@@ -18,7 +18,7 @@ var token_gen = require('rand-token');
 var socket_port = process.argv[2] || 12346;
 var rest_port = 4730;
 var things = {};
-var cin = 0, cout = 0;
+var nb_dev = 0, msg_in = 0, msg_out = 0;
 
 // ********************************************************************* //
 // UGRID API
@@ -27,6 +27,7 @@ function authenticate(uuid, token) {
 	if (!(uuid in things) || (things[uuid].token != token))
 		throw 'authentication failed';
 }
+
 function connect(from_uuid, data, connection) {
 	if (from_uuid == null)
 		return register(from_uuid, data, connection);
@@ -53,7 +54,7 @@ function register(from_uuid, data, connection) {
 			things[uuid].connection.sock.uuid = uuid;
 			things[uuid].online = true;
 		}
-	}	
+	}
 	return {uuid: uuid, token: things[uuid].token};
 }
 
@@ -89,7 +90,7 @@ function send_thing(from_uuid, to_uuid, cmd_id, data, cmd) {
 	var msg = {from: from_uuid, cmd_id: cmd_id, data: data.payload};
 	if (cmd) msg.cmd = cmd;
 	thing.connection.sock.write(JSON.stringify(msg) + '\n');
-	++cout;
+	++msg_out;
 }
 
 function publish(from_uuid, data, cmd_id) {
@@ -142,6 +143,7 @@ function set(from_uuid, uuid, data) {
 // ********************************************************************* //
 var client_command = {
 	connect: function(sock, msg, line) {
+		nb_dev++;
 		send(sock, msg, connect(msg.from, msg.data, {protocol: "TCP", sock: sock}));
 	},
 	register: function(sock, msg, line) {
@@ -181,14 +183,14 @@ function send(sock, msg, result) {
 	if (msg.cmd === 'request') return;
 	var json = {cmd_id: msg.cmd_id, data: {result: result}};
 	sock.write(JSON.stringify(json) + '\n');
-	cout++;
+	msg_out++;
 }
 
 var grid = net.createServer(function(sock) {
 	byline(sock).on('data', function(d) {
 		try {
 			var o = JSON.parse(d);
-			++cin;
+			++msg_in;
 			//console.log(o);
 			//console.log("");
 			// Authentification
@@ -215,14 +217,15 @@ var grid = net.createServer(function(sock) {
 	sock.on('end', function() {
 		if (sock.uuid in things)
 			things[sock.uuid].online = false;
-		console.log('disconnected')
+		console.log('disconnected: ' + sock.uuid);
+		nb_dev--;
 	});
 });
 
 grid.listen(socket_port);
 setInterval(function() {
-	console.log('in: ' + cin + ', out: ' + cout);
-	cin = cout = 0;
+	console.log('devices: ' + nb_dev + '\tmsg in: ' + msg_in + ', out: ' + msg_out);
+	msg_in = msg_out = 0;
 }, 1000);
 
 // ********************************************************************* //
