@@ -17,9 +17,9 @@ var worker_request = {
 		vm.runInThisContext('var Task = ' + msg.data.args.lastStr);
 		task = new Task();
 
-		var res = task.run[task.stageIdx](ml, STAGE_RAM, RAM, msg.data.args.lineages, msg.data.args.action);
+		var res = task.run[task.stageIdx++](ml, STAGE_RAM, RAM, msg.data.args.lineages, msg.data.args.action);
 
-		if (task.stageIdx == (task.run.length - 1)) {
+		if (task.stageIdx == task.run.length) {
 			grid.send_cb('answer', {uuid: msg.from, cmd_id: msg.cmd_id, payload: {result: res || null}}, function(err2, res2) {
 				if (err2) throw err2;
 			});
@@ -30,7 +30,7 @@ var worker_request = {
 				}, callback);
 			}
 
-			console.log('lazy-worker.js: Ready to shuffle following dataset')
+			console.log('\nlazy-worker.js task rpc: hashcode stage result, dispatch partitions to workers')
 			console.log(res);
 			
 			for (var i in task.worker)
@@ -40,7 +40,7 @@ var worker_request = {
 		}
 	},
 	shuffle: function(msg) {
-		console.log('# received shuffle commmand')
+		console.log('\nlazy-worker.js shuffle rpc: call task stage specific processing and run next stage')
 		console.log(msg)
 	}
 };
