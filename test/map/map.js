@@ -15,7 +15,7 @@ function doubles(n) {
 var b = a.map(doubles);
 
 var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
-b = a.map(doubles);
+
 co(function *() {
 	yield grid.connect();
 	var res = yield grid.send('devices', {type: "worker"});
