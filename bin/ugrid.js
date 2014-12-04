@@ -11,10 +11,9 @@
 
 var net = require('net');
 var byline = require('byline');
-var express = require('express');
-var bodyParser = require('body-parser');
 var uuid_gen = require('node-uuid');
 var token_gen = require('rand-token');
+var ugrid_server_rest = require('../lib/ugrid-server-rest.js');
 var socket_port = process.argv[2] || 12346;
 var rest_port = 4730;
 var things = {};
@@ -23,6 +22,16 @@ var nb_dev = 0, msg_in = 0, msg_out = 0;
 // ********************************************************************* //
 // UGRID API
 // ********************************************************************* //
+var api = {
+	authenticate: authenticate,
+	register: register,
+	unregister: unregister,
+	query: query,
+	get: get,
+	set: set,
+	things: things
+};
+
 function authenticate(uuid, token) {
 	if (!(uuid in things) || (things[uuid].token != token))
 		throw 'authentication failed';
@@ -228,71 +237,4 @@ setInterval(function() {
 	msg_in = msg_out = 0;
 }, 1000);
 
-// ********************************************************************* //
-// REST API
-// ********************************************************************* //
-var app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
-// authentication filter
-app.all('*', function(req, res, next) {
-	// DEBUG: bypass auth for base uri
-	if (req.path == '/')
-		return next();
-
-	// authentification non requise pour methode POST vers /devices
-	var isRegister = (req.path == '/devices') && (req.method == 'POST');
-	var isAuthenticated = (req.headers.auth_token != undefined) || (req.headers.auth_uuid  != undefined);
-	if (!(isRegister))
-		authenticate(req.headers.auth_uuid, req.headers.auth_token);
-	if (isAuthenticated)
-		authenticate(req.headers.auth_uuid, req.headers.auth_token);
-	next();
-})
-
-// POST /devices : register thing
-app.post('/devices', function(req, res) {
-	res.send(register(req.headers.auth_uuid, req.body));
-});
-
-// GET /devices/:uuid, get device data
-app.get('/devices/:uuid', function(req, res) {
-	res.send(get(req.headers.auth_uuid, req.params.uuid));
-});
-
-// PUT /devices/:uuid, set device data
-app.put('/devices/:uuid', function(req, res) {
-	res.send(set(req.headers.auth_uuid, req.params.uuid, req.body));
-});
-
-// GET /devices : query devices matching criteria
-app.get('/devices', function(req, res) {
-	res.send(query(req.headers.auth_uuid, req.query));
-});
-
-// DELETE /devices/:uuid, unregister device
-app.delete('/devices/:uuid', function(req, res){
-	res.send(unregister(req.headers.auth_uuid, req.params.uuid))
-});
-
-// DEBUG GET / : list all devices with details
-app.get('/', function(req, res) {
-	var json = {};
-	for (i in things) {
-		json[i] = {};
-		for (j in things[i])
-			json[i][j] = (j == 'connection') ? things[i][j].protocol : things[i][j];
-	}
-	res.send(json);
-});
-
-// POST /messages : publish message
-// curl -X POST -d '{"uuid": "*", "payload": {"yellow":"off"}}' http://localhost:4730/messages -H "Content-Type: application/json"
-// app.post('/messages', function(req, res) {
-// 	// passer le from uuid ici
-// 	publishMessage(req.body, null);
-// 	res.send({});
-// });
-
-app.listen(process.env.PORT || rest_port);
+ugrid_server_rest(api, process.env.UGRID_REST_PORT || rest_port);
