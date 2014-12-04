@@ -1,0 +1,32 @@
+{
+  "name": "ugrid",
+  "version": "0.0.0",
+  "description": "ugrid client and server",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd bin; ./ugrid.js & echo $! >/tmp/ugrid.pid",
+    "stop": "kill $(cat /tmp/ugrid.pid)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@gitlab.ugrid.net:10022/ugrid/ugrid.git"
+  },
+  "keywords": [
+    "grid",
+    "parallel",
+    "cluster",
+    "hpc"
+  ],
+  "author": "Luca SAS",
+  "dependencies": {
+    "body-parser": "^1.9.2",
+    "byline": "^4.1.1",
+    "co": "^3.1.0",
+    "express": "^4.10.1",
+    "node-uuid": "^1.4.1",
+    "rand-token": "^0.2.1",
+    "request": "^2.49.0",
+    "thunkify": "^2.1.2",
+    "ws": "^0.4.31"
+  }
+}

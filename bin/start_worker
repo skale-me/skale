@@ -1,0 +1,8 @@
+#!/bin/sh
+i=0
+while [ $i -lt ${1:-1} ]
+do
+	./worker.js &
+	i=$(($i+1))
+done
+wait
