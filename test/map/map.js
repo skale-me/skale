@@ -3,6 +3,7 @@
 var co = require('co');
 var UgridClient = require('../../lib/ugrid-client.js');
 var UgridContext = require('../../lib/ugrid-context.js');
+var ml = require('../../lib/ugrid-ml.js');
 
 var M = 5;
 var a = ml.randn(M);
@@ -10,6 +11,8 @@ var a = ml.randn(M);
 function doubles(n) {
 	return n * 2;
 }
+
+var b = a.map(doubles);
 
 var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
 
@@ -24,7 +27,7 @@ co(function *() {
 	console.log(res);
 
 	console.log('\nlocal map result')
-	console.log(json.output);
+	console.log(b);
 
 	grid.disconnect();
 })();
