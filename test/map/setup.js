@@ -1,10 +1,8 @@
 #!/usr/local/bin/node --harmony
 
-// Example sans workers
-
-var ml = require('../ugrid-ml.js');
-var tl = require('./test-lib.js');
 var fs = require('fs');
+var ml = require('../../lib/ugrid-ml.js');
+var tl = require('../test-lib.js');
 
 var name = 'map';
 var M = 5;  // taille du vecteur a
@@ -14,7 +12,7 @@ b = a.map(tl.doubles);
 
 var json = {
 	name: name,
-	inputs: {a: a},
+	input: a,
 	output: b
 }
 
