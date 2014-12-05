@@ -1,5 +1,12 @@
-# Grid: a platform for Big Data
+# Ugrid
 
-`grid` virtualizes the cloud in the form of a single computer. It
-performs auto-parallelization, dynamic scheduling and realtime
-execution of javascript programs.
+Ugrid is a real time distributed data processing system.
+
+### Install
+    npm install ugrid
+
+### Start server
+    bin/ugrid.js [port]
+
+### Start workers
+    bin/worker.js [-n number] [-H server_host] [-P server_port]
