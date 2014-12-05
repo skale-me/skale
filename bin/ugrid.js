@@ -10,7 +10,7 @@
 */
 
 var net = require('net');
-var byline = require('byline');
+var readline = require('readline');
 var uuid_gen = require('node-uuid');
 var token_gen = require('rand-token');
 var ugrid_server_rest = require('../lib/ugrid-server-rest.js');
@@ -196,7 +196,9 @@ function send(sock, msg, result) {
 }
 
 var grid = net.createServer(function(sock) {
-	byline(sock).on('data', function(d) {
+	var rl = readline.createInterface({input: sock, output: sock});
+
+	rl.on('line', function(d) {
 		try {
 			var o = JSON.parse(d);
 			++msg_in;
