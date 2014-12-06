@@ -48,26 +48,40 @@ co(function *() {
 		return a;
 	}
 
+	// Detailed version
+	var data = yield points.collect();
+	console.log('\nData :');
+	console.log(data);	
+
 	for (i = 0; i < ITERATIONS; i++) {
 		// var startTime = new Date();
 
 		// Detailed version
-		var t0 = points.map(closestSpectralNorm, [means]);
-		var t1 = yield t0.collect();
-		console.log('\nClosest Spectral norm');
-		console.log(t1);
+		// var t0 = points.map(closestSpectralNorm, [means]);
+		// var t1 = yield t0.collect();
+		// console.log('\nClosest Spectral norm');
+		// console.log(t1);
 
-		var initVal = {acc: ml.zeros(D), sum: 0};
-		var t2 = points.map(closestSpectralNorm, [means]).reduceByKey('cluster', accumulate, initVal);
-		var t3 = yield t2.collect();
-		console.log('\nreduceByKey closest spectral norm: ');
-		console.log(t3);
+		// var initVal = {acc: ml.zeros(D), sum: 0};
+		// var t2 = points.map(closestSpectralNorm, [means]).reduceByKey('cluster', accumulate, initVal);
+		// var t3 = yield t2.collect();
+		// console.log('\nreduceByKey closest spectral norm: ');
+		// console.log(t3);
 
 		// Compact version
-		// var t0 = yield points.map(closestSpectralNorm, [means])
-		// 	.reduceByKey('cluster', accumulate, {acc: ml.zeros(D), sum: 0})
-		// 	.collect();
-		// console.log(t0);
+		var t0 = yield points.map(closestSpectralNorm, [means])
+			.reduceByKey('cluster', accumulate, {acc: ml.zeros(D), sum: 0})
+			// .map(function(a) {
+			// 	// console.log(a);
+			// 	// return a;
+			// 	var res = [];
+			// 	for (var i = 0; i < a.acc.length; i++)
+			// 		res.push(a.acc[i] / a.sum);
+			// 	return res;
+			// })
+			.collect();
+		console.log('\nNew means :')
+		console.log(t0);
 
 		// var endTime = new Date();
 		// time[i] = (endTime - startTime) / 1000;
