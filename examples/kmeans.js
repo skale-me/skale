@@ -71,14 +71,14 @@ co(function *() {
 		// Compact version
 		var t0 = yield points.map(closestSpectralNorm, [means])
 			.reduceByKey('cluster', accumulate, {acc: ml.zeros(D), sum: 0})
-			// .map(function(a) {
-			// 	// console.log(a);
-			// 	// return a;
-			// 	var res = [];
-			// 	for (var i = 0; i < a.acc.length; i++)
-			// 		res.push(a.acc[i] / a.sum);
-			// 	return res;
-			// })
+			.map(function(a) {
+				console.log(a);
+				return a;
+				// var res = [];
+				// for (var i = 0; i < a.acc.length; i++)
+				// 	res.push(a.acc[i] / a.sum);
+				// return res;
+			})
 			.collect();
 		console.log('\nNew means :')
 		console.log(t0);
