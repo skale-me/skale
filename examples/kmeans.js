@@ -12,18 +12,16 @@ co(function *() {
 	var res = yield grid.send('devices', {type: "worker"});
 	var ugrid = new UgridContext(grid, res.devices);
 
-	var N = 203472;						// Number of observations
-	var D = 16;						// Number of features
-	var K = 4;						// Number of clusters
-	var ITERATIONS = 100;				// Number of iterations
+	var N = 5;						// Number of observations
+	var D = 2;						// Number of features
+	var K = 2;						// Number of clusters
+	var ITERATIONS = 3;				// Number of iterations
 	var time = new Array(ITERATIONS);
 
 	var points = ugrid.loadTestData(N, D).persist();
 	var means = yield points.takeSample(K);
 	for (i = 0; i < K; i++)
 		means[i] = means[i].features;
-	// console.log('\nInitial K-means');
-	// console.log(means);
 
 	function closestSpectralNorm(element, means) {
 		var smallestSn = Infinity;
@@ -48,11 +46,14 @@ co(function *() {
 	}
 
 	// Display input data
-	// var data = yield points.collect();
-	// console.log('\nData :');
-	// console.log(data);
+	console.log('\nInitial K-means');
+	console.log(means);
+	
+	var data = yield points.collect();
+	console.log('\nData :');
+	console.log(data);
 
-	for (i = 0; i < ITERATIONS; i++) {
+	for (var i = 0; i < ITERATIONS; i++) {
 		var startTime = new Date();
 		var means = yield points.map(closestSpectralNorm, [means])
 			.reduceByKey('cluster', accumulate, {acc: ml.zeros(D), sum: 0})
@@ -66,6 +67,8 @@ co(function *() {
 		var endTime = new Date();
 		time[i] = (endTime - startTime) / 1000;
 		console.log('Iteration : ' + i + ', Time : ' + time[i]);
+		
+		console.log(means)
 	}
 	console.log('First iteration : ' + time[0]);
 	time.shift();
