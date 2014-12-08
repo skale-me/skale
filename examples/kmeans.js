@@ -12,19 +12,16 @@ co(function *() {
 	var res = yield grid.send('devices', {type: "worker"});
 	var ugrid = new UgridContext(grid, res.devices);
 
-	var N = 4;						// Number of observations
+	var N = 5;						// Number of observations
 	var D = 2;						// Number of features
 	var K = 2;						// Number of clusters
-	var ITERATIONS = 1;				// Number of iterations
+	var ITERATIONS = 3;				// Number of iterations
 	var time = new Array(ITERATIONS);
 
 	var points = ugrid.loadTestData(N, D).persist();
-
 	var means = yield points.takeSample(K);
 	for (i = 0; i < K; i++)
 		means[i] = means[i].features;
-	console.log('\nInitial K-means');
-	console.log(means);
 
 	function closestSpectralNorm(element, means) {
 		var smallestSn = Infinity;
@@ -48,35 +45,34 @@ co(function *() {
 		return a;
 	}
 
-	for (i = 0; i < ITERATIONS; i++) {
-		// var startTime = new Date();
+	// Display input data
+	console.log('\nInitial K-means');
+	console.log(means);
+	
+	var data = yield points.collect();
+	console.log('\nData :');
+	console.log(data);
 
-		// Detailed version
-		var t0 = points.map(closestSpectralNorm, [means]);
-		var t1 = yield t0.collect();
-		console.log('\nClosest Spectral norm');
-		console.log(t1);
-
-		var initVal = {acc: ml.zeros(D), sum: 0};
-		var t2 = points.map(closestSpectralNorm, [means]).reduceByKey('cluster', accumulate, initVal);
-		var t3 = yield t2.collect();
-		console.log('\nreduceByKey closest spectral norm: ');
-		console.log(t3);
-
-		// Compact version
-		// var t0 = yield points.map(closestSpectralNorm, [means])
-		// 	.reduceByKey('cluster', accumulate, {acc: ml.zeros(D), sum: 0})
-		// 	.collect();
-		// console.log(t0);
-
-		// var endTime = new Date();
-		// time[i] = (endTime - startTime) / 1000;
-		// startTime = endTime;
-		// console.log('Iteration : ' + i + ', Time : ' + time[i]);
+	for (var i = 0; i < ITERATIONS; i++) {
+		var startTime = new Date();
+		var means = yield points.map(closestSpectralNorm, [means])
+			.reduceByKey('cluster', accumulate, {acc: ml.zeros(D), sum: 0})
+			.map(function(a) {
+				var res = [];
+				for (var i = 0; i < a.acc.length; i++)
+					res.push(a.acc[i] / a.sum);
+				return res;
+			}, [])
+			.collect();
+		var endTime = new Date();
+		time[i] = (endTime - startTime) / 1000;
+		console.log('Iteration : ' + i + ', Time : ' + time[i]);
+		
+		console.log(means)
 	}
-	// console.log('First iteration : ' + time[0]);
-	// time.shift();
-	// console.log('Later iterations : ' + time.reduce(function(a, b) {return a + b}) / (ITERATIONS - 1));
+	console.log('First iteration : ' + time[0]);
+	time.shift();
+	console.log('Later iterations : ' + time.reduce(function(a, b) {return a + b}) / (ITERATIONS - 1));
 
 	grid.disconnect();
 })();

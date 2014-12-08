@@ -19,18 +19,19 @@ if (cluster.isMaster) {
 	for (var i = 0; i < num; i++)
 		cluster.fork();
 } else {
-	run_worker(host, port);
+	runWorker(host, port);
 }
 
-function run_worker(host, port) {
+function runWorker(host, port) {
 	var grid = new UgridClient({
 		host: host,
 		port: port,
 		data: {type: 'worker'}
 	});
+
 	var RAM = {}, STAGE_RAM = {}, task;
 
-	var worker_request = {
+	var request = {
 		task: function(msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.lastStr);
 			task = new Task(grid, ml, STAGE_RAM, RAM, msg.data.args.lineages, msg.data.args.action, function(res) {
@@ -40,17 +41,14 @@ function run_worker(host, port) {
 			});
 			task.run();
 		},	
-		shuffle: function(msg) {
-			console.log('\nlazy-worker.js shuffle rpc: call task stage specific processing and run next stage')
-			console.log(msg)
-		}
+		shuffle: function(msg) {task.shuffle(msg.data.args);}
 	};
 
 	grid.connect_cb(function(err, res) {
 		console.log("uuid: " + res.uuid);
 		grid.uuid = res.uuid;
 		grid.on('request', function(msg) {
-			try {worker_request[msg.data.cmd](msg);} 
+			try {request[msg.data.cmd](msg);} 
 			catch (error) {
 				console.log(msg.data.fun + ' error : ' + error);
 				grid.send_cb('answer', {uuid: msg.from, cmd_id: msg.cmd_id, payload: {err: error}}, function(err2, res2) {

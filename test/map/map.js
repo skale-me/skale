@@ -6,7 +6,8 @@ var UgridContext = require('../../lib/ugrid-context.js');
 var ml = require('../../lib/ugrid-ml.js');
 
 var M = 5;
-var a = ml.randn(M);
+var rng = new ml.Random();
+var a = rng.randn(M);
 
 function doubles(n) {
 	return n * 2;
