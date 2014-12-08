@@ -29,7 +29,7 @@ function runWorker(host, port) {
 		data: {type: 'worker'}
 	});
 
-	var RAM = {}, STAGE_RAM = {}, task;
+	var RAM = {}, STAGE_RAM = [], task;
 
 	var request = {
 		task: function(msg) {
@@ -41,7 +41,9 @@ function runWorker(host, port) {
 			});
 			task.run();
 		},	
-		shuffle: function(msg) {task.shuffle(msg.data.args);}
+		shuffle: function(msg) {
+			task.processShuffle(msg.data.args);
+		}
 	};
 
 	grid.connect_cb(function(err, res) {
