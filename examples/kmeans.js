@@ -22,41 +22,17 @@ co(function *() {
 	var means = yield points.takeSample(K);
 	for (i = 0; i < K; i++)
 		means[i] = means[i].features;
-
-	function closestSpectralNorm(element, means) {
-		var smallestSn = Infinity;
-		var smallestSnIdx = 0;
-		for (var i = 0; i < means.length; i++) {
-			var sn = 0;
-			for (var j = 0; j < element.features.length; j++)
-				sn += Math.pow(element.features[j] - means[i][j], 2);
-			if (sn < smallestSn) {
-				smallestSnIdx = i;
-				smallestSn = sn;
-			}
-		}
-		return {label: element.label, features: element.features, cluster: smallestSnIdx, sum: 1}
-	}
-
-	function accumulate(a, b) {
-		a.sum += b.sum;
-		for (var i = 0; i < b.features.length; i++)
-			a.acc[i] += b.features[i];
-		return a;
-	}
-
 	// Display input data
 	console.log('\nInitial K-means');
 	console.log(means);
-	
 	var data = yield points.collect();
 	console.log('\nData :');
 	console.log(data);
 
 	for (var i = 0; i < ITERATIONS; i++) {
 		var startTime = new Date();
-		var means = yield points.map(closestSpectralNorm, [means])
-			.reduceByKey('cluster', accumulate, {acc: ml.zeros(D), sum: 0})
+		var means = yield points.map(ml.closestSpectralNorm, [means])
+			.reduceByKey('cluster', ml.accumulate, {acc: ml.zeros(D), sum: 0})
 			.map(function(a) {
 				var res = [];
 				for (var i = 0; i < a.acc.length; i++)
@@ -66,8 +42,7 @@ co(function *() {
 			.collect();
 		var endTime = new Date();
 		time[i] = (endTime - startTime) / 1000;
-		console.log('Iteration : ' + i + ', Time : ' + time[i]);
-		
+		console.log('Iteration : ' + i + ', Time : ' + time[i]);		
 		console.log(means)
 	}
 	console.log('First iteration : ' + time[0]);
