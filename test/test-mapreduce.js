@@ -1,7 +1,7 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var UgridClient = require('../lib/co-ugrid.js');
+var UgridClient = require('../lib/ugrid-client.js');
 var UgridContext = require('../lib/ugrid-context.js');
 var ml = require('../lib/ugrid-ml.js');
 
