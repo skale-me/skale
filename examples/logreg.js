@@ -17,7 +17,6 @@ co(function *() {
 	var P = 4;							// Number of partitions
 	var ITERATIONS = 20;				// Number of iterations
 	var time = new Array(ITERATIONS);
-
 	var rng = new ml.Random();
 	var w = rng.randn(D);
 	var points = ugrid.loadTestData(N, D, P).persist();
