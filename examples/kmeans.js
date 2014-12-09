@@ -12,17 +12,20 @@ co(function *() {
 	var res = yield grid.send('devices', {type: "worker"});
 	var ugrid = new UgridContext(grid, res.devices);
 
-	// var N = 5;						// Number of observations
-	var N = 100000;						// Number of observations	
-	var D = 16;						// Number of features
-	var K = 4;						// Number of clusters
-	var ITERATIONS = 20;				// Number of iterations
+	// var N = 100000;						// Number of observations	
+	// var D = 16;						// Number of features
+	// var K = 4;						// Number of clusters
+	var N = 4000;						// Number of observations	
+	var D = 2;						// Number of features
+	var K = 2;						// Number of clusters
+	var ITERATIONS = 10;				// Number of iterations
 	var time = new Array(ITERATIONS);
 
 	var points = ugrid.loadTestData(N, D).persist();
 	var means = yield points.takeSample(K);
 	for (i = 0; i < K; i++)
 		means[i] = means[i].features;
+
 	// Display input data
 	// console.log('\nInitial K-means');
 	// console.log(means);
@@ -43,10 +46,11 @@ co(function *() {
 			.collect();
 		var endTime = new Date();
 		time[i] = (endTime - startTime) / 1000;
-		console.log('Iteration : ' + i + ', Time : ' + time[i]);
+		console.log('\nIteration : ' + i + ', Time : ' + time[i]);
 		console.log(means);
+		// Compare current K-means with previous iteration ones
 	}
-	console.log('First iteration : ' + time[0]);
+	console.log('\nFirst iteration : ' + time[0]);
 	time.shift();
 	console.log('Later iterations : ' + time.reduce(function(a, b) {return a + b}) / (ITERATIONS - 1));
 
