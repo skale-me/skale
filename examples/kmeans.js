@@ -43,8 +43,8 @@ co(function *() {
 			.collect();
 		var endTime = new Date();
 		time[i] = (endTime - startTime) / 1000;
-		console.log('Iteration : ' + i + ', Time : ' + time[i]);		
-		// console.log(means)
+		console.log('Iteration : ' + i + ', Time : ' + time[i]);
+		console.log(means);
 	}
 	console.log('First iteration : ' + time[0]);
 	time.shift();

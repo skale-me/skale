@@ -33,14 +33,14 @@ function runWorker(host, port) {
 
 	var request = {
 		task: function(msg) {
-			vm.runInThisContext('var Task = ' + msg.data.args.lastStr);
+			vm.runInThisContext('var Task = ' + msg.data.args.task);
 			task = new Task(grid, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action, function(res) {
 				grid.send_cb('answer', {uuid: msg.from, cmd_id: msg.cmd_id, payload: {result: res || null}}, function(err2, res2) {
 					if (err2) throw err2;
-				});			
+				});
 			});
 			task.run();
-		},	
+		},
 		shuffle: function(msg) {
 			task.processShuffle(msg.data.args);
 		}
@@ -50,7 +50,7 @@ function runWorker(host, port) {
 		console.log("uuid: " + res.uuid);
 		grid.uuid = res.uuid;
 		grid.on('request', function(msg) {
-			try {request[msg.data.cmd](msg);} 
+			try {request[msg.data.cmd](msg);}
 			catch (error) {
 				console.log(msg.data.fun + ' error : ' + error);
 				grid.send_cb('answer', {uuid: msg.from, cmd_id: msg.cmd_id, payload: {err: error}}, function(err2, res2) {
