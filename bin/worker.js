@@ -34,7 +34,7 @@ function runWorker(host, port) {
 	var request = {
 		task: function(msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.lastStr);
-			task = new Task(grid, ml, STAGE_RAM, RAM, msg.data.args.lineages, msg.data.args.action, function(res) {
+			task = new Task(grid, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action, function(res) {
 				grid.send_cb('answer', {uuid: msg.from, cmd_id: msg.cmd_id, payload: {result: res || null}}, function(err2, res2) {
 					if (err2) throw err2;
 				});			
