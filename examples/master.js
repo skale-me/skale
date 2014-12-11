@@ -10,7 +10,7 @@ var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master
 co(function *() {
 	yield grid.connect();
 	var res = yield grid.send('devices', {type: "worker"});
-	var ugrid = new UgridContext(grid, res.devices);
+	var ugrid = new UgridContext(grid, res[0].devices);
 
 	// var lines = ugrid.textFile('data.txt');				// Need to reimplement load file
 	var lines = ugrid.loadTestData(4, 2).persist();
