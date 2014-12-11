@@ -10,7 +10,7 @@ var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master
 co(function *() {
 	yield grid.connect();
 	var res = yield grid.send('devices', {type: "worker"});
-	var ugrid = new UgridContext(grid, res.devices);
+	var ugrid = new UgridContext(grid, res[0].devices);
 
 	// Bug on initial kmeans with 4 workers with this setup
 	// var N = 4;				// Number of observations
@@ -52,7 +52,7 @@ co(function *() {
 		var endTime = new Date();
 		time[i] = (endTime - startTime) / 1000;
 		console.log('\nIteration : ' + i + ', Time : ' + time[i]);
-		// console.log(newMeans);
+		console.log(newMeans);
 		// Compare current K-means with previous iteration ones
 		var dist = 0;
 		for (var k = 0; k < K; k++)
