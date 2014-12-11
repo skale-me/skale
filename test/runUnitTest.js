@@ -14,7 +14,7 @@ var grid = new UgridClient({
 	host: 'localhost',
 	port: 12346	
 });
-	
+
 co(function*(){
 	var res = yield grid.connect();
 	var N = process.argv[2] || 5;
@@ -51,10 +51,10 @@ function runTests(grid) {
 
 	co(function*() {
 		var testResults = {};
-		var files = yield yieldable_readdir('../test/unitTest/'); //make sur that we read all the files  
+		var files = yield yieldable_readdir('unitTest/'); //make sur that we read all the files  
 		for (var i = 0; i < files.length; i++) {
 			console.log('running : ' + files[i]);
-			var res = yield spawnTest('../test/unitTest/' + files[i]); 
+			var res = yield spawnTest('unitTest/' + files[i]); 
 			testResults[files[i]] = res || 'Bad test file';
 		}
 		console.log('\n=> Test results: ')
