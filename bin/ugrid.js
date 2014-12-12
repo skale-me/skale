@@ -92,12 +92,16 @@ function unsubscribe(from_uuid, uuid) {
 	return null;
 }
 
-function send_thing(from_uuid, to_uuid, cmd_id, data, cmd) {
+function send_thing(from_uuid, to_uuid, cmd_id, data, cmd, line) {
 	if (!(to_uuid in things)) throw 'send_thing: device not found: ' + to_uuid;
 	var thing = things[to_uuid];
 	if (!(thing.online)) return;
 	var msg = {from: from_uuid, cmd_id: cmd_id, data: data.payload};
 	if (cmd) msg.cmd = cmd;
+	if (line) {
+		console.log(line);
+		console.log(JSON.stringify(msg));
+	}
 	thing.connection.sock.write(JSON.stringify(msg) + '\n');
 	++msg_out;
 }
@@ -171,10 +175,10 @@ var client_command = {
 		send(sock, msg, publish(msg.from, msg.data, msg.cmd_id));
 	},
 	request: function(sock, msg, line) {
-		send(sock, msg, send_thing(msg.from, msg.data.uuid, msg.cmd_id, msg.data, 'request'));
+		send(sock, msg, send_thing(msg.from, msg.data.uuid, msg.cmd_id, msg.data, 'request', line));
 	},
 	answer: function(sock, msg, line) {
-		send(sock, msg, send_thing(msg.from, msg.data.uuid, msg.cmd_id, msg.data));
+		send(sock, msg, send_thing(msg.from, msg.data.uuid, msg.cmd_id, msg.data, line));
 	},
 	devices: function(sock, msg, line) {
 		send(sock, msg, query(msg.from, msg.data));
@@ -196,7 +200,7 @@ function send(sock, msg, result) {
 }
 
 var grid = net.createServer(function(sock) {
-	var rl = readline.createInterface({input: sock, output: sock});
+	var rl = readline.createInterface(sock, sock);
 
 	rl.on('line', function(d) {
 		try {

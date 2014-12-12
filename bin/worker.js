@@ -2,7 +2,7 @@
 
 var cluster = require('cluster');
 var vm = require('vm');
-var UgridClient = require('../lib/ugrid-client.js');
+var UgridClient = require('../lib/ugrid-io.js');
 var ml = require('../lib/ugrid-ml.js')
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -35,7 +35,10 @@ function runWorker(host, port) {
 		task: function(msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
 			task = new Task(grid, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action, function(res) {
-				grid.send_cb('answer', {uuid: msg.from, cmd_id: msg.cmd_id, payload: {result: res || null}}, function(err2, res2) {
+				msg.cmd = 'reply';
+				msg.id = msg.from;
+				msg.data = res;
+				grid.send_cb(msg, function(err2, res2) {
 					if (err2) throw err2;
 				});
 			});
@@ -47,14 +50,17 @@ function runWorker(host, port) {
 	};
 
 	grid.connect_cb(function(err, res) {
-		console.log("uuid: " + res.uuid);
-		grid.uuid = res.uuid;
+		console.log('id: ' + res.id + ', uuid: ' + res.uuid);
+		grid.host = {uuid: res.uuid, id: res.id};
 		grid.on('request', function(msg) {
 			try {request[msg.data.cmd](msg);}
 			catch (error) {
 				console.log(msg.data.fun + ' error : ' + error);
-				grid.send_cb('answer', {uuid: msg.from, cmd_id: msg.cmd_id, payload: {err: error}}, function(err2, res2) {
-					if (err2) throw err2;
+				msg.cmd = 'reply';
+				msg.id = msg.from;
+				msg.error = error;
+				grid.send_cb(msg, function(err, res) {
+					if (err) throw err;
 				});
 			}
 		});

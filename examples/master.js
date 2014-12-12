@@ -1,7 +1,7 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var UgridClient = require('../lib/ugrid-client.js');
+var UgridClient = require('../lib/ugrid-io.js');
 var UgridContext = require('../lib/ugrid-context.js');
 var ml = require('../lib/ugrid-ml.js');
 
@@ -9,8 +9,9 @@ var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master
 
 co(function *() {
 	yield grid.connect();
-	var res = yield grid.send('devices', {type: "worker"});
-	var ugrid = new UgridContext(grid, res[0].devices);
+	var workers = yield grid.send({cmd: 'devices', data: {type: "worker"}, id: 0});
+	console.log(workers);
+	var ugrid = new UgridContext(grid, workers);
 
 	// var lines = ugrid.textFile('data.txt');				// Need to reimplement load file
 	var lines = ugrid.loadTestData(4, 2).persist();
