@@ -12,7 +12,7 @@ var yieldable_readdir = thunkify(fs.readdir);
 
 var grid = new UgridClient({
 	host: 'localhost',
-	port: 12346	
+	port: 12346
 });
 
 co(function*(){
@@ -20,10 +20,11 @@ co(function*(){
 	var N = process.argv[2] || 5;
 	// Query devices, get uuid array
 	var t0 = setInterval(function() {
-		grid.send_cb('devices', {type: "worker"}, function(err, res) {
+		grid.send_cb({cmd: 'devices', data: {type: 'worker'}}, function(err, res) {
 			if (err) console.log(err);
-			if (res.devices.length != N)
-				console.log(res.devices.length + ' workers connected');
+			console.log(res);
+			if (res.length != N)
+				console.log(res.length + ' workers connected');
 			else {
 				console.log('Cluster ready: ' + N + ' worker(s) connected')
 				clearInterval(t0);

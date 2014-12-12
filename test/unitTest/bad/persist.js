@@ -7,12 +7,11 @@ var UgridContext = require('../../lib/ugrid-context.js');
 var ml = require('../../lib/ugrid-ml.js');
 
 var M = 5;
-var a = ml.randn(M);
-console.error(a);
+var v = ml.randn(M);
+//console.error(v);
 
-var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
-var name = 'parallelize_collect';
-var json = {success: false, time: 0};
+var grid = new UgridClient({host: 'localhost', port: 12346, datat: {type: 'master'}});
+var json = {success: false, time: 0}
 
 try {
 	co(function *() {
@@ -20,28 +19,28 @@ try {
 		yield grid.connect();
 		var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
 		var ugrid = new UgridContext(grid, devices);
-		
-		var res = yield ugrid.parallelize(a).collect();
-
+		var a = ugrid.parallelize(v).persist();
+		var r1 = yield a.collect();
+		console.log(r1);
+		var r2 = yield a.collect();
 		console.error('distributed parallelize collect result')
-		console.error(res);
+		console.error(r1);
+		console.error(r2);
 
-		//compare a and res
+		//compare r1 and r2
 		test = true;
-		for (var i = 0; i < res.length; i++) {
-			if (res[i] != a[i]) {
+		for (var i = 0; i < r1.length; i++) {
+			if (r1[i] != r2[i]) {
 				test = false;
 				break;
 			}				
 		}
 		var endTime = new Date();
 		if (test) {
-			// json with test results
 			json.success = true;
 			json.time = (endTime - startTime) / 1000;
 			console.error('\ntest ok');
-		}		
-		else {
+		} else {
 			json.success = false;
 			json.time = (endTime - startTime) / 1000;
 			console.error('\ntest ko');
@@ -54,4 +53,3 @@ try {
 	console.log(JSON.stringify(json));
 	process.exit(1);
 }
-

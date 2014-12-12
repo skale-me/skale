@@ -8,7 +8,7 @@ var ml = require('../../lib/ugrid-ml.js');
 
 var M = 5;
 var v = ml.randn(M);
-console.error(v);
+//console.error(v);
 
 var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
 var json = {success: false, time: 0}
@@ -17,10 +17,11 @@ try {
 	co(function *() {
 		var startTime = new Date();
 		yield grid.connect();
-		var res = yield grid.send('devices', {type: "worker"});
-		var ugrid = new UgridContext(grid, res[0].devices);
+		var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
+		var ugrid = new UgridContext(grid, devices);
 		var a = ugrid.parallelize(v).persist();
 		var r1 = yield a.collect();
+		console.log(r1);
 		var r2 = yield a.collect();
 		console.error('distributed parallelize collect result')
 		console.error(r1);

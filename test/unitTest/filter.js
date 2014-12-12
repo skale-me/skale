@@ -16,16 +16,14 @@ function positive(n) {
 var b = a.filter(positive);
 
 var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
-var json = {success: false, time: 0}:
+var json = {success: false, time: 0};
 
 try {
 	co(function *() {
 		var startTime = new Date();
 		yield grid.connect();
-		var res = yield grid.send('devices', {type: "worker"});
-		// console.log(res);
-
-		var ugrid = new UgridContext(grid, res[0].devices);
+		var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
+		var ugrid = new UgridContext(grid, devices);
 		
 		console.error('a = ')
 		console.error(a)

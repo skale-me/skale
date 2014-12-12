@@ -21,8 +21,8 @@ try {
 	co(function *() {
 		var startTime = new Date();
 		yield grid.connect();
-		var res = yield grid.send('devices', {type: "worker"});
-		var ugrid = new UgridContext(grid, res[0].devices);
+		var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
+		var ugrid = new UgridContext(grid, devices);
 
 		var res = yield ugrid.parallelize(a).map(doubles, []).collect();
 

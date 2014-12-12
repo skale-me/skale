@@ -2,7 +2,7 @@
 
 var cluster = require('cluster');
 var vm = require('vm');
-var UgridClient = require('../lib/ugrid-io.js');
+var UgridClient = require('../lib/ugrid-client.js');
 var ml = require('../lib/ugrid-ml.js')
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
