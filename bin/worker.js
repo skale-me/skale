@@ -1,5 +1,7 @@
 #!/usr/local/bin/node
 
+'use strict';
+
 var cluster = require('cluster');
 var vm = require('vm');
 var UgridClient = require('../lib/ugrid-client.js');
@@ -35,17 +37,11 @@ function runWorker(host, port) {
 		setTask: function(msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
 			task = new Task(grid, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action);
-			msg.cmd = 'reply';
-			msg.id = msg.from;
-			msg.data = 'worker ready to process task';
-			grid.send_cb(msg, function(err2, res2) {if (err2) throw err2;});
+			grid.reply_cb(msg, null, 'worker ready to process task');
 		},
 		runTask: function(msg) {
 			task.run(function(res) {
-				msg.cmd = 'reply';
-				msg.id = msg.from;
-				msg.data = res;
-				grid.send_cb(msg, function(err2, res2) {if (err2) throw err2;});
+				grid.reply_cb(msg, null, res);
 			});
 		},
 		shuffle: function(msg) {
@@ -60,12 +56,7 @@ function runWorker(host, port) {
 			try {request[msg.data.cmd](msg);}
 			catch (error) {
 				console.log(msg.data.fun + ' error : ' + error);
-				msg.cmd = 'reply';
-				msg.id = msg.from;
-				msg.error = error;
-				grid.send_cb(msg, function(err, res) {
-					if (err) throw err;
-				});
+				grid.reply_cb(msg, error, null);
 			}
 		});
 	});
