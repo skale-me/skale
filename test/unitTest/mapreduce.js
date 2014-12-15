@@ -11,8 +11,8 @@ try {
 	co(function *() {
 
 		yield grid.connect();
-		var res = yield grid.send('devices', {type: "worker"});
-		var ugrid = new UgridContext(grid, res[0].devices);
+		var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
+		var ugrid = new UgridContext(grid, devices);
 
 		var N = 4;
 		var D = 2;
@@ -30,11 +30,10 @@ try {
 		}
 
 		var res = yield ugrid.loadTestData(N, D).map(mapper, []).reduce(reducer, {label: 1, features: ml.zeros(D)});
-
+		console.log(res)
 		grid.disconnect();
 	})();
 } catch (err) {
 	json.error = err;
-	console.log(JSON.stringify(json));
 	process.exit(1);
 }
