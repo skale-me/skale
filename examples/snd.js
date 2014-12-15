@@ -10,10 +10,10 @@ var ugrid = new UgridClient({
 
 ugrid.connect_cb(function(err, res) {
 	console.log("uuid: " + res.uuid);
-	ugrid.send_cb('devices', {type: 'rcv'}, function(err, res) {
+	ugrid.devices_cb({type: 'rcv'}, function(err, res) {
 		setInterval(function() {
 			for (var i = 0; i < 1000; i++)
-				ugrid.send_cb('request', {uuid: res.devices[0]});
+				ugrid.send_cb({cmd: 'request', id: res[0].id});
 		}, 1);
 	});
 });

@@ -9,8 +9,8 @@ var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master
 
 co(function *() {
 	yield grid.connect();
-	var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
-	var ugrid = new UgridContext(grid, devices);
+	var workers = yield grid.devices({type: 'worker'});
+	var ugrid = new UgridContext(grid, workers);
 
 	var N = 203472;						// Number of observations
 	var D = 16;							// Number of features

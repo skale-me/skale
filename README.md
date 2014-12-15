@@ -2,6 +2,8 @@
 
 Ugrid is a real time distributed data processing system.
 
+Ugrid provides a fast messaging library as per [ugrid-client](doc/UgridClient.md)
+
 ### Install
     npm install ugrid
 
