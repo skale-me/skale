@@ -10,8 +10,8 @@ co(function *() {
 	var devices = yield grid.send({cmd: 'devices', data: {type: 'worker'}});
 	var ugrid = new UgridContext(grid, devices);
 
-	var N = 100000, D = 16, K = 4, ITERATIONS = 100;
-	var points = ugrid.loadTestData(N, D).persist();
+	var N = 1000000, D = 16, K = 4, ITERATIONS = 100;
+	var points = ugrid.randomSVMData(N, D).persist();
 	var means = yield points.takeSample(K);
 	for (var i = 0; i < K; i++) 
 		means[i] = means[i].features;
