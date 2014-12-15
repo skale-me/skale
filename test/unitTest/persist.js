@@ -11,7 +11,6 @@ var v = ml.randn(M);
 //console.error(v);
 
 var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
-var json = {success: false, time: 0}
 
 try {
 	co(function *() {
@@ -37,19 +36,14 @@ try {
 		}
 		var endTime = new Date();
 		if (test) {
-			json.success = true;
-			json.time = (endTime - startTime) / 1000;
-			console.error('\ntest ok');
+			console.log('tesk ok');
+			process.exit(0);
 		} else {
-			json.success = false;
-			json.time = (endTime - startTime) / 1000;
-			console.error('\ntest ko');
+			console.log('tesk ko');
+			process.exit(1);
 		}
-		console.log(JSON.stringify(json));
 		grid.disconnect();
 	})();
 } catch (err) {
-	json.error = err;
-	console.log(JSON.stringify(json));
-	process.exit(1);
+	process.exit(2);
 }

@@ -25,7 +25,18 @@ co(function *() {
 	console.error(V);
 	console.error();
 	console.error(d1);
-
+	
+	if (d1.length == n ) {
+		for ( var i = 0; i < d1.length; i++) {
+			if ( V.indexOf(d1[i]) == -1) {
+				console.log("test ko");
+				process.exit(1); //test KO
+			} else {
+				console.log("test ok");
+				process.exit(0); //test OK
+			} 
+		}
+	} 
 	grid.disconnect();
 })();
 
