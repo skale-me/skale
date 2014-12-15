@@ -38,14 +38,12 @@ function runTests(grid) {
 	function spawnTest_cb(file, callback) {
 		var result;
 		var prog = spawn('node', ['--harmony', file]); // run in a asynchronous way all the unit tests
-		prog.stdout.on('data', function (data) {
-			try {result = JSON.parse(data);}
-			catch (error) {throw 'Coprocess is returning a bad string format'}
-		});
-
-		prog.on('close', function (code) {
+		var startTime = new Date();
+		prog.on('exit', function (code) {
 			// test finished
-			callback(null, result); //return the result 
+			var endTime = new Date();
+			runtime = (endTime - startTime) / 1000;
+			callback(null, {status : code , time : runtime}); //return the result
 		});
 	}
 	var spawnTest = thunkify(spawnTest_cb);
@@ -56,7 +54,7 @@ function runTests(grid) {
 		for (var i = 0; i < files.length; i++) {
 			console.log('running : ' + files[i]);
 			var res = yield spawnTest('unitTest/' + files[i]); 
-			testResults[files[i]] = res || 'Bad test file';
+			testResults[files[i]] = res;
 		}
 		console.log('\n=> Test results: ')
 		console.log(testResults);
