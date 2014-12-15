@@ -1,4 +1,5 @@
 #!/usr/local/bin/node --harmony
+'use strict';
 
 var co = require('co');
 var UgridClient = require('../lib/ugrid-client.js');

@@ -38,7 +38,7 @@ Example:
 Example:
 
 	grid.on("hello", callback(msg) {
-		grid.reply_cb(msg, "Welcome");
+		grid.reply_cb(msg, null, "Welcome");
 	});
 
 ## request_cb(host, data, [callback])
@@ -50,4 +50,4 @@ Example:
 		});
 	});
 
-## reply_cb(msg, data, [callback])
+## reply_cb(msg, error, data, [callback])

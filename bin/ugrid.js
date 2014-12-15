@@ -71,7 +71,6 @@ function register(from, data, sock)
 	return {uuid: uuid, token: 0, id: index};
 }
 
-// Pb: can not query on meta-data (i.e online status)
 function devices(query) {
 	var result = [];
 	for (var i in clients) {

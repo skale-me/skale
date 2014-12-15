@@ -1,6 +1,6 @@
 #!/usr/local/bin/node
 
-"use strict";
+'use strict';
 
 var cluster = require('cluster');
 var vm = require('vm');
