@@ -47,20 +47,16 @@ try {
 		var endTime = new Date();
 		if (test) {
 			// json with test results
-			json.success = true;
-			json.time = (endTime - startTime) / 1000;
-			console.error('\ntest ok');
+			console.log("test ok");
+			process.exit(0); //test OK
 		} else {
-			json.success = false;
-			json.time = (endTime - startTime) / 1000;
-			console.error('\ntest ko');
+			console.log("test ko");
+			process.exit(1); //test KO
 		}
-		console.log(JSON.stringify(json));
 		grid.disconnect();
 	})();
 } catch (err) {
-	json.error = err;
-	console.log(JSON.stringify(json));
-	process.exit(1);
+	console.log(" #######  ERRORRR ")
+	process.exit(2);
 }
 
