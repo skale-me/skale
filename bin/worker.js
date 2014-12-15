@@ -23,29 +23,33 @@ if (cluster.isMaster) {
 }
 
 function runWorker(host, port) {
+	var RAM = {}, STAGE_RAM = [], task;
+
 	var grid = new UgridClient({
 		host: host,
 		port: port,
 		data: {type: 'worker'}
 	});
 
-	var RAM = {}, STAGE_RAM = [], task;
-
 	var request = {
-		task: function(msg) {
+		setTask: function(msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
-			task = new Task(grid, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action, function(res) {
+			task = new Task(grid, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action);
+			msg.cmd = 'reply';
+			msg.id = msg.from;
+			msg.data = 'worker ready to process task';
+			grid.send_cb(msg, function(err2, res2) {if (err2) throw err2;});
+		},
+		runTask: function(msg) {
+			task.run(function(res) {
 				msg.cmd = 'reply';
 				msg.id = msg.from;
 				msg.data = res;
-				grid.send_cb(msg, function(err2, res2) {
-					if (err2) throw err2;
-				});
+				grid.send_cb(msg, function(err2, res2) {if (err2) throw err2;});
 			});
-			task.run();
 		},
 		shuffle: function(msg) {
-			task.processShuffle(msg.data.args);
+			task.processShuffle(msg);
 		}
 	};
 

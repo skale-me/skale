@@ -26,7 +26,6 @@ co(function *() {
 		var gradient = yield points.map(ml.logisticLossGradient, [w]).reduce(ml.sum, ml.zeros(D));
 		for (var j = 0; j < w.length; j++)
 			w[j] -= gradient[j];
-
 		var endTime = new Date();
 		time[i] = (endTime - startTime) / 1000;
 		startTime = endTime;
