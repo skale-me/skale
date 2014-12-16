@@ -1,18 +1,12 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var UgridClient = require('../../lib/ugrid-client.js');
-var UgridContext = require('../../lib/ugrid-context.js');
-
-var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
+var ugrid = require('../../lib/ugrid-context.js')({host: 'localhost', port: 12346});
 
 try {
-
 	co(function *() {
 		var startTime = new Date();
-		yield grid.connect();
-		var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
-		var ugrid = new UgridContext(grid, devices);
+		yield ugrid.init();
 
 		var N = 4;
 		var D = 2;
@@ -59,7 +53,7 @@ try {
 			process.exit(1);
 		}
 		
-		grid.disconnect();
+		grid.end();
 	})();
 }catch (err) {
 	console.log("error ")

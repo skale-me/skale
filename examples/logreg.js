@@ -2,16 +2,11 @@
 'use strict';
 
 var co = require('co');
-var UgridClient = require('../lib/ugrid-client.js');
-var UgridContext = require('../lib/ugrid-context.js');
+var ugrid = require('../lib/ugrid-context.js')({host: 'localhost', port: 12346});
 var ml = require('../lib/ugrid-ml.js');
 
-var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
-
 co(function *() {
-	yield grid.connect();
-	var workers = yield grid.devices({type: 'worker'});
-	var ugrid = new UgridContext(grid, workers);
+	yield ugrid.init();
 
 	var N = 203472 * 4;						// Number of observations
 	var D = 16;							// Number of features
@@ -39,5 +34,5 @@ co(function *() {
 	time.shift();
 	console.log('Later iterations : ' + time.reduce(function(a, b) {return a + b}) / (ITERATIONS - 1));
 
-	grid.disconnect();
+	ugrid.end();
 })();

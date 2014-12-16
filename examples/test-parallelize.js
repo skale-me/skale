@@ -1,17 +1,10 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var UgridClient = require('../lib/ugrid-client.js');
-var UgridContext = require('../lib/ugrid-context.js');
-
-var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
+var ugrid = require('../lib/ugrid-context.js')({host: 'localhost', port: 12346});
 
 co(function *() {
-	yield grid.connect();
-	var res = yield grid.send('devices', {type: "worker"});
-	var ugrid = new UgridContext(grid, res[0].devices);
-
-	console.log('# Test with ' + res[0].devices.length + ' workers')
+	yield ugrid.init();
 
 	var N = 10;
 
@@ -28,5 +21,5 @@ co(function *() {
 	console.log('\ndistributed array :')
 	console.log(r0)
 
-	grid.disconnect();
+	ugrid.end();
 })();

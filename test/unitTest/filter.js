@@ -2,8 +2,7 @@
 
 var co = require('co');
 var fs = require('fs');
-var UgridClient = require('../../lib/ugrid-client.js');
-var UgridContext = require('../../lib/ugrid-context.js');
+var ugrid = require('../../lib/ugrid-context.js')({host: 'localhost', port: 12346});
 var ml = require('../../lib/ugrid-ml.js');
 
 var M = 5;
@@ -15,15 +14,12 @@ function positive(n) {
 
 var b = a.filter(positive);
 
-var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
 var json = {success: false, time: 0};
 
 try {
 	co(function *() {
 		var startTime = new Date();
-		yield grid.connect();
-		var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
-		var ugrid = new UgridContext(grid, devices);
+		yield ugrid.init();
 		
 		console.error('a = ')
 		console.error(a)
@@ -53,7 +49,7 @@ try {
 			console.log("test ko");
 			process.exit(1); //test KO
 		}
-		grid.disconnect();
+		ugrid.end();
 	})();
 } catch (err) {
 	console.log(" #######  ERRORRR ")

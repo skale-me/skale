@@ -1,15 +1,10 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var UgridClient = require('../lib/ugrid-client.js');
-var UgridContext = require('../lib/ugrid-context.js');
-
-var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
+var ugrid = require('../lib/ugrid-context.js')({host: 'localhost', port: 12346});
 
 co(function *() {
-	yield grid.connect();
-	var res = yield grid.send('devices', {type: "worker"});
-	var ugrid = new UgridContext(grid, res[0].devices);
+	yield ugrid.init();
 
 	var N = 4;
 	var D = 2;
@@ -50,5 +45,5 @@ co(function *() {
 
 	console.log(passed ? 'Test with persist PASSED' : 'Test with persist FAILED');
 
-	grid.disconnect();
+	ugrid.end();
 })();
