@@ -1,21 +1,16 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var UgridClient = require('../../lib/ugrid-client.js');
-var UgridContext = require('../../lib/ugrid-context.js');
-var ml = require('../../lib/ugrid-ml.js');
-
-var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
+var fs = require('fs');
+var ugrid = require('../lib/ugrid-context.js')({host: 'localhost', port: 12346});
+var ml = require('../lib/ugrid-ml.js');
 
 co(function *() {
-	yield grid.connect();
-	var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
-	var ugrid = new UgridContext(grid, devices);
+	yield ugrid.init();
+	
+	var res = yield ugrid.textFile('test/svm_data_sample.txt').collect();
 
-	var d1 = yield ugrid.textFile('test/unitTest/svm_data_sample.txt').collect();
+	console.log(res);
 
-	console.log(d1);
-
-	grid.disconnect();
+	ugrid.end();
 })();
-
