@@ -24,6 +24,8 @@ if (cluster.isMaster) {
 	runWorker(host, port);
 }
 
+var fs = require('fs');
+
 function runWorker(host, port) {
 	var RAM = {}, STAGE_RAM = [], task;
 
@@ -36,7 +38,7 @@ function runWorker(host, port) {
 	var request = {
 		setTask: function(msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
-			task = new Task(grid, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action);
+			task = new Task(fs, grid, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action);
 			grid.reply_cb(msg, null, 'worker ready to process task');
 		},
 		runTask: function(msg) {

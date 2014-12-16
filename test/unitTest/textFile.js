@@ -12,7 +12,7 @@ co(function *() {
 	var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
 	var ugrid = new UgridContext(grid, devices);
 
-	var d1 = yield ugrid.textFile('test.txt').collect();
+	var d1 = yield ugrid.textFile('test/unitTest/svm_data_sample.txt').collect();
 
 	console.log(d1);
 
