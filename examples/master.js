@@ -1,17 +1,11 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var UgridClient = require('../lib/ugrid-client.js');
-var UgridContext = require('../lib/ugrid-context.js');
+var ugrid = require('../lib/ugrid-context.js')({host: 'localhost', port: 12346});
 var ml = require('../lib/ugrid-ml.js');
 
-var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
-
 co(function *() {
-	yield grid.connect();
-	var workers = yield grid.send({cmd: 'devices', data: {type: "worker"}, id: 0});
-	console.log(workers);
-	var ugrid = new UgridContext(grid, workers);
+	yield ugrid.init();
 
 	// var lines = ugrid.textFile('data.txt');				// Need to reimplement load file
 	var lines = ugrid.loadTestData(4, 2).persist();
@@ -72,6 +66,6 @@ co(function *() {
 	console.log('\nunionLines.groupByKey().collect() :');
 	yield unionLinesGroupedByKey.print();
 */
-	grid.disconnect();
+	ugrid.end();
 })();
 

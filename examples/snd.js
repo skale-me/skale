@@ -13,7 +13,7 @@ ugrid.connect_cb(function(err, res) {
 	ugrid.devices_cb({type: 'rcv'}, function(err, res) {
 		setInterval(function() {
 			for (var i = 0; i < 1000; i++)
-				ugrid.send_cb({cmd: 'request', id: res[0].id});
+				ugrid.request_cb(res[0]);	// Send empty requests
 		}, 1);
 	});
 });

@@ -2,22 +2,17 @@
 
 var co = require('co');
 var fs = require('fs');
-var UgridClient = require('../../lib/ugrid-client.js');
-var UgridContext = require('../../lib/ugrid-context.js');
+var ugrid = require('../../lib/ugrid-context.js')({host: 'localhost', port: 12346});
 var ml = require('../../lib/ugrid-ml.js');
 
 var M = 5;
 var v = ml.randn(M);
 //console.error(v);
 
-var grid = new UgridClient({host: 'localhost', port: 12346, data: {type: 'master'}});
-
 try {
 	co(function *() {
 		var startTime = new Date();
-		yield grid.connect();
-		var devices = yield grid.send({cmd: 'devices', data: {type: "worker"}});
-		var ugrid = new UgridContext(grid, devices);
+		yield ugrid.init();
 		var a = ugrid.parallelize(v).persist();
 		var r1 = yield a.collect();
 		console.log(r1);
@@ -42,7 +37,7 @@ try {
 			console.log('tesk ko');
 			process.exit(1);
 		}
-		grid.disconnect();
+		ugrid.end();
 	})();
 } catch (err) {
 	process.exit(2);
