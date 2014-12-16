@@ -24,7 +24,7 @@ try {
 			return a;
 		}
 
-		var res = yield ugrid.loadTestData(N, D).map(mapper, []).reduce(reducer, {label: 1, features: ml.zeros(D)});
+		var res = yield ugrid.randomSVMData(N, D).map(mapper, []).reduce(reducer, {label: 1, features: ml.zeros(D)});
 		console.log(res)
 		ugrid.end();
 	})();

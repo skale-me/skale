@@ -8,7 +8,7 @@ var ml = require('../lib/ugrid-ml.js');
 co(function *() {
 	yield ugrid.init();
 
-	var N = 203472 * 4;						// Number of observations
+	var N = 203472 * 4;					// Number of observations
 	var D = 16;							// Number of features
 	var P = 4;							// Number of partitions
 	var seed = 1;
