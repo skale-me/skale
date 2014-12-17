@@ -8,10 +8,17 @@ Example:
 		data: {type: 'worker'}
 	});
 
+## wsConnect_cb([callback])
+Example:
+
+	grid.wsConnect_cb(function (err, res) {
+		console.log("Connected as " + ' ' + res.uuid);
+	};
+
 ## connect_cb([callback])
 Example:
 
-	grid.connect(function (err, res) {
+	grid.connect_cb(function (err, res) {
 		console.log("Connected as " + ' ' + res.uuid);
 	};
 

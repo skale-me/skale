@@ -4,10 +4,10 @@
 
 var net = require('net');
 var uuidGen = require('node-uuid');
-var webSocketServer = require('ws').Server;
-var websocket = require('websocket-stream');
 var ugridMsg = require('../lib/ugrid-msg.js');
 var UgridClient = require('../lib/ugrid-client.js');
+var webSocketServer = require('ws').Server;
+var websocket = require('websocket-stream');
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -48,7 +48,7 @@ var client_command = {
 	broadcast: broadcast
 };
 
-// Connect to primary as backup
+// Connect as backup to primary if provided
 if (primary.host) {
 	cli = new UgridClient({host: primary.host, port: primary.port, data: {type: 'backup'}});
 	cli.connect_cb(function () {
@@ -61,12 +61,13 @@ if (primary.host) {
 	});
 }
 
-// Start a websocket server
+// Start a websocket server if a listening port is specified on command line
 if (opt.options.wsport) {
 	wss = new webSocketServer({port: opt.options.wsport});
 	wss.on('connection', function (ws) {
 		console.log('websocket connect');
-		handleConnect(websocket(ws));
+		var sock = handleConnect(websocket(ws));
+		ws.on('close', function () {handleClose(sock);});
 	});
 }
 
@@ -92,16 +93,19 @@ function handleConnect(sock) {
 				tsocks[to].write(data);
 			}
 		} catch (error) {
-			console.error(error);
+			console.error('handleConnect error: ' + error);
 			console.error('Closing ' + sock.client.index + ': ' + sock.client.uuid);
 			sock.end();
 		}
 	});
-	sock.on('end', function() {
-		console.log('Disconnect ' + sock.client.data.type + ' ' +
-		            sock.client.index + ': ' + sock.client.uuid);
-		tsocks[sock.client.index] = null;
-	});
+	sock.on('end', function () {handleClose(sock);});
+	return sock;
+}
+
+function handleClose(sock) {
+	console.log('Disconnect ' + sock.client.data.type + ' ' +
+				sock.client.index + ': ' + sock.client.uuid);
+	tsocks[sock.client.index] = null;
 }
 
 function register(from, data, sock)
