@@ -2,6 +2,7 @@
 
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')({host: 'localhost', port: 12346});
+var ml = require('../../lib/ugrid-ml.js');
 
 co(function *() {
 	yield ugrid.init();
@@ -21,9 +22,16 @@ co(function *() {
 	console.error(d1);
 	
 	if (d1.length == n ) {
-		for ( var i = 0; i < d1.length; i++)
-			if ( V.indexOf(d1[i]) == -1)
-				throw 'error: sampled data is not in array'
+		for ( var i = 0; i < d1.length; i++) {
+			if ( V.indexOf(d1[i]) == -1) {
+				console.log("test ko");
+				process.exit(1); //test KO
+			} else {
+				console.log("test ok");
+				process.exit(0); //test OK
+			} 
+		}
 	} 
 	ugrid.end();
 })();
+
