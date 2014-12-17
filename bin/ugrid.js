@@ -4,6 +4,8 @@
 
 var net = require('net');
 var uuidGen = require('node-uuid');
+var webSocketServer = require('ws').Server;
+var websocket = require('websocket-stream');
 var ugridMsg = require('../lib/ugrid-msg.js');
 var UgridClient = require('../lib/ugrid-client.js');
 
@@ -13,6 +15,8 @@ var opt = require('node-getopt').create([
 	['n', 'name=ARG', 'advertised server name (default localhost)'],
 	['P', 'Port=ARG', 'primary server port (default none)'],
 	['p', 'port=ARG', 'server port (default 12346)'],
+	['s', 'statistics', 'print periodic statistics'],
+	['w', 'wsport=ARG', 'listen on websocket port (default none)'],
 	['v', 'version', 'print version']
 ]).bindHelp().parseSystem();
 
@@ -23,9 +27,9 @@ var name = opt.options.name || 'localhost';
 var port = opt.options.port || 12346;
 var primary = {host: opt.options.Host, port: opt.options.Port || 12346};
 var secondary;
-var isBackup = primary.host != undefined;
 var msgCount = 0;
 var cli;
+var wss;
 
 var client_command = {
 	connect: function (sock, msg) {
@@ -44,7 +48,8 @@ var client_command = {
 	broadcast: broadcast
 };
 
-if (isBackup) {
+// Connect to primary as backup
+if (primary.host) {
 	cli = new UgridClient({host: primary.host, port: primary.port, data: {type: 'backup'}});
 	cli.connect_cb(function () {
 		console.log('connected as backup to ' + primary.host + ':' + primary.port);
@@ -56,7 +61,19 @@ if (isBackup) {
 	});
 }
 
-net.createServer(function (sock) {
+// Start a websocket server
+if (opt.options.wsport) {
+	wss = new webSocketServer({port: opt.options.wsport});
+	wss.on('connection', function (ws) {
+		console.log('websocket connect');
+		handleConnect(websocket(ws));
+	});
+}
+
+// Start a TCP server
+net.createServer(handleConnect).listen(port);
+
+function handleConnect(sock) {
 	var decoder = ugridMsg.Decoder();
 	sock.pipe(decoder);
 
@@ -85,7 +102,7 @@ net.createServer(function (sock) {
 		            sock.client.index + ': ' + sock.client.uuid);
 		tsocks[sock.client.index] = null;
 	});
-}).listen(port);
+}
 
 function register(from, data, sock)
 {
@@ -129,7 +146,9 @@ function broadcast(sock, msg) {
 	}
 }
 
-setInterval(function() {
-	console.log('msg: ' + (msgCount / 5) + ' msg/s');
-	msgCount = 0;
-}, 10000);
+if (opt.options.statistics) {
+	setInterval(function() {
+		console.log('msg: ' + (msgCount / 5) + ' msg/s');
+		msgCount = 0;
+	}, 10000);
+}
