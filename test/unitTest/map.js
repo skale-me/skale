@@ -1,47 +1,25 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var fs = require('fs');
 var ugrid = require('../../lib/ugrid-context.js')({host: 'localhost', port: 12346});
-var ml = require('../../lib/ugrid-ml.js');
 
-var M = 5;
-var a = ml.randn(M);
+co(function *() {
+	yield ugrid.init();
 
-function doubles(n) {
-	return n * 2;
-}
+	function doubles(n) {
+		return n * 2;
+	}
+	
+	var V = [1, 2, 3, 4, 5];
+	var local = V.map(doubles);
+	var dist = yield ugrid.parallelize(V).map(doubles, []).collect();
 
-var b = a.map(doubles);
+	if (local.length != dist.length)
+		throw 'error: local and distributed array have different lengths';
 
-try {
-	co(function *() {
-		yield ugrid.init();
+	for (var i = 0; i < local.length; i++)
+		if (local[i] != dist[i])
+			throw 'error: local and distributed array have different elements';
 
-		var res = yield ugrid.parallelize(a).map(doubles, []).collect();
-
-		console.error('distributed map result')
-		console.error(res);
-
-		console.error('\nlocal map result')
-		console.error(b);
-		//compare b and res
-		test = true;
-		for (var i = 0; i < res.length; i++) {
-			if (res[i] != b[i]) {
-				test = false;
-				break;
-			}
-		}
-		if (test) {
-			console.log('tesk ok');
-			process.exit(0); //test OK
-		} else {
-			console.log('tesk ko');
-			process.exit(1); //test KO	
-		}
-		ugrid.end();
-	})();
-} catch (err) {
-	process.exit(2); //error in test test
-}
+	ugrid.end();
+})();

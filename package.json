@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cd bin; ./ugrid.js & echo $! >/tmp/ugrid.pid ; sleep 1",
-    "pretest": "cd bin; ./ugrid.js > /dev/null & echo $! >/tmp/ugrid.pid ; sleep 1; ./worker.js -n 1 > /dev/null & echo $! >/tmp/workers.pid ; sleep 1",
+    "pretest": "./bin/ugrid.js > /dev/null & echo $! >/tmp/ugrid.pid ; sleep 1; ./bin/worker.js -n 1 > /dev/null & echo $! >/tmp/workers.pid ; sleep 1",
     "test" : "cd test; ./runUnitTest.js 1",
     "posttest": "kill $(cat /tmp/workers.pid); kill $(cat /tmp/ugrid.pid)",
     "stop": "kill $(cat /tmp/ugrid.pid)"
