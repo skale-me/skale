@@ -6,8 +6,11 @@ var ml = require('../lib/ugrid-ml.js');
 
 co(function *() {
 	yield ugrid.init();
-	
-	var res = yield ugrid.textFile('test/svm_data_sample.txt').collect();
+
+	var file = 'test/svm_data_sample.txt';
+	var P = process.argv[2];
+
+	var res = yield ugrid.textFile(file, P).collect();
 
 	console.log(res);
 
