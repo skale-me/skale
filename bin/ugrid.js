@@ -45,7 +45,12 @@ var client_command = {
 		msg.data = devices(msg.data);
 		sock.write(ugridMsg.encode(msg));
 	},
-	broadcast: broadcast
+	broadcast: broadcast,
+	subscribe: function (sock, msg) {
+		if (!(msg.data.uuid in clients))
+			throw 'subscribe error: device not found';
+		clients[uuid].subscribers.push(sock);
+	}
 };
 
 // Connect as backup to primary if provided
@@ -78,11 +83,11 @@ function handleConnect(sock) {
 	var decoder = ugridMsg.Decoder();
 	sock.pipe(decoder);
 
-	decoder.on('Message', function (to, len, data) {
+	decoder.on('Message', function (to, len, flag, data) {
 		try {
 			msgCount++;
 			if (!to) {
-				var o = JSON.parse(data.slice(8));
+				var o = JSON.parse(data.slice(9));
 				if (!(o.cmd in client_command))
                     throw 'Invalid command: ' + o.cmd;
 				client_command[o.cmd](sock, o);
@@ -116,7 +121,8 @@ function register(from, data, sock)
 		uuid: uuid,
 		owner: from ? from : uuid,
 		data: data || {},
-		sock: sock
+		sock: sock,
+		subscribers: []
 	};
 	tsocks[index] = sock;
 	return {uuid: uuid, token: 0, id: index};
