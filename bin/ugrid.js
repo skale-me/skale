@@ -36,7 +36,10 @@ var client_command = {
 		msg.cmd = 'reply';
 		msg.data = register(null, msg.data, sock);
 		sock.write(ugridMsg.encode(msg));
-		sock.write(ugridMsg.encode({cmd: 'broadcast', data: {secondary: secondary || {}}}));
+		if (msg.cmd === 'secondary')
+			secondary = msg.data;
+		else
+			sock.write(ugridMsg.encode({cmd: 'secondary', data: secondary || {}}));
 		console.log('Connect ' + sock.client.data.type + ' ' +
 					sock.client.index + ': ' + sock.client.uuid);
 	},
@@ -45,7 +48,6 @@ var client_command = {
 		msg.data = devices(msg.data);
 		sock.write(ugridMsg.encode(msg));
 	},
-	broadcast: broadcast,
 	subscribe: function (sock, msg) {
 		if (!(msg.data.uuid in clients))
 			throw 'subscribe error: device not found';
@@ -58,11 +60,11 @@ if (primary.host) {
 	cli = new UgridClient({host: primary.host, port: primary.port, data: {type: 'backup'}});
 	cli.connect_cb(function () {
 		console.log('connected as backup to ' + primary.host + ':' + primary.port);
-		cli.send_cb({cmd: 'broadcast', data: {secondary: {host: name, port: port}}});
+		cli.send_cb({cmd: 'secondary', flag: 0x01, data: {host: name, port: port}});
 		cli.on('end', function () {
 			console.log('primary server connection closed');
 		});
-		cli.on('broadcast', function(o) {});	// ignore self broadcast
+		cli.on('secondary', function(o) {});	// ignore broadcast from self
 	});
 }
 
@@ -86,13 +88,15 @@ function handleConnect(sock) {
 	decoder.on('Message', function (to, len, flag, data) {
 		try {
 			msgCount++;
-			if (!to) {
+			if (flag & 0x01) {	// Broadcast
+				for (var i in tsocks)
+					if (tsocks[i]) tsocks[i].write(data);
+			} else if (!to) {
 				var o = JSON.parse(data.slice(9));
 				if (!(o.cmd in client_command))
                     throw 'Invalid command: ' + o.cmd;
 				client_command[o.cmd](sock, o);
-			}
-			else {
+			} else {
 				if (!tsocks[to])
 					throw 'Invalid destination id: ' + to;
 				tsocks[to].write(data);
@@ -143,17 +147,6 @@ function devices(query) {
 			result.push({uuid: i, id: clients[i].index});
 	}
 	return result;
-}
-
-function broadcast(sock, msg) {
-	if ('secondary' in msg.data)
-		secondary = msg.data.secondary;
-	var d = ugridMsg.encode(msg);
-	for (var i in tsocks) {
-		if (tsocks[i]) {
-			tsocks[i].write(d);
-		}
-	}
 }
 
 if (opt.options.statistics) {
