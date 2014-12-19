@@ -30,6 +30,7 @@
     "rand-token": "^0.2.1",
     "request": "^2.49.0",
     "thunkify": "^2.1.2",
-    "ws": "^0.4.31"
+    "websocket-stream": "^1.1.1",
+    "ws": "^0.4.32"
   }
 }
