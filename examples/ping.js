@@ -22,6 +22,6 @@ co(function *() {
 	console.log(pong[0]);
 	while (true) {
 		var line = yield ask('ping> ');
-		grid.send_cb({cmd: 'ping', data: line, id: pong[0].id});
+		grid.send({cmd: 'ping', data: line, id: pong[0].id});
 	}
 })();

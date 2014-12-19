@@ -48,6 +48,11 @@ Example:
 		grid.reply_cb(msg, null, "Welcome");
 	});
 
+## publish_cb(data, [callback])
+Example:
+
+   grid.publish_cb(count++);
+
 ## request_cb(host, data, [callback])
 Example:
 

@@ -22,7 +22,7 @@ co(function*(){
 	var N = process.argv[2] || 1;
 	// Query devices, get uuid array
 	var t0 = setInterval(function() {
-		grid.send_cb({cmd: 'devices', data: {type: 'worker'}}, function(err, res) {
+		grid.devices_cb({type: 'worker'}, function (err, res) {
 			if (err) 
 				throw err;
 			if (res.length != N)
@@ -31,7 +31,7 @@ co(function*(){
 				clearInterval(t0);
 				runTests(grid);
 			}
-		})
+		});
 	}, 1000);
 })();
 

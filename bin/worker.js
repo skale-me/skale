@@ -40,11 +40,11 @@ function runWorker(host, port) {
 		setTask: function(msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
 			task = new Task(grid, fs, readline, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action);
-			grid.reply_cb(msg, null, 'worker ready to process task');
+			grid.reply(msg, null, 'worker ready to process task');
 		},
 		runTask: function(msg) {
 			task.run(function(res) {
-				grid.reply_cb(msg, null, res);
+				grid.reply(msg, null, res);
 			});
 		},
 		shuffle: function(msg) {
@@ -59,7 +59,7 @@ function runWorker(host, port) {
 			try {request[msg.data.cmd](msg);}
 			catch (error) {
 				console.log(msg.data.fun + ' error : ' + error);
-				grid.reply_cb(msg, error, null);
+				grid.reply(msg, error, null);
 			}
 		});
 	});
