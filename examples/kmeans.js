@@ -8,9 +8,9 @@ var ml = require('../lib/ugrid-ml.js');
 co(function *() {
 	yield ugrid.init();
 
-	var N = 1000000, D = 16, K = 4, ITERATIONS = 100;
+	var N = 1000000, D = 16, K = 4, ITERATIONS = 100, seed = 1;
 	var points = ugrid.randomSVMData(N, D).persist();
-	var means = yield points.takeSample(K);
+	var means = yield points.takeSample(K, seed);
 	for (var i = 0; i < K; i++) 
 		means[i] = means[i].features;
 
