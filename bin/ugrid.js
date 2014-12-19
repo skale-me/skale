@@ -44,9 +44,16 @@ var client_command = {
 		reply(sock, msg, devices(msg.data));
 	},
 	subscribe: function (sock, msg) {
-		var publishers = msg.data, i;
+		var publishers = msg.data, i, pubIndex;
 		for (i in publishers)
 			clients[publishers[i].uuid].subscribers.push(sock.client);
+	},
+	unsubscribe: function (sock, msg) {
+		var publishers = msg.data, i, subscribers;
+		for (i in publishers) {
+			subscribers = clients[publishers[i].uuid].subscribers;
+			delete subscribers[subscribers.indexOf(sock.client)];
+		}
 	}
 };
 
@@ -159,7 +166,7 @@ function devices(query) {
 }
 
 if (opt.options.statistics) {
-	setInterval(function() {
+	setInterval(function () {
 		console.log('msg: ' + (msgCount / 5) + ' msg/s');
 		msgCount = 0;
 	}, 10000);

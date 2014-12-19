@@ -159,6 +159,10 @@ function UgridClient(arg) {
 		send_cb({cmd: 'subscribe', data: publishers});
 	};
 
+	this.unsubscribe = function (publishers) {
+		send_cb({cmd: 'unsubscribe', data: publishers});
+	};
+
 	this.connect = thunkify(this.connect_cb);
 	this.devices = thunkify(this.devices_cb);
 	this.request = thunkify(this.request_cb);
