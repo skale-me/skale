@@ -4,3 +4,5 @@ node_modules
 npm-debug.log
 test/*.json
 TODO
+ugrid.sublime-project
+ugrid.sublime-workspace
