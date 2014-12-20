@@ -63,9 +63,9 @@ function runTests(grid) {
 		}
 		console.log(nPassedTests + ' passed');
 		console.log(nFailedTests + ' failed');
-		fs.writeFile('results.json', JSON.stringify(testResults, null, '\t'), function(err) {
-			if (err) throw err;
+		// fs.writeFile('results.json', JSON.stringify(testResults, null, '\t'), function(err) {
+		// 	if (err) throw err;
 			grid.disconnect();
-		});
+		// });
 	})();
 }	
