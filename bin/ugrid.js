@@ -21,8 +21,8 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var clients = {};
-var tsocks = [null];
-var clientMax = 1;
+var tsocks = [null, null, null, null];
+var clientMax = 4;
 var name = opt.options.name || 'localhost';
 var port = opt.options.port || 12346;
 var primary = {host: opt.options.Host, port: opt.options.Port || 12346};
@@ -63,7 +63,7 @@ if (primary.host) {
 						   data: {type: 'secondary', host: name, port: port}});
 	cli.connect_cb(function () {
 		console.log('connected as backup to ' + primary.host + ':' + primary.port);
-		cli.send_cb({cmd: 'secondary', flag: 0x01, data: {host: name, port: port}});
+		cli.send_cb({cmd: 'secondary', id: 1, data: {host: name, port: port}});
 		cli.on('end', function () {
 			console.log('primary server connection closed');
 		});
@@ -88,23 +88,30 @@ function handleConnect(sock) {
 	var decoder = ugridMsg.Decoder();
 	sock.pipe(decoder);
 
-	decoder.on('Message', function (to, len, flag, data) {
+	decoder.on('Message', function (to, len, data) {
 		var i, subscribers;
 		try {
 			msgCount++;
-			if (flag & 0x02) {			// Multicast
-				subscribers = sock.client.subscribers;
-				for (i in subscribers)
-					if (tsocks[subscribers[i].index]) subscribers[i].sock.write(data);
-			} else if (flag & 0x01) {	// Broadcast
-				for (i in tsocks)
-					if (tsocks[i]) tsocks[i].write(data);
-			} else if (!to) {
-				var o = JSON.parse(data.slice(9));
+			switch (to) {
+			case 0: 	// Server request
+				var o = JSON.parse(data.slice(8));
 				if (!(o.cmd in client_command))
                     throw 'Invalid command: ' + o.cmd;
 				client_command[o.cmd](sock, o);
-			} else {					// Unicast
+				break;
+			case 1:		// Broadcast
+				for (i in tsocks)
+					if (tsocks[i]) tsocks[i].write(data);
+				break;
+			case 2:		// Multicast
+				subscribers = sock.client.subscribers;
+				for (i in subscribers)
+					if (tsocks[subscribers[i].index]) subscribers[i].sock.write(data);
+				break;
+			case 3:		// Foreign
+				throw 'Foreign messages are not yet supported';
+				break;
+			default:	// Unicast
 				if (!tsocks[to])
 					throw 'Invalid destination id: ' + to;
 				tsocks[to].write(data);
