@@ -1,5 +1,15 @@
 <html>
 	<body>
-		<script src="./pong-ws-browser.js"></script>
+		<script src="../lib/ugrid-client-browser.js"></script>
+		<script>
+		var grid = new UgridClient({host: 'localhost', port: 12348, data: {type: 'pong'}});
+		grid.wsConnect_cb(function () {
+			console.log('connected');
+			grid.on('ping', function(msg) {
+				console.log('ping');
+				console.log(msg);
+			});
+		});
+		</script>
 	</body>
 </html>
