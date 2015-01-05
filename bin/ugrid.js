@@ -35,7 +35,7 @@ var client_command = {
 	connect: function (sock, msg) {
 		if (msg.data && msg.data.type === 'secondary')
 			secondary = {host: msg.data.host, port: msg.data.port};
-		reply(sock, msg, register(null, msg.data, sock));
+		reply(sock, msg, register(null, msg, sock));
 		sock.write(ugridMsg.encode({cmd: 'secondary', data: secondary || {}}));
 		console.log('Connect ' + sock.client.data.type + ' ' +
 					sock.client.index + ': ' + sock.client.uuid);
@@ -45,8 +45,11 @@ var client_command = {
 	},
 	subscribe: function (sock, msg) {
 		var publishers = msg.data, i, pubIndex;
-		for (i in publishers)
+		console.log('enter subscribe');
+		for (i in publishers) {
 			clients[publishers[i].uuid].subscribers.push(sock.client);
+		}
+		console.log('exit subscribe');
 	},
 	unsubscribe: function (sock, msg) {
 		var publishers = msg.data, i, subscribers;
@@ -140,14 +143,14 @@ function handleClose(sock) {
 	client.sock = tsocks[client.index] = null;
 }
 
-function register(from, data, sock)
+function register(from, msg, sock)
 {
-	var uuid = uuidGen.v1(), index = clientMax++;
+	var uuid = msg.uuid || uuidGen.v1(), index = clientMax++;
 	sock.client = clients[uuid] = {
 		index: index,
 		uuid: uuid,
 		owner: from ? from : uuid,
-		data: data || {},
+		data: msg.data || {},
 		sock: sock,
 		subscribers: []
 	};

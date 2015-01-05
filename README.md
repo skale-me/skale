@@ -15,3 +15,8 @@ Ugrid provides the following modules:
 
 ### Start workers
     bin/worker.js [-n number] [-H server_host] [-P server_port]
+
+## Todo
+
+* Topics for pub/sub
+* Fault tolerant ugrid server

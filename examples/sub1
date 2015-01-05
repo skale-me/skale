@@ -13,10 +13,10 @@ co(function *() {
 		grid.subscribe([pub[0]]);
 		console.log('subscribed');
 	} else process.exit(1);
-	setInterval(function () {
-		grid.unsubscribe([pub[0]]);
-		console.log('unsubscribe !');
-	}, 10000);
+	//setInterval(function () {
+	//	grid.unsubscribe([pub[0]]);
+	//	console.log('unsubscribe !');
+	//}, 10000);
 	grid.on('publish', function(msg) {
 		console.log(msg);
 	});
