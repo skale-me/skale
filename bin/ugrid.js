@@ -43,19 +43,20 @@ var client_command = {
 	devices: function (sock, msg) {
 		reply(sock, msg, devices(msg.data));
 	},
+	id: function (sock, msg) {
+		reply(sock, msg, msg.data in clients ? clients[msg.data].index : null);
+	},
 	subscribe: function (sock, msg) {
 		var publishers = msg.data, i, pubIndex;
-		console.log('enter subscribe');
-		for (i in publishers) {
+		for (i in publishers)
 			clients[publishers[i].uuid].subscribers.push(sock.client);
-		}
-		console.log('exit subscribe');
 	},
 	unsubscribe: function (sock, msg) {
-		var publishers = msg.data, i, subscribers;
+		var publishers = msg.data, i, subscribers, sub;
 		for (i in publishers) {
 			subscribers = clients[publishers[i].uuid].subscribers;
-			delete subscribers[subscribers.indexOf(sock.client)];
+			if ((sub = subscribers.indexOf(sock.client)) >= 0)
+				subscribers.splice(sub, 1);
 		}
 	}
 };
