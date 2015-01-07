@@ -23,7 +23,7 @@ co(function *() {
 	}
 
 	console.log('\nInitial K-means');	
-	// console.log(means);
+	console.log(means);
 
 	for (var i = 0; i < K - 1; i++)
 		for (var j = i + 1; j < K; j++)

@@ -14,7 +14,7 @@ co(function *() {
 		'-1 2 2 2 2 2 2 2 2 2 2\n' +
 		'-1 3 3 3 3 3 3 3 3 3 3\n' +
 		'-1 4 4 4 4 4 4 4 4 4 4';
-	fs.writeFile(file, a);
+	fs.writeFileSync(file, a);
 
 	// Distributed read
 	var P = process.argv[2];
