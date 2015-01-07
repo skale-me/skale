@@ -9,16 +9,14 @@ co(function *() {
 
 	var a = '1 2 3 4 5';
 	var b = '6 7 8 9 10';
-	fs.writeFile('/tmp/persist.txt', a);
+	fs.writeFileSync('/tmp/persist.txt', a);
 
 	var P = process.argv[2];
 	var dist = ugrid.textFile('/tmp/persist.txt', P).persist();
 	var res = yield dist.collect();
-	fs.writeFile('/tmp/persist.txt', b);
+	fs.writeFileSync('/tmp/persist.txt', b);
 	var res = yield dist.collect();
 	fs.unlink('/tmp/persist.txt');
-
-	console.log(res);
 
 	if (res[0] != a) throw 'error: persist()'
 
