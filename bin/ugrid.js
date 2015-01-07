@@ -67,7 +67,7 @@ if (primary.host) {
 						   data: {type: 'secondary', host: name, port: port}});
 	cli.connect_cb(function () {
 		console.log('connected as backup to ' + primary.host + ':' + primary.port);
-		cli.send_cb({cmd: 'secondary', id: 1, data: {host: name, port: port}});
+		cli.send_cb(0, {cmd: 'secondary', id: 1, data: {host: name, port: port}});
 		cli.on('end', function () {
 			console.log('primary server connection closed');
 		});
@@ -133,6 +133,7 @@ function handleConnect(sock) {
 
 function reply(sock, msg, data, error) {
 	msg.cmd = 'reply';
+	msg.from = 0;
 	msg.data = data;
 	msg.error = error;
 	sock.write(ugridMsg.encode(msg));
