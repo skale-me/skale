@@ -2,7 +2,7 @@
 'use strict';
 
 var co = require('co');
-var ugrid = require('../lib/ugrid-context.js')({host: 'localhost', port: 12346});
+var ugrid = require('../lib/ugrid-context.js')();
 var ml = require('../lib/ugrid-ml.js');
 
 co(function *() {

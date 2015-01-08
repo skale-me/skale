@@ -2,7 +2,7 @@
 
 var co = require('co');
 var fs = require('fs');
-var ugrid = require('../../lib/ugrid-context.js')({host: 'localhost', port: 12346});
+var ugrid = require('../../lib/ugrid-context.js')();
 
 co(function *() {
 	yield ugrid.init();
