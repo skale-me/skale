@@ -27,10 +27,10 @@ Example:
 
 	grid.disconnect();
 
-## send_cb(object, [callback])
+## send_cb(uuid, object, [callback])
 Example:
 
-	grid.send_cb({cmd: 'hello', id: 0, data: "world"}, function (err, res) {
+	grid.send_cb(0, {cmd: 'hello', data: "world"}, function (err, res) {
 		console.log("message sent");
 	});
 
