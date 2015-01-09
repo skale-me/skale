@@ -15,10 +15,10 @@ co(function *() {
 	var dist = ugrid.textFile('/tmp/persist.txt', P).persist();
 	var res = yield dist.collect();
 	fs.writeFileSync('/tmp/persist.txt', b);
-	var res = yield dist.collect();
+	res = yield dist.collect();
 	fs.unlink('/tmp/persist.txt');
 
-	if (res[0] != a) throw 'error: persist()'
+	if (res[0] != a) throw 'error: persist()';
 
 	ugrid.end();
 })();

@@ -15,7 +15,8 @@ co(function *() {
 	var N = 1000000, D = 16, K = 4, ITERATIONS = 100, seed = 1;
 	var points = ugrid.randomSVMData(N, D).persist();
 	var means = yield points.takeSample(K, seed);
-	for (var i = 0; i < K; i++) 
+	var i, j, k;
+	for (i = 0; i < K; i++)
 		means[i] = means[i].features;
 
 	// Ensure unicity of initial K-means
@@ -26,13 +27,13 @@ co(function *() {
 		return true;
 	}
 
-	console.log('\nInitial K-means');	
+	console.log('\nInitial K-means');
 	// console.log(means);
 
-	for (var i = 0; i < K - 1; i++)
-		for (var j = i + 1; j < K; j++)
+	for (i = 0; i < K - 1; i++)
+		for (j = i + 1; j < K; j++)
 			if (compareVector(means[i], means[j]))
-				throw 'Initial means must be distinct'
+				throw 'Initial means must be distinct';
 
 	// console.log('D = ' + means[0].length);
 	// var data = yield points.collect();
@@ -40,7 +41,7 @@ co(function *() {
 	// console.log(data);
 
 	// BUG si on collect juste après le reduceByKey car le stage 1 est vide
-	for (var i = 0; i < ITERATIONS; i++) {
+	for (i = 0; i < ITERATIONS; i++) {
 		var startTime = new Date();
 		var newMeans = yield points.map(ml.closestSpectralNorm, [means])
 			.reduceByKey('cluster', ml.accumulate, {acc: ml.zeros(D), sum: 0})
@@ -52,8 +53,8 @@ co(function *() {
 			}, [])
 			.collect();
 		var dist = 0;
-		for (var k = 0; k < K; k++)
-			for (var j = 0; j < means[k].length; j++)
+		for (k = 0; k < K; k++)
+			for (j = 0; j < means[k].length; j++)
 				dist += Math.pow(newMeans[k][j] - means[k][j], 2);
 		means = newMeans;
 		var time = (new Date() - startTime) / 1000;

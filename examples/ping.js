@@ -12,7 +12,7 @@ var ask_cb = function (str, callback) {
 	rl.once('line', function (res) {
 		callback(null, res);
 	});
-}
+};
 
 var ask = thunkify(ask_cb);
 

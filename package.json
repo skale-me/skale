@@ -32,5 +32,12 @@
     "thunkify": "^2.1.2",
     "websocket-stream": "^1.1.1",
     "ws": "^0.4.32"
+  },
+  "jshintConfig": {
+    "node": true,
+	"esnext": true,
+	"undef": true,
+	"unused": true,
+	"loopfunc": true
   }
 }

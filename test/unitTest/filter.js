@@ -13,7 +13,7 @@ co(function *() {
 	var N = 10;
 	var a = rng.randn(N);
 	var b = a.filter(positive);
-	
+
 	var dist = yield ugrid.parallelize(a).filter(positive).collect();
 
 	if (dist.length != b.length)

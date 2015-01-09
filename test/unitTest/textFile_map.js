@@ -8,19 +8,17 @@ var ml = require('../../lib/ugrid-ml.js');
 
 // Write textFile
 var N = 10; 	//observations
-var D = 4;  	//features 
+var D = 4;  	//features
 
 var rng = new ml.Random();
 var file = '/tmp/data.txt';
 
-for (var i = 0; i < N; i++){
+for (var i = 0; i < N; i++) {
    var line = 2 * Math.round(Math.abs(rng.randn(1))) - 1;
    for (var j = 0; j < D; j++)
 		line += ' ' + rng.randn(1).toString();
 	line += '\n';
-	fs.appendFile(file, line, function (err) {
-		if (err) return console.log(err);
-	});
+	fs.appendFile(file, line, function (err) {if (err) console.log(err);});
 }
 
 co(function *() {
@@ -28,7 +26,7 @@ co(function *() {
 
 	function parse(e) {
 		var tmp = e.split(' ').map(parseFloat);
-		return {label: tmp.shift(), features: tmp}
+		return {label: tmp.shift(), features: tmp};
 	}
 
 	var points = ugrid.textFile(file).map(parse, []).persist();

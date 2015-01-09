@@ -17,12 +17,12 @@ var points = ml.loadTestData(N, D, P);
 // Concatenate partitions to form one vector
 var data = [];
 for (var p = 0; p < P; p++)
-	data = data.concat(points[p])
+	data = data.concat(points[p]);
 
 // Iterate and compute gradient
 for (var i = 0; i < ITERATIONS; i++) {
 	var startTime = new Date();
-	var gradient = data.map(function(e) {return ml.logisticLossGradient(e, w);}).reduce(ml.sum, ml.zeros(D));
+	var gradient = data.map(function (e) {return ml.logisticLossGradient(e, w);}).reduce(ml.sum, ml.zeros(D));
 	for (var j = 0; j < w.length; j++)
 		w[j] -= gradient[j];
 	var endTime = new Date();
@@ -33,7 +33,7 @@ for (var i = 0; i < ITERATIONS; i++) {
 console.log(w);
 console.log('\nFirst iteration : ' + time[0]);
 time.shift();
-console.log('Later iterations : ' + time.reduce(function(a, b) {return a + b}) / (ITERATIONS - 1));
+console.log('Later iterations : ' + time.reduce(function (a, b) {return a + b;}) / (ITERATIONS - 1));
 
 // var resSerial = [ 1132.5804317594593,
 //   -1280.219956229454,

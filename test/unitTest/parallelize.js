@@ -12,11 +12,11 @@ co(function *() {
 	var res = yield ugrid.parallelize(V, P).collect();
 
 	if (V.length != res.length)
-		throw 'error: local and distributed array have different lengths'
+		throw 'error: local and distributed array have different lengths';
 
 	for (var i = 0; i < V.length; i++)
 		if (V[i] != res[i])
-			throw 'error: local and distributed array have different elements'
+			throw 'error: local and distributed array have different elements';
 
 	ugrid.end();
 })();

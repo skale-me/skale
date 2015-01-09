@@ -2,7 +2,6 @@
 
 var co = require('co');
 var ugrid = require('../lib/ugrid-context.js')({host: 'localhost', port: 12346});
-var ml = require('../lib/ugrid-ml.js');
 
 co(function *() {
 	yield ugrid.init();
@@ -50,7 +49,7 @@ co(function *() {
 			// WARNING, make a copy of the object here
 			var o = JSON.parse(JSON.stringify(a));
 			o.newField = "flatMapped " + i;
-			res.push(o);					
+			res.push(o);
 		}
 		return res;
 	}
@@ -68,4 +67,3 @@ co(function *() {
 */
 	ugrid.end();
 })();
-

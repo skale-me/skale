@@ -8,7 +8,8 @@ var readline = require('readline');
 var fs = require('fs');
 
 var UgridClient = require('../lib/ugrid-client.js');
-var ml = require('../lib/ugrid-ml.js')
+var ml = require('../lib/ugrid-ml.js');
+
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
 	['n', 'num=ARG', 'number of instances (default 1)'],
@@ -39,7 +40,7 @@ function runWorker(host, port) {
 	var request = {
 		setTask: function(msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
-			task = new Task(grid, fs, readline, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action);
+			task = new Task(grid, fs, readline, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action);	// jshint ignore:line
 			grid.reply(msg, null, 'worker ready to process task');
 		},
 		runTask: function(msg) {

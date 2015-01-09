@@ -47,7 +47,7 @@ var client_command = {
 		reply(sock, msg, msg.data in clients ? clients[msg.data].index : null);
 	},
 	subscribe: function (sock, msg) {
-		var publishers = msg.data, i, pubIndex;
+		var publishers = msg.data, i;
 		for (i in publishers)
 			clients[publishers[i].uuid].subscribers.push(sock.client);
 	},
@@ -71,7 +71,7 @@ if (primary.host) {
 		cli.on('end', function () {
 			console.log('primary server connection closed');
 		});
-		cli.on('secondary', function(o) {});	// ignore broadcast from self
+		cli.on('secondary', function () {});	// ignore broadcast from self
 	});
 }
 
@@ -114,7 +114,7 @@ function handleConnect(sock) {
 				break;
 			case 3:		// Foreign
 				throw 'Foreign messages are not yet supported';
-				break;
+				// break;
 			default:	// Unicast
 				if (!tsocks[to])
 					throw 'Invalid destination id: ' + to;

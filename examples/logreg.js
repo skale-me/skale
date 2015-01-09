@@ -32,7 +32,7 @@ co(function *() {
 	console.log(w);
 	console.log('\nFirst iteration : ' + time[0]);
 	time.shift();
-	console.log('Later iterations : ' + time.reduce(function(a, b) {return a + b}) / (ITERATIONS - 1));
+	console.log('Later iterations : ' + time.reduce(function (a, b) {return a + b;}) / (ITERATIONS - 1));
 
 	ugrid.end();
 })();

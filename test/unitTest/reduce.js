@@ -14,7 +14,7 @@ co(function *() {
 	var local = V.reduce(reducer, 0);
 
 	if (dist != local)
-		throw 'error: reduce value is different'
+		throw 'error: reduce value is different';
 
 	ugrid.end();
 })();

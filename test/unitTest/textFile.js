@@ -10,7 +10,7 @@ co(function *() {
 
 	// Create test file
 	var file = '/tmp/textFile.txt';
-	var a = '-1 1 1 1 1 1 1 1 1 1 1\n' + 
+	var a = '-1 1 1 1 1 1 1 1 1 1 1\n' +
 		'-1 2 2 2 2 2 2 2 2 2 2\n' +
 		'-1 3 3 3 3 3 3 3 3 3 3\n' +
 		'-1 4 4 4 4 4 4 4 4 4 4';
@@ -25,7 +25,7 @@ co(function *() {
 	var rl = readline.createInterface({input: fs.createReadStream(file), output: process.stdout, terminal: false});
 	rl.on("line", function (line) {V.push(line);});
 
-	rl.on('close', function(err) {
+	rl.on('close', function () {
 		if (V.length != res.length)
 			throw 'error: local and distributed array have different lengths';
 
@@ -34,5 +34,5 @@ co(function *() {
 				throw 'error: local and distributed array have different elements';
 			fs.unlink(file);
 		ugrid.end();
-	})
+	});
 })();
