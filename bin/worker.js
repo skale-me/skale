@@ -6,6 +6,7 @@ var cluster = require('cluster');
 var vm = require('vm');
 var readline = require('readline');
 var fs = require('fs');
+var exec = require('child_process').exec;
 
 var UgridClient = require('../lib/ugrid-client.js');
 var ml = require('../lib/ugrid-ml.js');
@@ -22,8 +23,12 @@ var port = opt.options.Port || 12346;
 var num = opt.options.num || 1;
 
 if (cluster.isMaster) {
-	for (var i = 0; i < num; i++)
-		cluster.fork();
+	for (var i = 0; i < num; i++) {
+		var t0 = cluster.fork();
+		exec('taskset -p -c ' + (i % 4) + ' ' + t0.process.pid, function (err, stdout, stdin) {
+			if (err) throw 'taskset error'
+		});
+	}
 } else {
 	runWorker(host, port);
 }
