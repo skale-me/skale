@@ -1,15 +1,18 @@
-#! /usr/bin/nodejs
+#! /usr/local/bin/node
 
 var exec = require('child_process').exec;
 
-var SPARK_HOME = '/gs/ugrid/work/x86_64/spark/spark-1.1.1-bin-hadoop1';
+var SPARK_HOME = process.argv[2];
+if (process.argv[2] == undefined)
+	throw 'You must provide SPARK_HOME directory path'
+
 var EXAMPLE_DIR = SPARK_HOME + '/examples/src/main/python/mllib/';
-var IP = '192.168.1.30';
+var IP = '127.0.0.1';
 var PORT = '7077';
 var FILE = 'logistic_regression_optimise.py';
 var SOURCE_DATA_FILE = '/gs/ugrid/work/x86_64/data.txt';
 var LOCAL_DATA_FILE = '/tmp/data.txt';
-var N_ITERATIONS = process.argv[2] || 1;
+var N_ITERATIONS = process.argv[3] || 1;
 
 // Edit slaves ip in spark cluster config file
 var cmd = 'echo ' + IP + ' > ' + SPARK_HOME + '/conf/slaves';
