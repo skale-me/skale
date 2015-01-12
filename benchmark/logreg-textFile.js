@@ -10,12 +10,11 @@ co(function *() {
 	yield ugrid.init();
 
 	var N = 800000;					// Number of observations
-	//~ var N = 1000;
+	// var N = 1000;
 	var D = 16;							// Number of features
-	var P = 2;							// Number of partitions
 	var seed = 1;
 	var file = process.argv[2];
-	var ITERATIONS = process.argv[3];				// Number of iterations
+	var ITERATIONS = process.argv[3] || 1;				// Number of iterations
 	var time = new Array(ITERATIONS);
 	var rng = new ml.Random(seed);
 	var w = rng.randn(D);
@@ -25,7 +24,7 @@ co(function *() {
 		return {label: tmp.shift(), features: tmp}
 	}
 
-	var points = ugrid.textFile(file, P).map(parse, []).persist();	
+	var points = ugrid.textFile(file).map(parse, []).persist();
 
 	for (var i = 0; i < ITERATIONS; i++) {
 		//~ console.log('w = ' + w);

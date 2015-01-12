@@ -24,6 +24,11 @@ var WORKER_INSTANCES = 1;
 var MAX_CORES = 4;
 
 co(function *() {
+	// Copy data file to /tmp directory only if needed
+	console.log('Looking for input data file');
+	var cmd = 'if [ ! -f ' + LOCAL_DATA_FILE + ' ];then cp ' + SOURCE_DATA_FILE + ' ' + LOCAL_DATA_FILE + '; fi';
+	yield exec(cmd);
+	
 	for (var WORKER_CORES = 1; WORKER_CORES <= MAX_CORES; WORKER_CORES++) {
 		console.log('WORKER_CORES = ' + WORKER_CORES);
 		console.log('Writing spark env file');
@@ -41,11 +46,6 @@ co(function *() {
 		// Edit slaves ip in spark cluster config file
 		console.log('Writing spark slaves file');
 		var cmd = 'echo ' + IP + ' > ' + SPARK_HOME + '/conf/slaves';
-		yield exec(cmd);
-
-		// Copy data file to /tmp directory only if needed
-		console.log('Looking for input data file');
-		var cmd = 'if [ ! -f ' + LOCAL_DATA_FILE + ' ];then cp ' + SOURCE_DATA_FILE + ' ' + LOCAL_DATA_FILE + '; fi';
 		yield exec(cmd);
 
 		// Start Spark master and workers
