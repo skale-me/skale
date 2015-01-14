@@ -13,7 +13,8 @@ if (process.argv[2] == undefined)
 var EXAMPLE_DIR = UGRID_HOME + '/benchmark/';
 var FILE = 'logreg-textFile.js';
 var SOURCE_DATA_FILE = '/gs/ugrid/work/x86_64/data.txt';
-var LOCAL_DATA_FILE = '/tmp/data.txt';
+//~ var LOCAL_DATA_FILE = '/tmp/data.txt';
+var LOCAL_DATA_FILE = '/tmp/data3.txt';
 var N_ITERATIONS = process.argv[3] || 1;
 var MAX_CORES = 4;
 
