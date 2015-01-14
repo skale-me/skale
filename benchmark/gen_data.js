@@ -3,12 +3,12 @@
 var fs = require('fs');
 var ml = require('../lib/ugrid-ml.js');
 
-N = 1000; //observations
+N = 800000 * 4; //observations
 D = 16; //features 
 
 var rng = new ml.Random();
 //~ var file = '/tmp/data.txt';
-var file = '/tmp/data2.txt';
+var file = '/tmp/data3.txt';
 
 var fd = fs.createWriteStream(file);
 

@@ -90,7 +90,7 @@ net.createServer(handleConnect).listen(port);
 
 function handleConnect(sock) {
 	var decoder = ugridMsg.Decoder();
-	sock.setNoDelay(true);
+	sock.setNoDelay();
 	sock.pipe(decoder);
 
 	decoder.on('Message', function (to, len, data) {

@@ -2,12 +2,14 @@
 'use strict';
 
 var co = require('co');
-var ugrid = require('../lib/ugrid-context.js')({host: 'localhost', port: 12346});
+var ugrid = require('../lib/ugrid-context.js')();
 var ml = require('../lib/ugrid-ml.js');
 
 // NB il faut que le nombre de partitions soit par défzaut le nombre de workers
 co(function *() {
+	console.time('init');
 	yield ugrid.init();
+	console.timeEnd('init');
 
 	var N = 800000;					// Number of observations
 	// var N = 1000;
