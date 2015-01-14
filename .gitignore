@@ -6,3 +6,5 @@ test/*.json
 TODO
 ugrid.sublime-project
 ugrid.sublime-workspace
+conf/slaves
+conf/ugrid-env.sh

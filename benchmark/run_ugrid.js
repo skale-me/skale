@@ -1,6 +1,7 @@
 #! /usr/local/bin/node --harmony
 
 var co = require('co');
+var fs = require('fs');
 var thunkify = require('thunkify');
 var execCbk = require('child_process').exec;
 
@@ -33,14 +34,15 @@ co(function *() {
 
 	// Loop over number of cores
 	for (var i = 1; i <= MAX_CORES; i++) {
-
-		var cache_cmd = 'sh -c "echo 3 >/proc/sys/vm/drop_caches"';
-		yield exec(cache_cmd);
-
 		console.log('\nNumber of cores : ' + i);
+		console.log('Write ugrid-env.sh');
+		var spark_env = '#!/usr/bin/env bash\n\n' + 
+			'export UGRID_WORKER_PER_HOST=' + i + '\n';
+		fs.writeFileSync(UGRID_HOME + '/conf/ugrid-env.sh', spark_env, {encoding: 'utf8'}, function(err, res) {
+			if (err) throw 'Cannot write ugrid-env.sh file';
+		})
 		console.log('Start Ugrid cluster');
-		var start_cmd = UGRID_HOME + '/bin/start-all.sh ' + UGRID_HOME + '/bin ' + i;
-		yield exec(start_cmd);
+		yield exec(UGRID_HOME + '/bin/start-all.sh');
 
 		console.log('Run binary');
 		var startTime = new Date();
