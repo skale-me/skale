@@ -25,9 +25,9 @@ var num = opt.options.num || 1;
 if (cluster.isMaster) {
 	for (var i = 0; i < num; i++) {
 		var t0 = cluster.fork();
-		exec('taskset -p -c ' + (i % 4) + ' ' + t0.process.pid, function (err, stdout, stdin) {
-			if (err) throw 'taskset error'
-		});
+		//exec('taskset -p -c ' + (i % 4) + ' ' + t0.process.pid, function (err, stdout, stdin) {
+		//	if (err) throw 'taskset error'
+		//});
 	}
 } else {
 	runWorker(host, port);
