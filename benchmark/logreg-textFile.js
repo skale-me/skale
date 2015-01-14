@@ -7,9 +7,7 @@ var ml = require('../lib/ugrid-ml.js');
 
 // NB il faut que le nombre de partitions soit par défzaut le nombre de workers
 co(function *() {
-	console.time('init');
 	yield ugrid.init();
-	console.timeEnd('init');
 
 	var N = 800000;					// Number of observations
 	// var N = 1000;
