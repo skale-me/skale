@@ -1,0 +1,9 @@
+#!/bin/sh
+# Environment for Ugrid Cluster
+
+# Ugrid options, read by various ugrid programs
+# - UGRID_HOST, to set the Ugrid server host, default to localhost
+# - UGRID_PORT, to set the Ugrid server port, default to 12346
+# - UGRID_WORKER_PER_HOST, default to 4
+
+export UGRID_HOST=localhost

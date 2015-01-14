@@ -90,35 +90,27 @@ net.createServer(handleConnect).listen(port);
 
 function handleConnect(sock) {
 	var decoder = ugridMsg.Decoder();
+	sock.setNoDelay(true);
 	sock.pipe(decoder);
 
 	decoder.on('Message', function (to, len, data) {
 		var i, subscribers;
 		try {
 			msgCount++;
-			switch (to) {
-			case 0: 	// Server request
-				var o = JSON.parse(data.slice(8));
-				if (!(o.cmd in client_command))
-                    throw 'Invalid command: ' + o.cmd;
-				client_command[o.cmd](sock, o);
-				break;
-			case 1:		// Broadcast
+			if (to > 3) {			// Unicast
+				if (!tsocks[to]) throw 'Invalid destination id: ' + to;
+				tsocks[to].write(data);
+			} else if (to == 2) {	// Broadcast
 				for (i in tsocks)
 					if (tsocks[i]) tsocks[i].write(data);
-				break;
-			case 2:		// Multicast
+			} else if (to == 1) {	// Multicast
 				subscribers = sock.client.subscribers;
 				for (i in subscribers)
 					if (tsocks[subscribers[i].index]) subscribers[i].sock.write(data);
-				break;
-			case 3:		// Foreign
-				throw 'Foreign messages are not yet supported';
-				// break;
-			default:	// Unicast
-				if (!tsocks[to])
-					throw 'Invalid destination id: ' + to;
-				tsocks[to].write(data);
+			} else {				// Server request
+				var o = JSON.parse(data.slice(8));
+				if (!(o.cmd in client_command)) throw 'Invalid command: ' + o.cmd;
+				client_command[o.cmd](sock, o);
 			}
 		} catch (error) {
 			console.error('handleConnect error: ' + sock.client.data.type + ' ' +
@@ -141,6 +133,7 @@ function reply(sock, msg, data, error) {
 
 function handleClose(sock) {
 	var client = sock.client;
+	if (!client) return;
 	console.log('Disconnect ' + client.data.type + ' ' + client.index + ': ' + client.uuid);
 	client.sock = tsocks[client.index] = null;
 }
