@@ -1,12 +1,11 @@
-#!/bin/bash
+#!/bin/sh
 
 # Compute canonical path to retrieve all conf/exec files from it
-case $0 in (/*) cpath=$0 ;; (*) cpath=$PWD/$0 ;; esac
-cpath=${cpath/.\//}; cpath=${cpath%/*/*}
+[ ${0%${0#?}} = / ] && cpath=$0 || cpath=$PWD/$0; cpath=$(cd "${cpath%/*}/.." && pwd)
 
 # Read user specific configuration
 [ -f "$cpath/conf/ugrid-env.sh" ] && . "$cpath/conf/ugrid-env.sh"
-[ -f "$cpath/conf/slaves" ] && workers=$(<$cpath/conf/slaves) || workers=localhost
+[ -f "$cpath/conf/slaves" ] && workers=$(cat $cpath/conf/slaves) || workers=localhost
 
 host=${UGRID_HOST:-localhost} port=${UGRID_PORT:-12346} wph=${UGRID_WORKER_PER_HOST:-4}
 
