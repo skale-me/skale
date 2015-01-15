@@ -1,8 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 # Compute canonical path to retrieve all conf/exec files from it
-case $0 in (/*) cpath=$0 ;; (*) cpath=$PWD/$0 ;; esac
-cpath=${cpath/.\//}; cpath=${cpath%/*/*}
+[ ${0%${0#?}} = / ] && cpath=$0 || cpath=$PWD/$0; cpath=$(cd "${cpath%/*}/.." && pwd)
 
 [ -f "$cpath/conf/ugrid-env.sh" ] && . "$cpath/conf/ugrid-env.sh"
 
