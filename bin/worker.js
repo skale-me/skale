@@ -6,7 +6,6 @@ var cluster = require('cluster');
 var vm = require('vm');
 var readline = require('readline');
 var fs = require('fs');
-var exec = require('child_process').exec;
 
 var UgridClient = require('../lib/ugrid-client.js');
 var ml = require('../lib/ugrid-ml.js');
@@ -23,12 +22,8 @@ var port = opt.options.Port || 12346;
 var num = opt.options.num || 1;
 
 if (cluster.isMaster) {
-	for (var i = 0; i < num; i++) {
-		var t0 = cluster.fork();
-		//exec('taskset -p -c ' + (i % 4) + ' ' + t0.process.pid, function (err, stdout, stdin) {
-		//	if (err) throw 'taskset error'
-		//});
-	}
+	for (var i = 0; i < num; i++)
+		cluster.fork();
 } else {
 	runWorker(host, port);
 }
@@ -45,13 +40,13 @@ function runWorker(host, port) {
 	var request = {
 		setTask: function (msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
-			task = new Task(grid, fs, readline, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action);	// jshint ignore:line
+			task = new Task(grid, fs, readline, ml, STAGE_RAM, RAM, msg);	// jshint ignore:line
 			grid.reply(msg, null, 'worker ready to process task');
 		},
 		runTask: function (msg) {
 			task.run(function(res) {
 				grid.reply(msg, null, res);
-			});
+			}, msg);
 		},
 		shuffle: function (msg) {
 			task.processShuffle(msg);
