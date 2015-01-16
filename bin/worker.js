@@ -43,25 +43,25 @@ function runWorker(host, port) {
 	});
 
 	var request = {
-		setTask: function(msg) {
+		setTask: function (msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
 			task = new Task(grid, fs, readline, ml, STAGE_RAM, RAM, msg.data.args.node, msg.data.args.action);	// jshint ignore:line
 			grid.reply(msg, null, 'worker ready to process task');
 		},
-		runTask: function(msg) {
+		runTask: function (msg) {
 			task.run(function(res) {
 				grid.reply(msg, null, res);
 			});
 		},
-		shuffle: function(msg) {
+		shuffle: function (msg) {
 			task.processShuffle(msg);
 		}
 	};
 
-	grid.connect_cb(function(err, res) {
+	grid.connect_cb(function (err, res) {
 		console.log('id: ' + res.id + ', uuid: ' + res.uuid);
 		grid.host = {uuid: res.uuid, id: res.id};
-		grid.on('request', function(msg) {
+		grid.on('request', function (msg) {
 			try {request[msg.data.cmd](msg);}
 			catch (error) {
 				console.log(msg.data.fun + ' error : ' + error);
