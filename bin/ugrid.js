@@ -165,7 +165,7 @@ function devices(query) {
 				break;
 			}
 		if (match)
-			result.push({uuid: i, id: clients[i].index});
+			result.push({uuid: i, id: clients[i].index, ip: clients[i].sock.remoteAddress});
 	}
 	return result;
 }
