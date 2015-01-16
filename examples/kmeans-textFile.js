@@ -5,11 +5,14 @@ var co = require('co');
 var ugrid = require('../lib/ugrid-context.js')();
 var ml = require('../lib/ugrid-ml.js');
 
+var file = process.argv[2];
+var K = process.argv[3] || 2;
+var ITERATIONS = process.argv[4] || 1;
+
 co(function *() {
 	yield ugrid.init();
 
-	var D = 16, K = 4, ITERATIONS = 100, seed = 1;
-	var file = process.argv[2];
+	var D = 16, seed = 1;
 
 	function parse(e) {
 		var t0 = e.split(' ').map(parseFloat);
@@ -50,7 +53,7 @@ co(function *() {
 	// BUG si on collect juste après le reduceByKey car le stage 1 est vide
 
 	for (i = 0; i < ITERATIONS; i++) {
-		var startTime = new Date();
+		// var startTime = new Date();
 
 		var newMeans = yield points.map(ml.closestSpectralNorm, [means])
 			.reduceByKey('cluster', ml.accumulate, {acc: ml.zeros(D), sum: 0})
@@ -66,13 +69,14 @@ co(function *() {
 			for (j = 0; j < means[k].length; j++)
 				dist += Math.pow(newMeans[k][j] - means[k][j], 2);
 		means = newMeans;
-		var time = (new Date() - startTime) / 1000;
-		console.log('\nIteration : ' + i + ', Time : ' + time);
+		// var time = (new Date() - startTime) / 1000;
+		// console.log('\nIteration : ' + i + ', Time : ' + time);
 		// Compare current K-means with previous iteration ones
 		// console.log(newMeans)
-		console.log('squared distance : ' + dist);
+		// console.log('squared distance : ' + dist);
 		if (dist < 0.001)
 			break;
 	}
+	console.log(means);
 	ugrid.end();
 })();
