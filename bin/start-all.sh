@@ -1,7 +1,11 @@
 #!/bin/sh
 
+unset CDPATH
+export LC_ALL=C IFS=' 	
+'
 # Compute canonical path to retrieve all conf/exec files from it
-[ ${0%${0#?}} = / ] && cpath=$0 || cpath=$PWD/$0; cpath=$(cd "${cpath%/*}/.." && pwd)
+case $0 in (/*) cpath=$0;; (*) cpath=$PWD/$0;; esac
+_PWD=$PWD; cd "${cpath%/*}/.."; cpath=$PWD; cd "$_PWD"
 
 # Read user specific configuration
 [ -f "$cpath/conf/ugrid-env.sh" ] && . "$cpath/conf/ugrid-env.sh"
@@ -23,5 +27,5 @@ for worker; do
 	ssh $worker "$worker_cmd"
 done
 
-# Wait ugrid workers
+# Wait for ugrid workers
 $cpath/bin/wait-workers.js $(($wph * $#))
