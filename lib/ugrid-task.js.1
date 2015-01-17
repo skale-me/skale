@@ -1,8 +1,6 @@
 'use strict';
 
 var fs = require('fs');
-var Connection = require('ssh2');
-var readline = require('readline');
 
 function treewalk(root, c_in, c_out) {
 	var n = root;
@@ -20,81 +18,7 @@ function treewalk(root, c_in, c_out) {
 	}
 }
 
-// Rendre asynchrone buildTask
-// Faire un premier treewalk à l'intérieur de build Task
-// pour rechercher les noeuds de type hdfsTextFile
-// et récupérer le breakdown des fichiers distants
-// Le mapping worker block peut alors etre calculé
-// et stocké dans la structure args associée au noeuds concernés
-// à la fin de cette opération, on peut lance la compilation
-// à l'issue de laquelle on appel le callback final rendant la main
-// à la fonction appelant buildTask (située dans ugrid-array)
-function buildTask2(worker, array, action, callback) {
-	var hdfsTextFileNodes = [];
-	treewalk(array, null, function (a) {
-		if (a.transform == 'hdfsTextFile')
-			hdfsTextFileNodes.push(a);
-	});
-	// console.log(hdfsTextFileNodes[0].args[0]);
-	// works only for one file in dag
-
-	var hdfsTextFile = hdfsTextFileNodes[0].args[0];
-	var conn = new Connection();
-	var host = 'localhost';
-	var username = 'cedric';
-	var privateKey = '/home/cedric/.ssh/id_rsa';
-	var bd = '/home/cedric/work/dist/hadoop-1.2.1'
-
-	var fsck_cmd = bd + '/bin/hadoop fsck ' + hdfsTextFile + ' -files -blocks -locations';
-
-	var regexp = /(\d+\. blk_-*\d+_\d+ len=\d+ repl=\d+ [[][0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+\])/i;
-	var blocks = [];
-	conn.on('ready', function() {
-		conn.exec(fsck_cmd, function(err, stream) {
-			if (err) throw err;
-
-			var rl = readline.createInterface({
-				input: stream.stdout,
-				output: process.stdout,
-				terminal: false
-			});
-			stream.stdout.setEncoding('utf8');
-			stream.stderr.setEncoding('utf8');
-
-			rl.on("line", function (line) {
-				if (line.search(regexp) == -1) 
-					return;	
-				var v = line.split(' ');
-				blocks.push({
-					blockNum: parseFloat(v[0]),
-					file: v[1].substr(0, v[1].lastIndexOf('_')),
-					host: v[4].substr(0, v[4].lastIndexOf(':')).replace('[', '')
-				});
-			});
-			rl.on('close', function () {
-				conn.end();
-				// Ici je possède tous les blocks
-				console.log(worker)
-				console.log(" ")
-				hdfsTextFileNodes[0].args[0] = blocks;
-				console.log(hdfsTextFileNodes[0].args)
-				// Pour le moment on affect tous les blocks au meme worker
-				callback();
-			});
-		})
-	}).connect({
-		host: host,
-		username: username,
-		privateKey: require('fs').readFileSync(privateKey)
-	});
-}
-
 function buildTask(worker, array, action) {
-
-	// buildTask2(worker, array, action, function() {
-	// 	;
-	// });
-
 	var nStage = 0, lastStage = 0, num = 0, code = '';
 	var task = new Array(worker.length);
 	for (var i = 0; i < task.length; i++)
@@ -108,7 +32,9 @@ function buildTask(worker, array, action) {
 	}, function (a) {
 		a.stageIdx = nStage;
 		a.num = num++;
-		if (a.transformType == 'wide') nStage--;
+		if (a.transformType == 'wide') {
+			nStage--;
+		}
 	});
 	var stage = new Array(lastStage + 1);
 	for (i = 0; i < stage.length; i++)

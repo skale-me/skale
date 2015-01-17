@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "cd bin; ./ugrid.js -w 12348 & echo $! >/tmp/ugrid.pid ; sleep 1",
-    "pretest": "./bin/ugrid.js -w 12348 > /dev/null & echo $! >/tmp/ugrid.pid ; sleep 1; ./bin/worker.js -n 1 > /dev/null & echo $! >/tmp/workers.pid ; sleep 1",
-    "test": "cd test; ./runUnitTest.js 1",
-    "posttest": "kill $(cat /tmp/workers.pid); kill $(cat /tmp/ugrid.pid)",
-    "stop": "kill $(cat /tmp/ugrid.pid)"
+    "pretest": "echo 'export UGRID_WORKER_PER_HOST=1' > conf/ugrid-env.sh; ./bin/start-all.sh",
+    "test": "cd test; ./runUnitTest.js",
+    "posttest": "bin/stop-all.sh",
+    "stop": "bin/stop-all.sh"
   },
   "repository": {
     "type": "git",
@@ -31,13 +31,14 @@
     "request": "^2.49.0",
     "thunkify": "^2.1.2",
     "websocket-stream": "^1.1.1",
-    "ws": "^0.4.32"
+    "ws": "^0.4.32",
+    "ssh2": "^0.3.6"
   },
   "jshintConfig": {
     "node": true,
-	"esnext": true,
-	"undef": true,
-	"unused": true,
-	"loopfunc": true
+    "esnext": true,
+    "undef": true,
+    "unused": true,
+    "loopfunc": true
   }
 }
