@@ -27,6 +27,8 @@ co(function *() {
 
 	var points = yield ugrid.hdfsTextFile(file).count();
 
+	console.log(points);
+
 	// var points = ugrid.hdfsTextFile(file).map(parse, []).persist();
 	// for (var i = 0; i < ITERATIONS; i++) {
 	// 	//~ console.log('w = ' + w);
