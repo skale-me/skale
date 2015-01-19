@@ -5,5 +5,9 @@
 # - UGRID_HOST, to set the Ugrid server host, default to localhost
 # - UGRID_PORT, to set the Ugrid server port, default to 12346
 # - UGRID_WORKER_PER_HOST, default to 4
+# - HDFS_HOST, to set the hdfs namenode host, default to localhost
+# - HDFS_USER, to set the hdfs namenode user, default to ugrid
+# - HADOOP_PREFIX, to set HADOOP install dir on namenode
+# - HDFS_DATA_DIR, to set hdfs chunk directory
 
 export UGRID_HOST=localhost

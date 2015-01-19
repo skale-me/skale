@@ -8,6 +8,7 @@ var ml = require('../lib/ugrid-ml.js');
 var file = process.argv[2];
 var K = process.argv[3] || 2;
 var ITERATIONS = process.argv[4] || 1;
+var maxDist = 0.0001;
 
 co(function *() {
 	yield ugrid.init();
@@ -74,7 +75,7 @@ co(function *() {
 		// Compare current K-means with previous iteration ones
 		// console.log(newMeans)
 		// console.log('squared distance : ' + dist);
-		if (dist < 0.001)
+		if (dist < maxDist)
 			break;
 	}
 	console.log(means);

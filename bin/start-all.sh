@@ -21,7 +21,7 @@ ssh $host "$ugrid_cmd"
 while true; do nc -z $host $port >/dev/null && break || sleep 1; done
 
 # Start ugrid workers
-worker_cmd="$cpath/bin/worker.js -H $host -P $port -n $wph >/tmp/worker.log 2>&1 &"
+worker_cmd=". $cpath/conf/ugrid-env.sh; $cpath/bin/worker.js -H $host -P $port -n $wph >/tmp/worker.log 2>&1 &"
 set -- $workers
 for worker; do
 	ssh $worker "$worker_cmd"
