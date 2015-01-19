@@ -32,7 +32,8 @@ co(function *() {
 		for (var i = 0; i < V.length; i++)
 			if (V[i] != res[i])
 				throw 'error: local and distributed array have different elements';
-			fs.unlink(file);
-		ugrid.end();
+		fs.unlink(file, function (err) {
+			ugrid.end();
+		});
 	});
 })();

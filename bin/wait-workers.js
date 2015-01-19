@@ -11,6 +11,6 @@ grid.connect_cb(function () {
 			if (res.length >= nworkers) process.exit(0);
 			setTimeout(waitWorkers, 1000);
 		});
-	};
+	}
 	waitWorkers();
 });

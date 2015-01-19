@@ -6,20 +6,13 @@ var fs = require('fs');
 var ugrid = require('../../lib/ugrid-context.js')();
 var ml = require('../../lib/ugrid-ml.js');
 
-// Write textFile
-var N = 10; 	//observations
-var D = 4;  	//features
-
-var rng = new ml.Random();
+// Create test file
 var file = '/tmp/data.txt';
-
-for (var i = 0; i < N; i++) {
-   var line = 2 * Math.round(Math.abs(rng.randn(1))) - 1;
-   for (var j = 0; j < D; j++)
-		line += ' ' + rng.randn(1).toString();
-	line += '\n';
-	fs.appendFile(file, line, function (err) {if (err) console.log(err);});
-}
+var a = '-1 1 1 1 1 1 1 1 1 1 1\n' +
+	'-1 2 2 2 2 2 2 2 2 2 2\n' +
+	'-1 3 3 3 3 3 3 3 3 3 3\n' +
+	'-1 4 4 4 4 4 4 4 4 4 4';
+fs.writeFileSync(file, a);
 
 co(function *() {
 	yield ugrid.init();
@@ -29,10 +22,11 @@ co(function *() {
 		return {label: tmp.shift(), features: tmp};
 	}
 
-	var points = ugrid.textFile(file).map(parse, []).persist();
+	var points = ugrid.textFile(file).map(parse).persist();
 	var t0 = yield points.collect();
 	console.log(t0);
 
-	fs.unlink(file);
-	ugrid.end();
+	fs.unlink(file, function (err) {
+		ugrid.end();
+	});
 })();
