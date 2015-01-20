@@ -12,7 +12,6 @@ if (process.argv[2] == undefined)
 	throw 'You must provide SPARK_HOME directory path'
 
 var EXAMPLE_DIR = SPARK_HOME + '/examples/src/main/python/mllib/';
-//~ var IP = '127.0.0.1';
 var IP = '192.168.1.29';
 var PORT = '7077';
 var FILE = 'logistic_regression_optimise.py';
@@ -20,12 +19,12 @@ var SOURCE_DATA_FILE = '/gs/ugrid/work/x86_64/data.txt';
 //~ var LOCAL_DATA_FILE = '/tmp/data3.txt';
 //~ var LOCAL_DATA_FILE = '/tmp/data.txt';
 //~ var LOCAL_DATA_FILE = '/tmp/bigdata.txt';
-LOCAL_DATA_FILE = '/tmp/hugedata.txt';
+var LOCAL_DATA_FILE = '/tmp/data.txt';
 var N_ITERATIONS = process.argv[3] || 1;
 var WORKER_CORES = 4;
 var WORKER_INSTANCES = 1; 
 var MAX_CORES = 4;
-var MAX_PC = 3;
+var MAX_PC = 2;
 var slave_ip= "";
 co(function *() {
 	for (var NB_PC = 1; NB_PC <= MAX_PC; NB_PC++) {
@@ -51,16 +50,16 @@ co(function *() {
 		})
 
 		// Copy data file to /tmp directory only if needed
-		console.log('Looking for input data file');
-		var cmd = 'if [ ! -f ' + LOCAL_DATA_FILE + ' ];then cp ' + SOURCE_DATA_FILE + ' ' + LOCAL_DATA_FILE + '; fi';
-		yield exec(cmd);
+		//~ console.log('Looking for input data file');
+		//~ var cmd = 'if [ ! -f ' + LOCAL_DATA_FILE + ' ];then cp ' + SOURCE_DATA_FILE + ' ' + LOCAL_DATA_FILE + '; fi';
+		//~ yield exec(cmd);
 		
 		// Copy data file to distant PC only if needed
-		if (NB_PC > 1) {
-			console.log('SCP input data file to slaves');	
-			var cmd = 'scp ' + LOCAL_DATA_FILE + ' ugrid@pc' + NB_PC + ":" + LOCAL_DATA_FILE;
-			yield exec(cmd);
-		}
+		//~ if (NB_PC > 1) {
+			//~ console.log('SCP input data file to slaves');	
+			//~ var cmd = 'scp ' + LOCAL_DATA_FILE + ' ugrid@pc' + NB_PC + ":" + LOCAL_DATA_FILE;
+			//~ yield exec(cmd);
+		//~ }
 		// Start Spark master and workers
 		console.log('Starting Spark Cluster');
 		yield exec(SPARK_HOME + '/sbin/start-all.sh');
