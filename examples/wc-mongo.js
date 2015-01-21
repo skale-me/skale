@@ -24,6 +24,7 @@ function WorkerTask(grid, fs, readline, ml, STAGE_RAM, RAM, msg) {
 	this.run = function (callback) {
 		var msg = {id: master.id, cmd: 'line'};
 		var count = 0;
+		grid.setInputStream(rl.input);
 		rl.on('line', function (line) {
 			if (wmax > 1 && (count++ % wmax != rank)) return;
 			var w, words = line.split(/\W+/), res = {};
@@ -46,6 +47,7 @@ function WorkerTask(grid, fs, readline, ml, STAGE_RAM, RAM, msg) {
 var words = {}, finished = 0;
 
 MongoClient.connect('mongodb://localhost:27017/test', function (err, db) {
+	//console.log(db.serverConfig.connectionPool.openConnections[db.serverConfig.connectionPool.currentConnectionIndex].connection.writable);
 	assert.equal(null, err);
 	grid.init_cb(function () {
 		var task = {
@@ -65,7 +67,10 @@ MongoClient.connect('mongodb://localhost:27017/test', function (err, db) {
 				//	words[i] = msg.data[i];
 				//else
 				//	words[i] += msg.data[i];
-				dwords.update({name: i}, {$inc: {count: msg.data[i]}}, {upsert: true, safe: false}, function () {});
+				grid.pause();
+				dwords.update({name: i}, {$inc: {count: msg.data[i]}}, {w:1, upsert: true, safe: false}, function () {
+					grid.resume();
+				});
 			}
 		});
 		grid.on('end', function (msg) {

@@ -98,15 +98,18 @@ function handleConnect(sock) {
 		try {
 			msgCount++;
 			if (to > 3) {			// Unicast
-				if (!tsocks[to]) throw 'Invalid destination id: ' + to;
-				tsocks[to].write(data);
+				if (tsocks[to])
+					if (!tsocks[to].write(data, function () {sock.resume();})) sock.pause();
+				// else should send back an error to sender
 			} else if (to == 2) {	// Broadcast
 				for (i in tsocks)
-					if (tsocks[i]) tsocks[i].write(data);
+					if (tsocks[i])
+						if (!tsocks[i].write(data, function () {sock.resume();})) sock.pause();
 			} else if (to == 1) {	// Multicast
 				subscribers = sock.client.subscribers;
 				for (i in subscribers)
-					if (tsocks[subscribers[i].index]) subscribers[i].sock.write(data);
+					if (tsocks[subscribers[i].index])
+						if (!subscribers[i].socks.write(data, function () {sock.resume();})) sock.pause();
 			} else {				// Server request
 				var o = JSON.parse(data.slice(8));
 				if (!(o.cmd in client_command)) throw 'Invalid command: ' + o.cmd;
@@ -120,6 +123,7 @@ function handleConnect(sock) {
 		}
 	});
 	sock.on('end', function () {handleClose(sock);});
+	sock.on('error', function () {handleClose(sock);});
 	return sock;
 }
 
@@ -133,7 +137,7 @@ function reply(sock, msg, data, error) {
 
 function handleClose(sock) {
 	var client = sock.client;
-	if (!client) return;
+	if (!client || !client.sock) return;
 	console.log('Disconnect ' + client.data.type + ' ' + client.index + ': ' + client.uuid);
 	client.sock = tsocks[client.index] = null;
 }
