@@ -18,6 +18,8 @@ co(function *() {
 	var time = new Array(ITERATIONS);
 	var rng = new ml.Random(seed);
 	var w = rng.randn(D);
+
+	console.log(w);
 	
 	function parse(e) {
 		var tmp = e.split(' ').map(parseFloat);
@@ -31,7 +33,7 @@ co(function *() {
 		var startTime = new Date();
 		var gradient = yield points.map(ml.logisticLossGradient, [w]).reduce(ml.sum, ml.zeros(D));
 		for (var j = 0; j < w.length; j++)
-			w[j] -= 1 / (Math.sqrt(i + 1)) * gradient[j] / N;		
+			w[j] -= 1 / (Math.sqrt(i + 1)) * gradient[j] / N;
 		var endTime = new Date();
 		time[i] = (endTime - startTime) / 1000;
 		startTime = endTime;
