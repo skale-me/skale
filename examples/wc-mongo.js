@@ -61,18 +61,28 @@ MongoClient.connect('mongodb://localhost:27017/test', function (err, db) {
 			grid.worker[i].rpc('setTask',  task);
 			grid.worker[i].rpc('runTask');
 		}
-		grid.on('line', function (msg) {
-			for (var i in msg.data) {
-				//if (!words[i])
-				//	words[i] = msg.data[i];
-				//else
-				//	words[i] += msg.data[i];
-				grid.pause();
-				dwords.update({name: i}, {$inc: {count: msg.data[i]}}, {w:1, upsert: true, safe: false}, function () {
-					grid.resume();
-				});
-			}
-		});
+		//grid.grid.on('line', function (msg) {
+		//	for (var i in msg.data) {
+		//		//if (!words[i])
+		//		//	words[i] = msg.data[i];
+		//		//else
+		//		//	words[i] += msg.data[i];
+		//		grid.grid.pause();
+		//		dwords.update({name: i}, {$inc: {count: msg.data[i]}}, {w:1, upsert: true, safe: false}, function () {
+		//			grid.grid.resume();
+		//		});
+		//	}
+		//});
+		function getline() {
+			grid.grid.once('line', function (msg) {
+				for (var i in msg.data) {
+					dwords.update({name: i}, {$inc: {count: msg.data[i]}}, {w:1, upsert: true, safe: false}, function () {
+						getline();
+					});
+				}
+			});
+		}
+		getline();
 		grid.on('end', function (msg) {
 			if (++finished < grid.worker.length) return;
 			//console.log(words);
