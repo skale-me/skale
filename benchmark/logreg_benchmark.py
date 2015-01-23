@@ -66,7 +66,6 @@ if __name__ == "__main__":
     model = LogisticRegressionWithSGD.train(points, iterations, initialWeights = w)
     line = str(model.weights[0])
     for i in range (1, D):
-		line += " "  + str(model.weights[i])
+        line += " "  + str(model.weights[i])
     sys.stdout.write(line + "\n")
-    #~ print "Final intercept: " + str(model.intercept)
     sc.stop()
