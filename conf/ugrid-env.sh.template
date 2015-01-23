@@ -5,6 +5,8 @@
 # - UGRID_HOST, to set the Ugrid server host, default to localhost
 # - UGRID_PORT, to set the Ugrid server port, default to 12346
 # - UGRID_WORKER_PER_HOST, default to 4
+# - NODE, to set the javascript interpreter, default to /usr/local/bin/node
+# - NODE_OPTS, to set the node javascript interpreter options
 # - HDFS_HOST, to set the hdfs namenode host, default to localhost
 # - HDFS_USER, to set the hdfs namenode user, default to ugrid
 # - HADOOP_PREFIX, to set HADOOP install dir on namenode
