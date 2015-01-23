@@ -45,9 +45,10 @@ function WorkerTask(grid, fs, readline, ml, STAGE_RAM, RAM, msg) {
 }
 
 var words = {}, finished = 0;
+//var pending = 0, remotePaused = [];
+var pending = 0, remotePaused = false;
 
 MongoClient.connect('mongodb://localhost:27017/test', function (err, db) {
-	//console.log(db.serverConfig.connectionPool.openConnections[db.serverConfig.connectionPool.currentConnectionIndex].connection.writable);
 	assert.equal(null, err);
 	grid.init_cb(function () {
 		var task = {
@@ -61,28 +62,40 @@ MongoClient.connect('mongodb://localhost:27017/test', function (err, db) {
 			grid.worker[i].rpc('setTask',  task);
 			grid.worker[i].rpc('runTask');
 		}
-		//grid.grid.on('line', function (msg) {
-		//	for (var i in msg.data) {
-		//		//if (!words[i])
-		//		//	words[i] = msg.data[i];
-		//		//else
-		//		//	words[i] += msg.data[i];
-		//		grid.grid.pause();
-		//		dwords.update({name: i}, {$inc: {count: msg.data[i]}}, {w:1, upsert: true, safe: false}, function () {
-		//			grid.grid.resume();
-		//		});
-		//	}
-		//});
-		function getline() {
-			grid.grid.once('line', function (msg) {
-				for (var i in msg.data) {
-					dwords.update({name: i}, {$inc: {count: msg.data[i]}}, {w:1, upsert: true, safe: false}, function () {
-						getline();
-					});
+		grid.grid.on('line', function (msg) {
+			for (var i in msg.data) {
+				//if (!words[i])
+				//	words[i] = msg.data[i];
+				//else
+				//	words[i] += msg.data[i];
+				pending++;
+				//if (pending > 100 && !remotePaused[msg.from]) {
+				if (pending > 100 && !remotePaused) {
+					//console.log('pause ' + msg.from);
+					//remotePaused[msg.from] = true;
+					console.log('pause');
+					remotePaused = true;
+					grid.grid.send_cb(1, {cmd: 'pause'});
 				}
-			});
-		}
-		getline();
+				dwords.update({name: i}, {$inc: {count: msg.data[i]}}, {w:0, upsert: true, safe: false}, function () {
+					pending--;
+					if (pending < 10) {
+						if (remotePaused) {
+							console.log('resume');
+							grid.grid.send_cb(1, {cmd: 'resume'});
+							remotePaused = false;
+						}
+						//for (var i in remotePaused) {
+						//	if (!remotePaused[i]) continue;
+						//	console.log('resume ' + i);
+						//	remotePaused[i] = false;
+						//	grid.grid.send_cb(0, {cmd: 'resume', id: i});
+						//}
+					}
+					console.log('pending: ' + pending);
+				});
+			}
+		});
 		grid.on('end', function (msg) {
 			if (++finished < grid.worker.length) return;
 			//console.log(words);

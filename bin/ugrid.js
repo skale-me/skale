@@ -126,8 +126,10 @@ function handleConnect(sock) {
 				}
 				// else should send back an error to sender
 			} else if (to == 2) {	// Broadcast
-				for (i in tsocks)
+				for (i in tsocks) {
+					if (i == sock.client.index) continue; // skip self
 					if (tsocks[i]) tsocks[i].write(data);
+				}
 			} else if (to == 1) {	// Multicast
 				subscribers = sock.client.subscribers;
 				for (i in subscribers)
