@@ -14,7 +14,7 @@ _PWD=$PWD; cd "${cpath%/*}/.."; cpath=$PWD; cd "$_PWD"
 host=${UGRID_HOST:-localhost} port=${UGRID_PORT:-12346} wph=${UGRID_WORKER_PER_HOST:-4}
 
 # Start ugrid server
-ugrid_cmd="$cpath/bin/ugrid.js >/tmp/ugrid.log 2>&1 </dev/null & echo \$! >/tmp/ugrid.pid"
+ugrid_cmd="$cpath/bin/ugrid.js >/tmp/ugrid.log 2>&1 & echo \$! >/tmp/ugrid.pid"
 ssh $host "$ugrid_cmd"
 
 # Wait for ugrid server

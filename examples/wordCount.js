@@ -1,10 +1,9 @@
-#!/usr/local/bin/node --harmony
+#!/usr/local/bin/node
 
 // Word count, stream mode
 
 'use strict';
 
-var co = require('co');
 var grid = require('../lib/ugrid-context.js')();
 
 var file = process.argv[2] || '/etc/hosts';
@@ -42,9 +41,8 @@ function WorkerTask(grid, fs, readline, ml, STAGE_RAM, RAM, msg) {
 	};
 }
 
-co(function *() {
-	var words = {}, finished = 0;
-	yield grid.init();
+var words = {}, finished = 0;
+grid.init_cb(function () {
 	for (var i = 0; i < grid.worker.length; i++) {
 		grid.worker[i].rpc('setTask',  {task: WorkerTask.toString(), file: file, rank: i, wmax: grid.worker.length});
 		grid.worker[i].rpc('runTask');
@@ -62,4 +60,4 @@ co(function *() {
 		console.log(words);
 		process.exit(0);
 	});
-})();
+});

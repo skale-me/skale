@@ -90,23 +90,50 @@ net.createServer(handleConnect).listen(port);
 
 function handleConnect(sock) {
 	var decoder = ugridMsg.Decoder();
+	sock.inputPaused = [];
 	sock.setNoDelay();
 	sock.pipe(decoder);
 
+	sock.on('drain', function () {
+		//console.log('drain ' + sock.client.index);
+		for (var i in sock.inputPaused) {
+			var s = sock.inputPaused[i];
+			if (s.remotePaused) {
+				//console.log('resume remote ' + s.client.index);
+				s.resume();
+				s.write(ugridMsg.encode({cmd: 'resume', from: 0}));
+				s.remotePaused = false;
+				delete sock.inputPaused[i];
+			}
+		}
+	});
 	decoder.on('Message', function (to, len, data) {
 		var i, subscribers;
 		try {
 			msgCount++;
 			if (to > 3) {			// Unicast
-				if (!tsocks[to]) throw 'Invalid destination id: ' + to;
-				tsocks[to].write(data);
+				if (tsocks[to]) {
+					if (!tsocks[to].write(data)) {	// TCP full
+						//console.log("Buffer " + to + ": " + tsocks[to].bufferSize);
+						if (! sock.remotePaused) {
+							//console.log('pause remote ' + sock.client.index);
+							tsocks[to].inputPaused[sock.client.index] = sock;
+							sock.write(ugridMsg.encode({cmd: 'pause', from: 0}));
+							sock.remotePaused = true;
+							sock.pause();
+						}
+					}
+				}
+				// else should send back an error to sender
 			} else if (to == 2) {	// Broadcast
-				for (i in tsocks)
+				for (i in tsocks) {
+					if (i == sock.client.index) continue; // skip self
 					if (tsocks[i]) tsocks[i].write(data);
+				}
 			} else if (to == 1) {	// Multicast
 				subscribers = sock.client.subscribers;
 				for (i in subscribers)
-					if (tsocks[subscribers[i].index]) subscribers[i].sock.write(data);
+					if (tsocks[subscribers[i].index]) subscribers[i].socks.write(data);
 			} else {				// Server request
 				var o = JSON.parse(data.slice(8));
 				if (!(o.cmd in client_command)) throw 'Invalid command: ' + o.cmd;
@@ -120,6 +147,7 @@ function handleConnect(sock) {
 		}
 	});
 	sock.on('end', function () {handleClose(sock);});
+	sock.on('error', function () {handleClose(sock);});
 	return sock;
 }
 
@@ -133,7 +161,7 @@ function reply(sock, msg, data, error) {
 
 function handleClose(sock) {
 	var client = sock.client;
-	if (!client) return;
+	if (!client || !client.sock) return;
 	console.log('Disconnect ' + client.data.type + ' ' + client.index + ': ' + client.uuid);
 	client.sock = tsocks[client.index] = null;
 }
