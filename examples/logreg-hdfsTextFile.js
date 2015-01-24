@@ -20,14 +20,16 @@ co(function *() {
 	}
 
 	var points = ugrid.textFile(file).map(parse).persist();
-	// This yield trigger hdfs query two times, revealing bug located in preBuild function
-	// var N = yield points.count();
-	var N = 328500;
+	var s = new Date();
+	var N = yield points.count();
 
 	for (var i = 0; i < iterations; i++) {
 		var gradient = yield points.map(ml.logisticLossGradient, [w]).reduce(ml.sum, ml.zeros(D));
 		for (var j = 0; j < w.length; j++)
 			w[j] -= gradient[j] / (N * Math.sqrt(i + 1));
+		var e = new Date();
+		console.log('it ' + i + ' time : ' + ((e - s) / 1000))
+		s = e;
 	}
 	console.log(w.join(' '));
 	ugrid.end();

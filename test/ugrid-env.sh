@@ -1,3 +1,4 @@
+export UGRID_HOST=localhost
 export UGRID_WORKER_PER_HOST=1
 export HDFS_HOST=localhost
 export HDFS_USER=cedric
