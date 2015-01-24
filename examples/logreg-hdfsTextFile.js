@@ -5,19 +5,13 @@ var co = require('co');
 var ugrid = require('../lib/ugrid-context.js')();
 var ml = require('../lib/ugrid-ml.js');
 
-// NB il faut que le nombre de partitions soit par défzaut le nombre de workers
 co(function *() {
 	yield ugrid.init();
 
-	var N = 800000;					// Number of observations
-	// var N = 1000;
-	var D = 16;							// Number of features
-	var seed = 1;
-	// var file = process.argv[2] || 'hdfs://localhost:9000/test/data.txt';
-	var file = process.argv[2] || '/test/data.txt';	
-	var ITERATIONS = process.argv[3] || 1;				// Number of iterations
-	var time = new Array(ITERATIONS);
-	var rng = new ml.Random(seed);
+	var D = 16;
+	var file = process.argv[2];
+	var iterations = process.argv[3] || 1;
+	var rng = new ml.Random(1);
 	var w = rng.randn(D);
 	
 	function parse(e) {
@@ -25,20 +19,14 @@ co(function *() {
 		return {label: tmp.shift(), features: tmp}
 	}
 
-	// var points = yield ugrid.hdfsTextFile(file).count();
-	// console.log(points);
+	var points = ugrid.textFile(file).map(parse).persist();
+	// This yield trigger hdfs query two times, revealing bug located in preBuild function
+	var N = yield points.count();
 
-	var points = ugrid.hdfsTextFile(file).map(parse).persist();
-	for (var i = 0; i < ITERATIONS; i++) {
-		//~ console.log('w = ' + w);
-		var startTime = new Date();
+	for (var i = 0; i < iterations; i++) {
 		var gradient = yield points.map(ml.logisticLossGradient, [w]).reduce(ml.sum, ml.zeros(D));
 		for (var j = 0; j < w.length; j++)
-			w[j] -= 1 / (Math.sqrt(i + 1)) * gradient[j] / N;		
-		var endTime = new Date();
-		time[i] = (endTime - startTime) / 1000;
-		startTime = endTime;
-		//~ console.log('\nIteration : ' + i + ', Time : ' + time[i]);
+			w[j] -= gradient[j] / (N * Math.sqrt(i + 1));
 	}
 	console.log(w.join(' '));
 	ugrid.end();
