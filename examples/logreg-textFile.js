@@ -9,10 +9,9 @@ co(function *() {
 	yield ugrid.init();
 
 	var D = 16;							// Number of features
-	var seed = 1;
 	var file = process.argv[2];
 	var iterations = process.argv[3] || 1;
-	var rng = new ml.Random(seed);
+	var rng = new ml.Random(1);
 	var w = rng.randn(D);
 
 	function parse(e) {
@@ -20,7 +19,7 @@ co(function *() {
 		return {label: tmp.shift(), features: tmp}
 	}
 
-	var points = ugrid.textFile(file).map(parse, []).persist();
+	var points = ugrid.textFile(file).map(parse).persist();
 	var N = yield points.count();
 
 	for (var i = 0; i < iterations; i++) {

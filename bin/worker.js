@@ -86,10 +86,11 @@ function hdfs(args, callback) {
 	var privateKey = process.env.HOME + '/.ssh/id_rsa';
 	var bd = process.env.HADOOP_PREFIX;
 	var fsck_cmd = bd + '/bin/hadoop fsck ' + hdfsTextFile + ' -files -blocks -locations';
-	var regexp = /(\d+\. blk_-*\d+_\d+ len=\d+ repl=\d+ [[][0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+\])/i;
+	var regexp = /(\d+\. blk_-*\d+_\d+ len=\d+ repl=\d+ [[][0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+.*\])/i;
 	var data_dir = process.env.HDFS_DATA_DIR;
 	var blocks = [];
 	var conn = new Connection();
+	
 	conn.on('ready', function() {
 		conn.exec(fsck_cmd, function(err, stream) {
 			if (err) throw err;
@@ -98,10 +99,13 @@ function hdfs(args, callback) {
 			lines.on('data', function(line) {
 				if (line.search(regexp) == -1) return;
 				var v = line.split(' ');
+				var host = [];
+				for (var i = 4; i < v.length; i++)
+					host.push(v[i].substr(0, v[i].lastIndexOf(':')).replace('[', ''));
 				blocks.push({
 					blockNum: parseFloat(v[0]),
 					file: data_dir + '/' + v[1].substr(0, v[1].lastIndexOf('_')),
-					host: v[4].substr(0, v[4].lastIndexOf(':')).replace('[', '')
+					host: host
 				});
 			});
 			lines.on('end', function() {
