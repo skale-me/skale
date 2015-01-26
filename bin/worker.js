@@ -4,12 +4,12 @@
 
 var cluster = require('cluster');
 var vm = require('vm');
-var readline = require('readline');
 var fs = require('fs');
 var exec = require('child_process').exec;
 var Connection = require('ssh2');
 
 var UgridClient = require('../lib/ugrid-client.js');
+var Lines = require('../lib/lines.js');
 var ml = require('../lib/ugrid-ml.js');
 
 var opt = require('node-getopt').create([
@@ -42,7 +42,8 @@ function runWorker(host, port) {
 	var request = {
 		setTask: function (msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
-			task = new Task(grid, fs, readline, ml, STAGE_RAM, RAM, msg);	// jshint ignore:line
+			//task = new Task(grid, fs, readline, ml, STAGE_RAM, RAM, msg);	// jshint ignore:line
+			task = new Task(grid, fs, Lines, ml, STAGE_RAM, RAM, msg);	// jshint ignore:line
 			grid.reply(msg, null, 'worker ready to process task');
 		},
 		runTask: function (msg) {
@@ -92,14 +93,9 @@ function hdfs(args, callback) {
 	conn.on('ready', function() {
 		conn.exec(fsck_cmd, function(err, stream) {
 			if (err) throw err;
-			var rl = readline.createInterface({
-				input: stream.stdout,
-				output: process.stdout,
-				terminal: false
-			});
-			stream.stdout.setEncoding('utf8');
-			stream.stderr.setEncoding('utf8');
-			rl.on("line", function(line) {
+			var lines = new Lines();
+			stream.stdout.pipe(lines);
+			lines.on('data', function(line) {
 				if (line.search(regexp) == -1) return;
 				var v = line.split(' ');
 				blocks.push({
@@ -108,7 +104,7 @@ function hdfs(args, callback) {
 					host: v[4].substr(0, v[4].lastIndexOf(':')).replace('[', '')
 				});
 			});
-			rl.on('close', function() {
+			lines.on('end', function() {
 				conn.end();
 				callback(null, blocks);
 			});
