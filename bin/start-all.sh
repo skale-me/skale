@@ -15,14 +15,14 @@ host=${UGRID_HOST:-localhost} port=${UGRID_PORT:-12346} wph=${UGRID_WORKER_PER_H
 node=${NODE:-/usr/local/bin/node} node_opts=${NODE_OPTS}
 
 # Start ugrid server
-ugrid_cmd="$node $node_opts $cpath/bin/ugrid.js >/tmp/ugrid.log 2>&1 & echo \$! >/tmp/ugrid.pid"
+ugrid_cmd="$node $node_opts $cpath/bin/ugrid.js >>/tmp/ugrid.log 2>&1 & echo \$! >/tmp/ugrid.pid"
 ssh $host "$ugrid_cmd"
 
 # Wait for ugrid server
-while true; do nc -z $host $port >/dev/null && break || sleep 1; done
+while ! $cpath/bin/wait-workers.js 0 2>/dev/null; do sleep 1; done
 
 # Start ugrid workers
-worker_cmd=". $cpath/conf/ugrid-env.sh; $node $node_opts $cpath/bin/worker.js -H $host -P $port -n $wph >/tmp/worker.log 2>&1 &"
+worker_cmd=". $cpath/conf/ugrid-env.sh; $node $node_opts $cpath/bin/worker.js -H $host -P $port -n $wph >>/tmp/worker.log 2>&1 &"
 set -- $workers
 for worker; do
 	ssh $worker "$worker_cmd"
