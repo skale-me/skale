@@ -1,246 +1,206 @@
-#!/usr/local/bin/node --harmony
+#!/usr/local/bin/node
 
-/*
-	TODO:
-		- Multicast publish modes
-		- gestion des droits
-		- REST API: publish subscribe
-	BUG:
-		- lancer new_ugrid.js et thing.js puis arreter new_ugrid.js et le relancer
-*/
+'use strict';
 
 var net = require('net');
-var readline = require('readline');
-var uuid_gen = require('node-uuid');
-var token_gen = require('rand-token');
-var ugrid_server_rest = require('../lib/ugrid-server-rest.js');
-var socket_port = process.argv[2] || 12346;
-var rest_port = 4730;
-var things = {};
-var nb_dev = 0, msg_in = 0, msg_out = 0;
+var uuidGen = require('node-uuid');
+var ugridMsg = require('../lib/ugrid-msg.js');
+var UgridClient = require('../lib/ugrid-client.js');
+var webSocketServer = require('ws').Server;
+var websocket = require('websocket-stream');
 
-// ********************************************************************* //
-// UGRID API
-// ********************************************************************* //
-var api = {
-	authenticate: authenticate,
-	register: register,
-	unregister: unregister,
-	query: query,
-	get: get,
-	set: set,
-	things: things
+var opt = require('node-getopt').create([
+	['h', 'help', 'print this help text'],
+	['H', 'Host=ARG', 'primary server host (default none)'],
+	['n', 'name=ARG', 'advertised server name (default localhost)'],
+	['P', 'Port=ARG', 'primary server port (default none)'],
+	['p', 'port=ARG', 'server port (default 12346)'],
+	['s', 'statistics', 'print periodic statistics'],
+	['w', 'wsport=ARG', 'listen on websocket port (default none)'],
+	['v', 'version', 'print version']
+]).bindHelp().parseSystem();
+
+var clients = {};
+var tsocks = [null, null, null, null];
+var clientMax = 4;
+var name = opt.options.name || 'localhost';
+var port = opt.options.port || 12346;
+var primary = {host: opt.options.Host, port: opt.options.Port || 12346};
+var secondary;
+var msgCount = 0;
+var cli;
+var wss;
+
+var client_command = {
+	connect: function (sock, msg) {
+		if (msg.data && msg.data.type === 'secondary')
+			secondary = {host: msg.data.host, port: msg.data.port};
+		reply(sock, msg, register(null, msg, sock));
+		sock.write(ugridMsg.encode({cmd: 'secondary', data: secondary || {}}));
+		console.log('Connect ' + sock.client.data.type + ' ' +
+					sock.client.index + ': ' + sock.client.uuid);
+	},
+	devices: function (sock, msg) {
+		reply(sock, msg, devices(msg.data));
+	},
+	id: function (sock, msg) {
+		reply(sock, msg, msg.data in clients ? clients[msg.data].index : null);
+	},
+	subscribe: function (sock, msg) {
+		var publishers = msg.data, i;
+		for (i in publishers)
+			clients[publishers[i].uuid].subscribers.push(sock.client);
+	},
+	unsubscribe: function (sock, msg) {
+		var publishers = msg.data, i, subscribers, sub;
+		for (i in publishers) {
+			subscribers = clients[publishers[i].uuid].subscribers;
+			if ((sub = subscribers.indexOf(sock.client)) >= 0)
+				subscribers.splice(sub, 1);
+		}
+	}
 };
 
-function authenticate(uuid, token) {
-	if (!(uuid in things) || (things[uuid].token != token))
-		throw 'authentication failed';
+// Connect as backup to primary if provided
+if (primary.host) {
+	cli = new UgridClient({host: primary.host, port: primary.port,
+						   data: {type: 'secondary', host: name, port: port}});
+	cli.connect_cb(function () {
+		console.log('connected as backup to ' + primary.host + ':' + primary.port);
+		cli.send_cb(0, {cmd: 'secondary', id: 1, data: {host: name, port: port}});
+		cli.on('end', function () {
+			console.log('primary server connection closed');
+		});
+		cli.on('secondary', function () {});	// ignore broadcast from self
+	});
 }
 
-function connect(from_uuid, data, connection) {
-	if (from_uuid == null)
-		return register(from_uuid, data, connection);
-	things[from_uuid].online = true;
-	things[from_uuid].connection = connection;
-	things[from_uuid].data = data;
-	return {uuid: from_uuid, token: things[from_uuid].token};
+// Start a websocket server if a listening port is specified on command line
+if (opt.options.wsport) {
+	wss = new webSocketServer({port: opt.options.wsport});
+	wss.on('connection', function (ws) {
+		console.log('websocket connect');
+		var sock = handleConnect(websocket(ws));
+		ws.on('close', function () {handleClose(sock);});
+	});
 }
 
-function register(from_uuid, data, connection) {
-	var uuid = uuid_gen.v1();
-	var token = token_gen.generate(32);
-	things[uuid] = {
+// Start a TCP server
+net.createServer(handleConnect).listen(port);
+
+function handleConnect(sock) {
+	var decoder = ugridMsg.Decoder();
+	sock.inputPaused = [];
+	sock.setNoDelay();
+	sock.pipe(decoder);
+
+	sock.on('drain', function () {
+		//console.log('drain ' + sock.client.index);
+		for (var i in sock.inputPaused) {
+			var s = sock.inputPaused[i];
+			if (s.remotePaused) {
+				//console.log('resume remote ' + s.client.index);
+				s.resume();
+				s.write(ugridMsg.encode({cmd: 'resume', from: 0}));
+				s.remotePaused = false;
+				delete sock.inputPaused[i];
+			}
+		}
+	});
+	decoder.on('Message', function (to, len, data) {
+		var i, subscribers;
+		try {
+			msgCount++;
+			if (to > 3) {			// Unicast
+				if (tsocks[to]) {
+					if (!tsocks[to].write(data)) {	// TCP full
+						//console.log("Buffer " + to + ": " + tsocks[to].bufferSize);
+						if (! sock.remotePaused) {
+							//console.log('pause remote ' + sock.client.index);
+							tsocks[to].inputPaused[sock.client.index] = sock;
+							sock.write(ugridMsg.encode({cmd: 'pause', from: 0}));
+							sock.remotePaused = true;
+							sock.pause();
+						}
+					}
+				}
+				// else should send back an error to sender
+			} else if (to == 2) {	// Broadcast
+				for (i in tsocks) {
+					if (i == sock.client.index) continue; // skip self
+					if (tsocks[i]) tsocks[i].write(data);
+				}
+			} else if (to == 1) {	// Multicast
+				subscribers = sock.client.subscribers;
+				for (i in subscribers)
+					if (tsocks[subscribers[i].index]) subscribers[i].socks.write(data);
+			} else {				// Server request
+				var o = JSON.parse(data.slice(8));
+				if (!(o.cmd in client_command)) throw 'Invalid command: ' + o.cmd;
+				client_command[o.cmd](sock, o);
+			}
+		} catch (error) {
+			console.error('handleConnect error: ' + sock.client.data.type + ' ' +
+						  sock.client.index + ': ' + error);
+			console.error('Closing ' + sock.client.index + ': ' + sock.client.uuid);
+			sock.end();
+		}
+	});
+	sock.on('end', function () {handleClose(sock);});
+	sock.on('error', function () {handleClose(sock);});
+	return sock;
+}
+
+function reply(sock, msg, data, error) {
+	msg.cmd = 'reply';
+	msg.from = 0;
+	msg.data = data;
+	msg.error = error;
+	sock.write(ugridMsg.encode(msg));
+}
+
+function handleClose(sock) {
+	var client = sock.client;
+	if (!client || !client.sock) return;
+	console.log('Disconnect ' + client.data.type + ' ' + client.index + ': ' + client.uuid);
+	client.sock = tsocks[client.index] = null;
+}
+
+function register(from, msg, sock)
+{
+	var uuid = msg.uuid || uuidGen.v1(), index = clientMax++;
+	sock.client = clients[uuid] = {
+		index: index,
 		uuid: uuid,
-		token: token,
-		owner: from_uuid ? from_uuid : uuid, 
-		online: false, 
-		data: data, 
+		owner: from ? from : uuid,
+		data: msg.data || {},
+		sock: sock,
 		subscribers: []
 	};
-	if (connection) {		
-		things[uuid].connection = connection;
-		if (things[uuid].connection.protocol == 'TCP') {
-			things[uuid].connection.sock.uuid = uuid;
-			things[uuid].online = true;
-		}
-	}
-	return {uuid: uuid, token: things[uuid].token};
+	tsocks[index] = sock;
+	return {uuid: uuid, token: 0, id: index};
 }
 
-function unregister(from_uuid, uuid) {
-	if (!(uuid in things))
-		throw 'unregister error: device not found';
-	if (things[uuid].owner != from_uuid)
-		throw 'unregister error: not owner';
-	delete things[uuid];
-	return null;
-}
-
-function subscribe(from_uuid, uuid) {
-	if (!(uuid in things))
-		throw 'subscribe error: device not found';
-	things[uuid].subscribers.push(from_uuid);
-	return null;
-}
-
-function unsubscribe(from_uuid, uuid) {
-	if (!(uuid in things))
-		throw 'unsubscribe error: device not found';
-	var idx;
-	if ((idx = things[data.uuid].subscribers.indexOf(from_uuid)) != -1)
-		things[uuid].subscribers.splice(idx, 1);
-	return null;
-}
-
-function send_thing(from_uuid, to_uuid, cmd_id, data, cmd, line) {
-	if (!(to_uuid in things)) throw 'send_thing: device not found: ' + to_uuid;
-	var thing = things[to_uuid];
-	if (!(thing.online)) return;
-	var msg = {from: from_uuid, cmd_id: cmd_id, data: data.payload};
-	if (cmd) msg.cmd = cmd;
-	if (line) {
-		console.log(line);
-		console.log(JSON.stringify(msg));
-	}
-	thing.connection.sock.write(JSON.stringify(msg) + '\n');
-	++msg_out;
-}
-
-function publish(from_uuid, data, cmd_id) {
-	if (data.uuid == '*') {     // Broadcast
-		for (var i = 0; i < things[from_uuid].subscribers.length; i++) {
-			send_thing(from_uuid, things[from_uuid].subscribers[i], cmd_id, data, 'message');
-		}
-	} else {                     // Single cast
-		send_thing(from_uuid, data.uuid, cmd_id, data, 'message');
-	}
-}
-
-// Pb: can not query on meta-data (i.e online status)
-function query(from_uuid, query) {
-	var uuids = [];
-	for (var i in things) {
-		if (!things[i].online) continue;
+function devices(query) {
+	var result = [];
+	for (var i in clients) {
+		if (!tsocks[clients[i].index])
+			continue;
 		var match = true;
 		for (var j in query)
-			if (things[i].data[j] != query[j]) {
+			if (!clients[i].data || clients[i].data[j] != query[j]) {
 				match = false;
 				break;
 			}
 		if (match)
-			uuids.push(i);
+			result.push({uuid: i, id: clients[i].index, ip: clients[i].sock.remoteAddress});
 	}
-	return {devices: uuids};
+	return result;
 }
 
-function get(from_uuid, uuid) {
-	if (!(uuid in things))
-		throw 'get error: device not found';
-	return things[uuid].data;
+if (opt.options.statistics) {
+	setInterval(function () {
+		console.log('msg: ' + (msgCount / 5) + ' msg/s');
+		msgCount = 0;
+	}, 10000);
 }
-
-function set(from_uuid, uuid, data) {
-	if (!(uuid in things))
-		throw 'set error: device not found';
-	for (i in data) {
-		if ((data[i] == null) || (data[i] == 'null')) // if null value remove key from device data
-			delete things[uuid].data[i];
-		else	// else update/add field
-			things[uuid].data[i] = data[i];
-	}
-	return things[uuid].data;
-}
-
-// ********************************************************************* //
-// TCP-SOCKET API
-// ********************************************************************* //
-var client_command = {
-	connect: function(sock, msg, line) {
-		nb_dev++;
-		send(sock, msg, connect(msg.from, msg.data, {protocol: "TCP", sock: sock}));
-	},
-	register: function(sock, msg, line) {
-		send(sock, msg, register(msg.from, msg.data));
-	},
-	unregister: function(sock, msg, line) {
-		send(sock, msg, unregister(msg.from, msg.data.uuid));
-	},
-	subscribe: function(sock, msg, line) {
-		send(sock, msg, subscribe(msg.from, msg.data.uuid));
-	},
-	unsubscribe: function(sock, msg, line) {
-		send(sock, msg, unsubscribe(msg.from, msg.data.uuid));
-	},
-	publish: function(sock, msg, line) {
-		send(sock, msg, publish(msg.from, msg.data, msg.cmd_id));
-	},
-	request: function(sock, msg, line) {
-		send(sock, msg, send_thing(msg.from, msg.data.uuid, msg.cmd_id, msg.data, 'request', line));
-	},
-	answer: function(sock, msg, line) {
-		send(sock, msg, send_thing(msg.from, msg.data.uuid, msg.cmd_id, msg.data, line));
-	},
-	devices: function(sock, msg, line) {
-		send(sock, msg, query(msg.from, msg.data));
-	},
-	get: function(sock, msg, line) {
-		send(sock, msg, get(msg.from, msg.data.uuid));
-	},
-	set: function(sock, msg, line) {
-		send(sock, msg, set(msg.from, msg.data.uuid, msg.data.data));
-	}
-}
-
-function send(sock, msg, result) {
-	// Todo: handle destination error
-	if (msg.cmd === 'request') return;
-	var json = {cmd_id: msg.cmd_id, data: {result: result}};
-	sock.write(JSON.stringify(json) + '\n');
-	msg_out++;
-}
-
-var grid = net.createServer(function(sock) {
-	var rl = readline.createInterface(sock, sock);
-
-	rl.on('line', function(d) {
-		try {
-			var o = JSON.parse(d);
-			++msg_in;
-			//console.log(o);
-			//console.log("");
-			// Authentification
-			//var isConnect = (o.cmd == 'connect');
-			//var isAuthenticated = (o.from != undefined) || (o.token  != undefined);
-			//if (!(isConnect))
-			//	authenticate(o.from, o.token);
-			//if (isAuthenticated)
-			//	authenticate(o.from, o.token);
-			client_command[o.cmd](sock, o, d);
-		} catch (error) {
-			console.log(error);
-			var json = {cmd_id: o.cmd_id, data: {err: error, result: null}};
-			if (error == 'authentication failed') {
-				sock.end(JSON.stringify(json) + '\n');
-				sock.destroy();
-			} else
-				sock.write(JSON.stringify(json) + '\n');
-			// sock.end(JSON.stringify(json) + '\n');
-			// sock.destroy()
-		}
-	});
-
-	sock.on('end', function() {
-		if (sock.uuid in things)
-			things[sock.uuid].online = false;
-		console.log('disconnected: ' + sock.uuid);
-		nb_dev--;
-	});
-});
-
-grid.listen(socket_port);
-setInterval(function() {
-	console.log('devices: ' + nb_dev + '\tmsg in: ' + msg_in + ', out: ' + msg_out);
-	msg_in = msg_out = 0;
-}, 1000);
-
-ugrid_server_rest(api, process.env.UGRID_REST_PORT || rest_port);

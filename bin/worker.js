@@ -2,6 +2,7 @@
 
 'use strict';
 
+var os = require('os');
 var cluster = require('cluster');
 var vm = require('vm');
 var fs = require('fs');
@@ -36,13 +37,22 @@ function runWorker(host, port) {
 	var grid = new UgridClient({
 		host: host,
 		port: port,
-		data: {type: 'worker'}
+		data: {
+			ncpu: os.cpus().length,
+			os: os.type(),
+			arch: os.arch(),
+			totalmem: os.totalmem(),
+			hostname: os.hostname(),
+			type: 'worker'
+		}
+	}, function (err, res) {
+		console.log('id: ' + res.id + ', uuid: ' + res.uuid);
+		grid.host = {uuid: res.uuid, id: res.id};
 	});
 
 	var request = {
 		setTask: function (msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
-			//task = new Task(grid, fs, readline, ml, STAGE_RAM, RAM, msg);	// jshint ignore:line
 			task = new Task(grid, fs, Lines, ml, STAGE_RAM, RAM, msg);	// jshint ignore:line
 			grid.reply(msg, null, 'worker ready to process task');
 		},
@@ -56,21 +66,18 @@ function runWorker(host, port) {
 		},
 		hdfs: function(msg) {
 			hdfs(msg.data.args, function (err, res) {
-				grid.reply(msg, err, res);
+					grid.reply(msg, err, res);
 			})
 		}
 	};
 
-	grid.connect_cb(function (err, res) {
-		console.log('id: ' + res.id + ', uuid: ' + res.uuid);
-		grid.host = {uuid: res.uuid, id: res.id};
-		grid.on('request', function (msg) {
-			try {request[msg.data.cmd](msg);}
-			catch (error) {
-				console.log(msg.data.fun + ' error : ' + error);
-				grid.reply(msg, error, null);
-			}
-		});
+	grid.on('request', function (msg) {
+		try {
+			request[msg.data.cmd](msg);
+		} catch (error) {
+			console.error(msg.data.fun + ' error : ' + error);
+			grid.reply(msg, error, null);
+		}
 	});
 }
 
