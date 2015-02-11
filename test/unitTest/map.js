@@ -1,6 +1,7 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
+var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 co(function *() {
@@ -12,14 +13,12 @@ co(function *() {
 
 	var V = [1, 2, 3, 4, 5];
 	var local = V.map(doubles);
-	var dist = yield ugrid.parallelize(V).map(doubles, []).collect();
+	var dist = yield ugrid.parallelize(V).map(doubles).collect();
 
-	if (local.length != dist.length)
-		throw 'error: local and distributed array have different lengths';
+	assert(local.length == dist.length)
 
 	for (var i = 0; i < local.length; i++)
-		if (local[i] != dist[i])
-			throw 'error: local and distributed array have different elements';
+		assert(local[i] == dist[i])
 
 	ugrid.end();
 })();
