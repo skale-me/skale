@@ -23,7 +23,6 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var clients = {};
-//var tsocks = [null, null, null, null];
 var clientMax = 4;
 var name = opt.options.name || 'localhost';
 var port = opt.options.port || 12346;
@@ -83,8 +82,14 @@ if (opt.options.wsport) {
 	wss = new webSocketServer({port: opt.options.wsport});
 	wss.on('connection', function (ws) {
 		console.log('websocket connect');
-		var sock = handleConnect(websocket(ws));
-		ws.on('close', function () {});
+		var sock = websocket(ws);
+		sock.ws = true;
+		handleConnect(sock);
+		ws.on('close', function () {
+			console.log('## connection end');
+			if (sock.client) sock.client.sock = null;
+			if (sock.crossIndex) delete crossbar[sock.crossIndex];
+		});
 	});
 }
 
@@ -93,10 +98,16 @@ net.createServer(handleConnect).listen(port);
 console.log("## Started " + Date());
 
 function handleConnect(sock) {
-	sock.setNoDelay();
+	if (sock.ws) { 
+		console.log('Connect websocket from ' + sock.socket.upgradeReq.headers.origin);
+	} else {
+		console.log('Connect tcp ' + sock.remoteAddress + ' ' + sock.remotePort);
+		sock.setNoDelay();
+	}
 	sock.pipe(ugridMsg.Decoder()).pipe(SwitchBoard(sock));
 	sock.on('end', function () {
-		if (sock.crossIndex) try {delete crossbar[sock.crossIndex];} catch (e) {};
+		if (sock.client) sock.client.sock = null;
+		if (sock.crossIndex) delete crossbar[sock.crossIndex];
 		console.log('## connection end');
 	});
 	sock.on('error', function (error) {
@@ -104,13 +115,6 @@ function handleConnect(sock) {
 		console.log(error);
 		console.log(sock);
 	});
-}
-
-function handleClose(sock) {
-	var client = sock.client;
-	//if (!client || !client.sock) return;
-	console.log('Disconnect ' + client.data.type + ' ' + client.index + ': ' + client.uuid);
-	//client.sock = tsocks[client.index] = null;
 }
 
 function register(from, msg, sock)
@@ -125,15 +129,14 @@ function register(from, msg, sock)
 		sock: sock,
 		subscribers: []
 	};
-	//tsocks[index] = sock;
+	sock.client = clients[uuid];
 	return {uuid: uuid, token: 0, id: index};
 }
 
 function devices(query) {
 	var result = [];
 	for (var i in clients) {
-		if (!clients[i].sock.remoteAddress) continue;
-		//if (!tsocks[clients[i].index]) continue;
+		if (!clients[i].sock) continue;
 		var match = true;
 		for (var j in query)
 			if (!clients[i].data || clients[i].data[j] != query[j]) {

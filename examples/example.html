@@ -2,13 +2,11 @@
 	<body>
 		<script src="../lib/ugrid-client-browser.js"></script>
 		<script>
-		var grid = new UgridClient({host: 'localhost', port: 12348, data: {type: 'pong'}});
-		grid.wsConnect_cb(function () {
-			console.log('connected');
-			grid.on('ping', function(msg) {
-				console.log('ping');
-				console.log(msg);
-			});
+		var grid = new Client({ws: true, host: 'localhost', port: 12348, data: {type: 'pong'}});
+		grid.on('request', function(msg) {
+			console.log(msg);
+			grid.reply(msg, null, 'pong from browser');
+			console.log('pong');
 		});
 		</script>
 	</body>
