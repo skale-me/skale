@@ -14,7 +14,7 @@ co(function *() {
 	var d1 = ugrid.parallelize(a);
 	var d2 = ugrid.parallelize(b);
 
-	// Reflexive union test
+	// // Reflexive union test
 	var r1 = yield d1.collect();
 	var r2 = yield d1.union(d1).collect();
 	assert(r1.length == r2.length);
@@ -25,15 +25,13 @@ co(function *() {
 	var d1 = ugrid.parallelize(a);
 	var d2 = ugrid.parallelize(b);
 	var d3 = d1.union(d2);
-
-	// var r1 = yield d1.collect();
-	// console.log(r1);
-
-	// var r2 = yield d2.collect();
-	// console.log(r2);
-
 	var r3 = yield d3.collect();
-	console.log(r3);
 
+	var c = a.concat(b);
+	assert(r3.length == c.length);
+
+	for (var i = 0; i < r3.length; i++)
+		assert(c.indexOf(r3[i]) != -1)
+	
 	ugrid.end();
 })();

@@ -2,6 +2,7 @@
 
 var co = require('co');
 var fs = require('fs');
+var assert = require('assert');
 var readline = require('readline');
 var ugrid = require('../../lib/ugrid-context.js')();
 
@@ -26,14 +27,16 @@ co(function *() {
 	rl.on("line", function (line) {V.push(line);});
 
 	rl.on('close', function () {
-		if (V.length != res.length)
-			throw 'error: local and distributed array have different lengths';
-
-		for (var i = 0; i < V.length; i++)
-			if (V[i] != res[i])
-				throw 'error: local and distributed array have different elements';
 		fs.unlink(file, function (err) {
+			console.log(res)
+			console.log(V)
+			assert(V.length == res.length)
+
+			for (var i = 0; i < V.length; i++)
+				if (V[i] != res[i])
+					throw 'error: local and distributed array have different elements';
 			ugrid.end();
+
 		});
 	});
 })();
