@@ -20,30 +20,32 @@ co(function *() {
 
 	function parse(e) {
 		var tmp = e.split(' ').map(parseFloat);
-		return {cluster: tmp.shift(), features: tmp, sum: 1};
+		return [tmp.shift(), {features: tmp, sum: 1}];
 	}
 
 	function reducer(a, b) {
 		a.sum += b.sum;
 		for (var i = 0; i < b.features.length; i++)
 			a.acc[i] += b.features[i];
-		return a;		
+		return a;
 	}
 
 	var points = yield ugrid.textFile(file)
 		.map(parse)
-		.reduceByKey('cluster', reducer, {acc: [0, 0], sum: 0})
+		.reduceByKey(reducer, {acc: [0, 0], sum: 0})
 		.collect();
 
-	assert(points[0].acc[0] == 4);
-	assert(points[0].acc[1] == 4);
-	assert(points[0].sum == 2);
-	assert(points[1].acc[0] == 2);
-	assert(points[1].acc[1] == 2);
-	assert(points[1].sum == 1);
-	assert(points[2].acc[0] == 4);
-	assert(points[2].acc[1] == 4);
-	assert(points[2].sum == 1);
+	console.log(points)	
+
+	assert(points[0][1].acc[0] == 4);
+	assert(points[0][1].acc[1] == 4);
+	assert(points[0][1].sum == 2);
+	assert(points[1][1].acc[0] == 2);
+	assert(points[1][1].acc[1] == 2);
+	assert(points[1][1].sum == 1);
+	assert(points[2][1].acc[0] == 4);
+	assert(points[2][1].acc[1] == 4);
+	assert(points[2][1].sum == 1);
 
 	fs.unlink(file, function (err) {
 		ugrid.end();
