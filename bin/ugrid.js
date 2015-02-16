@@ -6,7 +6,6 @@ var net = require('net');
 var util = require('util');
 var stream = require('stream');
 var uuidGen = require('node-uuid');
-var ugridMsg = require('../lib/ugrid-msg.js');
 var UgridClient = require('../lib/ugrid-client.js');
 var webSocketServer = require('ws').Server;
 var websocket = require('websocket-stream');
@@ -44,7 +43,7 @@ function SwitchBoard(sock) {
 util.inherits(SwitchBoard, stream.Transform);
 
 SwitchBoard.prototype._transform = function (chunk, encoding, done) {
-	var i, o = {}, to = chunk.readInt32LE(0, true);
+	var i, o = {}, to = chunk.readUInt32LE(0, true);
 	if (to > 3) {			// Unicast
 		if (crossbar[to]) crossbar[to].write(chunk, done);
 		else done();
@@ -57,13 +56,13 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 			if (!(o.cmd in clientCommand)) throw 'Invalid command: ' + o.cmd;
 			o.data = clientCommand[o.cmd](this.sock, o);
 		} catch (error) {
-			console.error("on message from " + this.sock.client.index);
 			console.error(o);
 			o.error = error;
 			console.error(error);
 		}
 		o.cmd = 'reply';
-		this.sock.write(ugridMsg.encode(o), done);
+		this.sock.write(UgridClient.encode(o),
+		done);
 	}
 };
 
@@ -109,7 +108,7 @@ function handleConnect(sock) {
 		console.log('Connect tcp ' + sock.remoteAddress + ' ' + sock.remotePort);
 		sock.setNoDelay();
 	}
-	sock.pipe(ugridMsg.Decoder()).pipe(SwitchBoard(sock));
+	sock.pipe(UgridClient.FromGrid()).pipe(SwitchBoard(sock));
 	sock.on('end', function () {
 		if (sock.client) sock.client.sock = null;
 		if (sock.crossIndex) delete crossbar[sock.crossIndex];
