@@ -41,6 +41,8 @@ co(function *() {
 		})
 		.collect();
 
+	console.log(points);
+
 	assert(points[0][0] == 2);
 	assert(points[0][1] == 2);
 	assert(points[1][0] == 2);

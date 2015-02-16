@@ -57,6 +57,8 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 			if (!(o.cmd in clientCommand)) throw 'Invalid command: ' + o.cmd;
 			o.data = clientCommand[o.cmd](this.sock, o);
 		} catch (error) {
+			console.error("on message from " + this.sock.client.index);
+			console.error(o);
 			o.error = error;
 			console.error(error);
 		}
@@ -74,6 +76,9 @@ var clientCommand = {
 	},
 	get: function (sock, msg) {
 		return clients[msg.data] ? clients[msg.data].data : 'error: not found';
+	},
+	id: function (sock, msg) {
+		return msg.data in clients ? clients[msg.data].index : null;
 	}
 };
 

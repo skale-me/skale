@@ -6,6 +6,7 @@ var os = require('os');
 var cluster = require('cluster');
 var vm = require('vm');
 var fs = require('fs');
+var util = require('util');
 var exec = require('child_process').exec;
 var Connection = require('ssh2');
 
@@ -53,7 +54,7 @@ function runWorker(host, port) {
 	var request = {
 		setTask: function (msg) {
 			vm.runInThisContext('var Task = ' + msg.data.args.task);
-			task = new Task(grid, fs, Lines, ml, STAGE_RAM, RAM, msg);	// jshint ignore:line
+			task = new Task(grid, fs, util, Lines, ml, STAGE_RAM, RAM, msg);	// jshint ignore:line
 			grid.reply(msg, null, 'worker ready to process task');
 		},
 		runTask: function (msg) {
