@@ -6,6 +6,7 @@ var os = require('os');
 var cluster = require('cluster');
 var vm = require('vm');
 var fs = require('fs');
+var util = require('util');
 var exec = require('child_process').exec;
 var Connection = require('ssh2');
 
