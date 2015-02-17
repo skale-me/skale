@@ -12,8 +12,7 @@ co(function *() {
 	var b = '6 7 8 9 10';
 	fs.writeFileSync('/tmp/persist.txt', a);
 
-	var P = process.argv[2];
-	var dist = ugrid.textFile('/tmp/persist.txt', P).persist();
+	var dist = ugrid.textFile('/tmp/persist.txt').persist();
 	var res = yield dist.collect();
 	fs.writeFileSync('/tmp/persist.txt', b);
 	res = yield dist.collect();
@@ -21,7 +20,7 @@ co(function *() {
 
 	console.log(a)
 	console.log(res)
-
+	
 	assert(res[0] == a);
 
 	ugrid.end();

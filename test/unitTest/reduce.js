@@ -1,6 +1,7 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
+var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 co(function *() {
@@ -13,8 +14,7 @@ co(function *() {
 	var dist = yield ugrid.parallelize(V).reduce(reducer, 0);
 	var local = V.reduce(reducer, 0);
 
-	if (dist != local)
-		throw 'error: reduce value is different';
+	assert(dist == local)
 
 	ugrid.end();
 })();

@@ -27,23 +27,15 @@ co(function *() {
 		.map(parse)
 		.groupByKey()
 		.collect();
-	console.log(points);
-	// 	.map(parse)
-	// 	.reduceByKey('cluster', reducer, {acc: [0, 0], sum: 0})
-	// 	.map(function(a) {
-	// 		var res = [];
-	// 		for (var i = 0; i < a.acc.length; i++)
-	// 			res.push(a.acc[i] / a.sum);
-	// 		return res;
-	// 	})
-	// 	.collect();
 
-	// assert(points[0][0] == 2);
-	// assert(points[0][1] == 2);
-	// assert(points[1][0] == 2);
-	// assert(points[1][1] == 2);
-	// assert(points[2][0] == 4);
-	// assert(points[2][1] == 4);
+	assert(points[0][1][0].features[0] == 1);
+	assert(points[0][1][0].features[1] == 1);
+	assert(points[0][1][1].features[0] == 3);
+	assert(points[0][1][1].features[1] == 3);
+	assert(points[1][1][0].features[0] == 2);
+	assert(points[1][1][0].features[1] == 2);
+	assert(points[2][1][0].features[0] == 4);
+	assert(points[2][1][0].features[1] == 4);	
 
 	fs.unlink(file, function (err) {
 		ugrid.end();

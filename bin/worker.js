@@ -11,7 +11,7 @@ var Connection = require('ssh2');
 
 var UgridClient = require('../lib/ugrid-client.js');
 var Lines = require('../lib/lines.js');
-var ml = require('../lib/ugrid-ml.js');
+var UgridTask = require('../lib/ugrid-processing.js').UgridTask;
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -32,7 +32,7 @@ if (cluster.isMaster) {
 }
 
 function runWorker(host, port) {
-	var RAM = {}, STAGE_RAM = [], task;
+	var RAM = {}, STAGE_RAM = {v: undefined}, task;
 
 	var grid = new UgridClient({
 		host: host,
@@ -52,8 +52,7 @@ function runWorker(host, port) {
 
 	var request = {
 		setTask: function (msg) {
-			vm.runInThisContext('var Task = ' + msg.data.args.task);
-			task = new Task(grid, fs, Lines, ml, STAGE_RAM, RAM, msg);	// jshint ignore:line
+			task = new UgridTask(grid, STAGE_RAM, RAM, msg);
 			grid.reply(msg, null, 'worker ready to process task');
 		},
 		runTask: function (msg) {
@@ -66,7 +65,7 @@ function runWorker(host, port) {
 		},
 		hdfs: function(msg) {
 			hdfs(msg.data.args, function (err, res) {
-					grid.reply(msg, err, res);
+				grid.reply(msg, err, res);
 			})
 		}
 	};

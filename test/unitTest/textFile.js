@@ -18,8 +18,7 @@ co(function *() {
 	fs.writeFileSync(file, a);
 
 	// Distributed read
-	var P = process.argv[2];
-	var res = yield ugrid.textFile(file, P).collect();
+	var res = yield ugrid.textFile(file).collect();
 
 	// Local read
 	var V = [];

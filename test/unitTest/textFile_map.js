@@ -2,6 +2,7 @@
 'use strict';
 
 var co = require('co');
+var assert = require('assert');
 var fs = require('fs');
 var ugrid = require('../../lib/ugrid-context.js')();
 var ml = require('../../lib/ugrid-ml.js');

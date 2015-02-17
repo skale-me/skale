@@ -1,6 +1,7 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
+var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 co(function *() {
@@ -16,12 +17,10 @@ co(function *() {
 
 	var d1 = yield ugrid.parallelize(V).takeSample(n, seed);
 
-	if (d1.length != n)
-		throw 'error: bad number of elements returned';
+	assert(d1.length == n)
 
 	for (i = 0; i < d1.length; i++)
-		if (V.indexOf(d1[i]) == -1)
-			throw 'error: sampled data is not in array';
+		assert(V.indexOf(d1[i]) != -1)
 
 	ugrid.end();
 })();

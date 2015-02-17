@@ -7,15 +7,11 @@ var ugrid = require('../../lib/ugrid-context.js')();
 co(function *() {
 	yield ugrid.init();
 
-	var V = [1, 2, 3, 4, 5];
+	var V = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-	var res = yield ugrid.parallelize(V).collect();
+	var dist = yield ugrid.parallelize(V).count();
 
-	console.log(res);
-	assert(V.length == res.length);
-
-	for (var i = 0; i < V.length; i++)
-		assert (V[i] == res[i])
+	assert(dist == V.length)
 
 	ugrid.end();
 })();
