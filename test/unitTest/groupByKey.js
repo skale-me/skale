@@ -28,6 +28,8 @@ co(function *() {
 		.groupByKey()
 		.collect();
 
+	console.log(points)
+
 	assert(points[0][1][0].features[0] == 1);
 	assert(points[0][1][0].features[1] == 1);
 	assert(points[0][1][1].features[0] == 3);
