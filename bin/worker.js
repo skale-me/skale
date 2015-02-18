@@ -4,10 +4,7 @@
 
 var os = require('os');
 var cluster = require('cluster');
-var vm = require('vm');
 var fs = require('fs');
-var util = require('util');
-var exec = require('child_process').exec;
 var Connection = require('ssh2');
 
 var UgridClient = require('../lib/ugrid-client.js');
@@ -67,7 +64,7 @@ function runWorker(host, port) {
 		hdfs: function(msg) {
 			hdfs(msg.data.args, function (err, res) {
 				grid.reply(msg, err, res);
-			})
+			});
 		}
 	};
 
@@ -119,7 +116,7 @@ function hdfs(args, callback) {
 				conn.end();
 				callback(null, blocks);
 			});
-		})
+		});
 	}).connect({
 		host: host,
 		username: username,
