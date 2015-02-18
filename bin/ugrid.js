@@ -23,12 +23,9 @@ var opt = require('node-getopt').create([
 
 var clients = {};
 var clientMax = 4;
-var name = opt.options.name || 'localhost';
+//var name = opt.options.name || 'localhost';
 var port = opt.options.port || 12346;
-var primary = {host: opt.options.Host, port: opt.options.Port || 12346};
-var secondary;
 var msgCount = 0;
-var cli;
 var wss;
 var crossbar = [], crossn = 4;
 
@@ -43,14 +40,14 @@ function SwitchBoard(sock) {
 util.inherits(SwitchBoard, stream.Transform);
 
 SwitchBoard.prototype._transform = function (chunk, encoding, done) {
-	var i, o = {}, to = chunk.readUInt32LE(0, true);
+	var o = {}, to = chunk.readUInt32LE(0, true);
 	if (to > 3) {			// Unicast
 		if (crossbar[to]) crossbar[to].write(chunk, done);
 		else done();
-	} else if (to == 3) {	// Foreign
-	} else if (to == 2) {	// Multicast
-	} else if (to == 1) {	// Broadcast
-	} else if (to == 0) {	// Server request
+	} else if (to === 3) {	// Foreign
+	} else if (to === 2) {	// Multicast
+	} else if (to === 1) {	// Broadcast
+	} else if (to === 0) {	// Server request
 		try {
 			o = JSON.parse(chunk.slice(8));
 			if (!(o.cmd in clientCommand)) throw 'Invalid command: ' + o.cmd;
@@ -108,7 +105,7 @@ function handleConnect(sock) {
 		console.log('Connect tcp ' + sock.remoteAddress + ' ' + sock.remotePort);
 		sock.setNoDelay();
 	}
-	sock.pipe(UgridClient.FromGrid()).pipe(SwitchBoard(sock));
+	sock.pipe(new UgridClient.FromGrid()).pipe(new SwitchBoard(sock));
 	sock.on('end', function () {
 		if (sock.client) sock.client.sock = null;
 		if (sock.crossIndex) delete crossbar[sock.crossIndex];
