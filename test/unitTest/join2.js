@@ -7,33 +7,22 @@
 // which is not the case for cogroup
 
 var co = require('co');
-var fs = require('fs');
 var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
-var ml = require('../../lib/ugrid-ml.js');
 
-var file1 = '/tmp/data.txt';
-fs.writeFileSync(file1, '0 world\n1 monde');
-
-var file2 = '/tmp/data2.txt';
-fs.writeFileSync(file2, '0 cedric\n1 cedric');
+var a = [[0, 'hello'], [1, 'goodbye'], [1, 'TEST']];
+var b = [[0, 'cedric'], [1, 'marc']];
 
 co(function *() {
 	yield ugrid.init();
 
-	function parse(e) {return e.split(' ');}
-
-	var p1 = ugrid.textFile(file1).map(parse);
-	var p2 = ugrid.textFile(file2).map(parse);	
+	var p1 = ugrid.parallelize(a);
+	var p2 = ugrid.parallelize(b);
 	var p3 = p1.join(p2);
 
 	// console.log(yield p1.collect());
 	// console.log(yield p2.collect());
 	console.log(yield p3.collect());	
 
-	fs.unlink(file1, function (err) {
-		fs.unlink(file2, function (err) {
-			ugrid.end();
-		});
-	});
+	ugrid.end();
 })();
