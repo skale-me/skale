@@ -15,7 +15,7 @@ co(function *() {
 	var ITERATIONS = 20;				// Number of iterations
 	var time = new Array(ITERATIONS);
 	var rng = new ml.Random();
-	var w = rng.randn(D);
+	var w = rng.randn(D + 1);
 
 	var points = ugrid.randomSVMData(N, D, seed, P).persist();
 
@@ -25,7 +25,7 @@ co(function *() {
 
 	for (var i = 0; i < ITERATIONS; i++) {
 		var startTime = new Date();
-		var gradient = yield points.map(ml.logisticLossGradient, [w]).reduce(ml.sum, ml.zeros(D));
+		var gradient = yield points.map(ml.logisticLossGradient, [w]).reduce(ml.sum, ml.zeros(D + 1));
 		for (var j = 0; j < w.length; j++)
 			w[j] -= gradient[j];
 		var endTime = new Date();
