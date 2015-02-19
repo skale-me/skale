@@ -1,9 +1,20 @@
+// ----------------------------------------------------------------- //
+Cas 1 stage:
+	- 1 lineage:
+		- de longueur 1:
+			- source -> action
+			- source -> persist -> action
+		- de longueur 2:
+			- source -> transfo -> action
+			- source -> persist -> transfo -> action
+			- source -> transfo -> persist -> action
+// ----------------------------------------------------------------- //
 [parallelize_0.js] parallelize -> count
 [parallelize_1.js] parallelize -> collect
 [parallelize_2.js] parallelize -> reduce
 [parallelize_3.js] parallelize -> lookup
 
-[parallelize_4.js] parallelize -> persist -> count
+BROKEN [parallelize_4.js] parallelize -> persist -> count
 [parallelize_5.js] parallelize -> persist -> collect
 [parallelize_6.js] parallelize -> persist -> reduce
 [parallelize_7.js] parallelize -> persist -> lookup
@@ -13,7 +24,24 @@
 [parallelize_10.js] parallelize -> map (no args) -> reduce
 [parallelize_11.js] parallelize -> map (no args) -> lookup
 
-[parallelize_12.js] parallelize -> persist -> map (no args) -> count
+BROKEN [parallelize_12.js] parallelize -> persist -> map (no args) -> count
 [parallelize_13.js] parallelize -> persist -> map (no args) -> collect
 [parallelize_14.js] parallelize -> persist -> map (no args) -> reduce
-[TODO] parallelize -> persist -> map (no args) -> lookup
+[parallelize_15.js] parallelize -> persist -> map (no args) -> lookup
+
+[parallelize_16.js] parallelize -> filter (no args) -> count
+[parallelize_17.js] parallelize -> filter (no args) -> collect
+[parallelize_18.js] parallelize -> filter (no args) -> reduce
+[parallelize_19.js] parallelize -> filter (no args) -> lookup
+
+BROKEN [parallelize_20.js] parallelize -> persist -> filter (no args) -> count
+[parallelize_21.js] parallelize -> persist -> filter (no args) -> collect
+[parallelize_22.js] parallelize -> persist -> filter (no args) -> reduce
+[parallelize_23.js] parallelize -> persist -> filter (no args) -> lookup
+
+[parallelize_24.js] parallelize -> flatMap (no args) -> count
+
+
+[parallelize_17.js] parallelize -> filter (no args) -> collect
+[parallelize_18.js] parallelize -> filter (no args) -> reduce
+[parallelize_19.js] parallelize -> filter (no args) -> lookup

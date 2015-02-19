@@ -20,6 +20,7 @@ co(function *() {
 
 	var res = yield ugrid.parallelize(v).map(by2).lookup(key);
 
+	assert(res.length == 1);
 	assert(res[0][0] == key);
 	assert(res[0][1] == value * 2);
 
