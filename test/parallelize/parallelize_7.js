@@ -16,7 +16,7 @@ co(function *() {
 	var data = ugrid.parallelize(v).persist();
 	yield data.lookup(key);
 
-	v[0][1] = 10;
+	v.push([key, value]);
 	var res = yield data.lookup(key);
 
 	assert(res.length == 1);

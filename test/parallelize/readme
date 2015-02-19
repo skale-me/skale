@@ -14,7 +14,7 @@ Cas 1 stage:
 [parallelize_2.js] parallelize -> reduce
 [parallelize_3.js] parallelize -> lookup
 
-BROKEN [parallelize_4.js] parallelize -> persist -> count
+[parallelize_4.js] parallelize -> persist -> count
 [parallelize_5.js] parallelize -> persist -> collect
 [parallelize_6.js] parallelize -> persist -> reduce
 [parallelize_7.js] parallelize -> persist -> lookup
@@ -24,7 +24,7 @@ BROKEN [parallelize_4.js] parallelize -> persist -> count
 [parallelize_10.js] parallelize -> map (no args) -> reduce
 [parallelize_11.js] parallelize -> map (no args) -> lookup
 
-BROKEN [parallelize_12.js] parallelize -> persist -> map (no args) -> count
+[parallelize_12.js] parallelize -> persist -> map (no args) -> count
 [parallelize_13.js] parallelize -> persist -> map (no args) -> collect
 [parallelize_14.js] parallelize -> persist -> map (no args) -> reduce
 [parallelize_15.js] parallelize -> persist -> map (no args) -> lookup
@@ -34,14 +34,17 @@ BROKEN [parallelize_12.js] parallelize -> persist -> map (no args) -> count
 [parallelize_18.js] parallelize -> filter (no args) -> reduce
 [parallelize_19.js] parallelize -> filter (no args) -> lookup
 
-BROKEN [parallelize_20.js] parallelize -> persist -> filter (no args) -> count
+[parallelize_20.js] parallelize -> persist -> filter (no args) -> count
 [parallelize_21.js] parallelize -> persist -> filter (no args) -> collect
 [parallelize_22.js] parallelize -> persist -> filter (no args) -> reduce
 [parallelize_23.js] parallelize -> persist -> filter (no args) -> lookup
 
 [parallelize_24.js] parallelize -> flatMap (no args) -> count
+[parallelize_25.js] parallelize -> flatMap (no args) -> collect
+[parallelize_26.js] parallelize -> flatMap (no args) -> reduce
+[parallelize_27.js] parallelize -> flatMap (no args) -> lookup
 
-
-[parallelize_17.js] parallelize -> filter (no args) -> collect
-[parallelize_18.js] parallelize -> filter (no args) -> reduce
-[parallelize_19.js] parallelize -> filter (no args) -> lookup
+[parallelize_28.js] parallelize -> persist -> flatMap (no args) -> count
+[parallelize_29.js] parallelize -> persist -> flatMap (no args) -> collect
+[parallelize_30.js] parallelize -> persist -> flatMap (no args) -> reduce
+[parallelize_31.js] parallelize -> persist -> flatMap (no args) -> lookup

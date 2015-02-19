@@ -11,19 +11,17 @@ co(function *() {
 	var value = 2;
 	var v = [[key, value], [3, 4], [5, 6]];
 
-	function isValueEven (e) {
-		return (e[1] % 2 == 0) ? true : false;
+	function dup (e) {
+		return [e, e];
 	}
 
-	var data = ugrid.parallelize(v).persist();
-	yield data.lookup(key);
+	var res = yield ugrid.parallelize(v).flatMap(dup).lookup(key);
 
-	v.push([key, value]);
-	var res = yield data.filter(isValueEven).lookup(key);
-
-	assert(res.length == 1);
+	assert(res.length == 2);
 	assert(res[0][0] == key);
 	assert(res[0][1] == value);
+	assert(res[1][0] == key);
+	assert(res[1][1] == value);
 
 	ugrid.end();
 })();

@@ -7,8 +7,8 @@ var ugrid = require('../../lib/ugrid-context.js')();
 co(function *() {
 	yield ugrid.init();
 
-	function by2 (e) {
-		return e * 2;
+	function dup (e) {
+		return [e, e];
 	}
 
 	var v = [1, 2, 3, 4, 5];
@@ -17,11 +17,12 @@ co(function *() {
 	yield data.collect();
 
 	v.push(6);
-	var res = yield data.map(by2).collect();
+	var res = yield data.flatMap(dup).collect();
 
 	res_sort = res.sort();
-	tmp_sort = v_copy.map(by2).sort();
+	var tmp_sort = v_copy.map(dup).reduce(function (a, b) {return a.concat(b);}, []).sort();
 
+	assert(res_sort.length == tmp_sort.length);
 	for (var i = 0; i < tmp_sort.length; i++)
 		for (var j = 0; j < tmp_sort[i].length; j++)
 			assert(tmp_sort[i][j] == res_sort[i][j])

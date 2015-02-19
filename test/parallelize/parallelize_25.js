@@ -1,7 +1,5 @@
 #!/usr/local/bin/node --harmony
 
-// Test parallelize -> map -> collect
-
 var co = require('co');
 var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
@@ -18,12 +16,11 @@ co(function *() {
 	var res = yield ugrid.parallelize(v).flatMap(dup).collect();
 	var res_sort = res.sort();
 
-	console.log(res)
+	var tmp_sort = v.map(dup).reduce(function(a, b) {return a.concat(b)}, []).sort();
 
-	// var tmp_sort = v.filter(isEven).sort();
-
-	// for (var i = 0; i < v.length; i++)
-	// 	assert(res_sort[i] == tmp_sort[i])
+	assert(tmp_sort.length == res_sort.length);
+	for (var i = 0; i < v.length; i++)
+		assert(res_sort[i] == tmp_sort[i]);
 
 	ugrid.end();
 })();

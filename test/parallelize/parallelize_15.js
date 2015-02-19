@@ -1,7 +1,5 @@
 #!/usr/local/bin/node --harmony
 
-// Test parallelize -> persist -> map -> lookup
-
 var co = require('co');
 var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
@@ -21,7 +19,7 @@ co(function *() {
 	var data = ugrid.parallelize(v).persist();
 	yield data.lookup(key);
 
-	v[0][1] = 10;
+	v.push([key, value]);
 	var res = yield data.map(by2).lookup(key);
 
 	assert(res.length == 1);

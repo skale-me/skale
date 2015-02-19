@@ -1,7 +1,5 @@
 #!/usr/local/bin/node --harmony
 
-// Test parallelize followed by count
-
 var co = require('co');
 var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
