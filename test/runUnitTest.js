@@ -7,6 +7,8 @@ var spawn = require('child_process').spawn;
 var yieldable_readdir = thunkify(fs.readdir);   
 var nPassedTests = 0, nFailedTests = 0;
 
+var test_dir = process.env['UNIT_TEST_DIR'] || 'unitTest';
+
 co(function*(){
 	function spawnTest_cb(file, callback) {
 		var result;
@@ -26,11 +28,11 @@ co(function*(){
 	var spawnTest = thunkify(spawnTest_cb);
 
 	var testResults = {};
-	var files = yield yieldable_readdir('unitTest/'); //make sur that we read all the files  
+	var files = yield yieldable_readdir(test_dir + '/'); //make sur that we read all the files  
 
 	console.log('Found ' + files.length + ' unit tests');
 	for (var i = 0; i < files.length; i++)
-		testResults[files[i]] = yield spawnTest('unitTest/' + files[i]); 
+		testResults[files[i]] = yield spawnTest(test_dir + '/' + files[i]); 
 	console.log(nPassedTests + ' passed');
 	console.log(nFailedTests + ' failed');
 })();
