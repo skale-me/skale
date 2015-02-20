@@ -28,7 +28,7 @@ co(function *() {
 	var ref = ml.randomSVMData(N, D, seed).filter(positiveLabel).filter(function (e) {
 		return e[0] == key;
 	});
-	var res = yield ugrid.randomSVMData(N, D, seed).filter(Positivefilter).lookup(key);
+	var res = yield ugrid.randomSVMData(N, D, seed).filter(positiveLabel).lookup(key);
 	console.assert(arrayEqual(ref.sort(), res.sort()));
 
 	ugrid.end();

@@ -14,7 +14,7 @@ co(function *() {
 	yield ugrid.init();
 
 	var N = 5, D = 2, seed = 1;
-	var ref = ml.randomSVMData(N, D, seed)[0];
+	var ref = ml.randomSVMData(N, D, seed);
 	var res = yield ugrid.randomSVMData(N, D, seed).collect();
 
 	console.assert(arrayEqual(ref.sort(), res.sort()));
