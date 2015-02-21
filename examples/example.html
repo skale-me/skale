@@ -8,6 +8,9 @@
 			grid.reply(msg, null, 'pong from browser');
 			console.log('pong');
 		});
+		grid.on('close', function () {
+			console.log("GRID CLOSED");
+		});
 		</script>
 	</body>
 </html>
