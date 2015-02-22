@@ -1,11 +1,8 @@
 Test randomSVMData
 1 stage:
 	- 1 lineage:
-		- de longueur 1:
-			- source -> action
-		- de longueur 2:
-			- source -> transfo -> action
-			- source -> transfo -> persist -> action
+		- source -> action
+		- source -> transfo -> action
 
 r000.js	randomSVNData -> count
 r001.js	randomSVNData -> collect
@@ -31,3 +28,18 @@ r016.js	randomSVNData -> mapValues -> count
 r017.js	randomSVNData -> mapValues -> collect
 r018.js	randomSVNData -> mapValues -> reduce
 r019.js	randomSVNData -> mapValues -> lookup
+
+r020.js	randomSVNData -> sample -> count
+r021.js	randomSVNData -> sample -> collect
+r022.js	randomSVNData -> sample -> reduce
+r023.js	randomSVNData -> sample -> lookup
+
+r024.js	randomSVNData -> groupByKey -> count
+r025.js	randomSVNData -> groupByKey -> collect
+r026.js	randomSVNData -> groupByKey -> reduce
+r027.js	randomSVNData -> groupByKey -> lookup
+
+r028.js	randomSVNData -> reduceByKey -> count
+r029.js	randomSVNData -> reduceByKey -> collect
+r031.js	randomSVNData -> reduceByKey -> reduce
+r032.js	randomSVNData -> reduceByKey -> lookup
