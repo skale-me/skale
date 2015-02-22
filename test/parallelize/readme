@@ -1,13 +1,12 @@
 // -------------------------------------------------------------------------- //
-Cas 1 stage:
-	- 1 lineage:
-		- de longueur 1:
-			- source -> action
-			- source -> persist -> action
-		- de longueur 2:
-			- source -> transfo -> action
-			- source -> persist -> transfo -> action
-			- source -> transfo -> persist -> action
+- 1 stage 1 lineage :
+	- de longueur 1 :
+		- source -> action
+		- source -> persist -> action
+	- de longueur 2 :
+		- source -> transfo -> action
+		- source -> persist -> transfo -> action
+		- source -> transfo -> persist -> action
 
 // -------------------------------------------------------------------------- //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 1
@@ -102,16 +101,17 @@ Cas 1 stage:
 [parallelize_34.js] parallelize -> sample -> reduce (no args)
 [parallelize_35.js] parallelize -> sample -> lookup
 
-// TODO
 [parallelize_60.js] parallelize -> groupByKey -> count
 [parallelize_61.js] parallelize -> groupByKey -> collect
 [parallelize_62.js] parallelize -> groupByKey -> reduce (no args)
 [parallelize_63.js] parallelize -> groupByKey -> lookup
 
+// TODO
 [parallelize_64.js] parallelize -> reduceByKey (no args) -> count
 [parallelize_65.js] parallelize -> reduceByKey (no args) -> collect
 [parallelize_66.js] parallelize -> reduceByKey (no args) -> reduce (no args)
 [parallelize_67.js] parallelize -> reduceByKey (no args) -> lookup
+
 
 [] parallelize -> persist -> sample -> count
 [] parallelize -> persist -> sample -> collect
@@ -127,3 +127,33 @@ Cas 1 stage:
 [] parallelize -> persist -> reduceByKey (no args) -> collect
 [] parallelize -> persist -> reduceByKey (no args) -> reduce (no args)
 [] parallelize -> persist -> reduceByKey (no args) -> lookup
+
+[] parallelize -> persist -> sample -> count
+[] parallelize -> persist -> sample -> collect
+[] parallelize -> persist -> sample -> reduce (no args)
+[] parallelize -> persist -> sample -> lookup
+
+[] parallelize -> groupByKey -> persist -> count
+[] parallelize -> groupByKey -> persist -> collect
+[] parallelize -> groupByKey -> persist -> reduce (no args)
+[] parallelize -> groupByKey -> persist -> lookup
+
+[] parallelize -> reduceByKey (no args) -> persist -> count
+[] parallelize -> reduceByKey (no args) -> persist -> collect
+[] parallelize -> reduceByKey (no args) -> persist -> reduce (no args)
+[] parallelize -> reduceByKey (no args) -> persist -> lookup
+
+// -------------------------------------------------------------------------- //
+// 1 stage 2 lineages
+// -------------------------------------------------------------------------- //
+parallelize -> union -> count
+parallelize ->
+
+parallelize -> persist -> union -> count
+parallelize ->
+
+parallelize ->			-> union -> count
+parallelize -> persist
+
+parallelize -> persist -> union -> count
+parallelize -> persist
