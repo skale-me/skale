@@ -1,6 +1,6 @@
 #!/usr/local/bin/node --harmony
 
-// parallelize -> sample -> persist -> count
+// parallelize -> sample -> persist -> collect
 
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
@@ -16,12 +16,17 @@ co(function *() {
 	var loc = sample(v, ugrid.worker.length, frac, seed);
 
 	var data = ugrid.parallelize(v).sample(frac).persist();
-	var dist = yield data.count();
+	yield data.count();
 
 	v.push(6);
-	var dist = yield data.count();
+	var dist = yield data.collect();	
 
-	console.assert(loc.length == dist);
+	loc = loc.sort();
+	dist = dist.sort();
+
+	console.assert(loc.length == dist.length);
+	for (var i = 0; i < loc.length; i++)
+		console.assert(loc[i] == dist[i]);
 
 	ugrid.end();
 })();

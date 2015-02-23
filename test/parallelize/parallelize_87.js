@@ -1,0 +1,27 @@
+#!/usr/local/bin/node --harmony
+
+// parallelize -> groupByKey -> persist -> lookup
+
+var co = require('co');
+var ugrid = require('../../lib/ugrid-context.js')();
+var groupByKey = require('..//ugrid-test.js').groupByKey;
+
+co(function *() {
+	yield ugrid.init();
+
+	var v = [[0, 1], [0, 2], [1, 3], [2, 4]];
+	var key = 0;
+	var loc = groupByKey(v).filter(function (e) {return (e[0] == key)});
+
+	var data = ugrid.parallelize(v).groupByKey().persist();
+	yield data.count();
+
+	v.push([key, 11]);
+	var dist = yield data.lookup(key);
+
+	console.assert(loc[0][0] == dist[0][0])
+	for (var i = 0; i < loc[0][1].length; i++)
+		console.assert(loc[0][1][i] == dist[0][1][i])
+
+	ugrid.end();
+})();
