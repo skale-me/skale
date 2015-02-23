@@ -38,7 +38,7 @@ function sample(v_in, P, frac, seed) {
 	}
 
 	var tmp = [];
-	for (var p in res.v)
+	for (var p in res.v) 
 		tmp = tmp.concat(res.v[p]);
 
 	return tmp;
