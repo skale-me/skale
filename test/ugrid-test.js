@@ -1,34 +1,20 @@
 var ml = require('../lib/ugrid-ml.js');
 
 /** local version of randomSVMData  (for testing) */
-function randomSVMData(N, D, seed) {
-	var res = [], rng = new ml.Random(seed);
-	for (var i = 0; i < N; i++)
-		res[i] = ml.randomSVMLine(rng, D);
-	return res;
-}
-
 function randomSVMData(N, D, seed, nPartitions) {
 	var rng = new ml.Random(seed);
-	var res = []; //, rng = [];
+	var res = [], tmp = [];
 	var P = nPartitions || 1;
 
-	for (var p = 0; p < P; p++) {
+	for (var p = 0; p < P; p++)
 		res[p] = [];
-		//rng[p] = new ml.Random(seed);
-	}
 	p = 0;
 	for (var i = 0; i < N; i++) {
-		//res[p].push({label: Math.round(Math.abs(rng.next())) * 2 - 1, features: rng.randn(D)});
-		//res[p].push(ml.randomSVMLine(rng[p], D));
 		res[p].push(ml.randomSVMLine(rng, D));
 		p = (p == (P - 1)) ? 0 : p + 1;
 	}
-
-	var tmp = [];
 	for (var p in res) 
 		tmp = tmp.concat(res[p]);
-
 	return tmp;
 }
 
