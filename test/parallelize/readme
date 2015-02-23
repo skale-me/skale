@@ -98,23 +98,22 @@
 [parallelize_69.js] parallelize -> persist -> sample -> collect
 [parallelize_70.js] parallelize -> persist -> sample -> reduce (no args)
 [parallelize_71.js] parallelize -> persist -> sample -> lookup
+[parallelize_72.js] parallelize -> persist -> groupByKey -> count
+[parallelize_73.js] parallelize -> persist -> groupByKey -> collect
+[parallelize_74.js] parallelize -> persist -> groupByKey -> reduce (no args)
+[parallelize_75.js] parallelize -> persist -> groupByKey -> lookup
+[parallelize_76.js] parallelize -> persist -> reduceByKey (no args) -> count
+[parallelize_77.js] parallelize -> persist -> reduceByKey (no args) -> collect
+[parallelize_78.js] parallelize -> persist -> reduceByKey (no args) -> reduce (no args)
+[parallelize_79.js] parallelize -> persist -> reduceByKey (no args) -> lookup
+
+// DOING
+[parallelize_80.js] parallelize -> sample -> persist -> count
+[parallelize_81.js] parallelize -> sample -> persist -> collect
+[parallelize_82.js] parallelize -> sample -> persist -> reduce (no args)
+[parallelize_83.js] parallelize -> sample -> persist -> lookup
 
 // TODO
-[] parallelize -> persist -> groupByKey -> count
-[] parallelize -> persist -> groupByKey -> collect
-[] parallelize -> persist -> groupByKey -> reduce (no args)
-[] parallelize -> persist -> groupByKey -> lookup
-
-[] parallelize -> persist -> reduceByKey (no args) -> count
-[] parallelize -> persist -> reduceByKey (no args) -> collect
-[] parallelize -> persist -> reduceByKey (no args) -> reduce (no args)
-[] parallelize -> persist -> reduceByKey (no args) -> lookup
-
-[] parallelize -> persist -> sample -> count
-[] parallelize -> persist -> sample -> collect
-[] parallelize -> persist -> sample -> reduce (no args)
-[] parallelize -> persist -> sample -> lookup
-
 [] parallelize -> groupByKey -> persist -> count
 [] parallelize -> groupByKey -> persist -> collect
 [] parallelize -> groupByKey -> persist -> reduce (no args)
