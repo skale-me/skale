@@ -4,7 +4,7 @@
 
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
-var ml = require('../../lib/ugrid-ml.js');
+var test = require('../ugrid-test.js');
 
 co(function *() {
 	yield ugrid.init();
@@ -14,7 +14,7 @@ co(function *() {
 	}
 
 	var N = 5, D = 1, seed = 1;
-	var ref = ml.randomSVMData(N, D, seed);
+	var ref = test.randomSVMData(N, D, seed);
 	var res = yield ugrid.randomSVMData(N, D, seed).mapValues(x2).count();
 	console.assert(ref.length == res);
 

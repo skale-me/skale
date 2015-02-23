@@ -4,11 +4,7 @@
 
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
-var ml = require('../../lib/ugrid-ml.js');
-
-function arrayEqual(a1, a2) {
-	return JSON.stringify(a1) == JSON.stringify(a2);
-}
+var test = require('../ugrid-test.js');
 
 co(function *() {
 	yield ugrid.init();
@@ -23,7 +19,7 @@ co(function *() {
 	}
 
 	var N = 5, D = 1, seed = 1;
-	var ref = ml.randomSVMData(N, D, seed);
+	var ref = test.randomSVMData(N, D, seed);
 
 	for (var i = 0; i < ref.length; i++)
 		ref[i][1] = x2(ref[i][1]);
@@ -31,7 +27,7 @@ co(function *() {
 	ref = ref.reduce(sum, [0, 0]);
 
 	var res = yield ugrid.randomSVMData(N, D, seed).mapValues(x2).reduce(sum, [0, 0]);
-	console.assert(arrayEqual(ref.sort(), res.sort()));
+	console.assert(test.arrayEqual(ref.sort(), res.sort()));
 
 	ugrid.end();
 })();
