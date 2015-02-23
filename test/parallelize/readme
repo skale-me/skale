@@ -7,7 +7,6 @@
 		- source -> transfo -> action
 		- source -> persist -> transfo -> action
 		- source -> transfo -> persist -> action
-
 // -------------------------------------------------------------------------- //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 1
 // -------------------------------------------------------------------------- //
@@ -106,24 +105,18 @@
 [parallelize_77.js] parallelize -> persist -> reduceByKey (no args) -> collect
 [parallelize_78.js] parallelize -> persist -> reduceByKey (no args) -> reduce (no args)
 [parallelize_79.js] parallelize -> persist -> reduceByKey (no args) -> lookup
-
-// DOING
 [parallelize_80.js] parallelize -> sample -> persist -> count
 [parallelize_81.js] parallelize -> sample -> persist -> collect
 [parallelize_82.js] parallelize -> sample -> persist -> reduce (no args)
 [parallelize_83.js] parallelize -> sample -> persist -> lookup
-
-// TODO
-[] parallelize -> groupByKey -> persist -> count
-[] parallelize -> groupByKey -> persist -> collect
-[] parallelize -> groupByKey -> persist -> reduce (no args)
-[] parallelize -> groupByKey -> persist -> lookup
-
-[] parallelize -> reduceByKey (no args) -> persist -> count
-[] parallelize -> reduceByKey (no args) -> persist -> collect
-[] parallelize -> reduceByKey (no args) -> persist -> reduce (no args)
-[] parallelize -> reduceByKey (no args) -> persist -> lookup
-
+[parallelize_84.js] parallelize -> groupByKey -> persist -> count
+[parallelize_85.js] parallelize -> groupByKey -> persist -> collect
+[parallelize_86.js] parallelize -> groupByKey -> persist -> reduce (no args)
+[parallelize_87.js] parallelize -> groupByKey -> persist -> lookup
+[parallelize_88.js] parallelize -> reduceByKey (no args) -> persist -> count
+[parallelize_89.js] parallelize -> reduceByKey (no args) -> persist -> collect
+[parallelize_90.js] parallelize -> reduceByKey (no args) -> persist -> reduce (no args)
+[parallelize_91.js] parallelize -> reduceByKey (no args) -> persist -> lookup
 // -------------------------------------------------------------------------- //
 // 1 stage 2 lineages
 // -------------------------------------------------------------------------- //
