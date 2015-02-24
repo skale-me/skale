@@ -120,14 +120,11 @@
 // -------------------------------------------------------------------------- //
 // 1 stage 2 lineages
 // -------------------------------------------------------------------------- //
-parallelize -> union -> count
-parallelize ->
-
-parallelize -> persist -> union -> count
-parallelize ->
-
-parallelize ->			-> union -> count
-parallelize -> persist
-
-parallelize -> persist -> union -> count
-parallelize -> persist
+[parallelize_92.js] parallelize -> union -> collect
+					parallelize ->
+[parallelize_93.js] parallelize -> persist -> union -> count
+					parallelize ------------>
+[parallelize_94.js] parallelize ------------> union -> count
+					parallelize -> persist ->
+[parallelize_95.js] parallelize -> persist -> union -> count
+					parallelize -> persist

@@ -80,6 +80,13 @@ function reduceByKey(v_in, reducer, init) {
 	return res;
 }
 
+function union(v1_in, v2_in) {
+	var v1 = JSON.parse(JSON.stringify(v1_in));
+	var v2 = JSON.parse(JSON.stringify(v2_in));	
+	return v1.concat(v2);
+}
+
 module.exports.sample = sample;
 module.exports.groupByKey = groupByKey;
 module.exports.reduceByKey = reduceByKey;
+module.exports.union = union;
