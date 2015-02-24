@@ -1,5 +1,23 @@
 var ml = require('../lib/ugrid-ml.js');
 
+/** local version of randomSVMData  (for testing) */
+function randomSVMData(N, D, seed, nPartitions) {
+	var rng = new ml.Random(seed);
+	var res = [], tmp = [];
+	var P = nPartitions || 1;
+
+	for (var p = 0; p < P; p++)
+		res[p] = [];
+	p = 0;
+	for (var i = 0; i < N; i++) {
+		res[p].push(ml.randomSVMLine(rng, D));
+		p = (p == (P - 1)) ? 0 : p + 1;
+	}
+	for (var p in res) 
+		tmp = tmp.concat(res[p]);
+	return tmp;
+}
+
 function sample(v_in, P, frac, seed) {
 	var v = JSON.parse(JSON.stringify(v_in));
 
@@ -86,7 +104,13 @@ function union(v1_in, v2_in) {
 	return v1.concat(v2);
 }
 
+function arrayEqual(a1, a2) {
+	return JSON.stringify(a1) === JSON.stringify(a2);
+}   
+
+module.exports.randomSVMData = randomSVMData;
 module.exports.sample = sample;
 module.exports.groupByKey = groupByKey;
 module.exports.reduceByKey = reduceByKey;
 module.exports.union = union;
+module.exports.arrayEqual = arrayEqual;

@@ -4,15 +4,15 @@
 
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
-var ml = require('../../lib/ugrid-ml.js');
+var test = require('../ugrid-test.js');
 
 co(function *() {
 	yield ugrid.init();
 
 	var N = 5, D = 1, seed = 1, frac = 0.1;
 
-	var ref = ml.randomSVMData(N, D, seed);
-	ref = ml.sample(ref, frac, ugrid.worker.length);
+	var ref = test.randomSVMData(N, D, seed);
+	ref = test.sample(ref, ugrid.worker.length, frac, seed);
 	var res = yield ugrid.randomSVMData(N, D, seed).sample(frac).count();
 	console.assert(ref.length == res);
 

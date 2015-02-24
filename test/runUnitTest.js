@@ -14,11 +14,13 @@ co(function*(){
 		var result;
 		var prog = spawn('node', ['--harmony', file]); // run in a asynchronous way all the unit tests
 		var startTime = new Date();
+		process.stdout.write("\r" + file + "                                 ");
 		prog.on('exit', function (code) {
 			var endTime = new Date();
 			runtime = (endTime - startTime) / 1000;
 			if (code) {
 				nFailedTests++;
+				console.log();
 				console.log(file + ' FAILED');
 			} else
 				nPassedTests++;
@@ -33,6 +35,7 @@ co(function*(){
 	console.log('Found ' + files.length + ' unit tests');
 	for (var i = 0; i < files.length; i++)
 		testResults[files[i]] = yield spawnTest(test_dir + '/' + files[i]); 
+	console.log("\r                                                        ");
 	console.log(nPassedTests + ' passed');
 	console.log(nFailedTests + ' failed');
 })();
