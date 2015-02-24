@@ -1,4 +1,4 @@
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 - 1 stage 1 lineage :
 	- de longueur 1 :
 		- source -> action
@@ -7,23 +7,23 @@
 		- source -> transfo -> action
 		- source -> persist -> transfo -> action
 		- source -> transfo -> persist -> action
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 1
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 [parallelize_0.js] parallelize -> count
 [parallelize_1.js] parallelize -> collect
 [parallelize_2.js] parallelize -> reduce
 [parallelize_3.js] parallelize -> lookup
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 1, persistence on source
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 [parallelize_4.js] parallelize -> persist -> count
 [parallelize_5.js] parallelize -> persist -> collect
 [parallelize_6.js] parallelize -> persist -> reduce
 [parallelize_7.js] parallelize -> persist -> lookup
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 2
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 [parallelize_8.js] parallelize -> map (no args) -> count
 [parallelize_9.js] parallelize -> map (no args) -> collect
 [parallelize_10.js] parallelize -> map (no args) -> reduce
@@ -40,9 +40,9 @@
 [parallelize_37.js] parallelize -> mapValues (no args) -> collect
 [parallelize_38.js] parallelize -> mapValues (no args) -> reduce (no args)
 [parallelize_39.js] parallelize -> mapValues (no args) -> lookup
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 2, persistence on source
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 [parallelize_12.js] parallelize -> persist -> map (no args) -> count
 [parallelize_13.js] parallelize -> persist -> map (no args) -> collect
 [parallelize_14.js] parallelize -> persist -> map (no args) -> reduce (no args) 
@@ -59,9 +59,9 @@
 [parallelize_53.js] parallelize -> persist -> mapValues (no args) -> collect
 [parallelize_54.js] parallelize -> persist -> mapValues (no args) -> reduce (no args)
 [parallelize_55.js] parallelize -> persist -> mapValues (no args) -> lookup
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 2, persistence on transformation
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 [parallelize_40.js] parallelize -> map (no args) -> persist -> count
 [parallelize_41.js] parallelize -> map (no args) -> persist -> collect
 [parallelize_42.js] parallelize -> map (no args) -> persist -> reduce (no args)
@@ -78,9 +78,9 @@
 [parallelize_57.js] parallelize -> mapValues (no args) -> persist -> collect
 [parallelize_58.js] parallelize -> mapValues (no args) -> persist -> reduce (no args)
 [parallelize_59.js] parallelize -> mapValues (no args) -> persist -> lookup
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 // nStage = 2, nPipelinePerStage = 1, pipeline length = [2, 0]
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 [parallelize_32.js] parallelize -> sample -> count
 [parallelize_33.js] parallelize -> sample -> collect
 [parallelize_34.js] parallelize -> sample -> reduce (no args)
@@ -117,14 +117,54 @@
 [parallelize_89.js] parallelize -> reduceByKey (no args) -> persist -> collect
 [parallelize_90.js] parallelize -> reduceByKey (no args) -> persist -> reduce (no args)
 [parallelize_91.js] parallelize -> reduceByKey (no args) -> persist -> lookup
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 // 1 stage 2 lineages
-// -------------------------------------------------------------------------- //
+// ========================================================================== //
 [parallelize_92.js] parallelize -> union -> collect
 					parallelize ->
-[parallelize_93.js] parallelize -> persist -> union -> count
+[parallelize_93.js] parallelize -> persist -> union -> collect
 					parallelize ------------>
-[parallelize_94.js] parallelize ------------> union -> count
+[parallelize_94.js] parallelize ------------> union -> collect
 					parallelize -> persist ->
-[parallelize_95.js] parallelize -> persist -> union -> count
+[parallelize_95.js] parallelize -> persist -> union -> collect
 					parallelize -> persist
+// ========================================================================== //
+// 2 stage 2 lineages
+// ========================================================================== //
+// TODO
+[parallelize_96.js] parallelize -> join -> collect
+					parallelize ->
+[parallelize_97.js] parallelize -> persist -> join -> collect
+					parallelize ------------>
+[parallelize_98.js] parallelize ------------> join -> collect
+					parallelize -> persist ->
+[parallelize_99.js] parallelize -> persist -> join -> collect
+					parallelize -> persist
+
+[parallelize_100.js] parallelize -> coGroup -> collect
+					 parallelize ->
+[parallelize_101.js] parallelize -> persist -> coGroup -> collect
+					 parallelize ------------>
+[parallelize_102.js] parallelize ------------> coGroup -> collect
+					 parallelize -> persist ->
+[parallelize_103.js] parallelize -> persist -> coGroup -> collect
+					 parallelize -> persist
+
+// Function to be implemented
+[parallelize_104.js] parallelize -> crossProduct -> collect
+					 parallelize ->
+[parallelize_105.js] parallelize -> persist -> crossProduct -> collect
+					 parallelize ------------>
+[parallelize_106.js] parallelize ------------> crossProduct -> collect
+					 parallelize -> persist ->
+[parallelize_107.js] parallelize -> persist -> crossProduct -> collect
+					 parallelize -> persist
+
+[parallelize_108.js] parallelize -> sortByKey -> collect
+					 parallelize ->
+[parallelize_109.js] parallelize -> persist -> sortByKey -> collect
+					 parallelize ------------>
+[parallelize_110.js] parallelize ------------> sortByKey -> collect
+					 parallelize -> persist ->
+[parallelize_111.js] parallelize -> persist -> sortByKey -> collect
+					 parallelize -> persist
