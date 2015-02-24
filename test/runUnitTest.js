@@ -5,7 +5,7 @@ var thunkify = require('thunkify');
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 var yieldable_readdir = thunkify(fs.readdir);   
-var nPassedTests = 0, nFailedTests = 0;
+var nPassedTests = 0, nFailedTests = 0, nIgnored = 0;
 
 var test_dir = process.env['UNIT_TEST_DIR'] || 'unitTest';
 
@@ -33,9 +33,15 @@ co(function*(){
 	var files = yield yieldable_readdir(test_dir + '/'); //make sur that we read all the files  
 
 	console.log('Found ' + files.length + ' unit tests');
-	for (var i = 0; i < files.length; i++)
+	for (var i = 0; i < files.length; i++) {
+		if (!files[i].match(/\.js$/)) {
+			nIgnored++;
+			continue
+		}
 		testResults[files[i]] = yield spawnTest(test_dir + '/' + files[i]); 
+	}
 	console.log("\r                                                        ");
+	console.log(nIgnored + ' ignored');
 	console.log(nPassedTests + ' passed');
 	console.log(nFailedTests + ' failed');
 })();
