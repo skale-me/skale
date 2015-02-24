@@ -98,6 +98,12 @@ function reduceByKey(v_in, reducer, init) {
 	return res;
 }
 
+function union(v1_in, v2_in) {
+	var v1 = JSON.parse(JSON.stringify(v1_in));
+	var v2 = JSON.parse(JSON.stringify(v2_in));	
+	return v1.concat(v2);
+}
+
 function arrayEqual(a1, a2) {
 	return JSON.stringify(a1) === JSON.stringify(a2);
 }   
@@ -106,4 +112,5 @@ module.exports.randomSVMData = randomSVMData;
 module.exports.sample = sample;
 module.exports.groupByKey = groupByKey;
 module.exports.reduceByKey = reduceByKey;
+module.exports.union = union;
 module.exports.arrayEqual = arrayEqual;
