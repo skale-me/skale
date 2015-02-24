@@ -41,5 +41,5 @@ r027.js	randomSVNData -> groupByKey -> lookup
 
 r028.js	randomSVNData -> reduceByKey -> count
 r029.js	randomSVNData -> reduceByKey -> collect
-r031.js	randomSVNData -> reduceByKey -> reduce
-r032.js	randomSVNData -> reduceByKey -> lookup
+r030.js	randomSVNData -> reduceByKey -> reduce
+r031.js	randomSVNData -> reduceByKey -> lookup
