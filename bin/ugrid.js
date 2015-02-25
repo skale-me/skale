@@ -45,23 +45,21 @@ util.inherits(SwitchBoard, stream.Transform);
 
 SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 	var o = {}, to = chunk.readUInt32LE(0, true);
-	if (to > 3) {			// Unicast
-		if (to < minMulticast) {
-			if (crossbar[to]) crossbar[to].write(chunk, done);
-			else done();
-		} else {		// Multicast
-			var sub = topics[to - minMulticast].sub, len = sub.length, n = 0;
-			for (var i in sub) {
-				if (crossbar[sub[i]])
-					crossbar[sub[i]].write(chunk, function () {
-						if (++n == len) done();
-					});
-				else if (!--len) done();
-			}
+	if (to >= minMulticast)	{	// Multicast
+		var sub = topics[to - minMulticast].sub, len = sub.length, n = 0;
+		for (var i in sub) {
+			if (crossbar[sub[i]])
+				crossbar[sub[i]].write(chunk, function () {
+					if (++n == len) done();
+				});
+			else if (!--len) done();
 		}
-	} else if (to === 3) {	// Foreign
-	} else if (to === 2) {	// Multicast
-	} else if (to === 1) {	// Broadcast
+	} else if (to > 3) {		// Unicast
+		if (crossbar[to]) crossbar[to].write(chunk, done);
+		else done();
+//	} else if (to === 3) {	// Foreign
+//	} else if (to === 2) {	// Multicast
+//	} else if (to === 1) {	// Broadcast
 	} else if (to === 0) {	// Server request
 		try {
 			o = JSON.parse(chunk.slice(8));
@@ -95,6 +93,9 @@ var clientCommand = {
 	},
 	subscribe: function (sock, msg) {
 		return subscribe(sock.client, msg.data);
+	},
+	unsubscribe: function (sock, msg) {
+		return unsubscribe(sock.client, msg.data);
 	}
 };
 
@@ -173,15 +174,20 @@ function devices(query) {
 
 function getTopicId(topic) {
 	if (topic in topicIndex) return topicIndex[topic];
-	topics[topicMax] = {name: topic, id: topicMax, rc: 0, sub: []};
+	topics[topicMax] = {name: topic, id: topicMax, sub: []};
 	topicIndex[topic] = topicMax++;
 	return topicIndex[topic]
 }
 
 function subscribe(client, topic) {
-	var t = topics[getTopicId(topic)]
-	t.sub.push(client.index);
-	t.rc++;
+	var sub = topics[getTopicId(topic)].sub
+	if (sub.indexOf(client.index) < 0) sub.push(client.index);
+}
+
+function unsubscribe(client, topic) {
+	if (!(topic in topicIndex)) return;
+	var sub = topics[topicIndex[topic]].sub, i = sub.indexOf(client.index);
+	if (i >= 0) sub.splice(i, 1);
 }
 
 if (opt.options.statistics) {
