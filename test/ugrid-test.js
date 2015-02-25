@@ -89,7 +89,7 @@ function reduceByKey(v_in, reducer, init) {
 			keys.push(v[i][0]);
 
 	var res = [];
-	for (var i = 0; i < keys.length; i++) 
+	for (var i = 0; i < keys.length; i++)
 		res.push([keys[i], init]);
 	for (var i = 0; i < v.length; i++) {
 		var idx = keys.indexOf(v[i][0]);
