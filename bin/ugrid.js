@@ -23,11 +23,15 @@ var opt = require('node-getopt').create([
 
 var clients = {};
 var clientMax = 4;
+var topics = [];
+var topicMax = 0;
+var topicIndex = {};
 //var name = opt.options.name || 'localhost';
 var port = opt.options.port || 12346;
 var msgCount = 0;
 var wss;
 var crossbar = [], crossn = 4;
+var minMulticast = 4294901760;	 // 2^32 - 2^16
 
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
@@ -41,12 +45,21 @@ util.inherits(SwitchBoard, stream.Transform);
 
 SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 	var o = {}, to = chunk.readUInt32LE(0, true);
-	if (to > 3) {			// Unicast
+	if (to >= minMulticast)	{	// Multicast
+		var sub = topics[to - minMulticast].sub, len = sub.length, n = 0;
+		for (var i in sub) {
+			if (crossbar[sub[i]])
+				crossbar[sub[i]].write(chunk, function () {
+					if (++n == len) done();
+				});
+			else if (!--len) done();
+		}
+	} else if (to > 3) {		// Unicast
 		if (crossbar[to]) crossbar[to].write(chunk, done);
 		else done();
-	} else if (to === 3) {	// Foreign
-	} else if (to === 2) {	// Multicast
-	} else if (to === 1) {	// Broadcast
+//	} else if (to === 3) {	// Foreign
+//	} else if (to === 2) {	// Multicast
+//	} else if (to === 1) {	// Broadcast
 	} else if (to === 0) {	// Server request
 		try {
 			o = JSON.parse(chunk.slice(8));
@@ -58,8 +71,7 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 			console.error(error);
 		}
 		o.cmd = 'reply';
-		this.sock.write(UgridClient.encode(o),
-		done);
+		this.sock.write(UgridClient.encode(o), done);
 	}
 };
 
@@ -75,6 +87,15 @@ var clientCommand = {
 	},
 	id: function (sock, msg) {
 		return msg.data in clients ? clients[msg.data].index : null;
+	},
+	tid: function (sock, msg) {
+		return getTopicId(msg.data);
+	},
+	subscribe: function (sock, msg) {
+		return subscribe(sock.client, msg.data);
+	},
+	unsubscribe: function (sock, msg) {
+		return unsubscribe(sock.client, msg.data);
 	}
 };
 
@@ -128,7 +149,8 @@ function register(from, msg, sock)
 		owner: from ? from : uuid,
 		data: msg.data || {},
 		sock: sock,
-		subscribers: []
+		subscribed: {},
+		published: {}
 	};
 	sock.client = clients[uuid];
 	return {uuid: uuid, token: 0, id: index};
@@ -148,6 +170,24 @@ function devices(query) {
 			result.push({uuid: i, id: clients[i].index, ip: clients[i].sock.remoteAddress});
 	}
 	return result;
+}
+
+function getTopicId(topic) {
+	if (topic in topicIndex) return topicIndex[topic];
+	topics[topicMax] = {name: topic, id: topicMax, sub: []};
+	topicIndex[topic] = topicMax++;
+	return topicIndex[topic]
+}
+
+function subscribe(client, topic) {
+	var sub = topics[getTopicId(topic)].sub
+	if (sub.indexOf(client.index) < 0) sub.push(client.index);
+}
+
+function unsubscribe(client, topic) {
+	if (!(topic in topicIndex)) return;
+	var sub = topics[topicIndex[topic]].sub, i = sub.indexOf(client.index);
+	if (i >= 0) sub.splice(i, 1);
 }
 
 if (opt.options.statistics) {
