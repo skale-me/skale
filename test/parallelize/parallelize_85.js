@@ -6,6 +6,8 @@ var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
 var groupByKey = require('..//ugrid-test.js').groupByKey;
 
+process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+
 co(function *() {
 	yield ugrid.init();
 

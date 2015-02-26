@@ -7,6 +7,8 @@ var fs = require('fs');
 var ugrid = require('../../lib/ugrid-context.js')();
 var ml = require('../../lib/ugrid-ml.js');
 
+process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+
 // Create test file
 var file = '/tmp/data.txt';
 var a = '-1 1 1 1 1 1 1 1 1 1 1\n' +

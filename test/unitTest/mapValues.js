@@ -5,6 +5,8 @@ var co = require('co');
 var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
+process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+
 var a = [[0, 1], [1, 2], [1, 3]];
 
 co(function *() {

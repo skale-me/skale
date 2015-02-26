@@ -1,0 +1,3 @@
+Unit tests of ugrid-client.js
+
+t000.js		devices_cb()

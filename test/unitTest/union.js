@@ -5,6 +5,8 @@ var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')({host: 'localhost', port: 12346});
 var ml = require('../../lib/ugrid-ml.js');
 
+process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+
 co(function *() {
 	yield ugrid.init();
 
