@@ -17,7 +17,7 @@ co(function *() {
 
 	// console.log(yield p1.collect());
 	// console.log(yield p2.collect());
-	console.log(yield p3.collect());	
+	console.log(yield p3.collect());
 
 	ugrid.end();
 })();
