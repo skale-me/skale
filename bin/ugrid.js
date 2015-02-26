@@ -22,16 +22,17 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var clients = {};
-var clientMax = 4;
+var clientMax = 2;
 var topics = [];
 var topicMax = 0;
 var topicIndex = {};
-//var name = opt.options.name || 'localhost';
+//var name = opt.options.name || 'localhost';		// Unused until FT comes back
 var port = opt.options.port || 12346;
 var msgCount = 0;
 var wss;
-var crossbar = [], crossn = 4;
-var minMulticast = 4294901760;	 // 2^32 - 2^16
+var wsport = opt.options.wsport || port + 2;
+var crossbar = [], crossn = clientMax;
+var minMulticast = UgridClient.minMulticast;
 
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
@@ -47,19 +48,19 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 	var o = {}, to = chunk.readUInt32LE(0, true);
 	if (to >= minMulticast)	{	// Multicast
 		var sub = topics[to - minMulticast].sub, len = sub.length, n = 0;
+		if (len == 0) return done();
 		for (var i in sub) {
-			if (crossbar[sub[i]])
+			// Flow control: adjust to the slowest receiver
+			if (crossbar[sub[i]]) {
 				crossbar[sub[i]].write(chunk, function () {
 					if (++n == len) done();
 				});
-			else if (!--len) done();
+			} else if (--len == 0) done();
 		}
-	} else if (to > 3) {		// Unicast
+	} else if (to > 1) {	// Unicast
 		if (crossbar[to]) crossbar[to].write(chunk, done);
 		else done();
-//	} else if (to === 3) {	// Foreign
-//	} else if (to === 2) {	// Multicast
-//	} else if (to === 1) {	// Broadcast
+	} else if (to === 1) {	// Foreign
 	} else if (to === 0) {	// Server request
 		try {
 			o = JSON.parse(chunk.slice(8));
@@ -99,9 +100,17 @@ var clientCommand = {
 	}
 };
 
+console.log("## Started " + Date());
+// Start a TCP server
+if (port) {
+	net.createServer(handleConnect).listen(port);
+	console.log("## Listening TCP on " + port);
+}
+
 // Start a websocket server if a listening port is specified on command line
-if (opt.options.wsport) {
-	wss = new webSocketServer({port: opt.options.wsport});
+if (wsport) {
+	console.log("## Listening WebSocket on " + wsport);
+	wss = new webSocketServer({port: wsport});
 	wss.on('connection', function (ws) {
 		console.log('websocket connect');
 		var sock = websocket(ws);
@@ -114,10 +123,6 @@ if (opt.options.wsport) {
 		});
 	});
 }
-
-// Start a TCP server
-net.createServer(handleConnect).listen(port);
-console.log("## Started " + Date());
 
 function handleConnect(sock) {
 	if (sock.ws) { 
@@ -142,8 +147,7 @@ function handleConnect(sock) {
 function register(from, msg, sock)
 {
 	var uuid = msg.uuid || uuidGen.v1(), index = clientMax++;
-	// sock.client = clients[uuid] = {
-	clients[uuid] = {
+	sock.client = clients[uuid] = {
 		index: index,
 		uuid: uuid,
 		owner: from ? from : uuid,
@@ -152,7 +156,6 @@ function register(from, msg, sock)
 		subscribed: {},
 		published: {}
 	};
-	sock.client = clients[uuid];
 	return {uuid: uuid, token: 0, id: index};
 }
 
@@ -191,8 +194,8 @@ function unsubscribe(client, topic) {
 }
 
 if (opt.options.statistics) {
-	setInterval(function () {
-		console.log('msg: ' + (msgCount / 5) + ' msg/s');
-		msgCount = 0;
-	}, 10000);
+	//setInterval(function () {
+	//	console.log('msg: ' + (msgCount / 5) + ' msg/s');
+	//	msgCount = 0;
+	//}, 10000);
 }
