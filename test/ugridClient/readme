@@ -1,0 +1,4 @@
+Unit tests of ugrid-client.js
+
+t000.js		devices_cb()
+t001.js		grid event 'connect'

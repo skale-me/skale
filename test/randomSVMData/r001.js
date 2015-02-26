@@ -6,6 +6,8 @@ var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
 var test = require('../ugrid-test.js');
 
+process.on('exit', function () {console.assert(ugrid.grid.id !== undefined);});
+
 function arrayEqual(a1, a2) {
 	return JSON.stringify(a1) == JSON.stringify(a2);
 }
