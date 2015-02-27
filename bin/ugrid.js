@@ -86,6 +86,11 @@ var clientCommand = {
 	get: function (sock, msg) {
 		return clients[msg.data] ? clients[msg.data].data : 'error: not found';
 	},
+	set: function (sock, msg) {
+		for (var i in msg.data) {
+			sock.client.data[i] = msg.data[i];
+		}
+	},
 	id: function (sock, msg) {
 		return msg.data in clients ? clients[msg.data].index : null;
 	},
