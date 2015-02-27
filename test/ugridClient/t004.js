@@ -26,10 +26,10 @@ co(function *() {
 	var response = yield grid.request(devices[0], 'test');
 	console.assert(response == 'hello test');
 	var data = yield grid.get(grid.uuid);
-	console.assert(data.type === 't000');
+	console.assert(data.data.type === 't000');
 	grid.set({type: 't001', state: 'ok'});
 	data = yield grid.get(grid.uuid);
-	console.assert(data.type === 't001');
-	console.assert(data.state === 'ok');
+	console.assert(data.data.type === 't001');
+	console.assert(data.data.state === 'ok');
 	grid.end();
 })();
