@@ -194,7 +194,12 @@ function devices(query) {
 				break;
 			}
 		if (match)
-			result.push({uuid: i, id: clients[i].index, ip: clients[i].sock.remoteAddress});
+			result.push({
+				uuid: i,
+				id: clients[i].index,
+				ip: clients[i].sock.remoteAddress,
+				data: clients[i].data
+			});
 	}
 	return result;
 }
