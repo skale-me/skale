@@ -29,6 +29,7 @@ co(function *() {
 	console.assert(data.type === 't000');
 	grid.set({type: 't001', state: 'ok'});
 	data = yield grid.get(grid.uuid);
-	console.log(data);
+	console.assert(data.type === 't001');
+	console.assert(data.state === 'ok');
 	grid.end();
 })();
