@@ -65,6 +65,11 @@ function runWorker(host, port) {
 			hdfs(msg.data.args, function (err, res) {
 				grid.reply(msg, err, res);
 			});
+		},
+		reset: function (msg) {
+			RAM = {};
+			task = undefined;
+			grid.reply(msg, null, null);
 		}
 	};
 
