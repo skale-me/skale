@@ -1,7 +1,8 @@
 #!/usr/local/bin/node --harmony
 
+// parallelize -> persist -> map (no args) -> count
+
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
@@ -9,24 +10,18 @@ process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
 co(function *() {
 	yield ugrid.init();
 
-	var key = 1;
-	var value = 2;
-	var v = [[key, value], [3, 4], [5, 6]];
-
 	function by2 (e) {
-		e[1] *= 2;
-		return e;
+		return e * 2;
 	}
 
+	var v = [1, 2, 3, 4, 5];
 	var data = ugrid.parallelize(v).persist();
-	yield data.lookup(key);
+	var res = yield data.count();
 
-	v.push([key, value]);
-	var res = yield data.map(by2).lookup(key);
+	v.push(6);
+	var res = yield data.map(by2).count();
 
-	assert(res.length == 1);
-	assert(res[0][0] == key);
-	assert(res[0][1] == value * 2);
+	console.assert((v.length - 1) == res);
 
 	ugrid.end();
 })();
