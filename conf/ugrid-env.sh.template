@@ -4,7 +4,9 @@
 # Ugrid options, read by various ugrid programs
 # - UGRID_HOST, to set the Ugrid server host, default to localhost
 # - UGRID_PORT, to set the Ugrid server port, default to 12346
-# - UGRID_WORKER_PER_HOST, default to 4
+# - UGRID_WS, to set the websocket mode for node clients, empty default
+# - UGRID_WSPORT, to set the websocket listening port for server, defaut to 12348
+# - UGRID_WORKER_PER_HOST, default to 1
 # - NODE, to set the javascript interpreter, default to /usr/local/bin/node
 # - NODE_OPTS, to set the node javascript interpreter options
 # - HDFS_HOST, to set the hdfs namenode host, default to localhost
@@ -12,4 +14,8 @@
 # - HADOOP_PREFIX, to set HADOOP install dir on namenode
 # - HDFS_DATA_DIR, to set hdfs chunk directory
 
-export UGRID_HOST=localhost
+#export UGRID_HOST=localhost
+#export UGRID_PORT=12346
+#export UGRID_WS=0
+#export UGRID_WSPORT=12348
+#export UGRID_WORKER_PER_HOST=1

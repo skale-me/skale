@@ -5,3 +5,5 @@ t001.js		grid event 'connect'
 t002.js		send_cb()
 t003.js		request - reply
 t004.js		co, yield: send, devices, request, get, set
+t005.js		grid.createWriteStream
+t006.js		publish / subscribe
