@@ -132,16 +132,16 @@
 // ========================================================================== //
 // 2 stage 2 lineages
 // ========================================================================== //
-// TODO
-[parallelize_96.js] parallelize -> join -> collect
-					parallelize ->
-[parallelize_97.js] parallelize -> persist -> join -> collect
-					parallelize ------------>
-[parallelize_98.js] parallelize ------------> join -> collect
-					parallelize -> persist ->
-[parallelize_99.js] parallelize -> persist -> join -> collect
-					parallelize -> persist
+[p096.js] parallelize -> join -> collect
+		  parallelize ->
+[p097.js] parallelize -> persist -> join -> collect
+		  parallelize ------------>
+[p098.js] parallelize ------------> join -> collect
+		  parallelize -> persist ->
+[p099.js] parallelize -> persist -> join -> collect
+		  parallelize -> persist
 
+// TODO
 [parallelize_100.js] parallelize -> coGroup -> collect
 					 parallelize ->
 [parallelize_101.js] parallelize -> persist -> coGroup -> collect

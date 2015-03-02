@@ -1,7 +1,7 @@
 #!/usr/local/bin/node --harmony
 
-// parallelize -> join -> count
-// parallelize -> 
+// parallelize -> persist -> join -> collect
+// parallelize -> persist
 
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
@@ -16,8 +16,14 @@ co(function *() {
 	var v2 = [[0, 5], [1, 6], [2, 7], [3, 8], [0, 9]];
 	var loc = join(v1, v2);
 
-	var d1 = ugrid.parallelize(v1);
-	var d2 = ugrid.parallelize(v2);
+	var d1 = ugrid.parallelize(v1).persist();
+	var d2 = ugrid.parallelize(v2).persist();
+
+	yield d1.count();
+	v1.push([0, 6]);
+
+	yield d2.count();
+	v2.push([0, 6]);
 
 	var dist = yield d1.join(d2).collect();
 

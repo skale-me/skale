@@ -104,6 +104,17 @@ function union(v1_in, v2_in) {
 	return v1.concat(v2);
 }
 
+function join(v1_in, v2_in) {
+	var v1 = JSON.parse(JSON.stringify(v1_in));
+	var v2 = JSON.parse(JSON.stringify(v2_in));	
+	var v3 = [];
+	for (var i = 0; i < v1.length; i++)
+		for (var j = 0; j < v2.length; j++)
+			if (v1[i][0] == v2[j][0])
+				v3.push([v1[i][0], [v1[i][1], v2[j][1]]])
+	return v3;
+}
+
 function arrayEqual(a1, a2) {
 	return JSON.stringify(a1) === JSON.stringify(a2);
 }   
@@ -113,4 +124,5 @@ module.exports.sample = sample;
 module.exports.groupByKey = groupByKey;
 module.exports.reduceByKey = reduceByKey;
 module.exports.union = union;
+module.exports.join = join;
 module.exports.arrayEqual = arrayEqual;

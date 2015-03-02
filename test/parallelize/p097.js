@@ -1,6 +1,6 @@
 #!/usr/local/bin/node --harmony
 
-// parallelize -> join -> count
+// parallelize -> persist -> join -> collect
 // parallelize -> 
 
 var co = require('co');
@@ -16,7 +16,10 @@ co(function *() {
 	var v2 = [[0, 5], [1, 6], [2, 7], [3, 8], [0, 9]];
 	var loc = join(v1, v2);
 
-	var d1 = ugrid.parallelize(v1);
+	var d1 = ugrid.parallelize(v1).persist();
+	yield d1.count();
+
+	v1.push([0, 6]);
 	var d2 = ugrid.parallelize(v2);
 
 	var dist = yield d1.join(d2).collect();
