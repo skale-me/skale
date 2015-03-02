@@ -88,9 +88,7 @@ var clientCommand = {
 		return devices(msg.data);
 	},
 	get: function (sock, msg) {
-		if (!(msg.data in clients)) return;
-		var client = clients[msg.data];
-		return {uuid: client.uuid, data: client.data};
+		return clients[msg.data] ? clients[msg.data].data : null;
 	},
 	set: function (sock, msg) {
 		if (typeof msg.data !== 'object') return;
