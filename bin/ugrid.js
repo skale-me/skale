@@ -135,8 +135,11 @@ if (wsport) {
 		sock.ws = true;
 		handleConnect(sock);
 		ws.on('close', function () {
-			console.log('## connection end');
-			if (sock.client) sock.client.sock = null;
+			console.log('## connection closed');
+			if (sock.client) {
+				pubmon({event: 'disconnect', uuid: sock.client.uuid});
+				sock.client.sock = null;
+			}
 			if (sock.crossIndex) delete crossbar[sock.crossIndex];
 		});
 	});
