@@ -14,3 +14,5 @@ grid.on("test 2", function (msg) {
 
 grid.pipe("test 1", process.stdout);
 grid.subscribe("test 1");
+
+process.stdin.pipe(grid.createTopicStream("test 1"));

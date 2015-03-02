@@ -1,5 +1,9 @@
 #!/usr/local/bin/node
 
+// Todo:
+// - recycle topics
+// - record/replay input messages
+
 'use strict';
 
 var net = require('net');
@@ -84,7 +88,15 @@ var clientCommand = {
 		return devices(msg.data);
 	},
 	get: function (sock, msg) {
-		return clients[msg.data] ? clients[msg.data].data : 'error: not found';
+		if (!(msg.data in clients)) return;
+		var client = clients[msg.data];
+		return {uuid: client.uuid, data: client.data};
+	},
+	set: function (sock, msg) {
+		if (typeof msg.data !== 'object') return;
+		for (var i in msg.data)
+			sock.client.data[i] = msg.data[i];
+		pubmon({event: 'set', uuid: sock.client.uuid, data: msg.data});
 	},
 	id: function (sock, msg) {
 		return msg.data in clients ? clients[msg.data].index : null;
@@ -99,6 +111,14 @@ var clientCommand = {
 		return unsubscribe(sock.client, msg.data);
 	}
 };
+
+// Create a source stream and topic for monitoring info publishing
+var mstream = new SwitchBoard({});
+clientMax++;
+var monid =  getTopicId('monitoring') + minMulticast;
+function pubmon(data) {
+	mstream.write(UgridClient.encode({cmd: 'monitoring', id: monid, data: data}));
+}
 
 console.log("## Started " + Date());
 // Start a TCP server
@@ -133,7 +153,10 @@ function handleConnect(sock) {
 	}
 	sock.pipe(new UgridClient.FromGrid()).pipe(new SwitchBoard(sock));
 	sock.on('end', function () {
-		if (sock.client) sock.client.sock = null;
+		if (sock.client) {
+			pubmon({event: 'disconnect', uuid: sock.client.uuid});
+			sock.client.sock = null;
+		}
 		if (sock.crossIndex) delete crossbar[sock.crossIndex];
 		console.log('## connection end');
 	});
@@ -156,6 +179,7 @@ function register(from, msg, sock)
 		subscribed: {},
 		published: {}
 	};
+	pubmon({event: 'connect', uuid: uuid, data: msg.data});
 	return {uuid: uuid, token: 0, id: index};
 }
 
@@ -170,7 +194,12 @@ function devices(query) {
 				break;
 			}
 		if (match)
-			result.push({uuid: i, id: clients[i].index, ip: clients[i].sock.remoteAddress});
+			result.push({
+				uuid: i,
+				id: clients[i].index,
+				ip: clients[i].sock.remoteAddress,
+				data: clients[i].data
+			});
 	}
 	return result;
 }
