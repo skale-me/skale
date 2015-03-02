@@ -1,9 +1,8 @@
 #!/usr/local/bin/node --harmony
 
-// Test parallelize -> map -> reduce
+// parallelize -> filter -> collect
 
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
@@ -17,14 +16,13 @@ co(function *() {
 		return (e % 2 == 0) ? true : false;
 	}
 
-	function sum(a, b) {
-		a += b;
-		return a;
-	}
+	var res = yield ugrid.parallelize(v).filter(isEven).collect();
+	var res_sort = res.sort();
 
-	var res = yield ugrid.parallelize(v).filter(isEven).reduce(sum, 0);
+	var tmp_sort = v.filter(isEven).sort();
 
-	assert(res == v.filter(isEven).reduce(sum, 0))
+	for (var i = 0; i < v.length; i++)
+		console.assert(res_sort[i] == tmp_sort[i])
 
 	ugrid.end();
 })();

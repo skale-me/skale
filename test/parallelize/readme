@@ -10,124 +10,125 @@
 // ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 1
 // ========================================================================== //
-[parallelize_0.js] parallelize -> count
-[parallelize_1.js] parallelize -> collect
-[parallelize_2.js] parallelize -> reduce
-[parallelize_3.js] parallelize -> lookup
+[p000.js] parallelize -> count
+[p001.js] parallelize -> collect
+[p002.js] parallelize -> reduce
+[p003.js] parallelize -> lookup
 // ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 1, persistence on source
 // ========================================================================== //
-[parallelize_4.js] parallelize -> persist -> count
-[parallelize_5.js] parallelize -> persist -> collect
-[parallelize_6.js] parallelize -> persist -> reduce
-[parallelize_7.js] parallelize -> persist -> lookup
+[p004.js] parallelize -> persist -> count
+[p005.js] parallelize -> persist -> collect
+[p006.js] parallelize -> persist -> reduce
+[p007.js] parallelize -> persist -> lookup
 // ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 2
 // ========================================================================== //
-[parallelize_8.js] parallelize -> map (no args) -> count
-[parallelize_9.js] parallelize -> map (no args) -> collect
-[parallelize_10.js] parallelize -> map (no args) -> reduce
-[parallelize_11.js] parallelize -> map (no args) -> lookup
-[parallelize_16.js] parallelize -> filter (no args) -> count
-[parallelize_17.js] parallelize -> filter (no args) -> collect
-[parallelize_18.js] parallelize -> filter (no args) -> reduce (no args)
-[parallelize_19.js] parallelize -> filter (no args) -> lookup
-[parallelize_24.js] parallelize -> flatMap (no args) -> count
-[parallelize_25.js] parallelize -> flatMap (no args) -> collect
-[parallelize_26.js] parallelize -> flatMap (no args) -> reduce (no args)
-[parallelize_27.js] parallelize -> flatMap (no args) -> lookup
-[parallelize_36.js] parallelize -> mapValues (no args) -> count
-[parallelize_37.js] parallelize -> mapValues (no args) -> collect
-[parallelize_38.js] parallelize -> mapValues (no args) -> reduce (no args)
-[parallelize_39.js] parallelize -> mapValues (no args) -> lookup
+[p008.js] parallelize -> map (no args) -> count
+[p009.js] parallelize -> map (no args) -> collect
+[p010.js] parallelize -> map (no args) -> reduce
+[p011.js] parallelize -> map (no args) -> lookup
+[p012.js] parallelize -> filter (no args) -> count
+[p013.js] parallelize -> filter (no args) -> collect
+[p014.js] parallelize -> filter (no args) -> reduce (no args)
+[p015.js] parallelize -> filter (no args) -> lookup
+[p016.js] parallelize -> flatMap (no args) -> count
+[p017.js] parallelize -> flatMap (no args) -> collect
+[p018.js] parallelize -> flatMap (no args) -> reduce (no args)
+[p019.js] parallelize -> flatMap (no args) -> lookup
+[p020.js] parallelize -> mapValues (no args) -> count
+[p021.js] parallelize -> mapValues (no args) -> collect
+[p022.js] parallelize -> mapValues (no args) -> reduce (no args)
+[p023.js] parallelize -> mapValues (no args) -> lookup
 // ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 2, persistence on source
 // ========================================================================== //
-[parallelize_12.js] parallelize -> persist -> map (no args) -> count
-[parallelize_13.js] parallelize -> persist -> map (no args) -> collect
-[parallelize_14.js] parallelize -> persist -> map (no args) -> reduce (no args) 
-[parallelize_15.js] parallelize -> persist -> map (no args) -> lookup
-[parallelize_20.js] parallelize -> persist -> filter (no args) -> count
-[parallelize_21.js] parallelize -> persist -> filter (no args) -> collect
-[parallelize_22.js] parallelize -> persist -> filter (no args) -> reduce (no args)
-[parallelize_23.js] parallelize -> persist -> filter (no args) -> lookup
-[parallelize_28.js] parallelize -> persist -> flatMap (no args) -> count
-[parallelize_29.js] parallelize -> persist -> flatMap (no args) -> collect
-[parallelize_30.js] parallelize -> persist -> flatMap (no args) -> reduce (no args)
-[parallelize_31.js] parallelize -> persist -> flatMap (no args) -> lookup
-[parallelize_52.js] parallelize -> persist -> mapValues (no args) -> count
-[parallelize_53.js] parallelize -> persist -> mapValues (no args) -> collect
-[parallelize_54.js] parallelize -> persist -> mapValues (no args) -> reduce (no args)
-[parallelize_55.js] parallelize -> persist -> mapValues (no args) -> lookup
+[p024.js] parallelize -> persist -> map (no args) -> count
+[p025.js] parallelize -> persist -> map (no args) -> collect
+[p026.js] parallelize -> persist -> map (no args) -> reduce (no args) 
+[p027.js] parallelize -> persist -> map (no args) -> lookup
+[p028.js] parallelize -> persist -> filter (no args) -> count
+[p029.js] parallelize -> persist -> filter (no args) -> collect
+[p030.js] parallelize -> persist -> filter (no args) -> reduce (no args)
+[p031.js] parallelize -> persist -> filter (no args) -> lookup
+[p032.js] parallelize -> persist -> flatMap (no args) -> count
+[p033.js] parallelize -> persist -> flatMap (no args) -> collect
+[p034.js] parallelize -> persist -> flatMap (no args) -> reduce (no args)
+[p035.js] parallelize -> persist -> flatMap (no args) -> lookup
+[p036.js] parallelize -> persist -> mapValues (no args) -> count
+[p037.js] parallelize -> persist -> mapValues (no args) -> collect
+[p038.js] parallelize -> persist -> mapValues (no args) -> reduce (no args)
+[p039.js] parallelize -> persist -> mapValues (no args) -> lookup
 // ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 2, persistence on transformation
 // ========================================================================== //
-[parallelize_40.js] parallelize -> map (no args) -> persist -> count
-[parallelize_41.js] parallelize -> map (no args) -> persist -> collect
-[parallelize_42.js] parallelize -> map (no args) -> persist -> reduce (no args)
-[parallelize_43.js] parallelize -> map (no args) -> persist -> lookup
-[parallelize_44.js] parallelize -> filter (no args) -> persist -> count
-[parallelize_45.js] parallelize -> filter (no args) -> persist -> collect
-[parallelize_46.js] parallelize -> filter (no args) -> persist -> reduce (no args)
-[parallelize_47.js] parallelize -> filter (no args) -> persist -> lookup
-[parallelize_48.js] parallelize -> flatMap (no args) -> persist -> count
-[parallelize_49.js] parallelize -> flatMap (no args) -> persist -> collect
-[parallelize_50.js] parallelize -> flatMap (no args) -> persist -> reduce (no args)
-[parallelize_51.js] parallelize -> flatMap (no args) -> persist -> lookup
-[parallelize_56.js] parallelize -> mapValues (no args) -> persist -> count
-[parallelize_57.js] parallelize -> mapValues (no args) -> persist -> collect
-[parallelize_58.js] parallelize -> mapValues (no args) -> persist -> reduce (no args)
-[parallelize_59.js] parallelize -> mapValues (no args) -> persist -> lookup
+
+[p040.js] parallelize -> map (no args) -> persist -> count
+[p041.js] parallelize -> map (no args) -> persist -> collect
+[p042.js] parallelize -> map (no args) -> persist -> reduce (no args)
+[p043.js] parallelize -> map (no args) -> persist -> lookup
+[p044.js] parallelize -> filter (no args) -> persist -> count
+[p045.js] parallelize -> filter (no args) -> persist -> collect
+[p046.js] parallelize -> filter (no args) -> persist -> reduce (no args)
+[p047.js] parallelize -> filter (no args) -> persist -> lookup
+[p048.js] parallelize -> flatMap (no args) -> persist -> count
+[p049.js] parallelize -> flatMap (no args) -> persist -> collect
+[p050.js] parallelize -> flatMap (no args) -> persist -> reduce (no args)
+[p051.js] parallelize -> flatMap (no args) -> persist -> lookup
+[p052.js] parallelize -> mapValues (no args) -> persist -> count
+[p053.js] parallelize -> mapValues (no args) -> persist -> collect
+[p054.js] parallelize -> mapValues (no args) -> persist -> reduce (no args)
+[p055.js] parallelize -> mapValues (no args) -> persist -> lookup
 // ========================================================================== //
 // nStage = 2, nPipelinePerStage = 1, pipeline length = [2, 0]
 // ========================================================================== //
-[parallelize_32.js] parallelize -> sample -> count
-[parallelize_33.js] parallelize -> sample -> collect
-[parallelize_34.js] parallelize -> sample -> reduce (no args)
-[parallelize_35.js] parallelize -> sample -> lookup
-[parallelize_60.js] parallelize -> groupByKey -> count
-[parallelize_61.js] parallelize -> groupByKey -> collect
-[parallelize_62.js] parallelize -> groupByKey -> reduce (no args)
-[parallelize_63.js] parallelize -> groupByKey -> lookup
-[parallelize_64.js] parallelize -> reduceByKey (no args) -> count
-[parallelize_65.js] parallelize -> reduceByKey (no args) -> collect
-[parallelize_66.js] parallelize -> reduceByKey (no args) -> reduce (no args)
-[parallelize_67.js] parallelize -> reduceByKey (no args) -> lookup
-[parallelize_68.js] parallelize -> persist -> sample -> count
-[parallelize_69.js] parallelize -> persist -> sample -> collect
-[parallelize_70.js] parallelize -> persist -> sample -> reduce (no args)
-[parallelize_71.js] parallelize -> persist -> sample -> lookup
-[parallelize_72.js] parallelize -> persist -> groupByKey -> count
-[parallelize_73.js] parallelize -> persist -> groupByKey -> collect
-[parallelize_74.js] parallelize -> persist -> groupByKey -> reduce (no args)
-[parallelize_75.js] parallelize -> persist -> groupByKey -> lookup
-[parallelize_76.js] parallelize -> persist -> reduceByKey (no args) -> count
-[parallelize_77.js] parallelize -> persist -> reduceByKey (no args) -> collect
-[parallelize_78.js] parallelize -> persist -> reduceByKey (no args) -> reduce (no args)
-[parallelize_79.js] parallelize -> persist -> reduceByKey (no args) -> lookup
-[parallelize_80.js] parallelize -> sample -> persist -> count
-[parallelize_81.js] parallelize -> sample -> persist -> collect
-[parallelize_82.js] parallelize -> sample -> persist -> reduce (no args)
-[parallelize_83.js] parallelize -> sample -> persist -> lookup
-[parallelize_84.js] parallelize -> groupByKey -> persist -> count
-[parallelize_85.js] parallelize -> groupByKey -> persist -> collect
-[parallelize_86.js] parallelize -> groupByKey -> persist -> reduce (no args)
-[parallelize_87.js] parallelize -> groupByKey -> persist -> lookup
-[parallelize_88.js] parallelize -> reduceByKey (no args) -> persist -> count
-[parallelize_89.js] parallelize -> reduceByKey (no args) -> persist -> collect
-[parallelize_90.js] parallelize -> reduceByKey (no args) -> persist -> reduce (no args)
-[parallelize_91.js] parallelize -> reduceByKey (no args) -> persist -> lookup
+[p056.js] parallelize -> sample -> count
+[p057.js] parallelize -> sample -> collect
+[p058.js] parallelize -> sample -> reduce (no args)
+[p059.js] parallelize -> sample -> lookup
+[p060.js] parallelize -> groupByKey -> count				// FAIL
+[p061.js] parallelize -> groupByKey -> collect				// FAIL
+[p062.js] parallelize -> groupByKey -> reduce (no args)		// FAIL
+[p063.js] parallelize -> groupByKey -> lookup				// FAIL
+[p064.js] parallelize -> reduceByKey (no args) -> count
+[p065.js] parallelize -> reduceByKey (no args) -> collect
+[p066.js] parallelize -> reduceByKey (no args) -> reduce (no args)
+[p067.js] parallelize -> reduceByKey (no args) -> lookup
+[p068.js] parallelize -> persist -> sample -> count
+[p069.js] parallelize -> persist -> sample -> collect
+[p070.js] parallelize -> persist -> sample -> reduce (no args)
+[p071.js] parallelize -> persist -> sample -> lookup
+[p072.js] parallelize -> persist -> groupByKey -> count
+[p073.js] parallelize -> persist -> groupByKey -> collect
+[p074.js] parallelize -> persist -> groupByKey -> reduce (no args)
+[p075.js] parallelize -> persist -> groupByKey -> lookup
+[p076.js] parallelize -> persist -> reduceByKey (no args) -> count
+[p077.js] parallelize -> persist -> reduceByKey (no args) -> collect
+[p078.js] parallelize -> persist -> reduceByKey (no args) -> reduce (no args)
+[p079.js] parallelize -> persist -> reduceByKey (no args) -> lookup
+[p080.js] parallelize -> sample -> persist -> count
+[p081.js] parallelize -> sample -> persist -> collect
+[p082.js] parallelize -> sample -> persist -> reduce (no args)
+[p083.js] parallelize -> sample -> persist -> lookup
+[p084.js] parallelize -> groupByKey -> persist -> count
+[p085.js] parallelize -> groupByKey -> persist -> collect
+[p086.js] parallelize -> groupByKey -> persist -> reduce (no args)
+[p087.js] parallelize -> groupByKey -> persist -> lookup
+[p088.js] parallelize -> reduceByKey (no args) -> persist -> count
+[p089.js] parallelize -> reduceByKey (no args) -> persist -> collect
+[p090.js] parallelize -> reduceByKey (no args) -> persist -> reduce (no args)
+[p091.js] parallelize -> reduceByKey (no args) -> persist -> lookup
 // ========================================================================== //
 // 1 stage 2 lineages
 // ========================================================================== //
-[parallelize_92.js] parallelize -> union -> collect
-					parallelize ->
-[parallelize_93.js] parallelize -> persist -> union -> collect
-					parallelize ------------>
-[parallelize_94.js] parallelize ------------> union -> collect
-					parallelize -> persist ->
-[parallelize_95.js] parallelize -> persist -> union -> collect
-					parallelize -> persist
+[p092.js] parallelize -> union -> collect
+		  parallelize ->
+[p093.js] parallelize -> persist -> union -> collect
+		  parallelize ------------>
+[p094.js] parallelize ------------> union -> collect
+		  parallelize -> persist ->
+[p095.js] parallelize -> persist -> union -> collect
+		  parallelize -> persist
 // ========================================================================== //
 // 2 stage 2 lineages
 // ========================================================================== //

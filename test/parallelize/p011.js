@@ -15,15 +15,16 @@ co(function *() {
 	var value = 2;
 	var v = [[key, value], [3, 4], [5, 6]];
 
-	function isValueEven (e) {
-		return (e[1] % 2 == 0) ? true : false;
+	function by2 (e) {
+		e[1] *= 2;
+		return e;
 	}
 
-	var res = yield ugrid.parallelize(v).filter(isValueEven).lookup(key);
+	var res = yield ugrid.parallelize(v).map(by2).lookup(key);
 
 	assert(res.length == 1);
 	assert(res[0][0] == key);
-	assert(res[0][1] == value);
+	assert(res[0][1] == value * 2);
 
 	ugrid.end();
 })();

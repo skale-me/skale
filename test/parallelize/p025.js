@@ -1,7 +1,8 @@
 #!/usr/local/bin/node --harmony
 
+// parallelize -> persist -> map (no args) -> collect
+
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
@@ -26,7 +27,7 @@ co(function *() {
 
 	for (var i = 0; i < tmp_sort.length; i++)
 		for (var j = 0; j < tmp_sort[i].length; j++)
-			assert(tmp_sort[i][j] == res_sort[i][j])
+			console.assert(tmp_sort[i][j] == res_sort[i][j])
 
 	ugrid.end();
 })();
