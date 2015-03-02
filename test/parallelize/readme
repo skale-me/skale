@@ -140,18 +140,17 @@
 		  parallelize -> persist ->
 [p099.js] parallelize -> persist -> join -> collect
 		  parallelize -> persist
+[p100.js] parallelize -> coGroup -> collect
+		  parallelize ->
+[p101.js] parallelize -> persist -> coGroup -> collect
+		  parallelize ------------>
+[p102.js] parallelize ------------> coGroup -> collect
+		  parallelize -> persist ->
+[p103.js] parallelize -> persist -> coGroup -> collect
+		  parallelize -> persist
 
-// TODO
-[parallelize_100.js] parallelize -> coGroup -> collect
-					 parallelize ->
-[parallelize_101.js] parallelize -> persist -> coGroup -> collect
-					 parallelize ------------>
-[parallelize_102.js] parallelize ------------> coGroup -> collect
-					 parallelize -> persist ->
-[parallelize_103.js] parallelize -> persist -> coGroup -> collect
-					 parallelize -> persist
 
-// Function to be implemented
+// TODO Function to be implemented
 [parallelize_104.js] parallelize -> crossProduct -> collect
 					 parallelize ->
 [parallelize_105.js] parallelize -> persist -> crossProduct -> collect

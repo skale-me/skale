@@ -115,6 +115,39 @@ function join(v1_in, v2_in) {
 	return v3;
 }
 
+function coGroup(v1_in, v2_in) {
+	var v1 = JSON.parse(JSON.stringify(v1_in));
+	var v2 = JSON.parse(JSON.stringify(v2_in));	
+	var v3 = [];
+	var already_v1 = [];
+	var already_v2 = [];	
+
+	for (var i = 0; i < v1.length; i++)
+		for (var j = 0; j < v2.length; j++)
+			if (v1[i][0] == v2[j][0]) {
+				var idx = -1;
+				for (var k = 0; k < v3.length; k++) {
+					if (v3[k][0] == v1[i][0]) {
+						idx = k;
+						break;
+					}
+				}
+				if (idx == -1) {
+					idx = v3.length;
+					v3[v3.length] = [v1[i][0], [[], []]];
+				} 
+				if (!already_v1[i]) {
+					v3[idx][1][0].push(v1[i][1]);
+					already_v1[i] = true;
+				}
+				if (!already_v2[j]) {
+					v3[idx][1][1].push(v2[j][1]);
+					already_v2[j] = true;
+				}
+			}
+	return v3;
+}
+
 function arrayEqual(a1, a2) {
 	return JSON.stringify(a1) === JSON.stringify(a2);
 }   
@@ -125,4 +158,5 @@ module.exports.groupByKey = groupByKey;
 module.exports.reduceByKey = reduceByKey;
 module.exports.union = union;
 module.exports.join = join;
+module.exports.coGroup = coGroup;
 module.exports.arrayEqual = arrayEqual;
