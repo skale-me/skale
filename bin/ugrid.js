@@ -88,9 +88,7 @@ var clientCommand = {
 		return devices(msg.data);
 	},
 	get: function (sock, msg) {
-		if (!(msg.data in clients)) return;
-		var client = clients[msg.data];
-		return {uuid: client.uuid, data: client.data};
+		return clients[msg.data] ? clients[msg.data].data : null;
 	},
 	set: function (sock, msg) {
 		if (typeof msg.data !== 'object') return;
@@ -137,8 +135,11 @@ if (wsport) {
 		sock.ws = true;
 		handleConnect(sock);
 		ws.on('close', function () {
-			console.log('## connection end');
-			if (sock.client) sock.client.sock = null;
+			console.log('## connection closed');
+			if (sock.client) {
+				pubmon({event: 'disconnect', uuid: sock.client.uuid});
+				sock.client.sock = null;
+			}
 			if (sock.crossIndex) delete crossbar[sock.crossIndex];
 		});
 	});
