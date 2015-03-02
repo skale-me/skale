@@ -6,7 +6,7 @@
   "scripts": {
     "start": "bin/start-all.sh",
     "pretest": "cat test/ugrid-env.sh > conf/ugrid-env.sh; bin/start-all.sh",
-    "test": "cd test; ./runUnitTest.js parallelize; ./runUnitTest.js randomSVMData; ./runUnitTest.js unitTest",
+    "test": "cd test; ./runUnitTest.js parallelize; ./runUnitTest.js randomSVMData; ./runUnitTest.js ugridClient; ./runUnitTest.js unitTest",
     "posttest": "bin/stop-all.sh",
     "stop": "bin/stop-all.sh"
   },
