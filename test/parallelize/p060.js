@@ -15,9 +15,6 @@ co(function *() {
 	var loc = groupByKey(v).length;
 	var dist = yield ugrid.parallelize(v).groupByKey().count();
 
-	console.log(loc)
-	console.log(dist)
-
 	console.assert(loc == dist);
 
 	ugrid.end();

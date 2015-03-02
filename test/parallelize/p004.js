@@ -1,7 +1,8 @@
 #!/usr/local/bin/node --harmony
 
+// parallelize -> persist -> count
+
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
@@ -16,7 +17,7 @@ co(function *() {
 	v.push(6);
 	var res = yield data.count();
 
-	assert((v.length - 1) == res);
+	console.assert((v.length - 1) == res);
 
 	ugrid.end();
 })();

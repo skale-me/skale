@@ -1,7 +1,6 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
@@ -30,7 +29,10 @@ co(function *() {
 	for (var p in part)
 		acc += Math.ceil(part[p].length * frac)
 
-	assert(res == acc)
+	console.log(res)
+	console.log(acc)
+
+	console.assert(res == acc)
 
 	ugrid.end();
 })();
