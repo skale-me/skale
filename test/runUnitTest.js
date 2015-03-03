@@ -6,13 +6,14 @@ var fs = require('fs');
 var spawn = require('child_process').spawn;
 var yieldable_readdir = thunkify(fs.readdir);   
 var nPassedTests = 0, nFailedTests = 0, nIgnored = 0;
-
-var test_dir = process.env['UNIT_TEST_DIR'] || process.argv[2];
+var node = process.env.NODE || 'node';
+var node_opts = process.env.NODE_OPTS || '--harmony';
+var test_dir = process.env.UNIT_TEST_DIR || process.argv[2];
 
 co(function*(){
 	function spawnTest_cb(file, callback) {
 		var result;
-		var prog = spawn('node', ['--harmony', file]); // run in a asynchronous way all the unit tests
+		var prog = spawn(node, [node_opts, file]); // run in a asynchronous way all the unit tests
 		var startTime = new Date();
 		process.stdout.write("\r" + file + "                                 ");
 		prog.on('exit', function (code) {
