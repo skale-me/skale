@@ -148,6 +148,19 @@ function coGroup(v1_in, v2_in) {
 	return v3;
 }
 
+function crossProduct(v1_in, v2_in) {
+	var v1 = JSON.parse(JSON.stringify(v1_in));
+	var v2 = JSON.parse(JSON.stringify(v2_in));	
+	var v3 = [];
+	var already_v1 = [];
+	var already_v2 = [];	
+
+	for (var i = 0; i < v1.length; i++)
+		for (var j = 0; j < v2.length; j++)
+			v3.push([v1[i], v2[j]])
+	return v3;
+}
+
 function arrayEqual(a1, a2) {
 	return JSON.stringify(a1) === JSON.stringify(a2);
 }   
@@ -159,4 +172,5 @@ module.exports.reduceByKey = reduceByKey;
 module.exports.union = union;
 module.exports.join = join;
 module.exports.coGroup = coGroup;
+module.exports.crossProduct = crossProduct;
 module.exports.arrayEqual = arrayEqual;

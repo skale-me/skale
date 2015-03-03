@@ -62,7 +62,6 @@
 // ========================================================================== //
 // nStage = 1, nPipelinePerStage = 1, pipeline length = 2, persistence on transformation
 // ========================================================================== //
-
 [p040.js] parallelize -> map (no args) -> persist -> count
 [p041.js] parallelize -> map (no args) -> persist -> collect
 [p042.js] parallelize -> map (no args) -> persist -> reduce (no args)
@@ -148,18 +147,17 @@
 		  parallelize -> persist ->
 [p103.js] parallelize -> persist -> coGroup -> collect
 		  parallelize -> persist
-
-
+[p104.js] parallelize -> crossProduct -> collect
+		  parallelize ->
+[p105.js] parallelize -> persist -> crossProduct -> collect
+		  parallelize ------------>
+[p106.js] parallelize ------------> crossProduct -> collect
+		  parallelize -> persist ->
+[p107.js] parallelize -> persist -> crossProduct -> collect
+		  parallelize -> persist
+// ========================================================================== //
 // TODO Function to be implemented
-[parallelize_104.js] parallelize -> crossProduct -> collect
-					 parallelize ->
-[parallelize_105.js] parallelize -> persist -> crossProduct -> collect
-					 parallelize ------------>
-[parallelize_106.js] parallelize ------------> crossProduct -> collect
-					 parallelize -> persist ->
-[parallelize_107.js] parallelize -> persist -> crossProduct -> collect
-					 parallelize -> persist
-
+// ========================================================================== //
 [parallelize_108.js] parallelize -> sortByKey -> collect
 					 parallelize ->
 [parallelize_109.js] parallelize -> persist -> sortByKey -> collect
