@@ -30,7 +30,7 @@ if (cluster.isMaster) {
 }
 
 function runWorker(host, port) {
-	var RAM = {}, task;
+	var RAM = {}, task, jobId;
 
 	var grid = new UgridClient({
 		host: host,
@@ -51,6 +51,10 @@ function runWorker(host, port) {
 	var request = {
 		setTask: function (msg) {
 			task = new UgridTask(grid, RAM, msg);
+			if (!jobId) {
+				jobId = msg.ufrom;
+				grid.set({jobId: jobId});
+			}
 			grid.reply(msg, null, 'worker ready to process task');
 		},
 		runTask: function (msg) {
@@ -69,6 +73,8 @@ function runWorker(host, port) {
 		reset: function (msg) {
 			RAM = {};
 			task = undefined;
+			jobId = undefined;
+			grid.set({jobId: ''});
 			grid.reply(msg, null, null);
 		}
 	};
