@@ -64,8 +64,8 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 	} else if (to > 1) {	// Unicast
 		if (crossbar[to]) crossbar[to].write(chunk, done);
 		else done();
-	} else if (to === 1) {	// Foreign
-	} else if (to === 0) {	// Server request
+	} else if (to == 1) {	// Foreign
+	} else if (to == 0) {	// Server request
 		try {
 			o = JSON.parse(chunk.slice(8));
 			if (!(o.cmd in clientCommand)) throw 'Invalid command: ' + o.cmd;
@@ -91,7 +91,7 @@ var clientCommand = {
 		return clients[msg.data] ? clients[msg.data].data : null;
 	},
 	set: function (sock, msg) {
-		if (typeof msg.data !== 'object') return;
+		if (typeof msg.data != 'object') return;
 		for (var i in msg.data)
 			sock.client.data[i] = msg.data[i];
 		pubmon({event: 'set', uuid: sock.client.uuid, data: msg.data});
@@ -140,7 +140,7 @@ if (wsport) {
 				pubmon({event: 'disconnect', uuid: sock.client.uuid});
 				sock.client.sock = null;
 			}
-			if (sock.crossIndex) delete crossbar[sock.crossIndex];
+			if (sock.crossIndex) crossbar[sock.crossIndex] = null;
 		});
 	});
 }
@@ -158,7 +158,7 @@ function handleConnect(sock) {
 			pubmon({event: 'disconnect', uuid: sock.client.uuid});
 			sock.client.sock = null;
 		}
-		if (sock.crossIndex) delete crossbar[sock.crossIndex];
+		if (sock.crossIndex) crossbar[sock.crossIndex] = null;
 		console.log('## connection end');
 	});
 	sock.on('error', function (error) {
