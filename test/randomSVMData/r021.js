@@ -24,5 +24,7 @@ co(function *() {
 	console.log(res.sort());
 	console.assert(test.arrayEqual(ref.sort(), res.sort()));
 
+	throw 'Test is broken'
+
 	ugrid.end();
 })();

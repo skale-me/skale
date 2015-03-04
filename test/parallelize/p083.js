@@ -15,10 +15,11 @@ co(function *() {
 	var frac = 0.5;
 	var seed = 1;
 	var key = 0;
+	var withReplacement = true;
 
-	var loc = sample(v, ugrid.worker.length, frac, seed).filter(function (e) {return (e[0] == key)});
+	var loc = sample(v, ugrid.worker.length, withReplacement, frac, seed).filter(function (e) {return (e[0] == key)});
 
-	var data = ugrid.parallelize(v).sample(frac).persist();
+	var data = ugrid.parallelize(v).sample(withReplacement, frac).persist();
 	yield data.count();
 
 	v.push([key, 11]);

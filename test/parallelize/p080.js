@@ -14,10 +14,11 @@ co(function *() {
 	var v = [1, 2, 3, 4, 5];
 	var frac = 0.1;
 	var seed = 1;
+	var withReplacement = true;
 
-	var loc = sample(v, ugrid.worker.length, frac, seed);
+	var loc = sample(v, ugrid.worker.length, withReplacement, frac, seed);
 
-	var data = ugrid.parallelize(v).sample(frac).persist();
+	var data = ugrid.parallelize(v).sample(withReplacement, frac).persist();
 	var dist = yield data.count();
 
 	v.push(6);

@@ -2,8 +2,7 @@
 
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
-var ml = require('../../lib/ugrid-ml.js');
-var test = require('../ugrid-test.js');
+var sample = require('../ugrid-test.js').sample;
 
 process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
 
@@ -13,17 +12,17 @@ co(function *() {
 	var v = [1, 2, 3, 4, 5];
 	var frac = 0.1;
 	var seed = 1;
+	var withReplacement = true;
 
-	var r1 = yield ugrid.parallelize(v).sample(frac).collect();
+	var loc = sample(v, ugrid.worker.length, withReplacement, frac, seed);
+	var dist = yield ugrid.parallelize(v).sample(withReplacement, frac).collect();
 
-	tmp = test.sample(v, ugrid.worker.length, frac, seed);
+	dist = dist.sort();
+	loc = loc.sort();
 
-	r1 = r1.sort();
-	tmp = tmp.sort();
-
-	console.assert(r1.length == tmp.length);
-	for (var i = 0; i < r1.length; i++)
-		console.assert(r1[i] == tmp[i]);
+	console.assert(dist.length == loc.length);
+	for (var i = 0; i < dist.length; i++)
+		console.assert(dist[i] == loc[i]);
 
 	ugrid.end();
 })();

@@ -14,19 +14,20 @@ co(function *() {
 	var v = [1, 2, 3, 4, 5];
 	var frac = 0.1;
 	var seed = 1;
+	var withReplacement = true;
 
 	function sum(a, b) {
 		a += b;
 		return a;
 	}
 
-	var loc = sample(v, ugrid.worker.length, frac, seed).reduce(sum, 0);
+	var loc = sample(v, ugrid.worker.length, withReplacement, frac, seed).reduce(sum, 0);
 
 	var data = ugrid.parallelize(v).persist();
 	yield data.count();
 
 	v.push(6);
-	var dist = yield data.sample(frac).reduce(sum, 0);
+	var dist = yield data.sample(withReplacement, frac).reduce(sum, 0);
 
 	console.assert(loc == dist);
 

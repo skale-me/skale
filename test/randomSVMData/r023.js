@@ -18,11 +18,11 @@ co(function *() {
 		return res;
 	}
 
-	var N = 5, D = 2, seed = 1, frac = 0.1, key = -1;
+	var N = 5, D = 2, seed = 1, frac = 0.1, key = -1, withReplacement = true;
 
 	var ref = test.randomSVMData(N, D, seed);
-	ref = test.sample(ref, ugrid.worker.length, frac, seed).filter(function (e) {return e[0] == key;});
-	var res = yield ugrid.randomSVMData(N, D, seed).sample(frac).lookup(key);
+	ref = test.sample(ref, ugrid.worker.length, withReplacement, frac, seed).filter(function (e) {return e[0] == key;});
+	var res = yield ugrid.randomSVMData(N, D, seed).sample(withReplacement, frac).lookup(key);
 	console.assert(test.arrayEqual(ref.sort(), res.sort()));
 
 	ugrid.end();

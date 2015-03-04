@@ -18,48 +18,48 @@ function randomSVMData(N, D, seed, nPartitions) {
 	return tmp;
 }
 
-function sample(v_in, P, frac, seed) {
+function sample(v_in, P, withReplacement, frac, seed) {
 	var v = JSON.parse(JSON.stringify(v_in));
 
-	// Create partitions
-	var part = {};
-	for (var p = 0; p < P; p++)
-		part[p] = []
+	function split(a, n) {
+		var len = a.length, out = [], i = 0;
+		while (i < len) {
+			var size = Math.ceil((len - i) / n--);
+			out.push(a.slice(i, i += size))
+		}
+		return out;
+	}	
+	var map = split(v_in, P);
 
-	var p = 0;
-	for (var i = 0; i < v.length; i++) {
-		part[p].push(v[i]);
-		p = (p + 1) % P;
+	var workerMap = [];
+	for (var i = 0; i < P; i++) {
+		workerMap[i] = {};
+		workerMap[i][i] = map[i];
 	}
 
-	// Reproduce same sampling locally
-	var res = {
-		v: {},
-		len: {},
-		rng: new ml.Random(seed)
-	};
-
-	for (var p in part) {
-		res.v[p] = [];
-		res.len[p] = 0;
-		for (var i = 0; i < part[p].length; i++) {
-			res.len[p]++;
-			var current_frac = res.v[p].length / res.len[p];
-			if (current_frac < frac)
-				res.v[p].push(part[p][i]);
-			else {
-				var idx = Math.round(Math.abs(res.rng.next()) * res.len[p]);
-				if (idx < res.v[p].length)
-					res.v[p][idx] = part[p][i];
+	var v_out = [];
+	for (var w = 0; w < P; w++) {
+		var p = 0;
+		var tmp = [];
+		var rng = new ml.Random(seed);
+		for (var i in workerMap[w]) {
+			var L = workerMap[w][i].length;
+			var L = Math.ceil(L * frac);
+			tmp[p] = {data: []};
+			var idxVect = [];
+			while (tmp[p].data.length != L) {
+				var idx = Math.round(Math.abs(rng.next()) * (L - 1));
+				if ((idxVect.indexOf(idx) != -1) &&  !withReplacement) 
+					continue;	// if already picked but no replacement mode
+				idxVect.push[idx];
+				tmp[p].data.push(workerMap[w][i][idx]);
 			}
+			v_out = v_out.concat(tmp[p].data)			
+			p++;
 		}
 	}
 
-	var tmp = [];
-	for (var p in res.v) 
-		tmp = tmp.concat(res.v[p]);
-
-	return tmp;
+	return v_out;
 }
 
 function groupByKey(v_in) {

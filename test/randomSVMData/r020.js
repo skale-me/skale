@@ -11,11 +11,11 @@ process.on('exit', function () {console.assert(ugrid.grid.id !== undefined);});
 co(function *() {
 	yield ugrid.init();
 
-	var N = 5, D = 1, seed = 1, frac = 0.1;
+	var N = 5, D = 1, seed = 1, frac = 0.1, withReplacement = true;
 
 	var ref = test.randomSVMData(N, D, seed);
-	ref = test.sample(ref, ugrid.worker.length, frac, seed);
-	var res = yield ugrid.randomSVMData(N, D, seed).sample(frac).count();
+	ref = test.sample(ref, ugrid.worker.length, withReplacement, frac, seed);
+	var res = yield ugrid.randomSVMData(N, D, seed).sample(withReplacement, frac).count();
 	console.assert(ref.length == res);
 
 	ugrid.end();

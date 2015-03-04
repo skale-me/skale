@@ -15,14 +15,15 @@ co(function *() {
 	var frac = 0.5;
 	var seed = 1;
 	var key = 0;
+	var withReplacement = true;
 
-	var loc = sample(v, ugrid.worker.length, frac, seed).filter(function (e) {return (e[0] == key)});
+	var loc = sample(v, ugrid.worker.length, withReplacement, frac, seed).filter(function (e) {return (e[0] == key)});
 
 	var data = ugrid.parallelize(v).persist();
 	yield data.count();
 
 	v.push([key, 11]);
-	var dist = yield data.sample(frac).lookup(key);
+	var dist = yield data.sample(withReplacement, frac).lookup(key);
 
 	loc = loc.sort();
 	dist = dist.sort();	
