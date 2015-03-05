@@ -1,6 +1,6 @@
 #!/usr/local/bin/node --harmony
 
-// parallelize -> join -> count
+// parallelize -> join -> collect
 // parallelize -> 
 
 var co = require('co');

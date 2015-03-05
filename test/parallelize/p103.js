@@ -1,6 +1,6 @@
 #!/usr/local/bin/node --harmony
 
-// parallelize -> persist -> coGroup -> count
+// parallelize -> persist -> coGroup -> collect
 // parallelize -> persist
 
 var co = require('co');
@@ -28,9 +28,12 @@ co(function *() {
 
 	loc = loc.sort();
 	dist = dist.sort();
+
 	for (var i = 0; i < loc.length; i++) {
 		console.assert(loc[i][0] == dist[i][0]);
 		for (var j = 0; j < loc[i][1].length; j++) {
+			loc[i][1][j] = loc[i][1][j].sort();
+			dist[i][1][j] = dist[i][1][j].sort();			
 			for (var k = 0; k < loc[i][1][j].length; k++)
 				console.assert(loc[i][1][j][k] == dist[i][1][j][k]);
 		}

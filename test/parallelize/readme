@@ -156,6 +156,13 @@
 [p107.js] parallelize -> persist -> crossProduct -> collect
 		  parallelize -> persist
 // ========================================================================== //
+// New transformations
+// ========================================================================== //
+[p108.js] parallelize -> distinct -> count
+[p109.js] parallelize -> distinct -> collect
+[p110.js] parallelize -> distinct -> reduce
+[p111.js] parallelize -> distinct -> lookup
+// ========================================================================== //
 // TODO Function to be implemented
 // ========================================================================== //
 [parallelize_108.js] parallelize -> sortByKey -> collect
@@ -166,3 +173,5 @@
 					 parallelize -> persist ->
 [parallelize_111.js] parallelize -> persist -> sortByKey -> collect
 					 parallelize -> persist
+
+

@@ -161,6 +161,17 @@ function crossProduct(v1_in, v2_in) {
 	return v3;
 }
 
+function distinct(v_in) {
+	var v = JSON.parse(JSON.stringify(v_in));
+	var v_out = [], v_ref = [];
+	for (var i = 0; i < v.length; i++) {
+		if (v_ref.indexOf(JSON.stringify(v[i])) != -1) continue;
+		v_ref.push(JSON.stringify(v[i]));
+		v_out.push(v[i]);
+	}
+	return v_out;
+}
+
 function arrayEqual(a1, a2) {
 	return JSON.stringify(a1) === JSON.stringify(a2);
 }   
@@ -173,4 +184,5 @@ module.exports.union = union;
 module.exports.join = join;
 module.exports.coGroup = coGroup;
 module.exports.crossProduct = crossProduct;
+module.exports.distinct = distinct;
 module.exports.arrayEqual = arrayEqual;
