@@ -1,8 +1,11 @@
-#!/usr/local/bin/node
+#!/usr/bin/env node
 
 // Todo:
 // - recycle topics
 // - record/replay input messages
+// - handle foreign messages
+// - authentication (register)
+// - topics permissions (who can publish / subscribe)
 
 'use strict';
 
@@ -27,7 +30,7 @@ var opt = require('node-getopt').create([
 
 var clients = {};
 var clientMax = 2;
-var topics = [];
+var topics = {};
 var topicMax = 0;
 var topicIndex = {};
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
@@ -35,7 +38,7 @@ var port = opt.options.port || 12346;
 var msgCount = 0;
 var wss;
 var wsport = opt.options.wsport || port + 2;
-var crossbar = [], crossn = clientMax;
+var crossbar = {}, crossn = clientMax;
 var minMulticast = UgridClient.minMulticast;
 
 function SwitchBoard(sock) {
@@ -64,49 +67,66 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 	} else if (to > 1) {	// Unicast
 		if (crossbar[to]) crossbar[to].write(chunk, done);
 		else done();
-	} else if (to === 1) {	// Foreign
-	} else if (to === 0) {	// Server request
+	} else if (to == 1) {	// Foreign
+	} else if (to == 0) {	// Server request
 		try {
 			o = JSON.parse(chunk.slice(8));
-			if (!(o.cmd in clientCommand)) throw 'Invalid command: ' + o.cmd;
-			o.data = clientCommand[o.cmd](this.sock, o);
 		} catch (error) {
-			console.error(o);
-			o.error = error;
 			console.error(error);
+			return done();
 		}
-		o.cmd = 'reply';
-		this.sock.write(UgridClient.encode(o), done);
+		if (!(o.cmd in clientRequest)) {
+			o.error = 'Invalid command: ' + o.cmd;
+			o.cmd = 'reply';
+			this.sock.write(UgridClient.encode(o), done);
+		} else if (clientRequest[o.cmd](this.sock, o)) {
+			o.cmd = 'reply';
+			this.sock.write(UgridClient.encode(o), done);
+		} else done();
 	}
 };
 
-var clientCommand = {
+// Client requests functions, return true if a response must be sent
+// to client, false otherwise. Reply data, if any,  must be set in msg.data.
+var clientRequest = {
 	connect: function (sock, msg) {
-		return register(null, msg, sock);
+		register(null, msg, sock);
+		return true;
+	},
+	end: function (sock, msg) {
+		sock.client.end = true;
+		return false;
 	},
 	devices: function (sock, msg) {
-		return devices(msg.data);
+		msg.data = devices(msg.data);
+		return true;
 	},
 	get: function (sock, msg) {
-		return clients[msg.data] ? clients[msg.data].data : null;
+		msg.data = clients[msg.data] ? clients[msg.data].data : null;
+		return true;
 	},
 	set: function (sock, msg) {
-		if (typeof msg.data !== 'object') return;
+		if (typeof msg.data != 'object') return false;
 		for (var i in msg.data)
 			sock.client.data[i] = msg.data[i];
 		pubmon({event: 'set', uuid: sock.client.uuid, data: msg.data});
+		return false;
 	},
 	id: function (sock, msg) {
-		return msg.data in clients ? clients[msg.data].index : null;
+		msg.data = msg.data in clients ? clients[msg.data].index : null;
+		return true;
 	},
 	tid: function (sock, msg) {
-		return getTopicId(msg.data);
+		msg.data = getTopicId(msg.data);
+		return true;
 	},
 	subscribe: function (sock, msg) {
-		return subscribe(sock.client, msg.data);
+		subscribe(sock.client, msg.data);
+		return false;
 	},
 	unsubscribe: function (sock, msg) {
-		return unsubscribe(sock.client, msg.data);
+		unsubscribe(sock.client, msg.data);
+		return false;
 	}
 };
 
@@ -135,14 +155,20 @@ if (wsport) {
 		sock.ws = true;
 		handleConnect(sock);
 		ws.on('close', function () {
-			console.log('## connection closed');
-			if (sock.client) {
-				pubmon({event: 'disconnect', uuid: sock.client.uuid});
-				sock.client.sock = null;
-			}
-			if (sock.crossIndex) delete crossbar[sock.crossIndex];
+			handleClose(sock);
 		});
 	});
+}
+
+function handleClose(sock) {
+	console.log('## connection closed');
+	if (sock.client) {
+		pubmon({event: 'disconnect', uuid: sock.client.uuid});
+		sock.client.sock = null;
+	}
+	if (sock.crossIndex) delete crossbar[sock.crossIndex];
+	if (sock.client.end) delete clients[sock.client.uuid];
+	sock.removeAllListeners();
 }
 
 function handleConnect(sock) {
@@ -154,12 +180,7 @@ function handleConnect(sock) {
 	}
 	sock.pipe(new UgridClient.FromGrid()).pipe(new SwitchBoard(sock));
 	sock.on('end', function () {
-		if (sock.client) {
-			pubmon({event: 'disconnect', uuid: sock.client.uuid});
-			sock.client.sock = null;
-		}
-		if (sock.crossIndex) delete crossbar[sock.crossIndex];
-		console.log('## connection end');
+		handleClose(sock);
 	});
 	sock.on('error', function (error) {
 		console.log('## connection error');
@@ -181,7 +202,7 @@ function register(from, msg, sock)
 		published: {}
 	};
 	pubmon({event: 'connect', uuid: uuid, data: msg.data});
-	return {uuid: uuid, token: 0, id: index};
+	msg.data = {uuid: uuid, token: 0, id: index};
 }
 
 function devices(query) {
