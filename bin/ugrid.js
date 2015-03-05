@@ -1,8 +1,6 @@
-#!/usr/local/bin/node
+#!/usr/bin/env node
 
 // Todo:
-// - Do not send unexpected replies
-// - recycle clients
 // - recycle topics
 // - record/replay input messages
 // - handle foreign messages
@@ -40,7 +38,7 @@ var port = opt.options.port || 12346;
 var msgCount = 0;
 var wss;
 var wsport = opt.options.wsport || port + 2;
-var crossbar = [], crossn = clientMax;
+var crossbar = {}, crossn = clientMax;
 var minMulticast = UgridClient.minMulticast;
 
 function SwitchBoard(sock) {
@@ -89,14 +87,13 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 };
 
 // Client requests functions, return true if a response must be sent
-// to client, false otherwise.
+// to client, false otherwise. Reply data, if any,  must be set in msg.data.
 var clientRequest = {
 	connect: function (sock, msg) {
 		register(null, msg, sock);
 		return true;
 	},
 	end: function (sock, msg) {
-		console.log("end of " + sock.client.uuid);
 		sock.client.end = true;
 		return false;
 	},
@@ -158,14 +155,20 @@ if (wsport) {
 		sock.ws = true;
 		handleConnect(sock);
 		ws.on('close', function () {
-			console.log('## connection closed');
-			if (sock.client) {
-				pubmon({event: 'disconnect', uuid: sock.client.uuid});
-				sock.client.sock = null;
-			}
-			if (sock.crossIndex) crossbar[sock.crossIndex] = null;
+			handleClose(sock);
 		});
 	});
+}
+
+function handleClose(sock) {
+	console.log('## connection closed');
+	if (sock.client) {
+		pubmon({event: 'disconnect', uuid: sock.client.uuid});
+		sock.client.sock = null;
+	}
+	if (sock.crossIndex) delete crossbar[sock.crossIndex];
+	if (sock.client.end) delete clients[sock.client.uuid];
+	sock.removeAllListeners();
 }
 
 function handleConnect(sock) {
@@ -177,12 +180,7 @@ function handleConnect(sock) {
 	}
 	sock.pipe(new UgridClient.FromGrid()).pipe(new SwitchBoard(sock));
 	sock.on('end', function () {
-		if (sock.client) {
-			pubmon({event: 'disconnect', uuid: sock.client.uuid});
-			sock.client.sock = null;
-		}
-		if (sock.crossIndex) crossbar[sock.crossIndex] = null;
-		console.log('## connection end');
+		handleClose(sock);
 	});
 	sock.on('error', function (error) {
 		console.log('## connection error');
