@@ -16,6 +16,9 @@ co(function *() {
 	var loc = distinct(v);
 	var dist = yield ugrid.parallelize(v).distinct().count();
 
+	console.log(loc)
+	console.log(dist)
+
 	console.assert(loc.length == dist)
 
 	ugrid.end();
