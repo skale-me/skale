@@ -5,6 +5,7 @@
 // - record/replay input messages
 // - handle foreign messages
 // - authentication (register)
+// - statistics in monitoring
 // - topics permissions (who can publish / subscribe)
 
 'use strict';
@@ -23,7 +24,6 @@ var opt = require('node-getopt').create([
 	['n', 'name=ARG', 'advertised server name (default localhost)'],
 	['P', 'Port=ARG', 'primary server port (default none)'],
 	['p', 'port=ARG', 'server port (default 12346)'],
-	['s', 'statistics', 'print periodic statistics'],
 	['w', 'wsport=ARG', 'listen on websocket port (default none)'],
 	['v', 'version', 'print version']
 ]).bindHelp().parseSystem();
@@ -242,11 +242,4 @@ function unsubscribe(client, topic) {
 	if (!(topic in topicIndex)) return;
 	var sub = topics[topicIndex[topic]].sub, i = sub.indexOf(client.index);
 	if (i >= 0) sub.splice(i, 1);
-}
-
-if (opt.options.statistics) {
-	//setInterval(function () {
-	//	console.log('msg: ' + (msgCount / 5) + ' msg/s');
-	//	msgCount = 0;
-	//}, 10000);
 }
