@@ -29,24 +29,25 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var clients = {};
-var clientMax = 2;
+var clientNum = 1;
+var clientMax = UgridClient.minMulticast;
+var minMulticast = UgridClient.minMulticast;
 var topics = {};
-var topicMax = 0;
+var topicNum = 0;
 var topicIndex = {};
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
 var port = opt.options.port || 12346;
 var msgCount = 0;
 var wss;
 var wsport = opt.options.wsport || port + 2;
-var crossbar = {}, crossn = clientMax;
-var minMulticast = UgridClient.minMulticast;
+var crossbar = {};
 
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
 		return new SwitchBoard(sock);
 	stream.Transform.call(this, {objectMode: true});
-	this.crossIndex = sock.crossIndex = crossn++;
-	crossbar[this.crossIndex] = sock;
+	sock.index = getClientNumber();
+	crossbar[sock.index] = sock;
 	this.sock = sock;
 }
 util.inherits(SwitchBoard, stream.Transform);
@@ -131,8 +132,8 @@ var clientRequest = {
 };
 
 // Create a source stream and topic for monitoring info publishing
+//clientNum++;
 var mstream = new SwitchBoard({});
-clientMax++;
 var monid =  getTopicId('monitoring') + minMulticast;
 function pubmon(data) {
 	mstream.write(UgridClient.encode({cmd: 'monitoring', id: monid, data: data}));
@@ -150,12 +151,16 @@ if (wsport) {
 	console.log("## Listening WebSocket on " + wsport);
 	wss = new webSocketServer({port: wsport});
 	wss.on('connection', function (ws) {
-		console.log('websocket connect');
 		var sock = websocket(ws);
 		sock.ws = true;
 		handleConnect(sock);
+		// Catch error/close at websocket level in addition to stream level
 		ws.on('close', function () {
 			handleClose(sock);
+		});
+		ws.on('error', function () {
+			console.log('## websocket connection error');
+			console.log(error);
 		});
 	});
 }
@@ -166,7 +171,7 @@ function handleClose(sock) {
 		pubmon({event: 'disconnect', uuid: sock.client.uuid});
 		sock.client.sock = null;
 	}
-	if (sock.crossIndex) delete crossbar[sock.crossIndex];
+	if (sock.index) delete crossbar[sock.index];
 	if (sock.client.end) delete clients[sock.client.uuid];
 	sock.removeAllListeners();
 }
@@ -185,15 +190,22 @@ function handleConnect(sock) {
 	sock.on('error', function (error) {
 		console.log('## connection error');
 		console.log(error);
-		console.log(sock);
 	});
+}
+
+function getClientNumber() {
+	do {
+		clientNum = (clientNum < clientMax) ? clientNum + 1 : 2;
+	} while (clientNum in crossbar);
+console.log(clientNum);
+	return clientNum;
 }
 
 function register(from, msg, sock)
 {
-	var uuid = msg.uuid || uuidGen.v1(), index = clientMax++;
+	var uuid = msg.uuid || uuidGen.v1();
 	sock.client = clients[uuid] = {
-		index: index,
+		index: sock.index,
 		uuid: uuid,
 		owner: from ? from : uuid,
 		data: msg.data || {},
@@ -202,7 +214,7 @@ function register(from, msg, sock)
 		published: {}
 	};
 	pubmon({event: 'connect', uuid: uuid, data: msg.data});
-	msg.data = {uuid: uuid, token: 0, id: index};
+	msg.data = {uuid: uuid, token: 0, id: sock.index};
 }
 
 function devices(query) {
@@ -228,8 +240,8 @@ function devices(query) {
 
 function getTopicId(topic) {
 	if (topic in topicIndex) return topicIndex[topic];
-	topics[topicMax] = {name: topic, id: topicMax, sub: []};
-	topicIndex[topic] = topicMax++;
+	topics[topicNum] = {name: topic, id: topicNum, sub: []};
+	topicIndex[topic] = topicNum++;
 	return topicIndex[topic]
 }
 
