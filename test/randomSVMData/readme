@@ -43,3 +43,8 @@ r028.js	randomSVNData -> reduceByKey -> count
 r029.js	randomSVNData -> reduceByKey -> collect
 r030.js	randomSVNData -> reduceByKey -> reduce
 r031.js	randomSVNData -> reduceByKey -> lookup
+
+r032.js randomSVMData -> distinct -> count
+r033.js randomSVMData -> distinct -> collect
+r034.js randomSVMData -> distinct -> reduce
+r035.js randomSVMData -> distinct -> lookup
