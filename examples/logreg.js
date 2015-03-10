@@ -6,7 +6,7 @@ var ugrid = require('../lib/ugrid-context.js')();
 var ml = require('../lib/ugrid-ml.js');
 
 co(function *() {
-	yield ugrid.init();
+	yield ugrid.init({max: 2});
 
 	var N = 203472 * 4;					// Number of observations
 	var D = 16;							// Number of features

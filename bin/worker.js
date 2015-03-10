@@ -41,7 +41,8 @@ function runWorker(host, port) {
 			arch: os.arch(),
 			totalmem: os.totalmem(),
 			hostname: os.hostname(),
-			type: 'worker'
+			type: 'worker',
+			jobId: ''
 		}
 	}, function (err, res) {
 		console.log('id: ' + res.id + ', uuid: ' + res.uuid);
