@@ -183,6 +183,11 @@
 
 [p121.js] parallelize -> forEach
 
+[p122.js] parallelize -> flatMapValues -> count
+[p123.js] parallelize -> flatMapValues -> collect
+
+[p124.js] parallelize -> keys -> collect
+[p125.js] parallelize -> values -> collect
 // ========================================================================== //
 // TODO Function to be implemented
 // ========================================================================== //

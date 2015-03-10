@@ -225,10 +225,22 @@ function countByValue(v_in) {
 	return v_out;
 }
 
+function flatMapValues(v_in, mapper) {
+	var v = JSON.parse(JSON.stringify(v_in));
+
+	var out = [];
+	for (var i =0; i < v.length; i++) {
+		var t0 = mapper(v[i][1]);
+		out = out.concat(t0.map(function(e){return [v[i][0], e]}));
+	}
+	return out;
+}
+
 function arrayEqual(a1, a2) {
 	return JSON.stringify(a1) === JSON.stringify(a2);
 }   
 
+module.exports.flatMapValues = flatMapValues;
 module.exports.countByValue = countByValue;
 module.exports.randomSVMData = randomSVMData;
 module.exports.sample = sample;
