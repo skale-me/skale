@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 // Todo:
-// - recycle topics
 // - record/replay input messages
 // - handle foreign messages
 // - authentication (register)
