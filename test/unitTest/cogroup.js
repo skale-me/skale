@@ -2,7 +2,6 @@
 'use strict';
 
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
@@ -17,8 +16,6 @@ co(function *() {
 	var p2 = ugrid.parallelize(b);
 	var p3 = p1.coGroup(p2);
 
-	// console.log(yield p1.collect());
-	// console.log(yield p2.collect());
 	console.log(yield p3.collect());
 
 	ugrid.end();

@@ -172,10 +172,64 @@ function distinct(v_in) {
 	return v_out;
 }
 
+function intersection(v1_in, v2_in) {
+	var v1 = JSON.parse(JSON.stringify(v1_in));
+	var v2 = JSON.parse(JSON.stringify(v2_in));
+
+	var v_ref = [];
+	for (var i = 0; i < v1.length; i++) {
+		var e = JSON.stringify(v1[i]);
+		if (v_ref.indexOf(e) != -1) continue;
+		for (var j = 0; j < v2.length; j++) {
+			if (JSON.stringify(v2[j]) == e) {
+				v_ref.push(e);
+				break;
+			}
+		}
+	}
+	return v_ref.map(JSON.parse)
+}
+
+function substract(v1_in, v2_in) {
+	var v1 = JSON.parse(JSON.stringify(v1_in));
+	var v2 = JSON.parse(JSON.stringify(v2_in));
+
+	var v_ref = [];
+	for (var i = 0; i < v1.length; i++) {
+		var e = JSON.stringify(v1[i]);
+		var found = false;
+		for (var j = 0; j < v2.length; j++)
+			if (JSON.stringify(v2[j]) == e) {
+				found = true;
+				break;
+			}
+		if (!found)
+			v_ref.push(e);
+	}
+	return v_ref.map(JSON.parse)
+}
+
+function countByValue(v_in) {
+	var v = JSON.parse(JSON.stringify(v_in));
+
+	var tmp = {};
+	for (var i = 0; i < v.length; i++) {
+		var str = JSON.stringify(v[i]);
+		if (tmp[str] == undefined) tmp[str] = [v[i], 0];
+		tmp[str][1]++;
+	}
+
+	var v_out = [];
+	for (var i in tmp)
+		v_out.push(tmp[i]);
+	return v_out;
+}
+
 function arrayEqual(a1, a2) {
 	return JSON.stringify(a1) === JSON.stringify(a2);
 }   
 
+module.exports.countByValue = countByValue;
 module.exports.randomSVMData = randomSVMData;
 module.exports.sample = sample;
 module.exports.groupByKey = groupByKey;
@@ -185,4 +239,6 @@ module.exports.join = join;
 module.exports.coGroup = coGroup;
 module.exports.crossProduct = crossProduct;
 module.exports.distinct = distinct;
+module.exports.intersection = intersection;
+module.exports.substract = substract;
 module.exports.arrayEqual = arrayEqual;

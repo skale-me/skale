@@ -1,7 +1,8 @@
 #!/usr/local/bin/node --harmony
 
+// parallelize -> flatMap -> count
+
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../../lib/ugrid-context.js')();
 
 process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
@@ -17,7 +18,7 @@ co(function *() {
 
 	var res = yield ugrid.parallelize(v).flatMap(dup).count();
 
-	assert(res == v.length * 2)
+	console.assert(res == v.length * 2)
 
 	ugrid.end();
 })();

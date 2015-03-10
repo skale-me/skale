@@ -1,5 +1,7 @@
 #!/usr/local/bin/node --harmony
 
+// parallelize -> mapValues -> count
+
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
 

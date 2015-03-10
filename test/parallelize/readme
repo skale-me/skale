@@ -162,6 +162,27 @@
 [p109.js] parallelize -> distinct -> collect
 [p110.js] parallelize -> distinct -> reduce
 [p111.js] parallelize -> distinct -> lookup
+[p112.js] parallelize -> intersection -> count
+		  parallelize ->
+[p113.js] parallelize -> intersection -> collect
+		  parallelize ->
+[p114.js] parallelize -> intersection -> reduce
+		  parallelize ->
+[p115.js] parallelize -> intersection -> lookup
+		  parallelize ->
+[p116.js] parallelize -> substract -> count
+		  parallelize -> 
+[p117.js] parallelize -> substract -> collect
+		  parallelize ->
+[p118.js] parallelize -> substract -> reduce
+		  parallelize ->
+[p119.js] parallelize -> substract -> lookup
+		  parallelize ->
+
+[p120.js] parallelize -> countByValue
+
+[p121.js] parallelize -> forEach
+
 // ========================================================================== //
 // TODO Function to be implemented
 // ========================================================================== //
@@ -173,5 +194,3 @@
 					 parallelize -> persist ->
 [parallelize_111.js] parallelize -> persist -> sortByKey -> collect
 					 parallelize -> persist
-
-
