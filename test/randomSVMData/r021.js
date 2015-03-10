@@ -12,19 +12,12 @@ process.on('exit', function () {console.assert(ugrid.grid.id !== undefined);});
 co(function *() {
 	yield ugrid.init();
 
-	var N = 5, D = 2, seed = 1, frac = 0.1;
+	var N = 5, D = 2, seed = 1, frac = 0.1, replace = false;
 
 	var ref = test.randomSVMData(N, D, seed, ugrid.worker.length);
-	//console.log(ref.sort());
-	//ref = test.sample(ref, ugrid.worker.length, frac, seed);
-	//ref = ml.sample(ref, frac, ugrid.worker.length, seed);
-	console.log(ref.sort());
-	//var res = yield ugrid.randomSVMData(N, D, seed).sample(frac).collect();
-	var res = yield ugrid.randomSVMData(N, D, seed).collect();
-	console.log(res.sort());
+	ref = test.sample(ref, ugrid.worker.length, replace, frac, seed);
+	var res = yield ugrid.randomSVMData(N, D, seed).sample(replace, frac, seed).collect();
 	console.assert(test.arrayEqual(ref.sort(), res.sort()));
-
-	throw 'Test is broken'
 
 	ugrid.end();
 })();

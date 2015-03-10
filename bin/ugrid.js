@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 // Todo:
-// - recycle topics
 // - record/replay input messages
 // - handle foreign messages
 // - authentication (register)
@@ -29,24 +28,27 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var clients = {};
-var clientMax = 2;
+var clientNum = 1;
+var clientMax = UgridClient.minMulticast;
+var minMulticast = UgridClient.minMulticast;
 var topics = {};
-var topicMax = 0;
+var topicNum = -1;
+var UInt32Max = 4294967296;
+var topicMax = UInt32Max - minMulticast;
 var topicIndex = {};
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
 var port = opt.options.port || 12346;
 var msgCount = 0;
 var wss;
 var wsport = opt.options.wsport || port + 2;
-var crossbar = {}, crossn = clientMax;
-var minMulticast = UgridClient.minMulticast;
+var crossbar = {};
 
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
 		return new SwitchBoard(sock);
 	stream.Transform.call(this, {objectMode: true});
-	this.crossIndex = sock.crossIndex = crossn++;
-	crossbar[this.crossIndex] = sock;
+	sock.index = getClientNumber();
+	crossbar[sock.index] = sock;
 	this.sock = sock;
 }
 util.inherits(SwitchBoard, stream.Transform);
@@ -67,7 +69,7 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 	} else if (to > 1) {	// Unicast
 		if (crossbar[to]) crossbar[to].write(chunk, done);
 		else done();
-	} else if (to == 1) {	// Foreign
+	} else if (to == 1) {	// Foreign (to be done)
 	} else if (to == 0) {	// Server request
 		try {
 			o = JSON.parse(chunk.slice(8));
@@ -117,7 +119,13 @@ var clientRequest = {
 		return true;
 	},
 	tid: function (sock, msg) {
-		msg.data = getTopicId(msg.data);
+		var topic = msg.data;
+		var n = msg.data = getTopicId(topic);
+		// First to publish becomes topic owner
+		if (!topics[n].owner) {
+			topics[n].owner = sock.client;
+			sock.client.topics[n] = true;
+		}
 		return true;
 	},
 	subscribe: function (sock, msg) {
@@ -132,7 +140,6 @@ var clientRequest = {
 
 // Create a source stream and topic for monitoring info publishing
 var mstream = new SwitchBoard({});
-clientMax++;
 var monid =  getTopicId('monitoring') + minMulticast;
 function pubmon(data) {
 	mstream.write(UgridClient.encode({cmd: 'monitoring', id: monid, data: data}));
@@ -150,24 +157,33 @@ if (wsport) {
 	console.log("## Listening WebSocket on " + wsport);
 	wss = new webSocketServer({port: wsport});
 	wss.on('connection', function (ws) {
-		console.log('websocket connect');
 		var sock = websocket(ws);
 		sock.ws = true;
 		handleConnect(sock);
+		// Catch error/close at websocket level in addition to stream level
 		ws.on('close', function () {
 			handleClose(sock);
+		});
+		ws.on('error', function () {
+			console.log('## websocket connection error');
+			console.log(error);
 		});
 	});
 }
 
 function handleClose(sock) {
 	console.log('## connection closed');
-	if (sock.client) {
-		pubmon({event: 'disconnect', uuid: sock.client.uuid});
-		sock.client.sock = null;
+	var cli = sock.client;
+	if (cli) {
+		pubmon({event: 'disconnect', uuid: cli.uuid});
+		cli.sock = null;
 	}
-	if (sock.crossIndex) delete crossbar[sock.crossIndex];
-	if (sock.client.end) delete clients[sock.client.uuid];
+	if (sock.index) delete crossbar[sock.index];
+	for (var i in cli.topics) {		// remove owned topics
+		delete topicIndex[topics[i].name];
+		delete topics[i];
+	}
+	if (cli.end) delete clients[cli.uuid];
 	sock.removeAllListeners();
 }
 
@@ -185,24 +201,31 @@ function handleConnect(sock) {
 	sock.on('error', function (error) {
 		console.log('## connection error');
 		console.log(error);
-		console.log(sock);
 	});
+}
+
+function getClientNumber() {
+	var n = 100000;
+	do {
+		clientNum = (clientNum < clientMax) ? clientNum + 1 : 2;
+	} while (clientNum in crossbar && --n);
+	if (!n) throw "getClientNumber failed"
+	return clientNum;
 }
 
 function register(from, msg, sock)
 {
-	var uuid = msg.uuid || uuidGen.v1(), index = clientMax++;
+	var uuid = msg.uuid || uuidGen.v1();
 	sock.client = clients[uuid] = {
-		index: index,
+		index: sock.index,
 		uuid: uuid,
 		owner: from ? from : uuid,
 		data: msg.data || {},
 		sock: sock,
-		subscribed: {},
-		published: {}
+		topics: {}
 	};
 	pubmon({event: 'connect', uuid: uuid, data: msg.data});
-	msg.data = {uuid: uuid, token: 0, id: index};
+	msg.data = {uuid: uuid, token: 0, id: sock.index};
 }
 
 function devices(query) {
@@ -228,14 +251,20 @@ function devices(query) {
 
 function getTopicId(topic) {
 	if (topic in topicIndex) return topicIndex[topic];
-	topics[topicMax] = {name: topic, id: topicMax, sub: []};
-	topicIndex[topic] = topicMax++;
+	var n = 10000;
+	do {
+		topicNum = (topicNum < topicMax) ? topicNum + 1 : 0;
+	} while (topicNum in topics && --n);
+	if (!n) throw "getTopicId failed";
+	topics[topicNum] = {name: topic, id: topicNum, sub: []};
+	topicIndex[topic] = topicNum;
 	return topicIndex[topic]
 }
 
 function subscribe(client, topic) {
 	var sub = topics[getTopicId(topic)].sub
-	if (sub.indexOf(client.index) < 0) sub.push(client.index);
+	if (sub.indexOf(client.index) < 0)
+		sub.push(client.index);
 }
 
 function unsubscribe(client, topic) {
