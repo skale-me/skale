@@ -33,7 +33,9 @@ var clientNum = 1;
 var clientMax = UgridClient.minMulticast;
 var minMulticast = UgridClient.minMulticast;
 var topics = {};
-var topicNum = 0;
+var topicNum = -1;
+var UInt32Max = 4294967296;
+var topicMax = UInt32Max - minMulticast;
 var topicIndex = {};
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
 var port = opt.options.port || 12346;
@@ -68,7 +70,7 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 	} else if (to > 1) {	// Unicast
 		if (crossbar[to]) crossbar[to].write(chunk, done);
 		else done();
-	} else if (to == 1) {	// Foreign
+	} else if (to == 1) {	// Foreign (to be done)
 	} else if (to == 0) {	// Server request
 		try {
 			o = JSON.parse(chunk.slice(8));
@@ -118,7 +120,13 @@ var clientRequest = {
 		return true;
 	},
 	tid: function (sock, msg) {
-		msg.data = getTopicId(msg.data);
+		var topic = msg.data;
+		var n = msg.data = getTopicId(topic);
+		// First to publish becomes topic owner
+		if (!topics[n].owner) {
+			topics[n].owner = sock.client;
+			sock.client.topics[n] = true;
+		}
 		return true;
 	},
 	subscribe: function (sock, msg) {
@@ -132,7 +140,6 @@ var clientRequest = {
 };
 
 // Create a source stream and topic for monitoring info publishing
-//clientNum++;
 var mstream = new SwitchBoard({});
 var monid =  getTopicId('monitoring') + minMulticast;
 function pubmon(data) {
@@ -167,12 +174,17 @@ if (wsport) {
 
 function handleClose(sock) {
 	console.log('## connection closed');
-	if (sock.client) {
-		pubmon({event: 'disconnect', uuid: sock.client.uuid});
-		sock.client.sock = null;
+	var cli = sock.client;
+	if (cli) {
+		pubmon({event: 'disconnect', uuid: cli.uuid});
+		cli.sock = null;
 	}
 	if (sock.index) delete crossbar[sock.index];
-	if (sock.client.end) delete clients[sock.client.uuid];
+	for (var i in cli.topics) {		// remove owned topics
+		delete topicIndex[topics[i].name];
+		delete topics[i];
+	}
+	if (cli.end) delete clients[cli.uuid];
 	sock.removeAllListeners();
 }
 
@@ -194,10 +206,11 @@ function handleConnect(sock) {
 }
 
 function getClientNumber() {
+	var n = 100000;
 	do {
 		clientNum = (clientNum < clientMax) ? clientNum + 1 : 2;
-	} while (clientNum in crossbar);
-console.log(clientNum);
+	} while (clientNum in crossbar && --n);
+	if (!n) throw "getClientNumber failed"
 	return clientNum;
 }
 
@@ -210,8 +223,7 @@ function register(from, msg, sock)
 		owner: from ? from : uuid,
 		data: msg.data || {},
 		sock: sock,
-		subscribed: {},
-		published: {}
+		topics: {}
 	};
 	pubmon({event: 'connect', uuid: uuid, data: msg.data});
 	msg.data = {uuid: uuid, token: 0, id: sock.index};
@@ -240,14 +252,20 @@ function devices(query) {
 
 function getTopicId(topic) {
 	if (topic in topicIndex) return topicIndex[topic];
+	var n = 10000;
+	do {
+		topicNum = (topicNum < topicMax) ? topicNum + 1 : 0;
+	} while (topicNum in topics && --n);
+	if (!n) throw "getTopicId failed";
 	topics[topicNum] = {name: topic, id: topicNum, sub: []};
-	topicIndex[topic] = topicNum++;
+	topicIndex[topic] = topicNum;
 	return topicIndex[topic]
 }
 
 function subscribe(client, topic) {
 	var sub = topics[getTopicId(topic)].sub
-	if (sub.indexOf(client.index) < 0) sub.push(client.index);
+	if (sub.indexOf(client.index) < 0)
+		sub.push(client.index);
 }
 
 function unsubscribe(client, topic) {
