@@ -7,6 +7,7 @@
 # - UGRID_WS, to set the websocket mode for node clients, empty default
 # - UGRID_WSPORT, to set the websocket listening port for server, defaut to 12348
 # - UGRID_WORKER_PER_HOST, default to 1
+# - UGRID_WMAX, to set the maximum number of workers for a job (no default)
 # - NODE, to set the javascript interpreter, default to /usr/local/bin/node
 # - NODE_OPTS, to set the node javascript interpreter options
 # - HDFS_HOST, to set the hdfs namenode host, default to localhost

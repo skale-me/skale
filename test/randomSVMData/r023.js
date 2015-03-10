@@ -11,13 +11,6 @@ process.on('exit', function () {console.assert(ugrid.grid.id !== undefined);});
 co(function *() {
 	yield ugrid.init();
 
-	function arraySum (x, y) {
-		var res = [];
-		for (var i = 0; i < x.length; i++)
-			res[i] = x[i] + y[i];
-		return res;
-	}
-
 	var N = 5, D = 2, seed = 1, frac = 0.1, key = -1, withReplacement = true;
 
 	var ref = test.randomSVMData(N, D, seed);
