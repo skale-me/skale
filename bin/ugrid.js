@@ -208,7 +208,7 @@ function getClientNumber() {
 	do {
 		clientNum = (clientNum < clientMax) ? clientNum + 1 : 2;
 	} while (clientNum in crossbar && --n);
-	if (!n) throw "getClientNumber failed";
+	if (!n) throw new Error("getClientNumber failed");
 	return clientNum;
 }
 
@@ -254,7 +254,7 @@ function getTopicId(topic) {
 	do {
 		topicNum = (topicNum < topicMax) ? topicNum + 1 : 0;
 	} while (topicNum in topics && --n);
-	if (!n) throw "getTopicId failed";
+	if (!n) throw new Error("getTopicId failed");
 	topics[topicNum] = {name: topic, id: topicNum, sub: []};
 	topicIndex[topic] = topicNum;
 	return topicIndex[topic];
