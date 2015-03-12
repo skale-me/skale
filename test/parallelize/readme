@@ -188,14 +188,20 @@
 
 [p124.js] parallelize -> keys -> collect
 [p125.js] parallelize -> values -> collect
+
+// ========================================================================== //
+// LOCAL TEST TO BE IMPLEMENTED
+// ========================================================================== //
+[p126.js] parallelize -> leftOuterJoin -> collect
+[p127.js] parallelize -> rightOuterJoin -> collect
+[p128.js] parallelize  -> take
+[p129.js] parallelize  -> top
+[p130.js] parallelize  -> takeOrdered
+[p131.js] parallelize  -> takeSample
+
 // ========================================================================== //
 // TODO Function to be implemented
 // ========================================================================== //
-[parallelize_108.js] parallelize -> sortByKey -> collect
-					 parallelize ->
-[parallelize_109.js] parallelize -> persist -> sortByKey -> collect
-					 parallelize ------------>
-[parallelize_110.js] parallelize ------------> sortByKey -> collect
-					 parallelize -> persist ->
-[parallelize_111.js] parallelize -> persist -> sortByKey -> collect
-					 parallelize -> persist
+[*.js] parallelize -> sortByKey -> collect
+[*.js] parallelize -> persist -> sortByKey -> collect
+[*.js] parallelize -> sortByKey -> persist -> collect
