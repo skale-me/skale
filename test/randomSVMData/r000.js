@@ -13,6 +13,5 @@ co(function *() {
 	var N = 5, D = 2, seed = 1;
 	var res = yield ugrid.randomSVMData(N, D, seed).count();
 	console.assert(N == res);
-
 	ugrid.end();
 })();
