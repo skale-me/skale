@@ -1,6 +1,6 @@
 #!/usr/local/bin/node --harmony
 
-// Test randomSVMData -> reduceByKey -> collect
+// Test randomSVMData -> flatMapValues -> collect
 
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
@@ -11,16 +11,18 @@ process.on('exit', function () {console.assert(ugrid.grid.id !== undefined);});
 co(function *() {
 	yield ugrid.init();
 
-	function sum(a, b) {
-		return a + b;
+	var N = 5, D = 1, seed = 1;
+
+	function mapper(e) {
+		var out = [];
+		for (var i = e; i <= 5; i++)
+			out.push(i);
+		return out;
 	}
 
-	var N = 5, D = 1, seed = 1;
-	var ref = test.randomSVMData(N, D, seed, ugrid.worker.length);
-	var ref = test.reduceByKey(ref, sum, 0);
-
-	var res = yield ugrid.randomSVMData(N, D, seed).reduceByKey(sum, 0).collect();
-
+	var ref = test.randomSVMData(N, D, seed);
+	ref = test.flatMapValues(ref, mapper);
+	var res = yield ugrid.randomSVMData(N, D, seed).flatMapValues(mapper).collect();
 	console.assert(test.arrayEqual(ref.sort(), res.sort()));
 
 	ugrid.end();

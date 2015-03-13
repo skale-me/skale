@@ -38,7 +38,6 @@ var topicMax = UInt32Max - minMulticast;
 var topicIndex = {};
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
 var port = opt.options.port || 12346;
-var msgCount = 0;
 var wss;
 var wsport = opt.options.wsport || port + 2;
 var crossbar = {};
@@ -57,20 +56,20 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 	var o = {}, to = chunk.readUInt32LE(0, true);
 	if (to >= minMulticast)	{	// Multicast
 		var sub = topics[to - minMulticast].sub, len = sub.length, n = 0;
-		if (len == 0) return done();
+		if (len === 0) return done();
 		for (var i in sub) {
 			// Flow control: adjust to the slowest receiver
 			if (crossbar[sub[i]]) {
 				crossbar[sub[i]].write(chunk, function () {
 					if (++n == len) done();
 				});
-			} else if (--len == 0) done();
+			} else if (--len === 0) done();
 		}
 	} else if (to > 1) {	// Unicast
 		if (crossbar[to]) crossbar[to].write(chunk, done);
 		else done();
-	} else if (to == 1) {	// Foreign (to be done)
-	} else if (to == 0) {	// Server request
+	} else if (to === 1) {	// Foreign (to be done)
+	} else if (to === 0) {	// Server request
 		try {
 			o = JSON.parse(chunk.slice(8));
 		} catch (error) {
@@ -95,7 +94,7 @@ var clientRequest = {
 		register(null, msg, sock);
 		return true;
 	},
-	end: function (sock, msg) {
+	end: function (sock) {
 		sock.client.end = true;
 		return false;
 	},
@@ -164,7 +163,7 @@ if (wsport) {
 		ws.on('close', function () {
 			handleClose(sock);
 		});
-		ws.on('error', function () {
+		ws.on('error', function (error) {
 			console.log('## websocket connection error');
 			console.log(error);
 		});
@@ -209,7 +208,7 @@ function getClientNumber() {
 	do {
 		clientNum = (clientNum < clientMax) ? clientNum + 1 : 2;
 	} while (clientNum in crossbar && --n);
-	if (!n) throw "getClientNumber failed"
+	if (!n) throw new Error("getClientNumber failed");
 	return clientNum;
 }
 
@@ -255,14 +254,14 @@ function getTopicId(topic) {
 	do {
 		topicNum = (topicNum < topicMax) ? topicNum + 1 : 0;
 	} while (topicNum in topics && --n);
-	if (!n) throw "getTopicId failed";
+	if (!n) throw new Error("getTopicId failed");
 	topics[topicNum] = {name: topic, id: topicNum, sub: []};
 	topicIndex[topic] = topicNum;
-	return topicIndex[topic]
+	return topicIndex[topic];
 }
 
 function subscribe(client, topic) {
-	var sub = topics[getTopicId(topic)].sub
+	var sub = topics[getTopicId(topic)].sub;
 	if (sub.indexOf(client.index) < 0)
 		sub.push(client.index);
 }

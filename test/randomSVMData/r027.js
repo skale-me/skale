@@ -16,8 +16,6 @@ co(function *() {
 	var ref = test.groupByKey(ref).filter(function (e) {return e[0] == key;});
 
 	var res = yield ugrid.randomSVMData(N, D, seed).groupByKey().lookup(key);
-
-	console.assert(test.arrayEqual(ref, res));
-
+	console.assert(test.arrayFlatEqual(ref, res, 2));
 	ugrid.end();
 })();

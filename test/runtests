@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+var spawnSync = require('child_process').spawnSync;
+var find = require('find');
+
+var node = process.env.NODE || 'node';
+var nodeOptions = process.env.NODE_OPTS || '--harmony';
+
+find.file(/\.js$/, '.', function (files) {
+	var res, nfail = 0;
+	console.log(files.length + ' tests to run');
+	for (var i = 0; i < files.length; i++) {
+		process.stdout.write('\r' + files[i]);
+		res = spawnSync(node, nodeOptions.split(' ').concat(files[i]), {timeout: 5000});
+		if (res.status || res.error) {
+			nfail++;
+			console.log(' failed ' + (res.error || ''));
+		}
+	}
+	console.log('\r%d failed, %d passed\t\t\t', nfail, files.length - nfail);
+	process.exit(nfail != 0);
+});

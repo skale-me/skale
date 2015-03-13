@@ -9,7 +9,6 @@ process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
 co(function *() {
 	yield ugrid.init();
 
-	throw 'early exit';
-
-	ugrid.end();
+	process.exit(0);
+	//ugrid.end();
 })();

@@ -13,10 +13,10 @@ co(function *() {
 
 	var N = 5, D = 1, seed = 1;
 
-	var ref = test.randomSVMData(N, D, seed);
+	var ref = test.randomSVMData(N, D, seed, ugrid.worker.length);
 	ref = test.distinct(ref);
-	var res = yield ugrid.randomSVMData(N, D, seed).distinct().count();
-	console.assert(ref.length == res);
+	var res = yield ugrid.randomSVMData(N, D, seed).distinct().collect();
+	console.assert(test.arrayFlatEqual(ref, res, 2));
 
 	ugrid.end();
 })();

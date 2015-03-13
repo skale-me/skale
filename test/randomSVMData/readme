@@ -48,3 +48,8 @@ r032.js randomSVMData -> distinct -> count
 r033.js randomSVMData -> distinct -> collect
 r034.js randomSVMData -> distinct -> reduce
 r035.js randomSVMData -> distinct -> lookup
+
+r036.js randomSVMData -> flatMapValues -> count
+r037.js randomSVMData -> flatMapValues -> collect
+r038.js randomSVMData -> flatMapValues -> reduce
+r039.js randomSVMData -> flatMapValues -> lookup

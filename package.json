@@ -1,18 +1,21 @@
 {
   "name": "ugrid",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "ugrid client and server",
   "main": "index.js",
   "scripts": {
     "start": "bin/start-all.sh",
     "pretest": "cat test/ugrid-env.sh > conf/ugrid-env.sh; bin/start-all.sh",
-    "test": "cd test; ./runUnitTest.js parallelize; ./runUnitTest.js randomSVMData; ./runUnitTest.js ugridClient; ./runUnitTest.js unitTest",
+    "test": "cd test; ./runtests",
     "posttest": "bin/stop-all.sh",
     "stop": "bin/stop-all.sh"
   },
   "repository": {
     "type": "git",
     "url": "ssh://git@gitlab.ugrid.net:10022/ugrid/ugrid.git"
+  },
+  "publishConfig": {
+    "registry": "http://gitlab.ugrid.net:4873/"
   },
   "keywords": [
     "grid",
@@ -25,14 +28,15 @@
     "body-parser": "^1.9.2",
     "co": "^3.1.0",
     "express": "^4.10.1",
+    "find": "^0.1.7",
     "node-getopt": "^0.2.3",
     "node-uuid": "^1.4.1",
     "rand-token": "^0.2.1",
     "request": "^2.49.0",
+    "ssh2": "^0.4.4",
     "thunkify": "^2.1.2",
     "websocket-stream": "^1.1.1",
-    "ws": "^0.4.32",
-    "ssh2": "^0.3.6"
+    "ws": "^0.7.1"
   },
   "jshintConfig": {
     "node": true,

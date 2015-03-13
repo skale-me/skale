@@ -240,6 +240,15 @@ function arrayEqual(a1, a2) {
 	return JSON.stringify(a1) === JSON.stringify(a2);
 }   
 
+function arrayFlatEqual(a, b, flatLevel) {
+	flatLevel = flatLevel || 1;
+	for (var i = 0; i < flatLevel; i++) {
+		a = [].concat.apply([], a);	// Flatten array a
+		b = [].concat.apply([], b);	// Flatten array b
+	}
+	return arrayEqual(a.sort(), b.sort());
+}
+
 module.exports.flatMapValues = flatMapValues;
 module.exports.countByValue = countByValue;
 module.exports.randomSVMData = randomSVMData;
@@ -254,3 +263,4 @@ module.exports.distinct = distinct;
 module.exports.intersection = intersection;
 module.exports.subtract = subtract;
 module.exports.arrayEqual = arrayEqual;
+module.exports.arrayFlatEqual = arrayFlatEqual;

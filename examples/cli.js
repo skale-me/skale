@@ -5,7 +5,7 @@
 var Client = require('../lib/ugrid-client.js');
 var client = new Client({data: {type: 'truc'}});
 var input = process.stdin;
-if (process.argv[2]) input = require('fs').createReadStream(process.argv[2])
+if (process.argv[2]) input = require('fs').createReadStream(process.argv[2]);
 
 client.devices_cb({type: 'truc'}, function (err, res) {
 	//var pub = new PubStream({client: client, dest: res[0], cmd: 'line'});
