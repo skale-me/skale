@@ -12,15 +12,14 @@ co(function *() {
 	yield ugrid.init();
 
 	function sum(a, b) {
-		a += b;
-		return a;
+		return a + b;
 	}
 
 	var N = 5, D = 1, seed = 1;
 	var ref = test.randomSVMData(N, D, seed, ugrid.worker.length);
-	var ref = test.reduceByKey(ref, sum, [0,0]);
+	var ref = test.reduceByKey(ref, sum, 0);
 
-	var res = yield ugrid.randomSVMData(N, D, seed).reduceByKey(sum, [0, 0]).collect();
+	var res = yield ugrid.randomSVMData(N, D, seed).reduceByKey(sum, 0).collect();
 
 	console.assert(test.arrayEqual(ref.sort(), res.sort()));
 

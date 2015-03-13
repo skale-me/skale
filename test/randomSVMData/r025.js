@@ -15,7 +15,7 @@ co(function *() {
 	var ref = test.randomSVMData(N, D, seed, ugrid.worker.length);
 	var ref = test.groupByKey(ref);
 	var res = yield ugrid.randomSVMData(N, D, seed).groupByKey().collect();
-	console.assert(test.arrayEqual(ref.sort(), res.sort()));
+	console.assert(test.arrayFlatEqual(ref, res, 2));
 
 	ugrid.end();
 })();

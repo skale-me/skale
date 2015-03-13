@@ -18,9 +18,9 @@ co(function *() {
 
 	var N = 5, D = 1, seed = 1, key = 1;
 	var ref = test.randomSVMData(N, D, seed, ugrid.worker.length);
-	var ref = test.reduceByKey(ref, sum, [0,0]).filter(function (e) {return e[0] == key;});
+	var ref = test.reduceByKey(ref, sum, 0).filter(function (e) {return e[0] == key;});
 
-	var res = yield ugrid.randomSVMData(N, D, seed).reduceByKey(sum, [0, 0]).lookup(key);
+	var res = yield ugrid.randomSVMData(N, D, seed).reduceByKey(sum, 0).lookup(key);
 
 	console.assert(test.arrayEqual(ref, res));
 
