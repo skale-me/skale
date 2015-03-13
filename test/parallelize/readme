@@ -27,7 +27,8 @@
 [p008.js] parallelize -> map (no args) -> count
 [p009.js] parallelize -> map (no args) -> collect
 [p010.js] parallelize -> map (no args) -> reduce
-[p011.js] parallelize -> map (no args) -> lookup
+[p011.js] parallelize -> map (no args) -> lookup					// Modifié jusqu'ici
+
 [p012.js] parallelize -> filter (no args) -> count
 [p013.js] parallelize -> filter (no args) -> collect
 [p014.js] parallelize -> filter (no args) -> reduce (no args)
@@ -170,27 +171,24 @@
 		  parallelize ->
 [p115.js] parallelize -> intersection -> lookup
 		  parallelize ->
-[p116.js] parallelize -> substract -> count
+[p116.js] parallelize -> subtract -> count
 		  parallelize -> 
-[p117.js] parallelize -> substract -> collect
+[p117.js] parallelize -> subtract -> collect
 		  parallelize ->
-[p118.js] parallelize -> substract -> reduce
+[p118.js] parallelize -> subtract -> reduce
 		  parallelize ->
-[p119.js] parallelize -> substract -> lookup
+[p119.js] parallelize -> subtract -> lookup
 		  parallelize ->
 
 [p120.js] parallelize -> countByValue
-
 [p121.js] parallelize -> forEach
-
 [p122.js] parallelize -> flatMapValues -> count
 [p123.js] parallelize -> flatMapValues -> collect
-
 [p124.js] parallelize -> keys -> collect
 [p125.js] parallelize -> values -> collect
 
 // ========================================================================== //
-// LOCAL TEST TO BE IMPLEMENTED
+// LOCAL TEST TO BE REVIEWED / IMPLEMENTED
 // ========================================================================== //
 [p126.js] parallelize -> leftOuterJoin -> collect
 [p127.js] parallelize -> rightOuterJoin -> collect
@@ -199,9 +197,19 @@
 [p130.js] parallelize  -> takeOrdered
 [p131.js] parallelize  -> takeSample
 
-// ========================================================================== //
-// TODO Function to be implemented
-// ========================================================================== //
+[p132.js] parallelize  -> partitionByKey -> collect
+[p133.js] parallelize -> persist -> sortByKey -> collect
+
 [*.js] parallelize -> sortByKey -> collect
 [*.js] parallelize -> persist -> sortByKey -> collect
 [*.js] parallelize -> sortByKey -> persist -> collect
+
+// ========================================================================== //
+// TODO Function to be implemented
+// ========================================================================== //
+fold
+aggregate
+combineByKey
+subtractByKey
+foldByKey
+countByKey

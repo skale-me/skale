@@ -1,6 +1,6 @@
 #!/usr/local/bin/node --harmony
 
-// Test parallelize --> reduce
+// parallelize --> reduce
 
 var co = require('co');
 var ugrid = require('../../lib/ugrid-context.js')();
@@ -17,9 +17,9 @@ co(function *() {
 		return a;
 	}
 
-	var res = yield ugrid.parallelize(v).reduce(sum, 0);
+	var dist = yield ugrid.parallelize(v).reduce(sum, 0);
 
-	console.assert(res == v.reduce(sum, 0));
+	console.assert(dist == v.reduce(sum, 0));
 
 	ugrid.end();
 })();

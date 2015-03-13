@@ -11,13 +11,14 @@ co(function *() {
 	yield ugrid.init();
 
 	var v = [1, 2, 3, 4, 5];
+	var loc = v.length;
+
 	var data = ugrid.parallelize(v).persist();
 	yield data.count();
-
 	v.push(6);
-	var res = yield data.count();
+	var dist = yield data.count();
 
-	console.assert((v.length - 1) == res);
+	console.assert(loc == dist);
 
 	ugrid.end();
 })();

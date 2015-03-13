@@ -190,7 +190,7 @@ function intersection(v1_in, v2_in) {
 	return v_ref.map(JSON.parse)
 }
 
-function substract(v1_in, v2_in) {
+function subtract(v1_in, v2_in) {
 	var v1 = JSON.parse(JSON.stringify(v1_in));
 	var v2 = JSON.parse(JSON.stringify(v2_in));
 
@@ -252,5 +252,5 @@ module.exports.coGroup = coGroup;
 module.exports.crossProduct = crossProduct;
 module.exports.distinct = distinct;
 module.exports.intersection = intersection;
-module.exports.substract = substract;
+module.exports.subtract = subtract;
 module.exports.arrayEqual = arrayEqual;

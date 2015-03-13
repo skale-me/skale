@@ -11,9 +11,9 @@ co(function *() {
 	yield ugrid.init();
 
 	var v = [1, 2, 3, 4, 5];
-	var res = yield ugrid.parallelize(v).count();
+	var dist = yield ugrid.parallelize(v).count();
 
-	console.assert(v.length == res);
+	console.assert(v.length == dist);
 
 	ugrid.end();
 })();

@@ -66,6 +66,9 @@ function runWorker(host, port) {
 		shuffle: function (msg) {
 			task.processShuffle(msg);
 		},
+		action: function (msg) {
+			task.processAction(msg);
+		},		
 		hdfs: function(msg) {
 			hdfs(msg.data.args, function (err, res) {
 				grid.reply(msg, err, res);
