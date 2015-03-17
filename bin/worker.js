@@ -68,6 +68,9 @@ function runWorker(host, port) {
 		},
 		action: function (msg) {
 			task.processAction(msg);
+		},
+		lastLine: function (msg) {
+			task.processLastLine(msg);
 		},		
 		hdfs: function(msg) {
 			hdfs(msg.data.args, function (err, res) {
