@@ -177,6 +177,7 @@ function handleClose(sock) {
 		pubmon({event: 'disconnect', uuid: cli.uuid});
 		cli.sock = null;
 	}
+    releaseWorkers(cli.uuid);
 	if (sock.index) delete crossbar[sock.index];
 	for (var i in cli.topics) {		// remove owned topics
 		delete topicIndex[topics[i].name];
@@ -225,6 +226,14 @@ function register(from, msg, sock)
 	};
 	pubmon({event: 'connect', uuid: uuid, data: msg.data});
 	msg.data = {uuid: uuid, token: 0, id: sock.index};
+}
+
+function releaseWorkers(master) {
+	for (var i in clients) {
+		var d = clients[i].data;
+		if (d && d.jobId == master)
+			d.jobId = "";
+	}
 }
 
 function devices(query) {
