@@ -23,10 +23,17 @@ var port = opt.options.Port || 12346;
 var num = opt.options.num || 1;
 
 if (cluster.isMaster) {
+	cluster.on('exit', handleExit);
 	for (var i = 0; i < num; i++)
 		cluster.fork();
 } else {
 	runWorker(host, port);
+}
+
+function handleExit(worker, code, signal) {
+	console.log("worker %d died (%s). Restart.", worker.process.pid, signal || code);
+	if (code != 2)
+		cluster.fork();
 }
 
 function runWorker(host, port) {
@@ -47,6 +54,11 @@ function runWorker(host, port) {
 	}, function (err, res) {
 		console.log('id: ' + res.id + ', uuid: ' + res.uuid);
 		grid.host = {uuid: res.uuid, id: res.id};
+	});
+
+	grid.on('error', function (err) {
+		console.log("grid error %j", err);
+		process.exit(2);
 	});
 
 	var request = {
@@ -83,6 +95,7 @@ function runWorker(host, port) {
 			jobId = undefined;
 			grid.set({jobId: ''});
 			grid.reply(msg, null, null);
+			//process.exit(0);
 		}
 	};
 
