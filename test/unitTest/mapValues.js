@@ -21,4 +21,7 @@ co(function *() {
 	console.log(yield p1.collect());	
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

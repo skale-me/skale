@@ -23,4 +23,7 @@ co(function *() {
 	console.assert(loc == dist)
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

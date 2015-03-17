@@ -19,4 +19,7 @@ co(function *() {
 	assert(dist == local)
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

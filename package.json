@@ -25,8 +25,9 @@
   ],
   "author": "Luca SAS",
   "dependencies": {
+    "bluebird": "^2.9.14",
     "body-parser": "^1.9.2",
-    "co": "^3.1.0",
+    "co": "^4.4.0",
     "express": "^4.10.1",
     "find": "^0.1.7",
     "node-getopt": "^0.2.3",
@@ -34,7 +35,7 @@
     "rand-token": "^0.2.1",
     "request": "^2.49.0",
     "ssh2": "^0.4.4",
-    "thunkify": "^2.1.2",
+    "thenify": "^3.1.0",
     "websocket-stream": "^1.1.1",
     "ws": "^0.7.1"
   },

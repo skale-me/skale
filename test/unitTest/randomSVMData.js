@@ -21,4 +21,7 @@ co(function *() {
 		assert(res[i].length == (D + 1));
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

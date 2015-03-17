@@ -31,18 +31,18 @@ function WorkerTask(grid, fs, readline, ml, STAGE_RAM, RAM, msg) {
 				res[w] = res[w] ? res[w] + 1: 1;
 			}
 			msg.data = res;
-			grid.send_cb(0, msg);
+			grid.send(0, msg);
 		});
 		rl.on('close', function () {
 			msg.cmd = 'end';
 			msg.data = '';
-			grid.send_cb(0, msg);
+			grid.send(0, msg);
 		});
 	};
 }
 
 var words = {}, finished = 0;
-grid.init_cb(function () {
+grid.init(function () {
 	for (var i = 0; i < grid.worker.length; i++) {
 		grid.worker[i].rpc('setTask',  {task: WorkerTask.toString(), file: file, rank: i, wmax: grid.worker.length});
 		grid.worker[i].rpc('runTask');

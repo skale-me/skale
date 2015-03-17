@@ -33,13 +33,13 @@ function WorkerTask(grid, fs, Lines, ml, STAGE_RAM, RAM, msg) {
 	//			res[w] = res[w] ? res[w] + 1: 1;
 	//		}
 	//		msg.data = res;
-	//		grid.send_cb(0, msg);
+	//		grid.send(0, msg);
 	//	});
 	//	lines.on('end', function () {
 	//		console.log('sending end to master');
 	//		msg.cmd = 'end';
 	//		msg.data = '';
-	//		grid.send_cb(0, msg);
+	//		grid.send(0, msg);
 	//	});
 	//};
 
@@ -67,7 +67,7 @@ var pending = 0, remotePaused = false;
 
 MongoClient.connect('mongodb://localhost:27017/test', function (err, db) {
 	assert.equal(null, err);
-	grid.init_cb(function () {
+	grid.init(function () {
 		var task = {
 			task: WorkerTask.toString(),
 			file: file,
@@ -93,21 +93,21 @@ MongoClient.connect('mongodb://localhost:27017/test', function (err, db) {
 					//remotePaused[msg.from] = true;
 					console.log('pause');
 					remotePaused = true;
-					//grid.grid.send_cb(1, {cmd: 'pause'});
+					//grid.grid.send(1, {cmd: 'pause'});
 				}
 				dwords.update({name: i}, {$inc: {count: msg.data[i]}}, {w:0, upsert: true, safe: false}, function () {
 					pending--;
 					if (pending < 10) {
 						if (remotePaused) {
 							console.log('resume');
-							// grid.grid.send_cb(1, {cmd: 'resume'});
+							// grid.grid.send(1, {cmd: 'resume'});
 							remotePaused = false;
 						}
 						//for (var i in remotePaused) {
 						//	if (!remotePaused[i]) continue;
 						//	console.log('resume ' + i);
 						//	remotePaused[i] = false;
-						//	grid.grid.send_cb(0, {cmd: 'resume', id: i});
+						//	grid.grid.send(0, {cmd: 'resume', id: i});
 						//}
 					}
 					console.log('pending: ' + pending);

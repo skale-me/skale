@@ -2,10 +2,10 @@
 
 var co = require('co');
 var fs = require('fs');
-var thunkify = require('thunkify');
+var thenify = require('thenify');
 var execCbk = require('child_process').exec;
 
-var exec = thunkify(execCbk);
+var exec = thenify(execCbk);
 
 if (process.argv.length != 6) {
 	console.log('Usage: run_spark_kmeans.js sparkHomeDir dataFile K nIterations\n\t==> You must provide absolute path')
@@ -69,4 +69,7 @@ co(function *() {
 
 		yield exec('sleep 3');
 	}
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

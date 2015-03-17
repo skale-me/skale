@@ -18,4 +18,7 @@ co(function *() {
 	var dist = yield ugrid.parallelize(v).forEach(each);
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

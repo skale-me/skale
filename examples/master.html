@@ -3,7 +3,7 @@
 		<script src="../lib/ugrid-context-browser.js"></script>
 		<script>
 		var grid = new UgridContext();
-		grid.init_cb(function (err, res) {
+		grid.init(function (err, res) {
 			console.log("worker.length", grid.worker.length);
 		});
 		</script>

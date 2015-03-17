@@ -11,4 +11,7 @@ co(function *() {
 
 	process.exit(0);
 	//ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

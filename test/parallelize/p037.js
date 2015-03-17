@@ -35,4 +35,7 @@ co(function *() {
 			console.assert(res[i][j] == v_copy[i][j])
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

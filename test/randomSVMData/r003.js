@@ -20,4 +20,7 @@ co(function *() {
 	console.assert(test.arrayEqual(res.sort(), ref.sort()));
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

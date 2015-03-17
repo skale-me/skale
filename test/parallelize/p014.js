@@ -26,4 +26,7 @@ co(function *() {
 	console.assert(res == v.filter(isEven).reduce(sum, 0))
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});
