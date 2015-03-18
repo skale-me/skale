@@ -1,6 +1,6 @@
 #!/usr/local/bin/node --harmony
 
-// textFile -> collect
+// mongo -> collect
 
 var co = require('co');
 var fs = require('fs');
@@ -11,16 +11,10 @@ process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
 co(function *() {
 	yield ugrid.init();
 
-	var v = [1, 2, 3, 4, 5];
-	var t0 = v.reduce(function(a, b) {return a + b + '\n'}, '');
-	fs.writeFileSync('/tmp/v', t0);
+	var dist = yield ugrid.mongo({v : {$gt: 1}}).collect();
 
-	var loc = v.map(String);
-	var dist = yield ugrid.textFile('/tmp/v').collect();
-
+	// var dist = yield ugrid.mongo().collect();
 	console.log(dist);
-
-	console.assert(JSON.stringify(loc) == JSON.stringify(dist));
 
 	ugrid.end();
 })();
