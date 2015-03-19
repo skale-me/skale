@@ -236,23 +236,26 @@ function releaseWorkers(master) {
 	}
 }
 
-function devices(query) {
-	var result = [];
+function devices(data) {
+	var query = data.query, max = data.max, result = [];
 	for (var i in clients) {
 		if (!clients[i].sock) continue;
 		var match = true;
-		for (var j in query)
+		for (var j in query) {
 			if (!clients[i].data || clients[i].data[j] != query[j]) {
 				match = false;
 				break;
 			}
-		if (match)
+		}
+		if (match) {
 			result.push({
 				uuid: i,
 				id: clients[i].index,
 				ip: clients[i].sock.remoteAddress,
 				data: clients[i].data
 			});
+			if (result.length == max) break;
+		}
 	}
 	return result;
 }

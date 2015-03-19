@@ -19,7 +19,7 @@ grid.on('request', function (msg) {
 });
 
 co(function *() {
-	var devices = yield grid.devices({type: 't000'});
+	var devices = yield grid.devices({type: 't000'}, 0);
 	console.assert(devices[0] != undefined);
 	var id = yield grid.send(0, {cmd: 'id', data: grid.uuid});
 	console.assert(id == grid.id);

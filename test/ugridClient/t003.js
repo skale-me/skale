@@ -10,7 +10,7 @@ grid.on("request", function (msg) {
 	grid.reply(msg, null, "test ok");
 });
 
-grid.devices({type: 't000'}, function (err, res) {
+grid.devices({type: 't000'}, 0, function (err, res) {
 	console.assert(res[0] != undefined);
 	grid.request(res[0], "test", function (err, res) {
 		console.assert(res == "test ok");
