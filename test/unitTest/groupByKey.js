@@ -44,4 +44,7 @@ co(function *() {
 	fs.unlink(file, function (err) {
 		ugrid.end();
 	});
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

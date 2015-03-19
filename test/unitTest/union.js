@@ -36,4 +36,7 @@ co(function *() {
 		assert(c.indexOf(r3[i]) != -1)
 	
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

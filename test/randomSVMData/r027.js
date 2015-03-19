@@ -18,4 +18,7 @@ co(function *() {
 	var res = yield ugrid.randomSVMData(N, D, seed).groupByKey().lookup(key);
 	console.assert(test.arrayFlatEqual(ref, res, 2));
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

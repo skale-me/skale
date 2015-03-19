@@ -10,9 +10,9 @@ grid.on("request", function (msg) {
 	grid.reply(msg, null, "test ok");
 });
 
-grid.devices_cb({type: 't000'}, function (err, res) {
+grid.devices({type: 't000'}, function (err, res) {
 	console.assert(res[0] != undefined);
-	grid.request_cb(res[0], "test", function (err, res) {
+	grid.request(res[0], "test", function (err, res) {
 		console.assert(res == "test ok");
 		grid.end();
 	});

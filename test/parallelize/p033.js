@@ -30,4 +30,7 @@ co(function *() {
 			assert(tmp_sort[i][j] == res_sort[i][j])
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

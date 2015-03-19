@@ -29,4 +29,7 @@ co(function *() {
 	console.assert(res[0][1] == value);
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

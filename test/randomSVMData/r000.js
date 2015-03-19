@@ -14,4 +14,7 @@ co(function *() {
 	var res = yield ugrid.randomSVMData(N, D, seed).count();
 	console.assert(N == res);
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

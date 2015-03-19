@@ -27,4 +27,7 @@ co(function *() {
 	console.assert(tmp.length == res);
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

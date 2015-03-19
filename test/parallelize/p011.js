@@ -28,4 +28,7 @@ co(function *() {
 	console.assert(JSON.stringify(dist) == JSON.stringify(loc))
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

@@ -32,4 +32,7 @@ co(function *() {
 	console.assert(data.type === 't001');
 	console.assert(data.state === 'ok');
 	grid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

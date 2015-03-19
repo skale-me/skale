@@ -35,4 +35,7 @@ co(function *() {
 	console.log('Later iterations : ' + time.reduce(function (a, b) {return a + b;}) / (ITERATIONS - 1));
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

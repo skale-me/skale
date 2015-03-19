@@ -23,4 +23,7 @@ co(function *() {
 	console.assert( 2 * ref == res);
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

@@ -29,4 +29,7 @@ co(function *() {
 	console.assert(v_copy.length == res);
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

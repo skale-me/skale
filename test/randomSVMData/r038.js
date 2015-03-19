@@ -33,4 +33,7 @@ co(function *() {
 	console.assert(test.arrayEqual(ref, res));
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

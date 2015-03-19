@@ -40,4 +40,7 @@ co(function *() {
 
 		});
 	});
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

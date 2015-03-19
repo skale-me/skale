@@ -21,4 +21,7 @@ co(function *() {
 	console.assert(test.arrayEqual(ref.sort(), res.sort()));
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

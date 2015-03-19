@@ -26,4 +26,7 @@ co(function *() {
 	console.assert(dist == v.map(by2).reduce(sum, 0));
 
 	ugrid.end();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});

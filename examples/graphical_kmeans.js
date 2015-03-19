@@ -70,4 +70,7 @@ co(function *() {
 	}
 	ugrid.end();
 	ugrid2.disconnect();
-})();
+}).catch(function (err) {
+	console.error(err.stack);
+	process.exit(1);
+});
