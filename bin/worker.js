@@ -64,10 +64,10 @@ function runWorker(host, port) {
 	var request = {
 		setTask: function (msg) {
 			task = new UgridTask(grid, RAM, msg);
-			if (!jobId) {
-				jobId = msg.ufrom;
-				grid.set({jobId: jobId});
-			}
+			//if (!jobId) {
+			//	jobId = msg.ufrom;
+			//	grid.set({jobId: jobId});
+			//}
 			grid.reply(msg, null, 'worker ready to process task');
 		},
 		runTask: function (msg) {
@@ -93,8 +93,8 @@ function runWorker(host, port) {
 			RAM = {};
 			task = undefined;
 			jobId = undefined;
-			grid.set({jobId: ''});
-			grid.reply(msg, null, null);
+			//grid.set({jobId: ''});
+			//grid.reply(msg, null, null);
 			//process.exit(0);
 		}
 	};

@@ -99,7 +99,8 @@ var clientRequest = {
 		return false;
 	},
 	devices: function (sock, msg) {
-		msg.data = devices(msg.data);
+		msg.ufrom = sock.client.uuid;
+		msg.data = devices(msg);
 		return true;
 	},
 	get: function (sock, msg) {
@@ -236,8 +237,13 @@ function releaseWorkers(master) {
 	}
 }
 
-function devices(data) {
-	var query = data.query, max = data.max, result = [];
+function devices(msg) {
+	var query = msg.data.query, max = msg.data.max, result = [], master;
+	console.log(msg);
+	if (clients[msg.ufrom].data.type == 'master') {
+		master = msg.ufrom;
+		console.log("devices for master");
+	}
 	for (var i in clients) {
 		if (!clients[i].sock) continue;
 		var match = true;
@@ -254,9 +260,12 @@ function devices(data) {
 				ip: clients[i].sock.remoteAddress,
 				data: clients[i].data
 			});
+			if (master) clients[i].data.jobId = master;
 			if (result.length == max) break;
 		}
 	}
+	if (master)
+		pubmon({event: 'devices', uuid: master, data: result});
 	return result;
 }
 
