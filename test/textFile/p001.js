@@ -18,6 +18,8 @@ co(function *() {
 	var loc = v.map(String);
 	var dist = yield ugrid.textFile('/tmp/v').collect();
 
+	console.log(dist);
+
 	console.assert(JSON.stringify(loc) == JSON.stringify(dist));
 
 	ugrid.end();
