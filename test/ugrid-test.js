@@ -20,6 +20,7 @@ function randomSVMData(N, D, seed, nPartitions) {
 
 function sample(v_in, P, withReplacement, frac, seed) {
 	var v = JSON.parse(JSON.stringify(v_in));
+	if (P > v.length) P = v.length;
 
 	function split(a, n) {
 		var len = a.length, out = [], i = 0;
