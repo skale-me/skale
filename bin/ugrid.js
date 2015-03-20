@@ -239,11 +239,8 @@ function releaseWorkers(master) {
 
 function devices(msg) {
 	var query = msg.data.query, max = msg.data.max, result = [], master;
-	console.log(msg);
-	if (clients[msg.ufrom].data.type == 'master') {
+	if (clients[msg.ufrom].data.type == 'master')
 		master = msg.ufrom;
-		console.log("devices for master");
-	}
 	for (var i in clients) {
 		if (!clients[i].sock) continue;
 		var match = true;
