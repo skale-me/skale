@@ -5,18 +5,25 @@ var find = require('find');
 
 var node = process.env.NODE || 'node';
 var nodeOptions = process.env.NODE_OPTS || '--harmony';
+var maxWorkers = process.argv[2] || process.env.UGRID_WMAX || 1;
 
 find.file(/\.js$/, '.', function (files) {
 	var res, nfail = 0;
-	console.log(files.length + ' tests to run');
+	console.log(files.length + ' tests to run, 1 ' + (maxWorkers > 1 ? "to " + maxWorkers + " workers" : "worker"));
 	for (var i = 0; i < files.length; i++) {
-		process.stdout.write('\r' + files[i]);
-		res = spawnSync(node, nodeOptions.split(' ').concat(files[i]), {timeout: 5000});
-		if (res.status || res.error) {
-			nfail++;
-			console.log(' failed ' + (res.error || ''));
+		for (var j = 1; j <= maxWorkers; j++) {
+			process.stdout.write('\r' + j + ' worker' + (j == 1 ? ',  ' : 's, ') + files[i]);
+			process.env.UGRID_WMAX = j;
+			res = spawnSync(node, nodeOptions.split(' ').concat(files[i]), {
+				env: process.env,
+				timeout: 5000
+			});
+			if (res.status || res.error) {
+				nfail++;
+				console.log(' failed ' + (res.error || ''));
+			}
 		}
 	}
-	console.log('\r%d failed, %d passed\t\t\t', nfail, files.length - nfail);
+	console.log('\r%d failed, %d passed\t\t\t', nfail, maxWorkers * files.length - nfail);
 	process.exit(nfail != 0);
 });
