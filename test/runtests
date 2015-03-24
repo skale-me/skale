@@ -5,7 +5,7 @@ var find = require('find');
 
 var node = process.env.NODE || 'node';
 var nodeOptions = process.env.NODE_OPTS || '--harmony';
-var maxWorkers = process.argv[2] || process.env.UGRID_WMAX || 1;
+var maxWorkers = process.argv[2] || process.env.UGRID_WORKER_PER_HOST || 1;
 
 find.file(/\.js$/, '.', function (files) {
 	var res, nfail = 0;
