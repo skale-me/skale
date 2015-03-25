@@ -46,6 +46,7 @@ function runWorker(host, port) {
 			ncpu: os.cpus().length,
 			os: os.type(),
 			arch: os.arch(),
+			usedmem: process.memoryUsage().rss,
 			totalmem: os.totalmem(),
 			hostname: os.hostname(),
 			type: 'worker',
@@ -97,7 +98,7 @@ function runWorker(host, port) {
 		try {
 			request[msg.data.cmd](msg);
 		} catch (error) {
-			console.error(msg.data.fun + ' error : ' + error);
+			console.error(error.stack);
 			grid.reply(msg, error, null);
 		}
 	});
@@ -122,7 +123,7 @@ function hdfs(args, callback) {
 	
 	conn.on('ready', function() {
 		conn.exec(fsck_cmd, function(err, stream) {
-			if (err) throw err;
+			if (err) throw new Error(err);
 			var lines = new Lines();
 			stream.stdout.pipe(lines);
 			lines.on('data', function(line) {
