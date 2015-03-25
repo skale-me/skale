@@ -10,7 +10,7 @@ co(function *() {
 
 	var N = 203472 * 4;					// Number of observations
 	var D = 16;							// Number of features
-	var P = 4;							// Number of partitions
+	var P = ugrid.worker.length;		// Number of partitions
 	var seed = 1;
 	var ITERATIONS = 20;				// Number of iterations
 	var time = new Array(ITERATIONS);

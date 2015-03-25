@@ -24,6 +24,6 @@ find.file(/\.js$/, '.', function (files) {
 			}
 		}
 	}
-	console.log('\r%d failed, %d passed\t\t\t', nfail, maxWorkers * files.length - nfail);
+	console.log('\r%d failed, %d passed\t\t\t\t\t', nfail, maxWorkers * files.length - nfail);
 	process.exit(nfail != 0);
 });
