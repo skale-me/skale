@@ -18,8 +18,6 @@ var opt = require('node-getopt').create([
 	['P', 'Port=ARG', 'server port (default 12346)']
 ]).bindHelp().parseSystem();
 
-var host = opt.options.Host || 'localhost';
-var port = opt.options.Port || 12346;
 var num = opt.options.num || 1;
 
 if (cluster.isMaster) {
@@ -27,7 +25,7 @@ if (cluster.isMaster) {
 	for (var i = 0; i < num; i++)
 		cluster.fork();
 } else {
-	runWorker(host, port);
+	runWorker(opt.options.Host, opt.options.Port);
 }
 
 function handleExit(worker, code, signal) {
@@ -87,10 +85,10 @@ function runWorker(host, port) {
 			});
 		},
 		reset: function (msg) {
+			if (!process.env.UGRID_TEST) process.exit(0);
 			RAM = {};
 			task = undefined;
 			jobId = undefined;
-			//process.exit(0);
 		}
 	};
 
