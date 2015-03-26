@@ -11,7 +11,7 @@ co(function *() {
 	var N = 203472 * 4;					// Number of observations
 	var D = 16;							// Number of features
 	var seed = 1;
-	var ITERATIONS = 10;				// Number of iterations
+	var ITERATIONS = 20;				// Number of iterations
 
 	var points = ugrid.randomSVMData(N, D, seed).persist();
 	var model = new LogisticRegression(points, D, N);

@@ -22,7 +22,7 @@ var ugrid = require('../lib/ugrid-client.js')({
 
 co(function *() {
 	ugrid.on('start', function(res) {
-		var cmd = __dirname + '/../examples/web/' + res.data.app + '.js';		
+		var cmd = __dirname + '/../examples/web/' + res.data.app + '.js';
 		spawn('/usr/local/bin/node', ['--harmony', cmd, JSON.stringify(res.data)]);
 	});
 }).catch(function (err) {

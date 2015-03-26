@@ -2,14 +2,18 @@
 
 var co = require('co');
 
-var ugrid = require('../../../ugrid/lib/ugrid-context.js')({data: {type: 'master'}});
+if (process.argv.length != 5)
+	throw 'Usage logreg-file.js file nIterations nMaxWorker'
+
+var file = process.argv[2];
+var nIterations = process.argv[3];
+process.env.UGRID_WMAX = process.argv[4];
+
+var ugrid = require('../../../ugrid/lib/ugrid-context.js')();
 var LogisticRegression = require('../../../ugrid/lib/ugrid-ml.js').LogisticRegression;
 
 co(function *() {
 	yield ugrid.init();
-
-	var ITERATIONS = 10;				// Number of iterations
-	var file = '/tmp/logreg.data';		// a passer en argument
 
 	var points = ugrid.textFile(file).map(function (e) {
 		var tmp = e.split(' ').map(parseFloat);
@@ -21,7 +25,7 @@ co(function *() {
 
 	var model = new LogisticRegression(points, D, N);
 
-	yield model.train(ITERATIONS);
+	yield model.train(nIterations);
 
 	console.log(model.w);
 
