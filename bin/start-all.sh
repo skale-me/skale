@@ -28,5 +28,12 @@ for worker; do
 	ssh $worker "$worker_cmd"
 done
 
+# Start ugrid controller
+controller_cmd=". $cpath/conf/ugrid-env.sh; $node --harmony $node_opts $cpath/bin/controller.js -H $host -P $port >>/tmp/controller.log 2>&1 &"
+ssh $host "$controller_cmd"
+
 # Wait for ugrid workers
 $cpath/bin/wait-workers.js $(($wph * $#))
+
+# Wait for ugrid controller
+$cpath/bin/wait-controller.js
