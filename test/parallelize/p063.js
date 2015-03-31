@@ -17,13 +17,8 @@ co(function *() {
 	var loc = groupByKey(v).filter(function(e) {return (e[0] == key)});
 	var dist = yield ugrid.parallelize(v).groupByKey().lookup(key);
 
-	loc = loc.sort();
-	dist = dist.sort();
-	for (var i = 0; i < loc.length; i++) {
-		console.assert(loc[i][0] == dist[i][0]);
-		for (var j = 0; j < loc[i][1].length; j++)
-			console.assert(loc[i][1][j] == dist[i][1][j])
-	}
+	console.assert(loc[0][0] == dist[0][0]);
+	console.assert(JSON.stringify(loc[0][1].sort()) == JSON.stringify(dist[0][1].sort()))
 
 	ugrid.end();
 }).catch(function (err) {

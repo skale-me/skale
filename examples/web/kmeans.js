@@ -48,6 +48,9 @@ co(function *() {
 				.collect()
 		}});
 	}
+
+	console.log('KMeans finished')
+
 	ugrid.end();
 }).catch(function (err) {
 	console.error(err.stack);

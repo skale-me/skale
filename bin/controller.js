@@ -23,7 +23,16 @@ var ugrid = require('../lib/ugrid-client.js')({
 co(function *() {
 	ugrid.on('start', function(res) {
 		var cmd = __dirname + '/../examples/web/' + res.data.app + '.js';
-		spawn('/usr/local/bin/node', ['--harmony', cmd, JSON.stringify(res.data)]);
+		var prog = spawn('/usr/local/bin/node', ['--harmony', cmd, JSON.stringify(res.data)]);
+		prog.stdout.on('data', function(data) {
+			console.log('# stdout: ' + data);
+		});
+		prog.stderr.on('data', function(data) {
+			console.log('# stderr: ' + data);
+		});
+		prog.on('close', function (code) {
+		  	console.log('child process exited with code ' + code);
+		});		
 	});
 }).catch(function (err) {
 	console.error(err.stack);

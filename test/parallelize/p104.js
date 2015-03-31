@@ -23,8 +23,6 @@ co(function *() {
 
 	loc = loc.sort();
 	dist = dist.sort();
-	console.log("loc: %j", loc);
-	console.log("dist: %j", dist);
 
 	for (var i = 0; i < loc.length; i++) {
 		console.assert(loc[i][0] == dist[i][0]);

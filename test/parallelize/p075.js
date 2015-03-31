@@ -22,8 +22,7 @@ co(function *() {
 	var dist = yield data.groupByKey().lookup(key);
 
 	console.assert(loc[0][0] == dist[0][0])
-	for (var i = 0; i < loc[0][1].length; i++)
-		console.assert(loc[0][1][i] == dist[0][1][i])
+	console.assert(JSON.stringify(loc[0][1].sort()) == JSON.stringify(dist[0][1].sort()));
 
 	ugrid.end();
 }).catch(function (err) {

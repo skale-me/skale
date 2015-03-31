@@ -22,12 +22,14 @@ co(function *() {
 
 	loc = loc.sort();
 	dist = dist.sort();
-
 	for (var i = 0; i < loc.length; i++) {
-		console.assert(loc[i][0] == dist[i][0])
-		for (var j = 0; j < loc[i][1].length; j++)
-			console.assert(loc[i][1][j] == dist[i][1][j]);
+		loc[i][1] = loc[i][1].sort();
+		dist[i][1] = dist[i][1].sort();
+		console.log(loc[i])
+		console.log(dist[i])
 	}
+
+	console.assert(JSON.stringify(loc) == JSON.stringify(dist))
 
 	ugrid.end();
 }).catch(function (err) {

@@ -21,6 +21,9 @@ co(function *() {
 
 	var dist = yield d1.leftOuterJoin(d2).collect();
 
+	console.log(loc)
+	console.log(dist)
+
 	loc = loc.sort();
 	dist = dist.sort();
 	for (var i = 0; i < loc.length; i++) {
