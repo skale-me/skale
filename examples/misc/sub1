@@ -3,7 +3,7 @@
 // Example of a subscriber
 
 var co = require('co');
-var grid = require('../lib/ugrid-client.js')({data: {type: 'sub'}});
+var grid = require('../../lib/ugrid-client.js')({data: {type: 'sub'}});
 
 co(function *() {
 	yield grid.connect();

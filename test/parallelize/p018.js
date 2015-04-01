@@ -2,12 +2,11 @@
 
 var co = require('co');
 var assert = require('assert');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../../');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v = [1, 2, 3, 4, 5];
 
@@ -20,14 +19,11 @@ co(function *() {
 		return a;
 	}	
 
-	var res = yield ugrid.parallelize(v).flatMap(dup).reduce(sum, 0);
+	var res = yield uc.parallelize(v).flatMap(dup).reduce(sum, 0);
 
 	var tmp = v.map(dup).reduce(function(a, b) {return a.concat(b)}, []).reduce(sum, 0);
 	
 	assert(tmp == res);
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

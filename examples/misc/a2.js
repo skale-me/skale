@@ -1,13 +1,14 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../..');
 
 co(function *() {
 	var uc = yield ugrid.context();
-	console.assert(uc.worker.length > 0);
 
-	process.exit(0);
-	//uc.end();
+	console.log(uc.worker.length);
+	
+	//var res = yield uc.devices({type: 'worker'});
+	//console.log(res);
+	uc.end();
 }).catch(ugrid.onError);

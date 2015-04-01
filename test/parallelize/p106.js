@@ -4,20 +4,19 @@
 // parallelize -> persist
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
+var ugrid = require('../../');
 var crossProduct = require('../ugrid-test.js').crossProduct;
 
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
-
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v1 = [1, 2, 3, 4, 5];
 	var v2 = [6, 7, 8, 9, 10];
 	var loc = crossProduct(v1, v2);
 
-	var d1 = ugrid.parallelize(v1);
-	var d2 = ugrid.parallelize(v2).persist();
+	var d1 = uc.parallelize(v1);
+	var d2 = uc.parallelize(v2).persist();
 	yield d2.count();
 	v2.push(11);
 
@@ -32,8 +31,5 @@ co(function *() {
 			console.assert(loc[i][1][j] == dist[i][1][j]);
 	}
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

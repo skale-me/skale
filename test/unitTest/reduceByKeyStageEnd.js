@@ -4,10 +4,8 @@
 var co = require('co');
 var fs = require('fs');
 var assert = require('assert');
-var ugrid = require('../../lib/ugrid-context.js')();
+var ugrid = require('../..');
 var ml = require('../../lib/ugrid-ml.js');
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
 
 // Create test file
 var file = '/tmp/data.txt';
@@ -18,7 +16,8 @@ var a = '0 1 1\n' +
 fs.writeFileSync(file, a);
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	function parse(e) {
 		var tmp = e.split(' ').map(parseFloat);
@@ -32,7 +31,7 @@ co(function *() {
 		return a;
 	}
 
-	var points = yield ugrid.textFile(file)
+	var points = yield uc.textFile(file)
 		.map(parse)
 		.reduceByKey(reducer, {acc: [0, 0], sum: 0})
 		.collect();
@@ -50,9 +49,6 @@ co(function *() {
 	assert(points[2][1].sum == 1);
 
 	fs.unlink(file, function (err) {
-		ugrid.end();
+		uc.end();
 	});
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+}).catch(ugrid.onError);

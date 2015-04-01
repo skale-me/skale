@@ -4,12 +4,11 @@
 
 var co = require('co');
 var fs = require('fs');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../..');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var key = 1;
 	var v = [[1, 1], [1, 2], [2, 3], [2, 4], [3, 5]];
@@ -18,12 +17,9 @@ co(function *() {
 	var t0 = v.reduce(function(a, b) {return a + (b[0] + ' ' + b[1]) + '\n'}, '');
 	fs.writeFileSync('/tmp/v', t0);
 
-	var dist = yield ugrid.textFile('/tmp/v').map(function(e) {return e.split(' ').map(parseFloat)}).lookup(key);
+	var dist = yield uc.textFile('/tmp/v').map(function(e) {return e.split(' ').map(parseFloat)}).lookup(key);
 
 	console.assert(JSON.stringify(loc) == JSON.stringify(dist));
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

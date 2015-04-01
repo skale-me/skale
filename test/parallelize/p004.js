@@ -3,25 +3,21 @@
 // parallelize -> persist -> count
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../../');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v = [1, 2, 3, 4, 5];
 	var loc = v.length;
 
-	var data = ugrid.parallelize(v).persist();
+	var data = uc.parallelize(v).persist();
 	yield data.count();
 	v.push(6);
 	var dist = yield data.count();
 
 	console.assert(loc == dist);
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);
