@@ -3,9 +3,7 @@
 
 var co = require('co');
 var fs = require('fs');
-var assert = require('assert');
 var ugrid = require('../..');
-var ml = require('../../lib/ugrid-ml.js');
 
 // Create test file
 var file = '/tmp/data.txt';
@@ -44,12 +42,12 @@ co(function *() {
 
 	console.log(points)
 
-	assert(points[0][0] == 2);
-	assert(points[0][1] == 2);
-	assert(points[1][0] == 2);
-	assert(points[1][1] == 2);
-	assert(points[2][0] == 4);
-	assert(points[2][1] == 4);
+	console.assert(points[0][0] == 2);
+	console.assert(points[0][1] == 2);
+	console.assert(points[1][0] == 2);
+	console.assert(points[1][1] == 2);
+	console.assert(points[2][0] == 4);
+	console.assert(points[2][1] == 4);
 
 	fs.unlink(file, function (err) {
 		uc.end();

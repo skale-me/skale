@@ -4,7 +4,6 @@
 
 var co = require('co');
 var ugrid = require('../..');
-var ml = require('../../lib/ugrid-ml.js');
 var test = require('../ugrid-test.js');
 
 co(function *() {

@@ -2,10 +2,8 @@
 'use strict';
 
 var co = require('co');
-var assert = require('assert');
 var fs = require('fs');
 var ugrid = require('../..');
-var ml = require('../../lib/ugrid-ml.js');
 
 // Create test file
 var file = '/tmp/data.txt';
