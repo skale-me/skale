@@ -17,6 +17,8 @@ co(function *() {
 
 	var dist = yield ugrid.textFile('/tmp/v').count();
 
+	console.log(dist);
+
 	console.assert(dist == v.length);
 
 	ugrid.end();

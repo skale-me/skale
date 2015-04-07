@@ -20,6 +20,9 @@ co(function *() {
 
 	var dist = yield ugrid.textFile('/tmp/v').map(function(e) {return e.split(' ').map(parseFloat)}).lookup(key);
 
+	dist = dist.sort();
+	loc = loc.sort();
+
 	console.assert(JSON.stringify(loc) == JSON.stringify(dist));
 
 	ugrid.end();

@@ -16,7 +16,7 @@ find.file(/\.js$/, '.', function (files) {
 			process.env.UGRID_WMAX = j;
 			res = spawnSync(node, nodeOptions.split(' ').concat(files[i]), {
 				env: process.env,
-				timeout: 5000
+				timeout: 15000
 			});
 			if (res.status || res.error) {
 				nfail++;
