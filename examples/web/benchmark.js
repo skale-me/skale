@@ -6,7 +6,7 @@ var co = require('co');
 var thenify = require('thenify');
 var exec = require('child_process').exec;
 
-var ugrid = require('../../../ugrid/lib/ugrid-client.js')();
+var ugrid = require('../../lib/ugrid-client.js')();
 
 var args = JSON.parse(process.argv[2] || '{}');
 
@@ -84,5 +84,3 @@ co(function *() {
 	console.error(err.stack);
 	process.exit(1);
 });
-
-

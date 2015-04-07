@@ -1,12 +1,11 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../../');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]];
 
@@ -19,7 +18,7 @@ co(function *() {
 		return a;
 	}
 
-	var res = yield ugrid.parallelize(v).mapValues(by2).reduce(sum, [0, 0]);
+	var res = yield uc.parallelize(v).mapValues(by2).reduce(sum, [0, 0]);
 
 	for (var i = 0; i < v.length; i++)
 		v[i][1] = by2(v[i][1]);
@@ -29,8 +28,5 @@ co(function *() {
 	console.assert(res[0] == tmp[0]);
 	console.assert(res[1] == tmp[1]);
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

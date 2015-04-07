@@ -4,20 +4,19 @@
 // parallelize ------------>
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
+var ugrid = require('../../');
 var union = require('../ugrid-test.js').union;
 
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
-
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v1 = [1, 2, 3, 4, 5];
 	var v2 = [6, 7, 8, 9, 10];
 	var loc = union(v1, v2);
 
-	var d1 = ugrid.parallelize(v1).persist();
-	var d2 = ugrid.parallelize(v2);
+	var d1 = uc.parallelize(v1).persist();
+	var d2 = uc.parallelize(v2);
 
 	yield d1.count();
 	v1.push(11);
@@ -29,8 +28,5 @@ co(function *() {
 	for (var i = 0; i < loc.length; i++)
 		console.assert(loc[i] == dist[i]);
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

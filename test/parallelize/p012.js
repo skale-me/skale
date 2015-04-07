@@ -3,12 +3,11 @@
 // parallelize -> filter (no args) -> count
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../../');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v = [1, 2, 3, 4, 5];
 
@@ -16,12 +15,9 @@ co(function *() {
 		return (e % 2 == 0) ? true : false;
 	}
 
-	var res = yield ugrid.parallelize(v).filter(isEven).count();
+	var res = yield uc.parallelize(v).filter(isEven).count();
 
 	console.assert(res == v.filter(isEven).length)
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

@@ -3,17 +3,16 @@
 // parallelize -> groupByKey -> collect();
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
-var groupByKey = require('..//ugrid-test.js').groupByKey;
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../..');
+var groupByKey = require('../ugrid-test.js').groupByKey;
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v = [[0, 1], [0, 2], [1, 3], [2, 4]];
 	var loc = groupByKey(v);
-	var dist = yield ugrid.parallelize(v).groupByKey().collect();
+	var dist = yield uc.parallelize(v).groupByKey().collect();
 
 	loc = loc.sort();
 	dist = dist.sort();
@@ -23,8 +22,5 @@ co(function *() {
 			console.assert(loc[i][1][j], dist[i][1][j]);
 	}
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

@@ -4,12 +4,11 @@ var co = require('co');
 var fs = require('fs');
 var assert = require('assert');
 var readline = require('readline');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../..');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	// Create test file
 	var file = '/tmp/textFile.txt';
@@ -20,7 +19,7 @@ co(function *() {
 	fs.writeFileSync(file, a);
 
 	// Distributed read
-	var res = yield ugrid.textFile(file).collect();
+	var res = yield uc.textFile(file).collect();
 
 	// Local read
 	var V = [];
@@ -36,11 +35,8 @@ co(function *() {
 			for (var i = 0; i < V.length; i++)
 				if (V[i] != res[i])
 					throw new Error('error: local and distributed array have different elements');
-			ugrid.end();
+			uc.end();
 
 		});
 	});
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+}).catch(ugrid.onError);

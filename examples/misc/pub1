@@ -1,7 +1,7 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var grid = require('../lib/ugrid-client.js')({data: {type: 'pub'}});
+var grid = require('../../lib/ugrid-client.js')({data: {type: 'pub'}});
 
 var count = 0;
 

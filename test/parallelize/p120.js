@@ -3,17 +3,16 @@
 // parallelize -> countByValue
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
+var ugrid = require('../../');
 var countByValue = require('../ugrid-test.js').countByValue;
 
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
-
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v = [1, 2, 3, 3];
 	var loc = countByValue(v);
-	var dist = yield ugrid.parallelize(v).countByValue();
+	var dist = yield uc.parallelize(v).countByValue();
 
 	console.log(loc);
 	console.log(dist)
@@ -23,8 +22,5 @@ co(function *() {
 
 	// console.assert(JSON.stringify(loc) == JSON.stringify(dist))
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

@@ -1,7 +1,7 @@
 #!/usr/local/bin/node
 
 var util = require('util');
-var grid = require('../lib/ugrid-client.js')({data: {type: 'ping'}});
+var grid = require('../../lib/ugrid-client.js')({data: {type: 'ping'}});
 
 grid.devices({type: 'pong'}, function (err, res) {
 	if (!res.length) process.exit(1);

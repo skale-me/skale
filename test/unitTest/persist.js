@@ -3,18 +3,17 @@
 var co = require('co');
 var fs = require('fs');
 var assert = require('assert');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../..');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var a = '1 2 3 4 5';
 	var b = '6 7 8 9 10';
 	fs.writeFileSync('/tmp/persist.txt', a);
 
-	var dist = ugrid.textFile('/tmp/persist.txt').persist();
+	var dist = uc.textFile('/tmp/persist.txt').persist();
 	var res = yield dist.collect();
 	fs.writeFileSync('/tmp/persist.txt', b);
 	res = yield dist.collect();
@@ -25,8 +24,5 @@ co(function *() {
 	
 	assert(res[0] == a);
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

@@ -3,12 +3,11 @@
 // parallelize -> map -> lookup
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../../');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var key = 1;
 	var value = 2;
@@ -20,15 +19,12 @@ co(function *() {
 		return e;
 	}
 
-	var dist = yield ugrid.parallelize(v).map(by2).lookup(key);
+	var dist = yield uc.parallelize(v).map(by2).lookup(key);
 
 	console.log(loc)
 	console.log(dist)
 
 	console.assert(JSON.stringify(dist) == JSON.stringify(loc))
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

@@ -3,13 +3,12 @@
 // parallelize -> reduceByKey -> persist -> lookup
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
-var reduceByKey = require('..//ugrid-test.js').reduceByKey;
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../../');
+var reduceByKey = require('../ugrid-test.js').reduceByKey;
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v = [[0, 1], [0, 2], [1, 3], [2, 4]];
 	var key = 0;
@@ -21,7 +20,7 @@ co(function *() {
 
 	var loc = reduceByKey(v, reducerByKey, 0).filter(function(e) {return (e[0] == key)});
 
-	var data = ugrid.parallelize(v).reduceByKey(reducerByKey, 0).persist();
+	var data = uc.parallelize(v).reduceByKey(reducerByKey, 0).persist();
 	yield data.count();
 
 	v.push([key, 10]);
@@ -34,8 +33,5 @@ co(function *() {
 		for (var j = 0; j < loc[i].length; j++)
 			console.assert(loc[i][j] == dist[i][j]);
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

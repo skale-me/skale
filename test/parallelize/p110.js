@@ -3,13 +3,12 @@
 // parallelize -> distinct -> reduce
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
+var ugrid = require('../../');
 var distinct = require('../ugrid-test.js').distinct;
 
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
-
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v = [3, 2, 1, 3];
 
@@ -18,12 +17,9 @@ co(function *() {
 	}
 
 	var loc = distinct(v).reduce(sum, 0);
-	var dist = yield ugrid.parallelize(v).distinct().reduce(sum, 0);
+	var dist = yield uc.parallelize(v).distinct().reduce(sum, 0);
 
 	console.assert(loc == dist)
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

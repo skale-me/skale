@@ -1,6 +1,6 @@
 #!/usr/local/bin/node --harmony
 
-var grid = require('../lib/ugrid-client.js')({data: {type: 'pong'}});
+var grid = require('../../lib/ugrid-client.js')({data: {type: 'pong'}});
 
 grid.on('request', function (msg) {
 	console.log(msg);

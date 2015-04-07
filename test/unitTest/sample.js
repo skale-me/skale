@@ -2,25 +2,19 @@
 'use strict';
 
 var co = require('co');
-var assert = require('assert');
-var ugrid = require('../../lib/ugrid-context.js')();
-var ml = require('../../lib/ugrid-ml.js');
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../..');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var v = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 	var frac = 0.4;
 	var seed = 1;
 
-	var points = yield ugrid.parallelize(v).sample(frac, seed).collect();
+	var points = yield uc.parallelize(v).sample(frac, seed).collect();
 
 	console.log(points)
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

@@ -177,8 +177,8 @@ function handleClose(sock) {
 	if (cli) {
 		pubmon({event: 'disconnect', uuid: cli.uuid});
 		cli.sock = null;
+		releaseWorkers(cli.uuid);
 	}
-    releaseWorkers(cli.uuid);
 	if (sock.index) delete crossbar[sock.index];
 	for (var i in cli.topics) {		// remove owned topics
 		delete topicIndex[topics[i].name];

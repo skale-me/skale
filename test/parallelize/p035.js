@@ -2,12 +2,11 @@
 
 var co = require('co');
 var assert = require('assert');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../../');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var key = 1;
 	var value = 2;
@@ -17,7 +16,7 @@ co(function *() {
 		return [e, e];
 	}
 
-	var data = ugrid.parallelize(v).persist();
+	var data = uc.parallelize(v).persist();
 	yield data.lookup(key);
 
 	v.push([key, value]);
@@ -31,8 +30,5 @@ co(function *() {
 	assert(res[1][0] == key);
 	assert(res[1][1] == value);
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

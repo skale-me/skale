@@ -1,12 +1,11 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../../');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	function dup (e) {
 		return [e, e];
@@ -14,7 +13,7 @@ co(function *() {
 
 	var v = [1, 2, 3, 4, 5];
 	var v_copy = JSON.parse(JSON.stringify(v));
-	var data = ugrid.parallelize(v).flatMap(dup).persist();
+	var data = uc.parallelize(v).flatMap(dup).persist();
 	var res = yield data.count();
 
 	v.push(6);
@@ -24,8 +23,5 @@ co(function *() {
 
 	console.assert(tmp.length == res);
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);

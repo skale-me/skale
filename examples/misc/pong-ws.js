@@ -2,7 +2,7 @@
 
 // Run 'bin/ugrid.js -w 12348' prior to start this script
 
-var grid = require('../lib/ugrid-client.js')({
+var grid = require('../../lib/ugrid-client.js')({
 	ws: true,
 	host: 'localhost',
 	port: 12348,

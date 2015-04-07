@@ -1,12 +1,11 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var ugrid = require('../../lib/ugrid-context.js')();
-
-process.on("exit", function () {console.assert(ugrid.grid.id !== undefined);});
+var ugrid = require('../../');
 
 co(function *() {
-	yield ugrid.init();
+	var uc = yield ugrid.context();
+	console.assert(uc.worker.length > 0);
 
 	var key = 1;
 	var value = 2;
@@ -22,7 +21,7 @@ co(function *() {
 		return a;
 	}
 
-	var data = ugrid.parallelize(v).persist();
+	var data = uc.parallelize(v).persist();
 	yield data.lookup(key);
 
 	v.push([key, value]);
@@ -36,8 +35,5 @@ co(function *() {
 	console.assert(res[0] == tmp[0]);
 	console.assert(res[1] == tmp[1]);
 
-	ugrid.end();
-}).catch(function (err) {
-	console.error(err.stack);
-	process.exit(1);
-});
+	uc.end();
+}).catch(ugrid.onError);
