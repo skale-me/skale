@@ -16,6 +16,8 @@ co(function *() {
 
 	var dist = yield uc.textFile('/tmp/v').count();
 
+	console.log(dist);
+
 	console.assert(dist == v.length);
 
 	uc.end();

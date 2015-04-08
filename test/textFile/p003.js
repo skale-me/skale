@@ -19,6 +19,9 @@ co(function *() {
 
 	var dist = yield uc.textFile('/tmp/v').map(function(e) {return e.split(' ').map(parseFloat)}).lookup(key);
 
+	dist = dist.sort();
+	loc = loc.sort();
+
 	console.assert(JSON.stringify(loc) == JSON.stringify(dist));
 
 	uc.end();
