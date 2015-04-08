@@ -8,7 +8,9 @@ var ugrid = require('../');
 
 co(function *() {
 	var uc = yield ugrid.context();
-	var context = coshell({prompt: 'ugrid> '}).context;
+	//var context = coshell({prompt: 'ugrid> '}).context;
+	var context = coshell({prompt: ''}).context;
 	context.ugrid = ugrid;
 	context.uc = uc;
+	process.stdout.write("Welcome to ugrid-shell");
 }).catch(ugrid.onError);
