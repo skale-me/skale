@@ -3,7 +3,6 @@
 // mongo -> collect
 
 var co = require('co');
-var fs = require('fs');
 var ugrid = require('../..');
 
 co(function *() {
@@ -16,4 +15,4 @@ co(function *() {
 	console.log(dist);
 
 	uc.end();
-})();
+}).catch(ugrid.onError);

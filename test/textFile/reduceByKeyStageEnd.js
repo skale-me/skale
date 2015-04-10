@@ -19,31 +19,31 @@ co(function *() {
 
 	function parse(e) {
 		var tmp = e.split(' ').map(parseFloat);
-		return [tmp.shift(), {features: tmp, sum: 1}];
+		return [tmp.shift(), {array: tmp, sum: 1}];
 	}
 
 	function reducer(a, b) {
 		a.sum += b.sum;
-		for (var i = 0; i < b.features.length; i++)
-			a.acc[i] += b.features[i];
+		for (var i = 0; i < b.array.length; i++)
+			a.array[i] += b.array[i];
 		return a;
 	}
 
 	var points = yield uc.textFile(file)
 		.map(parse)
-		.reduceByKey(reducer, {acc: [0, 0], sum: 0})
+		.reduceByKey(reducer, {array: [0, 0], sum: 0})
 		.collect();
 
-	console.log(points)	
+	points.sort();
 
-	console.assert(points[0][1].acc[0] == 4);
-	console.assert(points[0][1].acc[1] == 4);
+	console.assert(points[0][1].array[0] == 4);
+	console.assert(points[0][1].array[1] == 4);
 	console.assert(points[0][1].sum == 2);
-	console.assert(points[1][1].acc[0] == 2);
-	console.assert(points[1][1].acc[1] == 2);
+	console.assert(points[1][1].array[0] == 2);
+	console.assert(points[1][1].array[1] == 2);
 	console.assert(points[1][1].sum == 1);
-	console.assert(points[2][1].acc[0] == 4);
-	console.assert(points[2][1].acc[1] == 4);
+	console.assert(points[2][1].array[0] == 4);
+	console.assert(points[2][1].array[1] == 4);
 	console.assert(points[2][1].sum == 1);
 
 	fs.unlink(file, function (err) {

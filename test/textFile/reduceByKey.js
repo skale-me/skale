@@ -19,28 +19,27 @@ co(function *() {
 
 	function parse(e) {
 		var tmp = e.split(' ').map(parseFloat);
-		return [tmp.shift(), {features: tmp, sum: 1}];
+		return [tmp.shift(), {array: tmp, sum: 1}];
 	}
 
 	function reducer(a, b) {
 		a.sum += b.sum;
-		for (var i = 0; i < b.features.length; i++)
-			a.acc[i] += b.features[i];
+		for (var i = 0; i < b.array.length; i++)
+			a.array[i] += b.array[i];
 		return a;
 	}
 
-	var points = yield uc.textFile(file)
-		.map(parse)
-		.reduceByKey(reducer, {acc: [0, 0], sum: 0})
+	var points = yield uc.textFile(file).map(parse)
+		.reduceByKey(reducer, {array: [0, 0], sum: 0})
 		.map(function(a) {
 			var res = [];
-			for (var i = 0; i < a[1].acc.length; i++)
-				res.push(a[1].acc[i] / a[1].sum);
+			for (var i = 0; i < a[1].array.length; i++)
+				res.push(a[1].array[i] / a[1].sum);
 			return res;
 		})
 		.collect();
 
-	console.log(points)
+	points.sort();
 
 	console.assert(points[0][0] == 2);
 	console.assert(points[0][1] == 2);
