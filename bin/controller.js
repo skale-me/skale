@@ -19,7 +19,7 @@ var ugrid = require('../lib/ugrid-client.js')({
 	data: {type: 'controller'}
 });
 
-ugrid.on('start', function(res) {
+ugrid.on('start', function (res) {
 	var cmd = __dirname + '/../examples/web/' + res.data.app + '.js';
 	var prog = spawn('/usr/local/bin/node', ['--harmony', cmd, JSON.stringify(res.data)]);
 	prog.stdout.on('data', function(data) {
@@ -30,5 +30,21 @@ ugrid.on('start', function(res) {
 	});
 	prog.on('close', function (code) {
 		console.log('child process exited with code ' + code);
+	});
+});
+
+ugrid.on('shell', function (res) {
+	var prog = spawn('node', ['--harmony', __dirname + '/../bin/ugrid-shell.js']);
+	prog.stdout.on('data', function (data) {
+		ugrid.send(0, {cmd: 'stdout', id: res.from, data: data.toString()});
+	});
+	prog.stderr.on('data', function (data) {
+		console.log("# shell stderr: %s", data);
+	});
+	prog.on('close', function (code) {
+		console.log("# shell exited with code: %j", code);
+	});
+	ugrid.on('stdin-' + res.from, function (msg) {
+		prog.stdin.write(msg.data + "\n");
 	});
 });
