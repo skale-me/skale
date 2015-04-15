@@ -12,5 +12,8 @@ co(function *() {
 	var context = coshell({prompt: ''}).context;
 	context.ugrid = ugrid;
 	context.uc = uc;
+	context.plot = function (data) {
+		uc.send(0, {cmd: 'plot', id: process.env.UGRID_WEBID, data: data});
+	};
 	process.stdout.write("Welcome to ugrid-shell");
 }).catch(ugrid.onError);

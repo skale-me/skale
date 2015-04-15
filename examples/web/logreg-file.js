@@ -9,7 +9,6 @@ if (process.argv.length != 4)
 var file = process.argv[2];
 var iterations = process.argv[3];
 
-
 co(function *() {
 	var uc = yield ugrid.context();
 
