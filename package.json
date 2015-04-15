@@ -4,6 +4,7 @@
   "description": "ugrid client and server",
   "main": "index.js",
   "scripts": {
+    "install": "echo 'Generating test scripts'; utils/gen_test_script.js test/automatic | sh",
     "start": "bin/start-all.sh",
     "pretest": "cat test/ugrid-env.sh > conf/ugrid-env.sh; bin/start-all.sh",
     "test": "cd test; ./runtests || true",
