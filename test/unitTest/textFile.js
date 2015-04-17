@@ -2,7 +2,6 @@
 
 var co = require('co');
 var fs = require('fs');
-var assert = require('assert');
 var readline = require('readline');
 var ugrid = require('../..');
 
@@ -27,10 +26,10 @@ co(function *() {
 	rl.on("line", function (line) {V.push(line);});
 
 	rl.on('close', function () {
-		fs.unlink(file, function (err) {
-			console.log(res)
-			console.log(V)
-			assert(V.length == res.length)
+		fs.unlink(file, function () {
+			console.log(res);
+			console.log(V);
+			console.assert(V.length == res.length);
 
 			for (var i = 0; i < V.length; i++)
 				if (V[i] != res[i])

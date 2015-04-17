@@ -26,7 +26,7 @@ co(function *() {
 	var t0 = yield points.collect();
 	console.log(t0);
 
-	fs.unlink(file, function (err) {
+	fs.unlink(file, function () {
 		uc.end();
 	});
 }).catch(ugrid.onError);

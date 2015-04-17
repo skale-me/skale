@@ -21,16 +21,16 @@ co(function *() {
 		console.assert(r1[i] == r2[i]);
 
 	// union with other array
-	var d1 = uc.parallelize(a);
-	var d2 = uc.parallelize(b);
+	d1 = uc.parallelize(a);
+	d2 = uc.parallelize(b);
 	var d3 = d1.union(d2);
 	var r3 = yield d3.collect();
 
 	var c = a.concat(b);
 	console.assert(r3.length == c.length);
 
-	for (var i = 0; i < r3.length; i++)
-		console.assert(c.indexOf(r3[i]) != -1)
+	for (i = 0; i < r3.length; i++)
+		console.assert(c.indexOf(r3[i]) != -1);
 	
 	uc.end();
 }).catch(ugrid.onError);

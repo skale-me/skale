@@ -2,7 +2,6 @@
 'use strict';
 
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../..');
 
 var a = [[0, 1], [1, 2], [1, 3]];

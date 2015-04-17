@@ -2,7 +2,6 @@
 'use strict';
 
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../..');
 
 co(function *() {

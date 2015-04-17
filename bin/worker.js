@@ -4,11 +4,11 @@
 
 var os = require('os');
 var cluster = require('cluster');
-var fs = require('fs');
-var Connection = require('ssh2');
+//var fs = require('fs');
+//var Connection = require('ssh2');
 
 var UgridClient = require('../lib/ugrid-client.js');
-var Lines = require('../lib/lines.js');
+//var Lines = require('../lib/lines.js');
 var UgridTask = require('../lib/ugrid-processing.js').UgridTask;
 
 var opt = require('node-getopt').create([
@@ -79,7 +79,7 @@ function runWorker(host, port) {
 		lastLine: function (msg) {
 			task.processLastLine(msg);
 		},
-		reset: function (msg) {
+		reset: function () {
 			if (!process.env.UGRID_TEST) process.exit(0);
 			RAM = {};
 			task = undefined;

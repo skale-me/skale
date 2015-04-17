@@ -14,7 +14,7 @@ co(function *() {
 
 	var points = yield uc.parallelize(v).sample(frac, seed).collect();
 
-	console.log(points)
+	console.log(points);
 
 	uc.end();
 }).catch(ugrid.onError);

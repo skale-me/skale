@@ -7,7 +7,6 @@
 // which is not the case for cogroup
 
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../..');
 
 var a = [[0, 'hello'], [1, 'goodbye'], [1, 'TEST']];

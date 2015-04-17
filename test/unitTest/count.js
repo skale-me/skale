@@ -1,7 +1,6 @@
 #!/usr/local/bin/node --harmony
 
 var co = require('co');
-var assert = require('assert');
 var ugrid = require('../..');
 
 co(function *() {
@@ -12,7 +11,7 @@ co(function *() {
 
 	var dist = yield uc.parallelize(V).count();
 
-	assert(dist == V.length)
+	console.assert(dist == V.length);
 
 	uc.end();
 }).catch(ugrid.onError);
