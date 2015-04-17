@@ -105,29 +105,40 @@ function union(v1_in, v2_in) {
 	return v1.concat(v2);
 }
 
-function join(v1_in, v2_in, type) {
-	var v1 = JSON.parse(JSON.stringify(v1_in));
-	var v2 = JSON.parse(JSON.stringify(v2_in));	
+function join(first_in, other_in, type) {
+	var first = JSON.parse(JSON.stringify(first_in));
+	var other = JSON.parse(JSON.stringify(other_in));	
 	var v3 = [];
 
 	if (type == undefined) {
-		for (var i = 0; i < v1.length; i++)
-			for (var j = 0; j < v2.length; j++)
-				if (v1[i][0] == v2[j][0])
-					v3.push([v1[i][0], [v1[i][1], v2[j][1]]])
+		for (var i = 0; i < first.length; i++)
+			for (var j = 0; j < other.length; j++)
+				if (first[i][0] == other[j][0])
+					v3.push([first[i][0], [first[i][1], other[j][1]]])
 	} else if (type == 'left') {
-		for (var i = 0; i < v1.length; i++)
-			for (var j = 0; j < v2.length; j++)
-				if (v1[i][0] == v2[j][0])
-					v3.push([v1[i][0], [v1[i][1], v2[j][1]]])
-				else
-					v3.push([v1[i][0], [v1[i][1], null]])
-	} else if (type == 'right') {
-		for (var i = 0; i < v2.length; i++)
-			for (var j = 0; j < v1.length; j++) {
-				if (v2[i][0] != v1[j][0]) continue;
-				v3.push([v2[i][0], [v1[j][1], v2[i][1]]])
+		for (var i = 0; i < first.length; i++) {
+			var found = false;
+			for (var j = 0; j < other.length; j++) {
+				if (first[i][0] == other[j][0]) {
+					found = true;
+					v3.push([first[i][0], [first[i][1], other[j][1]]]);
+				}
 			}
+			if (!found)
+				v3.push([first[i][0], [first[i][1], null]]);				
+		}
+	} else if (type == 'right') {
+		for (var i = 0; i < other.length; i++) {
+			var found = false;
+			for (var j = 0; j < first.length; j++) {
+				if (other[i][0] == first[j][0]) {
+					found = true;
+					v3.push([other[i][0], [first[j][1], other[i][1]]]);					
+				}
+			}
+			if (!found)
+				v3.push([other[i][0], [null, other[i][1]]]);			
+		}
 	}
 
 	return v3;
