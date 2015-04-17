@@ -4,11 +4,8 @@
 
 var os = require('os');
 var cluster = require('cluster');
-//var fs = require('fs');
-//var Connection = require('ssh2');
 
 var UgridClient = require('../lib/ugrid-client.js');
-//var Lines = require('../lib/lines.js');
 var UgridTask = require('../lib/ugrid-processing.js').UgridTask;
 
 var opt = require('node-getopt').create([
