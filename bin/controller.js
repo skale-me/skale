@@ -21,7 +21,7 @@ var ugrid = require('../lib/ugrid-client.js')({
 
 ugrid.on('start', function (res) {
 	var cmd = __dirname + '/../examples/web/' + res.data.app + '.js';
-	var prog = spawn('/usr/local/bin/node', ['--harmony', cmd, JSON.stringify(res.data)]);
+	var prog = spawn('node', ['--harmony', cmd, JSON.stringify(res.data)]);
 	prog.stdout.on('data', function(data) {
 		console.log('# stdout: ' + data);
 	});
@@ -34,7 +34,9 @@ ugrid.on('start', function (res) {
 });
 
 ugrid.on('shell', function (res) {
-	var prog = spawn('node', ['--harmony', __dirname + '/../bin/ugrid-shell.js']);
+	var env = process.env;
+	env.UGRID_WEBID = res.from;
+	var prog = spawn('node', ['--harmony', __dirname + '/ugrid-shell.js'], {env: env});
 	prog.stdout.on('data', function (data) {
 		ugrid.send(0, {cmd: 'stdout', id: res.from, data: data.toString()});
 	});
