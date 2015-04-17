@@ -1,8 +1,8 @@
 #!/usr/local/bin/node --harmony
 
-'use strict'
+'use strict';
 
-var spawn = require('child_process').spawn;
+var fork = require('child_process').fork;
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -12,6 +12,7 @@ var opt = require('node-getopt').create([
 
 var host = opt.options.Host || 'localhost';
 var port = opt.options.Port || 12346;
+var node = process.env.NODE || 'node';
 
 var ugrid = require('../lib/ugrid-client.js')({
 	host: host,
@@ -19,9 +20,9 @@ var ugrid = require('../lib/ugrid-client.js')({
 	data: {type: 'controller'}
 });
 
-ugrid.on('start', function (res) {
-	var cmd = __dirname + '/../examples/web/' + res.data.app + '.js';
-	var prog = spawn('node', ['--harmony', cmd, JSON.stringify(res.data)]);
+ugrid.on('start', function (msg) {
+	var cmd = __dirname + '/../examples/web/' + msg.data.app + '.js';
+	var prog = fork(cmd, [JSON.stringify(msg.data)], {silent: true});
 	prog.stdout.on('data', function(data) {
 		console.log('# stdout: ' + data);
 	});
@@ -33,20 +34,21 @@ ugrid.on('start', function (res) {
 	});
 });
 
-ugrid.on('shell', function (res) {
-	var env = process.env;
-	env.UGRID_WEBID = res.from;
-	var prog = spawn('node', ['--harmony', __dirname + '/ugrid-shell.js'], {env: env});
-	prog.stdout.on('data', function (data) {
-		ugrid.send(0, {cmd: 'stdout', id: res.from, data: data.toString()});
+ugrid.on('shell', function (msg) {
+	process.env.UGRID_WEBID = msg.from;
+	var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
+	ugrid.send(0, {cmd: 'shell', id: msg.from});
+	shell.stdout.on('data', function (data) {
+		ugrid.send(0, {cmd: 'stdout', id: msg.from, data: data.toString()});
 	});
-	prog.stderr.on('data', function (data) {
-		console.log("# shell stderr: %s", data);
+	shell.stderr.on('data', function (data) {
+		console.log("# shell pid %d stderr: %s", shell.pid, data);
 	});
-	prog.on('close', function (code) {
-		console.log("# shell exited with code: %j", code);
+	shell.on('close', function (code) {
+		console.log("# shell %d exited with code: %d", shell.pid, code);
 	});
-	ugrid.on('stdin-' + res.from, function (msg) {
-		prog.stdin.write(msg.data + "\n");
+	ugrid.on('stdin-' + msg.from, function (msg) {
+		shell.stdin.write(msg.data + "\n");
 	});
+	console.log('forked ugrid-shell.js pid ' + shell.pid);
 });

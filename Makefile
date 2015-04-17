@@ -10,4 +10,4 @@ browserify:
 	browserify lib/ugrid-context.js --standalone UgridContext > lib/ugrid-context-browser.js
 
 lint:
-	jshint $(filter-out $(OBJS),$(SRCS))
+	jshint $(filter-out $(OBJS), $(SRCS))
