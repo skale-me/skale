@@ -3,7 +3,7 @@
 var fs = require('fs');
 
 if (process.argv.length != 5) {
-	console.log('Usage: gen_data.js file D size_in_Mo')
+	console.log('Usage: gen_data.js file D size_in_Mo');
 	process.exit(1);
 }
 
@@ -25,7 +25,7 @@ function writeChunk() {
 	if ((fileSize + lineSize) > maxSize)
 		fd.end();
 	else
-		fd.write(line, function(err) {fileSize += lineSize; writeChunk();});
+		fd.write(line, function() {fileSize += lineSize; writeChunk();});
 }
 
 writeChunk();

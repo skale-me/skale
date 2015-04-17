@@ -12,7 +12,6 @@ var opt = require('node-getopt').create([
 
 var host = opt.options.Host || 'localhost';
 var port = opt.options.Port || 12346;
-var node = process.env.NODE || 'node';
 
 var ugrid = require('../lib/ugrid-client.js')({
 	host: host,

@@ -1,8 +1,6 @@
 #!/usr/local/bin/node --harmony
 
-var co = require('co');
 var fs = require('fs');
-var ugrid = require('../');
 
 // TODO : forEach, take, top, takeOrdered, takeSample, partitionByKey, sortByKey
 // LATER: fold aggregate combineByKey subtractByKey foldByKey countByKey

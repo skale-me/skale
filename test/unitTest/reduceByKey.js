@@ -48,7 +48,7 @@ co(function *() {
 	console.assert(points[2][0] == 4);
 	console.assert(points[2][1] == 4);
 
-	fs.unlink(file, function (err) {
+	fs.unlink(file, function () {
 		uc.end();
 	});
 }).catch(ugrid.onError);
