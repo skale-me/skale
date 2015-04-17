@@ -36,12 +36,19 @@ co(function *() {
 	var key = v_ref[0][0][0];
 
 	function reducer(a, b) {
-		a[0] += b[0];
-		if (Array.isArray(b[1]) == false) {
+		if (Array.isArray(b[0]))
+			a[0] += b[0].reduce(function (a, b) {return a + b});
+		else
+			a[0] += b[0];
+
+		if (Array.isArray(b[1])) {
+			a[1] += b[1].reduce(function (a, b) {
+				if (Array.isArray(b))
+					return a + b.reduce(function(a, b) {return a + b});				
+				return a + b
+			}, 0);
+		} else
 			a[1] += b[1];
-		} else {
-			a[1] += b[1].reduce(function (a, b) {return a + b});
-		}
 		return a;
 	}
 
@@ -74,21 +81,16 @@ co(function *() {
 	console.log('=> Distributed result')
 	console.log(dist);
 
-	if (Array.isArray(dist)) {
-		dist.sort();
-		for (var i = 0; i < dist.length; i++) {
-			if (Array.isArray(dist[i][1]))
-				dist[i][1].sort();
+	function sort(v) {
+		for (var i = 0; i < v.length; i++) {
+			if (Array.isArray(v[i]))
+				sort(v[i]);
 		}
+		v.sort();
 	}
 
-	if (Array.isArray(loc)) {
-		loc.sort();
-		for (var i = 0; i < loc.length; i++) {
-			if (Array.isArray(loc[i][1]))
-				loc[i][1].sort();
-		}
-	}
+	if (Array.isArray(dist)) sort(dist);
+	if (Array.isArray(loc)) sort(loc);
 
 	console.assert(JSON.stringify(dist) == JSON.stringify(loc));
 
