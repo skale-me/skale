@@ -4,9 +4,8 @@
   "description": "ugrid client and server",
   "main": "index.js",
   "scripts": {
-    "install": "echo 'Generating test scripts'; utils/gen_test_script.js test/automatic | sh",
     "start": "bin/start-all.sh",
-    "pretest": "cat test/ugrid-env.sh > conf/ugrid-env.sh; bin/start-all.sh",
+    "pretest": "make gentest; bin/start-all.sh -c test/ugrid-env.sh",
     "test": "cd test; ./runtests || true",
     "posttest": "bin/stop-all.sh",
     "stop": "bin/stop-all.sh"
@@ -27,9 +26,9 @@
   "author": "Luca SAS",
   "dependencies": {
     "bluebird": "^2.9.14",
-    "body-parser": "^1.9.2",
+    "body-parser": "^1.12.3",
     "co": "^4.4.0",
-    "co-shell": "^0.1.0",
+    "co-shell": "^0.1.2",
     "express": "^4.10.1",
     "find": "^0.1.7",
     "mongodb": "^1.4.34",
@@ -39,7 +38,7 @@
     "request": "^2.49.0",
     "ssh2": "^0.4.4",
     "thenify": "^3.1.0",
-    "websocket-stream": "^1.1.1",
+    "websocket-stream": "^1.5.0",
     "ws": "^0.7.1"
   },
   "jshintConfig": {

@@ -1,9 +1,5 @@
 #!/usr/local/bin/node --harmony
 
-var co = require('co');
-var fs = require('fs');
-var ugrid = require('../');
-
 // Chaque bloc ne prend qu'une input de type kv (keys -> reduce est indéfini)
 
 var sources = ['parallelize', 'textFile'];
@@ -28,8 +24,8 @@ console.log('cp test/automatic/kv.data /tmp; cp test/automatic/kv2.data /tmp');
 // source -> action
 for (var i = 0; i < sources.length; i++)
 	for (var j = 0; j < actions.length; j++) {
-		console.log('./utils/b1.js ' + sources[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js ' + sources[i] + ' persist ' + actions[j] + ' > ' + file())
+		console.log('./utils/b1.js ' + sources[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js ' + sources[i] + ' persist ' + actions[j] + ' > ' + file());
 	}
 
 // source -> transfo -> action
@@ -38,8 +34,8 @@ for (var i = 0; i < sources.length; i++)
 		for (var k = 0; k < actions.length; k++) {
 			if ((transfos[j] == 'keys') && (actions[k] == 'reduce')) continue;
 			if ((transfos[j] == 'values') && (actions[k] == 'reduce')) continue;
-			console.log('./utils/b1.js ' + sources[i] + ' ' + transfos[j] + ' ' + actions[k] + ' > ' + file())
-			console.log('./utils/b1.js ' + sources[i] + ' persist ' + transfos[j] + ' ' + actions[k] + ' > ' + file())
+			console.log('./utils/b1.js ' + sources[i] + ' ' + transfos[j] + ' ' + actions[k] + ' > ' + file());
+			console.log('./utils/b1.js ' + sources[i] + ' persist ' + transfos[j] + ' ' + actions[k] + ' > ' + file());
 			console.log('./utils/b1.js ' + sources[i] + ' ' + transfos[j] + ' persist ' + actions[k] + ' > ' + file());
 		}
 
@@ -53,24 +49,24 @@ for (var i = 0; i < sources.length; i++)
 for (var i = 0; i < dualtransfo.length; i++)
 	for (var j = 0; j < actions.length; j++) {
 		// parallelize parallelize
-		console.log('./utils/b1.js parallelize parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js parallelize persist parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js parallelize parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js parallelize persist parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
+		console.log('./utils/b1.js parallelize parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js parallelize persist parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js parallelize parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js parallelize persist parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		// parallelize textFile
-		console.log('./utils/b1.js parallelize textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js parallelize persist textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js parallelize textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js parallelize persist textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
+		console.log('./utils/b1.js parallelize textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js parallelize persist textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js parallelize textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js parallelize persist textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		// textFile parallelize
-		console.log('./utils/b1.js textFile parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js textFile persist parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js textFile parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js textFile persist parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
+		console.log('./utils/b1.js textFile parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js textFile persist parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js textFile parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js textFile persist parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		// // textFile textFile
-		console.log('./utils/b1.js textFile textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js textFile persist textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js textFile textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
-		console.log('./utils/b1.js textFile persist textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file())
+		console.log('./utils/b1.js textFile textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js textFile persist textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js textFile textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js textFile persist textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 	}
 

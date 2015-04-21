@@ -85,7 +85,7 @@ function runWorker(host, port) {
 			// idem shuffle
 			job.processLastLine(msg);
 		},
-		reset: function (msg) {
+		reset: function () {
 			if (!process.env.UGRID_TEST) process.exit(0);
 			RAM = {};
 			job = undefined;

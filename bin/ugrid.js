@@ -94,17 +94,21 @@ var clientRequest = {
 		register(null, msg, sock);
 		return true;
 	},
-	end: function (sock) {
-		sock.client.end = true;
-		return false;
-	},
 	devices: function (sock, msg) {
 		msg.ufrom = sock.client.uuid;
 		msg.data = devices(msg);
 		return true;
 	},
+	end: function (sock) {
+		sock.client.end = true;
+		return false;
+	},
 	get: function (sock, msg) {
 		msg.data = clients[msg.data] ? clients[msg.data].data : null;
+		return true;
+	},
+	id: function (sock, msg) {
+		msg.data = msg.data in clients ? clients[msg.data].index : null;
 		return true;
 	},
 	set: function (sock, msg) {
@@ -114,9 +118,9 @@ var clientRequest = {
 		pubmon({event: 'set', uuid: sock.client.uuid, data: msg.data});
 		return false;
 	},
-	id: function (sock, msg) {
-		msg.data = msg.data in clients ? clients[msg.data].index : null;
-		return true;
+	subscribe: function (sock, msg) {
+		subscribe(sock.client, msg.data);
+		return false;
 	},
 	tid: function (sock, msg) {
 		var topic = msg.data;
@@ -127,10 +131,6 @@ var clientRequest = {
 			sock.client.topics[n] = true;
 		}
 		return true;
-	},
-	subscribe: function (sock, msg) {
-		subscribe(sock.client, msg.data);
-		return false;
 	},
 	unsubscribe: function (sock, msg) {
 		unsubscribe(sock.client, msg.data);

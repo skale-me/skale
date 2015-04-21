@@ -19,14 +19,14 @@ co(function *() {
 	fs.writeFileSync("/tmp/v1", raw_data[1]);	
 
 	var v = [
-		raw_data[0].split('\n').map(function(s) {return s.split(' ').map(parseFloat)}),
-		raw_data[1].split('\n').map(function(s) {return s.split(' ').map(parseFloat)})
+		raw_data[0].split('\n').map(function(s) {return s.split(' ').map(parseFloat);}),
+		raw_data[1].split('\n').map(function(s) {return s.split(' ').map(parseFloat);})
 	];
 
 	var v_ref = [
 		JSON.parse(JSON.stringify(v[0])),
 		JSON.parse(JSON.stringify(v[1]))
-	]
+	];
 
 	var dsource = [], lsource = [];
 
@@ -37,15 +37,15 @@ co(function *() {
 
 	function reducer(a, b) {
 		if (Array.isArray(b[0]))
-			a[0] += b[0].reduce(function (a, b) {return a + b});
+			a[0] += b[0].reduce(function (a, b) {return a + b;});
 		else
 			a[0] += b[0];
 
 		if (Array.isArray(b[1])) {
 			a[1] += b[1].reduce(function (a, b) {
 				if (Array.isArray(b))
-					return a + b.reduce(function(a, b) {return a + b});				
-				return a + b
+					return a + b.reduce(function(a, b) {return a + b;});
+				return a + b;
 			}, 0);
 		} else
 			a[1] += b[1];
@@ -76,9 +76,9 @@ co(function *() {
 	}
 
 	"SOURCE_CODE"
-	console.log('=> Local result')
+	console.log('=> Local result');
 	console.log(loc);
-	console.log('=> Distributed result')
+	console.log('=> Distributed result');
 	console.log(dist);
 
 	function sort(v) {
