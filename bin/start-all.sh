@@ -39,7 +39,7 @@ ssh $host "$ugrid_cmd"
 while ! $cpath/bin/wait-workers.js 0 2>/dev/null; do sleep 1; done
 
 # Start ugrid workers
-worker_cmd="PATH=$PATH; [ -f $config ] && . $config; $node $node_opts $cpath/bin/worker.js -H $host -P $port -n $wph >>/tmp/worker.log 2>&1 &"
+worker_cmd="{ set -x; PATH=$PATH; [ -f $config ] && . $config; $node $node_opts $cpath/bin/worker.js -H $host -P $port -n $wph; } >>/tmp/worker.log 2>&1 &"
 set -- $workers
 for worker; do
 	ssh $worker "$worker_cmd"
