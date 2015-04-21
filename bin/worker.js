@@ -4,12 +4,9 @@
 
 var os = require('os');
 var cluster = require('cluster');
-var fs = require('fs');
-var Connection = require('ssh2');
 
 var UgridClient = require('../lib/ugrid-client.js');
-var Lines = require('../lib/lines.js');
-var UgridTask = require('../lib/ugrid-processing.js').UgridTask;
+var UgridJob = require('../lib/ugrid-processing.js').UgridJob;
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -35,7 +32,7 @@ function handleExit(worker, code, signal) {
 }
 
 function runWorker(host, port) {
-	var RAM = {}, task, jobId;
+	var RAM = {}, job, jobId;
 
 	var grid = new UgridClient({
 		host: host,
@@ -60,29 +57,38 @@ function runWorker(host, port) {
 		process.exit(2);
 	});
 
+	grid.on('runJob', function (err) {
+		job.run();
+	});
+
 	var request = {
-		setTask: function (msg) {
-			task = new UgridTask(grid, RAM, msg);
-			grid.reply(msg, null, 'worker ready to process task');
+		setJob: function (msg) {
+			job = new UgridJob(request, grid, RAM, msg);
+			grid.reply(msg, null, 'worker ready to process job');
 		},
-		runTask: function (msg) {
-			task.run(function(res) {
-				grid.reply(msg, null, res);
-			}, msg);
-		},
+		// runJob: function (msg) {
+		// 	job.run(function(res) {
+		// 		grid.reply(msg, null, res);
+		// 	}, msg);
+		// },
 		shuffle: function (msg) {
-			task.processShuffle(msg);
+			// Ici job doit etre un JSON indexé par l'id du job
+			// msg doit contenir l'id du job concerné par la request
+			// afin de pouvoir ecrire job[msg.data.jobid].processShuffle(msg);
+			job.processShuffle(msg);
 		},
 		action: function (msg) {
-			task.processAction(msg);
+			// idem shuffle
+			job.processAction(msg);
 		},
 		lastLine: function (msg) {
-			task.processLastLine(msg);
+			// idem shuffle
+			job.processLastLine(msg);
 		},
 		reset: function (msg) {
 			if (!process.env.UGRID_TEST) process.exit(0);
 			RAM = {};
-			task = undefined;
+			job = undefined;
 			jobId = undefined;
 		}
 	};
