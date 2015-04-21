@@ -17,8 +17,8 @@ slaves=$cpath/conf/slaves
 while getopts :c:s: opt
 do
 	case $opt in
-	(c) config=$OPTARG; [ -f "$config" ] || die "$config not found" ;;
-	(s) slaves=$OPTARG; [ -f "$slaves" ] || die "$slaves not found" ;;
+	(c) config=$PWD/$OPTARG; [ -f "$config" ] || die "$config not found" ;;
+	(s) slaves=$PWD/$OPTARG; [ -f "$slaves" ] || die "$slaves not found" ;;
 	(*) echo "Usage: $0 [-c config_file] [-s slave_file]"; exit 1 ;;
 	esac
 done

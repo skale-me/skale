@@ -12,6 +12,7 @@ var opt = require('node-getopt').create([
 
 var host = opt.options.Host || 'localhost';
 var port = opt.options.Port || 12346;
+var shells = {};
 
 var ugrid = require('../lib/ugrid-client.js')({
 	host: host,
@@ -33,10 +34,20 @@ ugrid.on('start', function (msg) {
 	});
 });
 
+ugrid.on('remoteClose', function (msg) {
+	if (msg.data in shells) {
+		console.log('remoteClose ' + msg.data + ', terminate ' + shells[msg.data].pid);
+		shells[msg.data].kill();
+		delete shells[msg.data];
+	}
+});
+
 ugrid.on('shell', function (msg) {
 	process.env.UGRID_WEBID = msg.from;
 	var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
+	shells[msg.data] = shell;
 	ugrid.send(0, {cmd: 'shell', id: msg.from});
+	ugrid.send(0, {cmd: 'notify', data: msg.data});
 	shell.stdout.on('data', function (data) {
 		ugrid.send(0, {cmd: 'stdout', id: msg.from, data: data.toString()});
 	});

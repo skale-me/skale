@@ -111,6 +111,11 @@ var clientRequest = {
 		msg.data = msg.data in clients ? clients[msg.data].index : null;
 		return true;
 	},
+	notify: function (sock, msg) {
+		if (clients[msg.data])
+			clients[msg.data].closeListeners[sock.client.uuid] = true;
+		return false;
+	},
 	set: function (sock, msg) {
 		if (typeof msg.data != 'object') return false;
 		for (var i in msg.data)
@@ -166,21 +171,24 @@ if (wsport) {
 		});
 		ws.on('error', function (error) {
 			console.log('## websocket connection error');
-			console.log(error);
+			console.log(error.stack);
 		});
 	});
 }
 
 function handleClose(sock) {
 	console.log('## connection closed');
-	var cli = sock.client;
+	var i, cli = sock.client;
 	if (cli) {
 		pubmon({event: 'disconnect', uuid: cli.uuid});
 		cli.sock = null;
 		releaseWorkers(cli.uuid);
+		for (i in cli.closeListeners) {
+			clients[i].sock.write(UgridClient.encode({cmd: 'remoteClose', data: cli.uuid}));
+		}
 	}
 	if (sock.index) delete crossbar[sock.index];
-	for (var i in cli.topics) {		// remove owned topics
+	for (i in cli.topics) {		// remove owned topics
 		delete topicIndex[topics[i].name];
 		delete topics[i];
 	}
@@ -223,7 +231,8 @@ function register(from, msg, sock)
 		owner: from ? from : uuid,
 		data: msg.data || {},
 		sock: sock,
-		topics: {}
+		topics: {},
+		closeListeners: {}
 	};
 	pubmon({event: 'connect', uuid: uuid, data: msg.data});
 	msg.data = {uuid: uuid, token: 0, id: sock.index};
