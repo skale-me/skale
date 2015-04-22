@@ -66,11 +66,6 @@ function runWorker(host, port) {
 			job = new UgridJob(request, grid, RAM, msg);
 			grid.reply(msg, null, 'worker ready to process job');
 		},
-		// runJob: function (msg) {
-		// 	job.run(function(res) {
-		// 		grid.reply(msg, null, res);
-		// 	}, msg);
-		// },
 		shuffle: function (msg) {
 			// Ici job doit etre un JSON indexé par l'id du job
 			// msg doit contenir l'id du job concerné par la request
