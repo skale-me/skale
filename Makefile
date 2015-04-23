@@ -12,7 +12,7 @@ browserify:
 	browserify lib/ugrid-context.js --standalone UgridContext > lib/ugrid-context-browser.js
 
 clean:
-	rm test/automatic/*.js
+	rm -f test/automatic/*.js
 
 lint:
 	jshint $(filter-out $(OBJS), $(SRCS))
