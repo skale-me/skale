@@ -10,7 +10,8 @@ co(function *() {
 	console.assert(uc.worker.length > 0);
 
 	uc.stream({N: 10}).collect(function(err, res) {
-		console.log(res);
+	//uc.stream({N: 10}).count(function(err, res) {
+		console.log('res: ' + res);
 	});
 
 	// uc.end();
