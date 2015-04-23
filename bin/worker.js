@@ -57,8 +57,9 @@ function runWorker(host, port) {
 		process.exit(2);
 	});
 
-	grid.on('runJob', function (err) {
+	grid.on('runJob', function (msg, done) {
 		job.run();
+		done();
 	});
 
 	var request = {
@@ -88,12 +89,13 @@ function runWorker(host, port) {
 		}
 	};
 
-	grid.on('request', function (msg) {
+	grid.on('request', function (msg, done) {
 		try {
 			request[msg.data.cmd](msg);
 		} catch (error) {
 			console.error(error.stack);
 			grid.reply(msg, error, null);
 		}
+		done();
 	});
 }
