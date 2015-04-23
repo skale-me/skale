@@ -57,9 +57,8 @@ function runWorker(host, port) {
 		process.exit(2);
 	});
 
-	grid.on('runJob', function (msg, done) {
+	grid.on('runJob', function (msg) {
 		job.run();
-		done();
 	});
 
 	var request = {
@@ -86,16 +85,20 @@ function runWorker(host, port) {
 			RAM = {};
 			job = undefined;
 			jobId = undefined;
+		},
+		stream: function (msg) {
+			grid.emit(msg.data.stream, msg.data.data, function () {
+				grid.reply(msg);
+			});
 		}
 	};
 
-	grid.on('request', function (msg, done) {
+	grid.on('request', function (msg) {
 		try {
 			request[msg.data.cmd](msg);
 		} catch (error) {
 			console.error(error.stack);
 			grid.reply(msg, error, null);
 		}
-		done();
 	});
 }
