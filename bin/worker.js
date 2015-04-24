@@ -57,7 +57,7 @@ function runWorker(host, port) {
 		process.exit(2);
 	});
 
-	grid.on('runJob', function (msg) {
+	grid.on('runJob', function () {
 		job.run();
 	});
 
