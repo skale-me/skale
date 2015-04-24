@@ -17,14 +17,14 @@ server.on('connection', function(conn) {
         characterSet: 8,
         capabilityFlags: 0xffffff
     });
- 
+
     conn.on('field_list', function(table, fields) {
         console.log('field list:', table, fields);
         conn.writeEof();
     });
 
     var remote = mysql.createConnection({user: 'cedric', database: 'test', host:'127.0.0.1', password: ''});
-     
+
     conn.on('query', function(sql) {
         remote.query(sql, function(err) { // overloaded args, either (err, result :object)
             // or (err, rows :array, columns :array)

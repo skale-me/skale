@@ -12,11 +12,11 @@ co(function *() {
 	console.assert(uc.worker.length > 0);
 
 	var raw_data = [
-		fs.readFileSync('/tmp/kv.data', {encoding: 'utf8'}), 
+		fs.readFileSync('/tmp/kv.data', {encoding: 'utf8'}),
 		fs.readFileSync('/tmp/kv2.data', {encoding: 'utf8'})
 	];
 	fs.writeFileSync("/tmp/v0", raw_data[0]);
-	fs.writeFileSync("/tmp/v1", raw_data[1]);	
+	fs.writeFileSync("/tmp/v1", raw_data[1]);
 
 	var v = [
 		raw_data[0].split('\n').map(function(s) {return s.split(' ').map(parseFloat);}),
@@ -57,7 +57,7 @@ co(function *() {
 		return e;
 	}
 
-	function filter(e) {return (e[1] % 2 == 0);}
+	function filter(e) {return (e[1] % 2 === 0);}
 
 	function flatMapper(e) {return [e, e];}
 
