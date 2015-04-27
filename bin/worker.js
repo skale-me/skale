@@ -32,7 +32,7 @@ function handleExit(worker, code, signal) {
 }
 
 function runWorker(host, port) {
-	var RAM = {}, job, jobId;
+	var RAM = {}, jobs = {}, jobId;
 
 	var grid = new UgridClient({
 		host: host,
@@ -57,13 +57,14 @@ function runWorker(host, port) {
 		process.exit(2);
 	});
 
-	grid.on('runJob', function () {
-		job.run();
+	grid.on('runJob', function (msg) {
+		//console.log('in runJob: %j', msg);
+		jobs[msg.data.jobId].run();
 	});
 
 	var request = {
 		setJob: function (msg) {
-			job = new UgridJob(request, grid, RAM, msg);
+			jobs[msg.data.jobId] = new UgridJob(request, grid, RAM, msg);
 			grid.reply(msg, null, 'worker ready to process job');
 		},
 		shuffle: function (msg) {
@@ -87,9 +88,15 @@ function runWorker(host, port) {
 			jobId = undefined;
 		},
 		stream: function (msg) {
-			grid.emit(msg.data.stream, msg.data.data, function () {
-				grid.reply(msg);
-			});
+			console.log('in worker %d, data: %j', grid.host.id, msg.data.data);
+			if (msg.data.data === null)
+				grid.emit(msg.data.stream + ".end", null, function () {
+					grid.reply(msg);
+				});
+			else
+				grid.emit(msg.data.stream, msg.data.data, function () {
+					grid.reply(msg);
+				});
 		}
 	};
 

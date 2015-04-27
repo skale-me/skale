@@ -13,5 +13,9 @@ co(function *() {
 		console.log('res: ' + res);
 	});
 
+	uc.jobs[0].stream.on('end', function () {
+		console.log("BYE"):
+		uc.end();
+	});
 	// uc.end();
 }).catch(ugrid.onError);
