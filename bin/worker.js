@@ -64,22 +64,22 @@ function runWorker(host, port) {
 
 	var request = {
 		setJob: function (msg) {
-			jobs[msg.data.jobId] = new UgridJob(request, grid, RAM, msg);
+			jobs[msg.data.jobId] = new UgridJob(request, msg.data.jobId, grid, RAM, msg);
 			grid.reply(msg, null, 'worker ready to process job');
 		},
 		shuffle: function (msg) {
 			// Ici job doit etre un JSON indexé par l'id du job
 			// msg doit contenir l'id du job concerné par la request
 			// afin de pouvoir ecrire job[msg.data.jobid].processShuffle(msg);
-			job.processShuffle(msg);
+			jobs[msg.data.jobId].processShuffle(msg);
 		},
 		action: function (msg) {
 			// idem shuffle
-			job.processAction(msg);
+			jobs[msg.data.jobId].processAction(msg);
 		},
 		lastLine: function (msg) {
 			// idem shuffle
-			job.processLastLine(msg);
+			jobs[msg.data.jobId].processLastLine(msg);
 		},
 		reset: function () {
 			if (!process.env.UGRID_TEST) process.exit(0);
