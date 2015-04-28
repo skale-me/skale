@@ -10,12 +10,14 @@ var UgridJob = require('../lib/ugrid-processing.js').UgridJob;
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
+	['d', 'debug', 'print debug traces'],
 	['n', 'num=ARG', 'number of instances (default 1)'],
 	['H', 'Host=ARG', 'server hostname (default localhost)'],
 	['P', 'Port=ARG', 'server port (default 12346)']
 ]).bindHelp().parseSystem();
 
 var num = opt.options.num || 1;
+var debug = opt.options.debug || false;
 
 if (cluster.isMaster) {
 	cluster.on('exit', handleExit);
@@ -35,6 +37,7 @@ function runWorker(host, port) {
 	var RAM = {}, jobs = {}, jobId;
 
 	var grid = new UgridClient({
+		debug: debug,
 		host: host,
 		port: port,
 		data: {
@@ -68,17 +71,12 @@ function runWorker(host, port) {
 			grid.reply(msg, null, 'worker ready to process job');
 		},
 		shuffle: function (msg) {
-			// Ici job doit etre un JSON indexé par l'id du job
-			// msg doit contenir l'id du job concerné par la request
-			// afin de pouvoir ecrire job[msg.data.jobid].processShuffle(msg);
 			jobs[msg.data.jobId].processShuffle(msg);
 		},
 		action: function (msg) {
-			// idem shuffle
 			jobs[msg.data.jobId].processAction(msg);
 		},
 		lastLine: function (msg) {
-			// idem shuffle
 			jobs[msg.data.jobId].processLastLine(msg);
 		},
 		reset: function () {
@@ -89,14 +87,15 @@ function runWorker(host, port) {
 		},
 		stream: function (msg) {
 			console.log('in worker %d, data: %j', grid.host.id, msg.data.data);
-			if (msg.data.data === null)
+			if (msg.data.data === null) {
 				grid.emit(msg.data.stream + ".end", null, function () {
 					grid.reply(msg);
 				});
-			else
+			} else {
 				grid.emit(msg.data.stream, msg.data.data, function () {
 					grid.reply(msg);
 				});
+			}
 		}
 	};
 
