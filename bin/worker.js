@@ -73,9 +73,6 @@ function runWorker(host, port) {
 		shuffle: function (msg) {
 			jobs[msg.data.jobId].processShuffle(msg);
 		},
-		//action: function (msg) {
-		//	jobs[msg.data.jobId].processAction(msg);
-		//},
 		lastLine: function (msg) {
 			jobs[msg.data.jobId].processLastLine(msg);
 		},
@@ -88,7 +85,7 @@ function runWorker(host, port) {
 		stream: function (msg) {
 			console.log('in worker %d, data: %j', grid.host.id, msg.data.data);
 			if (msg.data.data === null) {
-				grid.emit(msg.data.stream + ".end", msg.data.forward, function () {
+				grid.emit(msg.data.stream + ".end", msg.data.ignore, function () {
 					grid.reply(msg);
 				});
 			} else {

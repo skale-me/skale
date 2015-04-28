@@ -2,23 +2,23 @@
 
 // stream -> collect
 
+var fs = require('fs');
 var co = require('co');
 var ugrid = require('../..');
+
+var s1 = fs.createReadStream('./f', {encoding: 'utf8'});
+var s2 = fs.createReadStream('./f2', {encoding: 'utf8'});
 
 co(function *() {
 	var uc = yield ugrid.context();
 	console.assert(uc.worker.length > 0);
 
-	var us = uc.stream(process.stdin, {N: 3}).collectStream()
-	
-//	us.on('data', function(res) {
-//		console.log('res: ' + res);
-//	});
-//
-	us.on('end', function () {
-		console.log("BYE");
-		uc.end();
+	uc.stream(s1, {N: 4}).collect(function(err, res) {
+		console.log('res1: ' + res);
+	});
+	uc.stream(s2, {N: 4}).collect(function(err, res) {
+		console.log('res2: ' + res);
 	});
 
-	us.pipe(process.stdout);
+	// uc.end();
 }).catch(ugrid.onError);
