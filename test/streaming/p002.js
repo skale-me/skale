@@ -6,7 +6,7 @@ var co = require('co');
 var ugrid = require('../..');
 
 co(function *() {
-	var uc = yield ugrid.context({debug: true});
+	var uc = yield ugrid.context();
 	console.assert(uc.worker.length > 0);
 
 	uc.stream(process.stdin, {N: 4}).collect(function(err, res) {
