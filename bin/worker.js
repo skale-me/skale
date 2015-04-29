@@ -60,21 +60,30 @@ function runWorker(host, port) {
 		process.exit(2);
 	});
 
-	grid.on('runJob', function (msg) {
-		//console.log('in runJob: %j', msg);
-		jobs[msg.data.jobId].run();
-	});
-
 	var request = {
 		setJob: function (msg) {
-			jobs[msg.data.jobId] = new UgridJob(request, msg.data.jobId, grid, RAM, msg);
+			// TODO: app object must be created once per application, and reset on worker release
+			var worker = msg.data.args.worker;
+			for (var wid = 0; wid < worker.length; wid++)
+				if (worker[wid].uuid == grid.host.uuid) break;
+			var app = {
+				worker: worker,
+				wid: wid,
+				master_uuid: msg.data.master_uuid,
+				RAM: RAM,
+				dones: {},
+				completedStreams: {}
+			}
+			jobs[msg.data.jobId] = new UgridJob(grid, app, {
+				node: msg.data.args.node,
+				stageData: msg.data.args.stageData,
+				actionData: msg.data.args.actionData,
+				jobId: msg.data.jobId
+			});
 			grid.reply(msg, null, 'worker ready to process job');
 		},
 		shuffle: function (msg) {
 			jobs[msg.data.jobId].processShuffle(msg);
-		},
-		lastLine: function (msg) {
-			jobs[msg.data.jobId].processLastLine(msg);
 		},
 		reset: function () {
 			if (!process.env.UGRID_TEST) process.exit(0);
@@ -95,6 +104,14 @@ function runWorker(host, port) {
 			}
 		}
 	};
+
+	grid.on('runJob', function (msg) {
+		jobs[msg.data.jobId].run();
+	});
+
+	grid.on('lastLine', function (msg) {
+		jobs[msg.jobId].processLastLine(msg);
+	});
 
 	grid.on('action', function (msg) {
 		jobs[msg.jobId].processAction(msg);
