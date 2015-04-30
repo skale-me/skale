@@ -82,9 +82,6 @@ function runWorker(host, port) {
 			});
 			grid.reply(msg, null, 'worker ready to process job');
 		},
-		shuffle: function (msg) {
-			jobs[msg.data.jobId].processShuffle(msg);
-		},
 		reset: function () {
 			if (!process.env.UGRID_TEST) process.exit(0);
 			RAM = {};
@@ -104,6 +101,10 @@ function runWorker(host, port) {
 			}
 		}
 	};
+
+	grid.on('shuffle', function (msg) {
+		jobs[msg.jobId].processShuffle(msg);
+	});
 
 	grid.on('runJob', function (msg) {
 		jobs[msg.data.jobId].run();
