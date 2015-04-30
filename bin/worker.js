@@ -5,6 +5,7 @@
 var os = require('os');
 var cluster = require('cluster');
 
+var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
 var UgridJob = require('../lib/ugrid-processing.js').UgridJob;
 
@@ -78,12 +79,13 @@ function runWorker(host, port) {
 		},
 		reset: function () {
 			if (!process.env.UGRID_TEST) process.exit(0);
+			trace(jobs);
 			RAM = {};
-			job = undefined;
+			jobs = {};
 			jobId = undefined;
 		},
 		stream: function (msg) {
-			console.log('in worker %d, data: %j', grid.host.id, msg.data.data);
+			trace('worker %d, data: %j', grid.host.id, msg.data.data);
 			if (msg.data.data === null) {
 				grid.emit(msg.data.stream + ".end", msg.data.ignore, function () {
 					grid.reply(msg);

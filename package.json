@@ -31,6 +31,7 @@
     "co-shell": "^0.1.2",
     "express": "^4.10.1",
     "find": "^0.1.7",
+    "line-trace": "^1.0.2",
     "mongodb": "^1.4.34",
     "node-getopt": "^0.2.3",
     "node-uuid": "^1.4.1",

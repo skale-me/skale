@@ -12,12 +12,10 @@ co(function *() {
 	var uc = yield ugrid.context();
 	console.assert(uc.worker.length > 0);
 
-	uc.stream(s1, {N: 4}).collect(function(err, res) {
-		console.assert(res.length == 4);
-	});
+	var s = uc.stream(s1, {N: 4}).collect({stream: true});
 
-	uc.jobs[0].stream.on('end', function () {
-		console.log("BYE");
+	s.pipe(process.stdout);
+	s.on('end', function () {
 		uc.end();
 	});
 }).catch(ugrid.onError);
