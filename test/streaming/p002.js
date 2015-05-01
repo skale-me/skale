@@ -12,13 +12,19 @@ co(function *() {
 	var uc = yield ugrid.context();
 	console.assert(uc.worker.length > 0);
 
-	uc.stream(s1, {N: 3}).collect(function(err, res) {
-		console.log('res: ' + res);
+	var dist = [];
+
+	var out = uc.stream(s1, {N: 3}).collect({stream: true});
+
+	out.on('data', function(res) {
+		dist.push(res);
 	});
 
-	uc.jobs[0].stream.on('end', function () {
-		console.log("BYE");
+	out.on('end', function(res) {
+		console.log(dist);
+		console.assert(dist.length == 2);
+		console.assert(dist[0].length == 3);
+		console.assert(dist[1].length == 1);
 		uc.end();
 	});
-	// uc.end();
 }).catch(ugrid.onError);
