@@ -5,7 +5,8 @@
 var sources = ['parallelize', 'textFile'];
 var transfos = ['map', 'filter', 'flatMap', 'mapValues', 'sample', 'groupByKey', 'reduceByKey', 'distinct', 'flatMapValues', 'keys', 'values'];
 var dualtransfo = ['rightOuterJoin', 'leftOuterJoin', 'intersection', 'subtract', 'crossProduct', 'coGroup', 'union', 'join'];
-var actions = ['count', 'collect', 'reduce', 'lookup', 'countByValue'];
+var actions = ['count', 'collect', 'reduce', 'lookup', 'countByValue',
+	'countStream', 'collectStream', 'reduceStream', 'lookupStream', 'countByValueStream'];
 
 var test_id = 0;
 var dir = process.argv[2] ? (process.argv[2] + '/') : './';

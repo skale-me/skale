@@ -18,6 +18,11 @@ co(function *() {
 	fs.writeFileSync("/tmp/v0", raw_data[0]);
 	fs.writeFileSync("/tmp/v1", raw_data[1]);
 
+	var s = [
+		fs.createReadStream('/tmp/kv.data', {encoding: 'utf8'}),
+		fs.createReadStream('/tmp/kv2.data', {encoding: 'utf8'})
+	];
+
 	var v = [
 		raw_data[0].split('\n').map(function(s) {return s.split(' ').map(parseFloat);}),
 		raw_data[1].split('\n').map(function(s) {return s.split(' ').map(parseFloat);})
@@ -75,12 +80,6 @@ co(function *() {
 		return out;
 	}
 
-	"SOURCE_CODE"
-	console.log('=> Local result');
-	console.log(loc);
-	console.log('=> Distributed result');
-	console.log(dist);
-
 	function sort(v) {
 		for (var i = 0; i < v.length; i++) {
 			if (Array.isArray(v[i]))
@@ -89,10 +88,15 @@ co(function *() {
 		v.sort();
 	}
 
-	if (Array.isArray(dist)) sort(dist);
-	if (Array.isArray(loc)) sort(loc);
+	function compareResults(r1, r2) {
+		console.log('=> local result: %j', r1);
+		console.log('=> distributed result: %j', r2);
+		if (Array.isArray(r1)) sort(r1);
+		if (Array.isArray(r2)) sort(r2);
+		console.assert(JSON.stringify(r1) == JSON.stringify(r2));
+		uc.end();
+	}
 
-	console.assert(JSON.stringify(dist) == JSON.stringify(loc));
+	"SOURCE_CODE"
 
-	uc.end();
 }).catch(ugrid.onError);

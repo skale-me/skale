@@ -19,5 +19,5 @@ lint:
 
 gentest: $(LAST_TEST)
 
-$(LAST_TEST): utils/gen_test_script.js utils/b1.js
+$(LAST_TEST): utils/gen_test_script.js utils/b1.js utils/template.js
 	utils/gen_test_script.js test/automatic | sh
