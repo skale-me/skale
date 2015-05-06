@@ -5,6 +5,11 @@ var fs = require('fs');
 // TODO : forEach, take, top, takeOrdered, takeSample, partitionByKey, sortByKey
 // LATER: fold aggregate combineByKey subtractByKey foldByKey countByKey
 
+process.stderr.write('\r');
+for (var i = 2; i < process.argv.length; i++)
+	process.stderr.write(process.argv[i] + ' ');
+process.stderr.write('\t\t\t\t');
+
 var sources = ['parallelize', 'textFile', 'stream'];
 var transfos = ['rightOuterJoin', 'leftOuterJoin', 'intersection', 'subtract', 'crossProduct', 'coGroup', 'join', 'union', 'map', 'filter', 'flatMap', 'mapValues',
 	'sample', 'groupByKey', 'reduceByKey', 'distinct', 'flatMapValues',

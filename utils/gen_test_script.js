@@ -71,3 +71,4 @@ for (var i = 0; i < dualtransfo.length; i++)
 		console.log('./utils/b1.js textFile persist textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 	}
 
+process.stderr.write('\r\t\t\t\t\t\t\t\t\t\n\n');
