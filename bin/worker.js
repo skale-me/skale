@@ -74,7 +74,7 @@ function runWorker(host, port) {
 				RAM: RAM,
 				dones: {},
 				completedStreams: {}
-			}
+			};
 			jobs[msg.data.jobId] = new UgridJob(grid, app, {
 				node: msg.data.args.node,
 				stageData: msg.data.args.stageData,
@@ -94,11 +94,11 @@ function runWorker(host, port) {
 			trace('worker %d, data: %j', grid.host.id, msg.data.data);
 			if (msg.data.data === null) {
 				grid.emit(msg.data.stream + ".end", msg.data.ignore, function () {
-					grid.reply(msg);
+					try {grid.reply(msg);} catch(err) {}
 				});
 			} else {
 				grid.emit(msg.data.stream, msg.data.data, function () {
-					grid.reply(msg);
+					try {grid.reply(msg);} catch(err) {}
 				});
 			}
 		}
