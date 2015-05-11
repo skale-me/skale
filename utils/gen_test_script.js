@@ -2,7 +2,7 @@
 
 // Chaque bloc ne prend qu'une input de type kv (keys -> reduce est indéfini)
 
-var sources = ['parallelize', 'textFile'];
+var sources = ['parallelize', 'stream', 'textFile'];
 var transfos = ['map', 'filter', 'flatMap', 'mapValues', 'sample', 'groupByKey', 'reduceByKey', 'distinct', 'flatMapValues', 'keys', 'values'];
 var dualtransfo = ['rightOuterJoin', 'leftOuterJoin', 'intersection', 'subtract', 'crossProduct', 'coGroup', 'union', 'join'];
 var actions = ['count', 'collect', 'reduce', 'lookup', 'countByValue',

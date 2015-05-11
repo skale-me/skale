@@ -37,7 +37,7 @@ for (var i = 2; i < process.argv.length; i++) {
 		} else if (process.argv[i] == 'textFile') {
 			dist += 'dsource[' + src_cnt + '] = uc.textFile("/tmp/v' + src_cnt + '").map(function(e) {return e.split(" ").map(parseFloat)});\n\t';
 		} else if (process.argv[i] == 'stream') {
-			dist += 'dsource[' + src_cnt + '] = uc.stream(s[' + src_cnt + '], {N: 5});\n\t';
+			dist += 'dsource[' + src_cnt + '] = uc.stream(s[' + src_cnt + '], {N: 5}).map(textParser);\n\t';
 		} else throw new Error('Unknown source :' + process.argv[i]);
 		loc += 'lsource[' + src_cnt + '] = v_ref[' + src_cnt + '];\n\t';
 	} else if (isTransfo) {
@@ -181,9 +181,10 @@ for (var i = 2; i < process.argv.length; i++) {
 		dist += 'yield dsource[' + src_cnt + '].count();\n\t';
 		if (last_source_type == 'parallelize') {
 			dist += 'v[' + last_source_id + '].push([v_ref[' + last_source_id + '][0][0], v_ref[' + last_source_id + '][0][1]]);\n\t';
+		} else if (last_source_type == 'stream') {
 		} else if (last_source_type == 'textFile') {
 			dist += 'fs.appendFileSync("/tmp/v' + last_source_id + '", "\\n1 2\\n");\n\t';
-		} else throw new Error('Unknown source :' + process.argv[i - 1]);
+		} else throw new Error('Unknown source: ' + process.argv[i - 1]);
 	} else
 		throw 'Unknown command: ' + process.argv[i];
 }
