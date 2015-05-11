@@ -5,7 +5,8 @@
 var sources = ['parallelize', 'textFile'];
 var transfos = ['map', 'filter', 'flatMap', 'mapValues', 'sample', 'groupByKey', 'reduceByKey', 'distinct', 'flatMapValues', 'keys', 'values'];
 var dualtransfo = ['rightOuterJoin', 'leftOuterJoin', 'intersection', 'subtract', 'crossProduct', 'coGroup', 'union', 'join'];
-var actions = ['count', 'collect', 'reduce', 'lookup', 'countByValue'];
+var actions = ['count', 'collect', 'reduce', 'lookup', 'countByValue',
+	'countStream', 'collectStream', 'reduceStream', 'lookupStream', 'countByValueStream'];
 
 var test_id = 0;
 var dir = process.argv[2] ? (process.argv[2] + '/') : './';
@@ -70,3 +71,4 @@ for (var i = 0; i < dualtransfo.length; i++)
 		console.log('./utils/b1.js textFile persist textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 	}
 
+process.stderr.write('\r\t\t\t\t\t\t\t\t\t\n\n');

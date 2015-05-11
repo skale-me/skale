@@ -5,14 +5,21 @@ var fs = require('fs');
 // TODO : forEach, take, top, takeOrdered, takeSample, partitionByKey, sortByKey
 // LATER: fold aggregate combineByKey subtractByKey foldByKey countByKey
 
-var sources = ['parallelize', 'textFile'];
-var transfos = ['rightOuterJoin', 'leftOuterJoin', 'intersection', 'subtract', 'crossProduct', 'coGroup', 'join', 'union', 'map', 'filter', 'flatMap', 'mapValues', 
-	'sample', 'groupByKey', 'reduceByKey', 'distinct', 'flatMapValues', 
+process.stderr.write('\r');
+for (var i = 2; i < process.argv.length; i++)
+	process.stderr.write(process.argv[i] + ' ');
+process.stderr.write('\t\t\t\t');
+
+var sources = ['parallelize', 'textFile', 'stream'];
+var transfos = ['rightOuterJoin', 'leftOuterJoin', 'intersection', 'subtract', 'crossProduct', 'coGroup', 'join', 'union', 'map', 'filter', 'flatMap', 'mapValues',
+	'sample', 'groupByKey', 'reduceByKey', 'distinct', 'flatMapValues',
 	'keys', 'values'];
-var actions = ['count', 'collect', 'reduce', 'lookup', 'countByValue'];
+var actions = ['count', 'collect', 'reduce', 'lookup', 'countByValue',
+'countStream', 'collectStream', 'reduceStream', 'lookupStream', 'countByValueStream'];
 
 var dist = '', desc = '#', loc = '', src_cnt = -1;
 var last_source_id, last_source_type;
+var streamOut = false;
 
 for (var i = 2; i < process.argv.length; i++) {
 	desc += ' ' + process.argv[i];
@@ -29,20 +36,22 @@ for (var i = 2; i < process.argv.length; i++) {
 			dist += 'dsource[' + src_cnt + '] = uc.parallelize(v[' + src_cnt + ']);\n\t';
 		} else if (process.argv[i] == 'textFile') {
 			dist += 'dsource[' + src_cnt + '] = uc.textFile("/tmp/v' + src_cnt + '").map(function(e) {return e.split(" ").map(parseFloat)});\n\t';
-		} else throw new Error('Unknown source :' + process.argv[i]);
+		} else if (process.argv[i] == 'stream') {
+			dist += 'dsource[' + src_cnt + '] = uc.stream(s[' + src_cnt + '], {N: 5});\n\t';
+		} else throw new Error('Unknown source :' + process.argv[i]);
 		loc += 'lsource[' + src_cnt + '] = v_ref[' + src_cnt + '];\n\t';
 	} else if (isTransfo) {
 		dist += 'dsource[' + src_cnt + '] = dsource[' + src_cnt + ']';
-		loc += 'lsource[' + src_cnt + '] = '; 
+		loc += 'lsource[' + src_cnt + '] = ';
 		switch (process.argv[i]) {
 		case 'rightOuterJoin':
 			dist += '.rightOuterJoin(dsource[' + (src_cnt - 1) + ']);\n\t';
 			loc += 'ut.join(lsource[' + src_cnt + '], lsource[' + (src_cnt - 1) + '], "right");\n\t';
-			break;						
+			break;
 		case 'leftOuterJoin':
 			dist += '.leftOuterJoin(dsource[' + (src_cnt - 1) + ']);\n\t';
 			loc += 'ut.join(lsource[' + src_cnt + '], lsource[' + (src_cnt - 1) + '], "left");\n\t';
-			break;			
+			break;
 		case 'intersection':
 			dist += '.intersection(dsource[' + (src_cnt - 1) + ']);\n\t';
 			loc += 'ut.intersection(lsource[' + src_cnt + '], lsource[' + (src_cnt - 1) + ']);\n\t';
@@ -58,7 +67,7 @@ for (var i = 2; i < process.argv.length; i++) {
 		case 'coGroup':
 			dist += '.coGroup(dsource[' + (src_cnt - 1) + ']);\n\t';
 			loc += 'ut.coGroup(lsource[' + src_cnt + '], lsource[' + (src_cnt - 1) + ']);\n\t';
-			break;			
+			break;
 		case 'join':
 			dist += '.join(dsource[' + (src_cnt - 1) + ']);\n\t';
 			loc += 'ut.join(lsource[' + src_cnt + '], lsource[' + (src_cnt - 1) + ']);\n\t';
@@ -119,22 +128,52 @@ for (var i = 2; i < process.argv.length; i++) {
 			dist += 'var dist = yield dsource[' + src_cnt + '].count();\n\t';
 			loc += 'var loc = lsource[' + src_cnt + '].length;\n\t';
 			break;
+		case 'countStream':
+			streamOut = true;
+			dist += 'var dist = [];\n\t' +
+				'var out = dsource[' + src_cnt + '].count({stream: true});\n\t';
+			loc += 'var loc = [lsource[' + src_cnt + '].length];\n\t';
+			break;
 		case 'collect':
 			dist += 'var dist = yield dsource[' + src_cnt + '].collect();\n\t';
 			loc += 'var loc = lsource[' + src_cnt + '];\n\t';
+			break;
+		case 'collectStream':
+			streamOut = true;
+			dist += 'var dist = [];\n\t' +
+				'var out = dsource[' + src_cnt + '].collect({stream: true});\n\t';
+			loc += 'var loc = [lsource[' + src_cnt + ']];\n\t';
 			break;
 		case 'reduce':
 			dist += 'var dist = yield dsource[' + src_cnt + '].reduce(reducer, [0, 0]);\n\t';
 			loc += 'var loc = lsource[' + src_cnt + '].reduce(reducer, [0, 0]);\n\t';
 			break;
+		case 'reduceStream':
+			streamOut = true;
+			dist += 'var dist = [];\n\t' +
+				'var out = dsource[' + src_cnt + '].reduce(reducer, [0, 0], {stream: true});\n\t';
+			loc += 'var loc = [lsource[' + src_cnt + '].reduce(reducer, [0, 0])];\n\t';
+			break;
 		case 'lookup':
 			dist += 'var dist = yield dsource[' + src_cnt + '].lookup(key);\n\t';
 			loc += 'var loc = lsource[' + src_cnt + '].filter(function (e) {return (e[0] == key)});\n\t';
 			break;
+		case 'lookupStream':
+			streamOut = true;
+			dist += 'var dist = [];\n\t' +
+				'var out = dsource[' + src_cnt + '].lookup(key, {stream: true});\n\t';
+			loc += 'var loc = [lsource[' + src_cnt + '].filter(function (e) {return (e[0] == key)})];\n\t';
+			break;
 		case 'countByValue':
 			dist += 'var dist = yield dsource[' + src_cnt + '].countByValue();\n\t';
 			loc += 'var loc = ut.countByValue(lsource[' + src_cnt + ']);\n\t';
-			break;			
+			break;
+		case 'countByValueStream':
+			streamOut = true;
+			dist += 'var dist = [];\n\t' +
+				'var out = dsource[' + src_cnt + '].countByValue({stream: true});\n\t';
+			loc += 'var loc = [ut.countByValue(lsource[' + src_cnt + '])];\n\t';
+			break;
 		default: throw new Error('Unknown action :' + process.argv[i]);
 		}
 	} else if (isPersist) {
@@ -144,9 +183,16 @@ for (var i = 2; i < process.argv.length; i++) {
 			dist += 'v[' + last_source_id + '].push([v_ref[' + last_source_id + '][0][0], v_ref[' + last_source_id + '][0][1]]);\n\t';
 		} else if (last_source_type == 'textFile') {
 			dist += 'fs.appendFileSync("/tmp/v' + last_source_id + '", "\\n1 2\\n");\n\t';
-		} else throw new Error('Unknown source :' + process.argv[i - 1]);		
+		} else throw new Error('Unknown source :' + process.argv[i - 1]);
 	} else
 		throw 'Unknown command: ' + process.argv[i];
+}
+
+if (streamOut) {
+	dist += '\n\tout.on("data", function (d) {dist.push(d);});' +
+		'\n\tout.on("end", function() {compareResults(loc, dist);});';
+} else {
+	dist += '\n\tcompareResults(loc, dist);';
 }
 
 var template = fs.readFileSync('utils/template.js', {encoding: 'utf8'});

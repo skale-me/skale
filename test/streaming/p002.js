@@ -6,7 +6,7 @@ var fs = require('fs');
 var co = require('co');
 var ugrid = require('../..');
 
-var s1 = fs.createReadStream('./f', {encoding: 'utf8'});
+var s1 = fs.createReadStream(__dirname + '/f', {encoding: 'utf8'});
 
 co(function *() {
 	var uc = yield ugrid.context();
