@@ -26,6 +26,7 @@ console.log('cp test/automatic/kv.data /tmp; cp test/automatic/kv2.data /tmp');
 for (var i = 0; i < sources.length; i++)
 	for (var j = 0; j < actions.length; j++) {
 		console.log('./utils/b1.js ' + sources[i] + ' ' + actions[j] + ' > ' + file());
+		if (sources[i] == 'stream') continue;	// do not mix persist with input stream
 		console.log('./utils/b1.js ' + sources[i] + ' persist ' + actions[j] + ' > ' + file());
 	}
 
@@ -33,9 +34,8 @@ for (var i = 0; i < sources.length; i++)
 for (var i = 0; i < sources.length; i++)
 	for (var j = 0; j < transfos.length; j++)
 		for (var k = 0; k < actions.length; k++) {
-			if ((transfos[j] == 'keys') && (actions[k] == 'reduce')) continue;
-			if ((transfos[j] == 'values') && (actions[k] == 'reduce')) continue;
 			console.log('./utils/b1.js ' + sources[i] + ' ' + transfos[j] + ' ' + actions[k] + ' > ' + file());
+			if (sources[i] == 'stream') continue;	// do not mix persist with input stream
 			console.log('./utils/b1.js ' + sources[i] + ' persist ' + transfos[j] + ' ' + actions[k] + ' > ' + file());
 			console.log('./utils/b1.js ' + sources[i] + ' ' + transfos[j] + ' persist ' + actions[k] + ' > ' + file());
 		}
