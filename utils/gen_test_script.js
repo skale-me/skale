@@ -54,21 +54,54 @@ for (var i = 0; i < dualtransfo.length; i++)
 		console.log('./utils/b1.js parallelize persist parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js parallelize parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js parallelize persist parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+
 		// parallelize textFile
 		console.log('./utils/b1.js parallelize textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js parallelize persist textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js parallelize textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js parallelize persist textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+
+		// parallelize stream
+		console.log('./utils/b1.js parallelize stream ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js parallelize persist stream ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js parallelize stream persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js parallelize persist stream persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+
 		// textFile parallelize
 		console.log('./utils/b1.js textFile parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js textFile persist parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js textFile parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js textFile persist parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
-		// // textFile textFile
+
+		// textFile textFile
 		console.log('./utils/b1.js textFile textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js textFile persist textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js textFile textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 		console.log('./utils/b1.js textFile persist textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+
+		// textFile stream
+		console.log('./utils/b1.js textFile stream ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js textFile persist stream ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js textFile stream persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js textFile persist stream persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+
+		// stream parallelize
+		console.log('./utils/b1.js stream parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js stream persist parallelize ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js stream parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js stream persist parallelize persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+
+		// stream textFile
+		console.log('./utils/b1.js stream textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js stream persist textFile ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		console.log('./utils/b1.js stream textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js stream persist textFile persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+
+		// stream stream
+		console.log('./utils/b1.js stream stream ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js stream persist stream ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js stream stream persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
+		//console.log('./utils/b1.js stream persist stream persist ' + dualtransfo[i] + ' ' + actions[j] + ' > ' + file());
 	}
 
 process.stderr.write('\r\t\t\t\t\t\t\t\t\t\n\n');
