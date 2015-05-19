@@ -5,7 +5,7 @@ all: browserify
 OBJ = lib/ugrid-client-browser.js lib/ugrid-context-browser.js
 SRCS = $(filter-out $(OBJ), $(wildcard bin/*.js lib/*.js examples/*.js test/unitTest/*.js utils/*.js))
 
-LAST_TEST = test/automatic/t0977.js
+LAST_TEST = test/automatic/t2819.js
 
 browserify:
 	browserify lib/ugrid-client.js --standalone Client > lib/ugrid-client-browser.js

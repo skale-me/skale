@@ -16,8 +16,9 @@ function shellWriter(data) {
 co(function *() {
 	var uc = yield ugrid.context({noworker: true});
 	var context = coshell({
+		prompt: prompt,
 		ignoreUndefined: true,
-		prompt: prompt
+		writer: function () {return undefined}
 	}).context;
 	context.ugrid = ugrid;
 	context.uc = uc;

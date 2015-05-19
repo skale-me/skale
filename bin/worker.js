@@ -85,13 +85,13 @@ function runWorker(host, port) {
 		},
 		reset: function () {
 			if (!process.env.UGRID_TEST) process.exit(0);
-			trace(jobs);
+			//trace(jobs);
 			RAM = {};
 			jobs = {};
 			jobId = undefined;
 		},
 		stream: function (msg) {
-			trace('worker %d, data: %j', grid.host.id, msg.data.data);
+			//trace('worker %d, data: %j', grid.host.id, msg.data.data);
 			if (msg.data.data === null) {
 				grid.emit(msg.data.stream + ".end", msg.data.ignore, done);
 			} else {

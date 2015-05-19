@@ -58,6 +58,7 @@ ugrid.on('shell', function (msg) {
 		if (firstLine) {
 			firstLine = false;
 			data = data.replace(/^(\.\.\. )+/, '');
+			data = data.replace(/^(undefined *)+/, '');
 		}
 		ugrid.send(0, {cmd: 'stdout', id: msg.from, data: data + '\n'});
 	});
