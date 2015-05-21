@@ -8,7 +8,6 @@
     "pretest": "make gentest; bin/start-all.sh -c test/ugrid-env.sh",
     "test": "cd test; UGRID_STOP=1 ./runtests || true",
     "posttest": "bin/stop-all.sh",
-    "postinstall": "cp lib/escodegen.js node_modules/escodegen/",
     "stop": "bin/stop-all.sh"
   },
   "repository": {
