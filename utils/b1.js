@@ -20,6 +20,7 @@ var actions = ['count', 'collect', 'reduce', 'lookup', 'countByValue',
 var dist = '', desc = '#', loc = '', src_cnt = -1;
 var last_source_id, last_source_type;
 var streamOut = false;
+var hasKeysOrValues = false;
 
 for (var i = 2; i < process.argv.length; i++) {
 	desc += ' ' + process.argv[i];
@@ -37,7 +38,7 @@ for (var i = 2; i < process.argv.length; i++) {
 		} else if (process.argv[i] == 'textFile') {
 			dist += 'dsource[' + src_cnt + '] = uc.textFile("/tmp/v' + src_cnt + '").map(function(e) {return e.split(" ").map(parseFloat)});\n\t';
 		} else if (process.argv[i] == 'stream') {
-			dist += 'dsource[' + src_cnt + '] = uc.stream(s[' + src_cnt + '], {N: 5});\n\t';
+			dist += 'dsource[' + src_cnt + '] = uc.stream(s[' + src_cnt + '], {N: 5}).map(textParser);\n\t';
 		} else throw new Error('Unknown source :' + process.argv[i]);
 		loc += 'lsource[' + src_cnt + '] = v_ref[' + src_cnt + '];\n\t';
 	} else if (isTransfo) {
@@ -115,10 +116,12 @@ for (var i = 2; i < process.argv.length; i++) {
 		case 'keys':
 			dist += '.keys();\n\t';
 			loc += 'lsource[' + src_cnt + '].map(function(e){return e[0]});\n\t';
+			hasKeysOrValues = true;
 			break;
 		case 'values':
 			dist += '.values();\n\t';
 			loc += 'lsource[' + src_cnt + '].map(function(e){return e[1]});\n\t';
+			hasKeysOrValues = true;
 			break;
 		default: throw new Error('Unknown transformation :' + process.argv[i]);
 		}
@@ -145,14 +148,25 @@ for (var i = 2; i < process.argv.length; i++) {
 			loc += 'var loc = [lsource[' + src_cnt + ']];\n\t';
 			break;
 		case 'reduce':
-			dist += 'var dist = yield dsource[' + src_cnt + '].reduce(reducer, [0, 0]);\n\t';
-			loc += 'var loc = lsource[' + src_cnt + '].reduce(reducer, [0, 0]);\n\t';
+			if (hasKeysOrValues) {
+				dist += 'var dist = yield dsource[' + src_cnt + '].reduce(reducerByKey, 0);\n\t';
+				loc += 'var loc = lsource[' + src_cnt + '].reduce(reducerByKey, 0);\n\t';
+			} else {
+				dist += 'var dist = yield dsource[' + src_cnt + '].reduce(reducer, [0, 0]);\n\t';
+				loc += 'var loc = lsource[' + src_cnt + '].reduce(reducer, [0, 0]);\n\t';
+			}
 			break;
 		case 'reduceStream':
 			streamOut = true;
-			dist += 'var dist = [];\n\t' +
-				'var out = dsource[' + src_cnt + '].reduce(reducer, [0, 0], {stream: true});\n\t';
-			loc += 'var loc = [lsource[' + src_cnt + '].reduce(reducer, [0, 0])];\n\t';
+			if (hasKeysOrValues) {
+				dist += 'var dist = [];\n\t' +
+					'var out = dsource[' + src_cnt + '].reduce(reducerByKey, 0, {stream: true});\n\t';
+				loc += 'var loc = [lsource[' + src_cnt + '].reduce(reducerByKey, 0)];\n\t';
+			} else {
+				dist += 'var dist = [];\n\t' +
+					'var out = dsource[' + src_cnt + '].reduce(reducer, [0, 0], {stream: true});\n\t';
+				loc += 'var loc = [lsource[' + src_cnt + '].reduce(reducer, [0, 0])];\n\t';
+			}
 			break;
 		case 'lookup':
 			dist += 'var dist = yield dsource[' + src_cnt + '].lookup(key);\n\t';
@@ -181,9 +195,10 @@ for (var i = 2; i < process.argv.length; i++) {
 		dist += 'yield dsource[' + src_cnt + '].count();\n\t';
 		if (last_source_type == 'parallelize') {
 			dist += 'v[' + last_source_id + '].push([v_ref[' + last_source_id + '][0][0], v_ref[' + last_source_id + '][0][1]]);\n\t';
+		} else if (last_source_type == 'stream') {
 		} else if (last_source_type == 'textFile') {
 			dist += 'fs.appendFileSync("/tmp/v' + last_source_id + '", "\\n1 2\\n");\n\t';
-		} else throw new Error('Unknown source :' + process.argv[i - 1]);
+		} else throw new Error('Unknown source: ' + process.argv[i - 1]);
 	} else
 		throw 'Unknown command: ' + process.argv[i];
 }

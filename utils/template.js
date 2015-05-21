@@ -24,8 +24,8 @@ co(function *() {
 	];
 
 	var v = [
-		raw_data[0].split('\n').map(function(s) {return s.split(' ').map(parseFloat);}),
-		raw_data[1].split('\n').map(function(s) {return s.split(' ').map(parseFloat);})
+		raw_data[0].split('\n').map(textParser),
+		raw_data[1].split('\n').map(textParser)
 	];
 
 	var v_ref = [
@@ -39,6 +39,8 @@ co(function *() {
 	var seed = 1;
 	var withReplacement = true;
 	var key = v_ref[0][0][0];
+
+	function textParser(s) {return s.split(' ').map(parseFloat);}
 
 	function reducer(a, b) {
 		if (Array.isArray(b[0]))

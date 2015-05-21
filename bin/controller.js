@@ -3,6 +3,8 @@
 'use strict';
 
 var fork = require('child_process').fork;
+var trace = require('line-trace');
+var Lines = require('../lib/lines.js');
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -44,12 +46,22 @@ ugrid.on('remoteClose', function (msg) {
 
 ugrid.on('shell', function (msg) {
 	process.env.UGRID_WEBID = msg.from;
-	var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
+	//var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
+	var shell = fork(__dirname + '/../lib/copro.js', {silent: true});
+	var lines = new Lines();
+	var firstLine = true;
 	shells[msg.data] = shell;
 	ugrid.send(0, {cmd: 'shell', id: msg.from});
 	ugrid.send(0, {cmd: 'notify', data: msg.data});
-	shell.stdout.on('data', function (data) {
-		ugrid.send(0, {cmd: 'stdout', id: msg.from, data: data.toString()});
+	shell.stdout.pipe(lines);
+
+	lines.on('data', function (data) {
+		if (firstLine) {
+			firstLine = false;
+			data = data.replace(/^(\.\.\. )+/, '');
+			data = data.replace(/^(undefined *)+/, '');
+		}
+		ugrid.send(0, {cmd: 'stdout', id: msg.from, data: data + '\n'});
 	});
 	shell.stderr.on('data', function (data) {
 		console.log("# shell pid %d stderr: %s", shell.pid, data);
@@ -58,7 +70,9 @@ ugrid.on('shell', function (msg) {
 		console.log("# shell %d exited with code: %d", shell.pid, code);
 	});
 	ugrid.on('stdin-' + msg.from, function (msg) {
+		trace("%s", msg.data);
 		shell.stdin.write(msg.data + "\n");
+		firstLine = true;
 	});
 	console.log('forked ugrid-shell.js pid ' + shell.pid);
 });
