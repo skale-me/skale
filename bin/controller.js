@@ -15,11 +15,16 @@ var opt = require('node-getopt').create([
 var host = opt.options.Host || 'localhost';
 var port = opt.options.Port || 12346;
 var shells = {};
+var workerControllers;
 
 var ugrid = require('../lib/ugrid-client.js')({
 	host: host,
 	port: port,
 	data: {type: 'controller'}
+}, function (err, result) {
+	ugrid.devices({type: 'worker-controller'}, 0, function (err2, res2) {
+		workerControllers = res2;
+	});
 });
 
 ugrid.on('start', function (msg) {
@@ -44,12 +49,25 @@ ugrid.on('remoteClose', function (msg) {
 	}
 });
 
+var sessions = {};
+
 ugrid.on('shell', function (msg) {
+	var id = msg.userId + '.' + msg.appId;
+	if (sessions[id]) {
+		ugrid.send(0, {cmd: 'shell', id: msg.from});
+		return;
+	}
 	process.env.UGRID_WEBID = msg.from;
+	process.env.appid = id;
+	// Ask worker-controllers to fork new workers for this app
+	for (var i = 0; i < workerControllers.length; i++)
+		ugrid.send(workerControllers[i].uuid, {cmd: 'newapp', data: id});
+
 	//var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
 	var shell = fork(__dirname + '/../lib/copro.js', {silent: true});
 	var lines = new Lines();
 	shells[msg.data] = shell;
+	sessions[id] = msg.from;
 	ugrid.send(0, {cmd: 'shell', id: msg.from});
 	ugrid.send(0, {cmd: 'notify', data: msg.data});
 	shell.stdout.pipe(lines);
@@ -65,7 +83,6 @@ ugrid.on('shell', function (msg) {
 		console.log("# shell %d exited with code: %d", shell.pid, code);
 	});
 	ugrid.on('stdin-' + msg.from, function (msg) {
-		trace("%s", msg.data);
 		//shell.stdin.write(msg.data + "\n");
 		shell.stdin.write(JSON.stringify(msg));
 	});
