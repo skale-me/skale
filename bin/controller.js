@@ -3,7 +3,6 @@
 'use strict';
 
 var fork = require('child_process').fork;
-var trace = require('line-trace');
 var Lines = require('../lib/lines.js');
 
 var opt = require('node-getopt').create([
@@ -21,9 +20,9 @@ var ugrid = require('../lib/ugrid-client.js')({
 	host: host,
 	port: port,
 	data: {type: 'controller'}
-}, function (err, result) {
-	ugrid.devices({type: 'worker-controller'}, 0, function (err2, res2) {
-		workerControllers = res2;
+}, function () {
+	ugrid.devices({type: 'worker-controller'}, 0, function (err, res) {
+		workerControllers = res;
 	});
 });
 

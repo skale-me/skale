@@ -5,7 +5,6 @@
 var os = require('os');
 var cluster = require('cluster');
 
-var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
 var UgridJob = require('../lib/ugrid-processing.js').UgridJob;
 

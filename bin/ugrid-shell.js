@@ -9,16 +9,12 @@ var ugrid = require('../');
 var webid = process.env.UGRID_WEBID;
 var prompt = webid ? '' : 'ugrid> ';
 
-function shellWriter(data) {
-	console.log(data);
-}
-
 co(function *() {
 	var uc = yield ugrid.context({noworker: true});
 	var context = coshell({
 		prompt: prompt,
 		ignoreUndefined: true,
-		writer: function () {return undefined}
+		writer: function () {return undefined;}
 	}).context;
 	context.ugrid = ugrid;
 	context.uc = uc;
