@@ -1,13 +1,14 @@
 #!/usr/local/bin/node --harmony
 
 var child_process = require('child_process');
+var os = require('os');
 var co = require('co');
 var thenify = require('thenify');
 var Find = require('find');
 
 var node = process.env.NODE || 'node';
 var nodeOptions = process.env.NODE_OPTS || '--harmony';
-var maxWorkers = process.argv[2] || process.env.UGRID_WORKER_PER_HOST || 1;
+var maxWorkers = process.argv[2] || process.env.UGRID_WORKER_PER_HOST || os.cpus().length;
 var files = [], nfail = 0, npass = 0;
 
 var find = thenify(function (re, dir, callback) {
@@ -57,7 +58,7 @@ co(function * () {
 	for (f in files) {
 		for (var j = 1; j <= maxWorkers; j++) {
 			process.stdout.write('\r' + j + ' worker' + (j == 1 ? ',  ' : 's, ') + files[f]);
-			process.env.UGRID_WMAX = j;
+			process.env.UGRID_WORKER_PER_HOST = j;
 			res = yield spawn(node, nodeOptions.split(' ').concat(files[f]), {env: process.env, timeout: 2000});
 			if (res.error) {
 				nfail++;

@@ -11,6 +11,7 @@
 
 var net = require('net');
 var util = require('util');
+var trace = require('line-trace');
 var stream = require('stream');
 var uuidGen = require('node-uuid');
 var UgridClient = require('../lib/ugrid-client.js');
@@ -95,6 +96,10 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 var clientRequest = {
 	connect: function (sock, msg) {
 		register(null, msg, sock);
+		if (msg.data.query) msg.data.devices = devices(msg);
+		if (msg.data.notify in clients && clients[msg.data.notify].sock)
+			clients[msg.data.notify].sock.write(UgridClient.encode({cmd: 'notify', data: msg.data}));
+		console.log('## Connect %s %s %s', msg.data.type, msg.data.id, msg.data.uuid);
 		return true;
 	},
 	devices: function (sock, msg) {
@@ -180,9 +185,9 @@ if (wsport) {
 }
 
 function handleClose(sock) {
-	console.log('## connection closed');
 	var i, cli = sock.client;
 	if (cli) {
+		console.log('## Close: %s %s %s', cli.data.type, cli.index, cli.uuid);
 		pubmon({event: 'disconnect', uuid: cli.uuid});
 		cli.sock = null;
 		releaseWorkers(cli.uuid);
@@ -190,21 +195,23 @@ function handleClose(sock) {
 			if (clients[i].sock)
 				clients[i].sock.write(UgridClient.encode({cmd: 'remoteClose', data: cli.uuid}));
 		}
+		for (i in cli.topics) {		// remove owned topics
+			delete topicIndex[topics[i].name];
+			delete topics[i];
+		}
+		if (cli.end) delete clients[cli.uuid];
+	} else {
+		console.log('## Close: %j', sock._peername);
 	}
 	if (sock.index) delete crossbar[sock.index];
-	for (i in cli.topics) {		// remove owned topics
-		delete topicIndex[topics[i].name];
-		delete topics[i];
-	}
-	if (cli.end) delete clients[cli.uuid];
 	sock.removeAllListeners();
 }
 
 function handleConnect(sock) {
 	if (sock.ws) { 
-		console.log('Connect websocket from ' + sock.socket.upgradeReq.headers.origin);
+		console.log('## Connect websocket from ' + sock.socket.upgradeReq.headers.origin);
 	} else {
-		console.log('Connect tcp ' + sock.remoteAddress + ' ' + sock.remotePort);
+		console.log('## Connect tcp ' + sock.remoteAddress + ' ' + sock.remotePort);
 		sock.setNoDelay();
 	}
 	sock.pipe(new UgridClient.FromGrid()).pipe(new SwitchBoard(sock));
@@ -239,7 +246,10 @@ function register(from, msg, sock)
 		closeListeners: {}
 	};
 	pubmon({event: 'connect', uuid: uuid, data: msg.data});
-	msg.data = {uuid: uuid, token: 0, id: sock.index};
+	//msg.data = {uuid: uuid, token: 0, id: sock.index};
+	msg.data.uuid = uuid;
+	msg.data.token = 0;
+	msg.data.id = sock.index;
 }
 
 function releaseWorkers(master) {
@@ -251,12 +261,12 @@ function releaseWorkers(master) {
 }
 
 function devices(msg) {
-	var query = msg.data.query, max = msg.data.max, result = [], master;
+	var query = msg.data.query, max = msg.data.max || 0, result = [], master;
 	var workers = [];
 
-	if (clients[msg.ufrom].data.type == 'master' && query.type == 'worker')
-		master = msg.ufrom;
-	msg.ufrom = undefined;
+	//if (msg.ufrom in clients && clients[msg.ufrom].data.type == 'master' && query.type == 'worker')
+	//	master = msg.ufrom;
+	//msg.ufrom = undefined;
 	for (var i in clients) {
 		if (!clients[i].sock) continue;
 		var match = true;
@@ -273,15 +283,15 @@ function devices(msg) {
 				ip: clients[i].sock.remoteAddress,
 				data: clients[i].data
 			});
-			if (master) {
-				clients[i].data.jobId = master;
-				workers.push(i);
-			}
-			if (result.length == max) break;
+			//if (master) {
+			//	clients[i].data.jobId = master;
+			//	workers.push(i);
+			//}
+			//if (result.length == max) break;
 		}
 	}
-	if (master)
-		pubmon({event: 'devices', uuid: master, data: workers});
+	//if (master)
+	//	pubmon({event: 'devices', uuid: master, data: workers});
 	return result;
 }
 

@@ -10,10 +10,7 @@ ugrid.Context = require('./lib/ugrid-context.js');
 
 ugrid.ml = require('./lib/ugrid-ml.js');
 
-ugrid.context = thenify.withCallback(function context(opt, callback) {
-	var uc = new ugrid.Context(opt);
-	uc.init(opt, callback);
-});
+ugrid.context = thenify.withCallback(ugrid.Context);
 
 ugrid.onError = function (err) {
 	console.error(err.stack);
