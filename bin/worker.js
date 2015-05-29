@@ -5,32 +5,42 @@
 var os = require('os');
 var cluster = require('cluster');
 
+var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
 var UgridJob = require('../lib/ugrid-processing.js').UgridJob;
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
 	['d', 'debug', 'print debug traces'],
-	['n', 'num=ARG', 'number of instances (default 1)'],
 	['H', 'Host=ARG', 'server hostname (default localhost)'],
 	['P', 'Port=ARG', 'server port (default 12346)']
 ]).bindHelp().parseSystem();
 
-var num = opt.options.num || 1;
 var debug = opt.options.debug || false;
+var cgrid;
 
 if (cluster.isMaster) {
 	cluster.on('exit', handleExit);
-	for (var i = 0; i < num; i++)
-		cluster.fork();
+	cgrid = new UgridClient({
+		debug: debug,
+		host: opt.options.Host,
+		port: opt.options.Port,
+		data: {
+			type: 'worker-controller',
+			ncpu: os.cpus().length
+		}
+	});
+	cgrid.on('getWorker', function (msg) {
+		trace(msg);
+		for (var i = 0; i < msg.n; i++)
+			cluster.fork({appid: msg.appid});
+	});
 } else {
 	runWorker(opt.options.Host, opt.options.Port);
 }
 
 function handleExit(worker, code, signal) {
-	console.log("worker %d died (%s). Restart.", worker.process.pid, signal || code);
-	if (code != 2)
-		cluster.fork();
+	console.log("worker %d exited: %s", worker.process.pid, signal || code);
 }
 
 function runWorker(host, port) {
@@ -48,6 +58,8 @@ function runWorker(host, port) {
 			totalmem: os.totalmem(),
 			hostname: os.hostname(),
 			type: 'worker',
+			appid: process.env.appid,
+			notify: process.env.appid,
 			jobId: ''
 		}
 	}, function (err, res) {
@@ -82,13 +94,13 @@ function runWorker(host, port) {
 			});
 			grid.reply(msg, null, 'worker ready to process job');
 		},
-		reset: function () {
-			if (!process.env.UGRID_TEST) process.exit(0);
-			//trace(jobs);
-			RAM = {};
-			jobs = {};
-			jobId = undefined;
-		},
+		//reset: function () {
+		//	if (!process.env.UGRID_TEST) process.exit(0);
+		//	//trace(jobs);
+		//	RAM = {};
+		//	jobs = {};
+		//	jobId = undefined;
+		//},
 		stream: function (msg) {
 			//trace('worker %d, data: %j', grid.host.id, msg.data.data);
 			if (msg.data.data === null) {
@@ -99,6 +111,14 @@ function runWorker(host, port) {
 			function done() {try {grid.reply(msg);} catch(err) {}}
 		}
 	};
+
+	grid.on('reset', function () {
+		if (!process.env.UGRID_TEST) process.exit(0);
+		//trace(jobs);
+		RAM = {};
+		jobs = {};
+		jobId = undefined;
+	});
 
 	grid.on('shuffle', function (msg) {
 		jobs[msg.jobId].processShuffle(msg);

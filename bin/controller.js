@@ -58,10 +58,6 @@ ugrid.on('shell', function (msg) {
 	}
 	process.env.UGRID_WEBID = msg.from;
 	process.env.appid = id;
-	// Ask worker-controllers to fork new workers for this app
-	for (var i = 0; i < workerControllers.length; i++)
-		ugrid.send(workerControllers[i].uuid, {cmd: 'newapp', data: id});
-
 	//var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
 	var shell = fork(__dirname + '/../lib/copro.js', {silent: true});
 	var lines = new Lines();
