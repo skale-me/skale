@@ -5,6 +5,7 @@
 var os = require('os');
 var cluster = require('cluster');
 
+var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
 var UgridJob = require('../lib/ugrid-processing.js').UgridJob;
 
@@ -18,11 +19,26 @@ var opt = require('node-getopt').create([
 
 var num = opt.options.num || 1;
 var debug = opt.options.debug || false;
+var cgrid;
 
 if (cluster.isMaster) {
 	cluster.on('exit', handleExit);
-	for (var i = 0; i < num; i++)
-		cluster.fork();
+	cgrid = new UgridClient({
+		debug: debug,
+		host: opt.options.Host,
+		port: opt.options.Port,
+		data: {
+			type: 'worker-controller',
+			ncpu: os.cpus().length
+		}
+	});
+	cgrid.on('newapp', function (msg) {
+		trace(msg);
+		for (var i = 0; i < num; i++)
+			cluster.fork({appid: msg.data});
+	});
+	//for (var i = 0; i < num; i++)
+	//	cluster.fork();
 } else {
 	runWorker(opt.options.Host, opt.options.Port);
 }
@@ -48,6 +64,7 @@ function runWorker(host, port) {
 			totalmem: os.totalmem(),
 			hostname: os.hostname(),
 			type: 'worker',
+			appid: process.env.appid,
 			jobId: ''
 		}
 	}, function (err, res) {

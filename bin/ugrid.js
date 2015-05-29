@@ -187,7 +187,8 @@ function handleClose(sock) {
 		cli.sock = null;
 		releaseWorkers(cli.uuid);
 		for (i in cli.closeListeners) {
-			clients[i].sock.write(UgridClient.encode({cmd: 'remoteClose', data: cli.uuid}));
+			if (clients[i].sock)
+				clients[i].sock.write(UgridClient.encode({cmd: 'remoteClose', data: cli.uuid}));
 		}
 	}
 	if (sock.index) delete crossbar[sock.index];
