@@ -1,4 +1,3 @@
-export UGRID_TEST=1
 export UGRID_WORKER_PER_HOST=${UGRID_WORKER_PER_HOST:-8}
 
 export UGRID_HOST=localhost

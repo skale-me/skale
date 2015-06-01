@@ -94,13 +94,6 @@ function runWorker(host, port) {
 			});
 			grid.reply(msg, null, 'worker ready to process job');
 		},
-		//reset: function () {
-		//	if (!process.env.UGRID_TEST) process.exit(0);
-		//	//trace(jobs);
-		//	RAM = {};
-		//	jobs = {};
-		//	jobId = undefined;
-		//},
 		stream: function (msg) {
 			//trace('worker %d, data: %j', grid.host.id, msg.data.data);
 			if (msg.data.data === null) {
@@ -112,12 +105,12 @@ function runWorker(host, port) {
 		}
 	};
 
-	grid.on('reset', function () {
-		if (!process.env.UGRID_TEST) process.exit(0);
-		//trace(jobs);
-		RAM = {};
-		jobs = {};
-		jobId = undefined;
+	//grid.on('reset', function () {
+	//	process.exit(0);
+	//});
+
+	grid.on('remoteClose', function (msg) {
+		process.exit(0);
 	});
 
 	grid.on('shuffle', function (msg) {

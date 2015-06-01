@@ -97,8 +97,10 @@ var clientRequest = {
 	connect: function (sock, msg) {
 		register(null, msg, sock);
 		if (msg.data.query) msg.data.devices = devices(msg);
-		if (msg.data.notify in clients && clients[msg.data.notify].sock)
+		if (msg.data.notify in clients && clients[msg.data.notify].sock) {
 			clients[msg.data.notify].sock.write(UgridClient.encode({cmd: 'notify', data: msg.data}));
+			clients[msg.data.notify].closeListeners[msg.data.uuid] = true;
+		}
 		console.log('## Connect %s %s %s', msg.data.type, msg.data.id, msg.data.uuid);
 		return true;
 	},
