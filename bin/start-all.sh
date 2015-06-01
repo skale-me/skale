@@ -31,9 +31,12 @@ shift $(($OPTIND - 1))
 host=${UGRID_HOST:-localhost} port=${UGRID_PORT:-12346}
 node=${NODE:-node} node_opts=${NODE_OPTS}
 
+tmp=/tmp/$USER
+[ -d "$tmp" ] || mkdir -p $tmp
+
 # Start ugrid server
 printf "Starting ugrid server on $host port $port ... "
-ugrid_cmd="PATH=$PATH; [ -f $config ] && . $config; $node $node_opts $cpath/bin/ugrid.js >>/tmp/ugrid.log 2>&1 & echo \$! >/tmp/ugrid.pid"
+ugrid_cmd="PATH=$PATH; [ -f $config ] && . $config; $node $node_opts $cpath/bin/ugrid.js >>$tmp/ugrid.log 2>&1 & echo \$! >$tmp/ugrid.pid"
 ssh $host "$ugrid_cmd"
 
 # Wait for ugrid server
@@ -41,7 +44,7 @@ while ! $cpath/bin/wait-workers.js 0 2>/dev/null; do sleep 1; done && echo "ok"
 
 # Start ugrid workers
 printf "Starting worker on $host ... "
-worker_cmd="PATH=$PATH; [ -f $config ] && . $config; $node $node_opts $cpath/bin/worker.js -H $host -P $port >>/tmp/worker.log 2>&1 &"
+worker_cmd="PATH=$PATH; [ -f $config ] && . $config; $node $node_opts $cpath/bin/worker.js -H $host -P $port >>$tmp/worker.log 2>&1 &"
 set -- $workers
 for worker; do
 	ssh $worker "$worker_cmd"
@@ -52,7 +55,7 @@ $cpath/bin/wait-workers.js $# && echo "ok"
 
 # Start ugrid controller
 printf "Starting controller on $host ... "
-controller_cmd="PATH=$PATH; [ -f $config ] && . $config; $node --harmony $node_opts $cpath/bin/controller.js -H $host -P $port >>/tmp/controller.log 2>&1 &"
+controller_cmd="PATH=$PATH; [ -f $config ] && . $config; $node --harmony $node_opts $cpath/bin/controller.js -H $host -P $port >>$tmp/controller.log 2>&1 &"
 ssh $host "$controller_cmd"
 
 # Wait for ugrid controller
