@@ -67,7 +67,6 @@ ugrid.on('shell', function (msg) {
 	}
 	// Create a new shell
 	process.env.UGRID_WEBID = msg.from;
-	process.env.appid = id;
 	//var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
 	shell = fork(__dirname + '/../lib/copro.js', {silent: true});
 	shells[msg.data] = shell;
