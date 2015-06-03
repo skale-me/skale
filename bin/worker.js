@@ -17,7 +17,7 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var debug = opt.options.debug || false;
-var ncpu = process.env.UGRID_WORKER_PER_HOST || os.cpus().length;
+var ncpu = process.env.UGRID_WORKER_PER_HOST ? Number(process.env.UGRID_WORKER_PER_HOST) : os.cpus().length;
 var cgrid;
 
 if (cluster.isMaster) {
@@ -39,6 +39,7 @@ if (cluster.isMaster) {
 		for (var i = 0; i < msg.n; i++)
 			cluster.fork({wsid: msg.wsid});
 	});
+	console.log('worker controller ready');
 } else {
 	runWorker(opt.options.Host, opt.options.Port);
 }

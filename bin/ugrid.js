@@ -311,6 +311,7 @@ function register(from, msg, sock)
 	};
 	pubmon({event: 'connect', uuid: uuid, data: msg.data});
 	//msg.data = {uuid: uuid, token: 0, id: sock.index};
+	if (!msg.data) msg.data = {};
 	msg.data.uuid = uuid;
 	msg.data.token = 0;
 	msg.data.id = sock.index;
