@@ -17,7 +17,7 @@ var uuidGen = require('node-uuid');
 var UgridClient = require('../lib/ugrid-client.js');
 var webSocketServer = require('ws').Server;
 var websocket = require('websocket-stream');
-var wsid = 0;	// worker stock id
+var wsid = 1;	// worker stock id
 var expectedWorkers = 0;	// number of expected workers per stock
 var workerStock = [];
 var workerControllers = [];
@@ -108,7 +108,7 @@ var clientRequest = {
 			clients[msg.data.notify].closeListeners[msg.data.uuid] = true;
 		}
 		if (msg.data.type == 'worker-controller') {
-			msg.data.wsid = ++wsid;
+			msg.data.wsid = wsid;
 			expectedWorkers += msg.data.ncpu;
 			workerControllers.push(msg.data);
 		} else if (msg.data.type == 'worker') {
@@ -123,7 +123,7 @@ var clientRequest = {
 				}
 			}
 		} else if (msg.data.type == 'master') {
-			if (workerStock.length >= expectedWorkers) {
+			if (expectedWorkers && workerStock.length >= expectedWorkers) {
 				msg.data.devices = workerStock;
 				postMaster(msg.data.uuid);
 			} else {
@@ -240,6 +240,21 @@ function handleClose(sock) {
 		pubmon({event: 'disconnect', uuid: cli.uuid});
 		cli.sock = null;
 		releaseWorkers(cli.uuid);
+		if (cli.data.type == 'worker-controller') {
+			// resize stock capacity
+			expectedWorkers -= cli.data.ncpu;
+			for (i = 0; i < workerControllers.length; i++) {
+				if (cli.uuid == workerControllers[i].uuid) {
+					workerControllers.splice(i, 1);
+				}
+			}
+		} else if (cli.data.type == 'worker') {
+			// remove worker from stock
+			for (i = 0; i < workerStock.length; i++) {
+				if (cli.uuid == workerStock[i].uuid)
+					workerStock.splice(i, 1);
+			}
+		}
 		for (i in cli.closeListeners) {
 			if (clients[i].sock)
 				clients[i].sock.write(UgridClient.encode({cmd: 'remoteClose', data: cli.uuid}));
