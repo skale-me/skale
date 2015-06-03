@@ -4,6 +4,7 @@
 
 var fork = require('child_process').fork;
 var Lines = require('../lib/lines.js');
+var trace = require('line-trace');
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -20,10 +21,6 @@ var ugrid = require('../lib/ugrid-client.js')({
 	host: host,
 	port: port,
 	data: {type: 'controller'}
-}, function () {
-	ugrid.devices({type: 'worker-controller'}, 0, function (err, res) {
-		workerControllers = res;
-	});
 });
 
 ugrid.on('start', function (msg) {
@@ -43,26 +40,37 @@ ugrid.on('start', function (msg) {
 ugrid.on('remoteClose', function (msg) {
 	if (msg.data in shells) {
 		console.log('remoteClose ' + msg.data + ', terminate ' + shells[msg.data].pid);
-		shells[msg.data].kill();
-		delete shells[msg.data];
+		//shells[msg.data].kill();
+		//delete shells[msg.data];
 	}
 });
 
 var sessions = {};
 
 ugrid.on('shell', function (msg) {
-	var id = msg.userId + '.' + msg.appId;
+	var lines = new Lines() , shell, id = msg.userId + '.' + msg.appId;
 	if (sessions[id]) {
+		// Reconnect to an existing shell
 		ugrid.send(0, {cmd: 'shell', id: msg.from});
+		ugrid.send(0, {cmd: 'notify', data: msg.data});
+		shell = sessions[id];
+		shell.stdout.pipe(lines);
+		shell.stdin.write(JSON.stringify({data: 'webid = ' + msg.from + ';'}));
+		ugrid.on('stdin-' + msg.from, function (msg) {
+			shell.stdin.write(JSON.stringify(msg));
+		});
+		lines.on('data', function (data) {
+			data = JSON.parse(data);
+			ugrid.send(0, {cmd: 'stdout', id: msg.from, file: data.file, data: data.data + '\n'});
+		});
 		return;
 	}
+	// Create a new shell
 	process.env.UGRID_WEBID = msg.from;
-	process.env.appid = id;
 	//var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
-	var shell = fork(__dirname + '/../lib/copro.js', {silent: true});
-	var lines = new Lines();
+	shell = fork(__dirname + '/../lib/copro.js', {silent: true});
 	shells[msg.data] = shell;
-	sessions[id] = msg.from;
+	sessions[id] = shell;
 	ugrid.send(0, {cmd: 'shell', id: msg.from});
 	ugrid.send(0, {cmd: 'notify', data: msg.data});
 	shell.stdout.pipe(lines);

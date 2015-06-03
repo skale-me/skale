@@ -17,6 +17,7 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var debug = opt.options.debug || false;
+var ncpu = process.env.UGRID_WORKER_PER_HOST || os.cpus().length;
 var cgrid;
 
 if (cluster.isMaster) {
@@ -27,13 +28,16 @@ if (cluster.isMaster) {
 		port: opt.options.Port,
 		data: {
 			type: 'worker-controller',
-			ncpu: os.cpus().length
+			ncpu: ncpu
 		}
 	});
+	cgrid.on('connect', function (msg) {
+		for (var i = 0; i < ncpu; i++)
+			cluster.fork({wsid: msg.wsid});
+	});
 	cgrid.on('getWorker', function (msg) {
-		trace(msg);
 		for (var i = 0; i < msg.n; i++)
-			cluster.fork({appid: msg.appid});
+			cluster.fork({wsid: msg.wsid});
 	});
 } else {
 	runWorker(opt.options.Host, opt.options.Port);
@@ -58,8 +62,7 @@ function runWorker(host, port) {
 			totalmem: os.totalmem(),
 			hostname: os.hostname(),
 			type: 'worker',
-			appid: process.env.appid,
-			notify: process.env.appid,
+			wsid: process.env.wsid,
 			jobId: ''
 		}
 	}, function (err, res) {
@@ -94,13 +97,6 @@ function runWorker(host, port) {
 			});
 			grid.reply(msg, null, 'worker ready to process job');
 		},
-		//reset: function () {
-		//	if (!process.env.UGRID_TEST) process.exit(0);
-		//	//trace(jobs);
-		//	RAM = {};
-		//	jobs = {};
-		//	jobId = undefined;
-		//},
 		stream: function (msg) {
 			if (msg.data.data === null) {
 				grid.emit(msg.data.stream + ".end", msg.data.ignore, done);
@@ -111,12 +107,12 @@ function runWorker(host, port) {
 		}
 	};
 
-	grid.on('reset', function () {
-		if (!process.env.UGRID_TEST) process.exit(0);
-		//trace(jobs);
-		RAM = {};
-		jobs = {};
-		jobId = undefined;
+	//grid.on('reset', function () {
+	//	process.exit(0);
+	//});
+
+	grid.on('remoteClose', function (msg) {
+		process.exit(0);
 	});
 
 	grid.on('shuffle', function (msg) {

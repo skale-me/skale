@@ -7,20 +7,22 @@ var fs = require('fs');
 var ugrid = require('../../');
 var ut = require('../ugrid-test.js');
 
+var tmpdir = '/tmp/' + process.env.USER;
+
 co(function *() {
 	var uc = yield ugrid.context();
 	console.assert(uc.worker.length > 0);
 
 	var raw_data = [
-		fs.readFileSync('/tmp/kv.data', {encoding: 'utf8'}),
-		fs.readFileSync('/tmp/kv2.data', {encoding: 'utf8'})
+		fs.readFileSync(tmpdir + '/kv.data', {encoding: 'utf8'}),
+		fs.readFileSync(tmpdir + '/kv2.data', {encoding: 'utf8'})
 	];
-	fs.writeFileSync("/tmp/v0", raw_data[0]);
-	fs.writeFileSync("/tmp/v1", raw_data[1]);
+	fs.writeFileSync(tmpdir + '/v0', raw_data[0]);
+	fs.writeFileSync(tmpdir + '/v1', raw_data[1]);
 
 	var s = [
-		fs.createReadStream('/tmp/kv.data', {encoding: 'utf8'}),
-		fs.createReadStream('/tmp/kv2.data', {encoding: 'utf8'})
+		fs.createReadStream(tmpdir + '/kv.data', {encoding: 'utf8'}),
+		fs.createReadStream(tmpdir + '/kv2.data', {encoding: 'utf8'})
 	];
 
 	var v = [

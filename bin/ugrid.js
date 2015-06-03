@@ -17,6 +17,11 @@ var uuidGen = require('node-uuid');
 var UgridClient = require('../lib/ugrid-client.js');
 var webSocketServer = require('ws').Server;
 var websocket = require('websocket-stream');
+var wsid = 1;	// worker stock id
+var expectedWorkers = 0;	// number of expected workers per stock
+var workerStock = [];
+var workerControllers = [];
+var pendingMasters = [];
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -95,12 +100,56 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 // to client, false otherwise. Reply data, if any,  must be set in msg.data.
 var clientRequest = {
 	connect: function (sock, msg) {
+		var i, ret = true, master;
 		register(null, msg, sock);
 		if (msg.data.query) msg.data.devices = devices(msg);
-		if (msg.data.notify in clients && clients[msg.data.notify].sock)
+		if (msg.data.notify in clients && clients[msg.data.notify].sock) {
 			clients[msg.data.notify].sock.write(UgridClient.encode({cmd: 'notify', data: msg.data}));
+			clients[msg.data.notify].closeListeners[msg.data.uuid] = true;
+		}
+		if (msg.data.type == 'worker-controller') {
+			msg.data.wsid = wsid;
+			expectedWorkers += msg.data.ncpu;
+			workerControllers.push(msg.data);
+		} else if (msg.data.type == 'worker') {
+			if (wsid == msg.data.wsid) {
+				workerStock.push(msg.data);
+				if (pendingMasters.length && workerStock.length >= expectedWorkers) {
+					master = pendingMasters.shift();
+					master.data.devices = workerStock;
+					master.cmd = 'reply';
+					clients[master.data.uuid].sock.write(UgridClient.encode(master));
+					postMaster(master.data.uuid);
+				}
+			}
+		} else if (msg.data.type == 'master') {
+			if (expectedWorkers && workerStock.length >= expectedWorkers) {
+				msg.data.devices = workerStock;
+				postMaster(msg.data.uuid);
+			} else {
+				pendingMasters.push(msg);
+				ret = false;
+			}
+		}
 		console.log('## Connect %s %s %s', msg.data.type, msg.data.id, msg.data.uuid);
-		return true;
+		return ret;
+
+		function postMaster(muuid) {
+			// Setup notifications to terminate workers on master end
+			for (i = 0; i < workerStock.length; i++) {
+				clients[muuid].closeListeners[workerStock[i].uuid] = true;
+			}
+			// Pre-fork new workers to renew the stock
+			wsid++;
+			workerStock = [];
+			for (i = 0; i < workerControllers.length; i++) {
+				clients[workerControllers[i].uuid].sock.write(UgridClient.encode({
+					cmd: 'getWorker',
+					wsid: wsid,
+					n: workerControllers[i].ncpu
+				}));
+			}
+		}
 	},
 	devices: function (sock, msg) {
 		msg.ufrom = sock.client.uuid;
@@ -191,6 +240,21 @@ function handleClose(sock) {
 		pubmon({event: 'disconnect', uuid: cli.uuid});
 		cli.sock = null;
 		releaseWorkers(cli.uuid);
+		if (cli.data.type == 'worker-controller') {
+			// resize stock capacity
+			expectedWorkers -= cli.data.ncpu;
+			for (i = 0; i < workerControllers.length; i++) {
+				if (cli.uuid == workerControllers[i].uuid) {
+					workerControllers.splice(i, 1);
+				}
+			}
+		} else if (cli.data.type == 'worker') {
+			// remove worker from stock
+			for (i = 0; i < workerStock.length; i++) {
+				if (cli.uuid == workerStock[i].uuid)
+					workerStock.splice(i, 1);
+			}
+		}
 		for (i in cli.closeListeners) {
 			if (clients[i].sock)
 				clients[i].sock.write(UgridClient.encode({cmd: 'remoteClose', data: cli.uuid}));

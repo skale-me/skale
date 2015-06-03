@@ -10,6 +10,7 @@ for (var i = 2; i < process.argv.length; i++)
 	process.stderr.write(process.argv[i] + ' ');
 process.stderr.write('\t\t\t\t');
 
+var tmpdir = '/tmp/' + process.env.USER;
 var sources = ['parallelize', 'textFile', 'stream'];
 var transfos = ['rightOuterJoin', 'leftOuterJoin', 'intersection', 'subtract', 'crossProduct', 'coGroup', 'join', 'union', 'map', 'filter', 'flatMap', 'mapValues',
 	'sample', 'groupByKey', 'reduceByKey', 'distinct', 'flatMapValues',
@@ -36,7 +37,7 @@ for (var i = 2; i < process.argv.length; i++) {
 		if (process.argv[i] == 'parallelize') {
 			dist += 'dsource[' + src_cnt + '] = uc.parallelize(v[' + src_cnt + ']);\n\t';
 		} else if (process.argv[i] == 'textFile') {
-			dist += 'dsource[' + src_cnt + '] = uc.textFile("/tmp/v' + src_cnt + '").map(function(e) {return e.split(" ").map(parseFloat)});\n\t';
+			dist += 'dsource[' + src_cnt + '] = uc.textFile("' + tmpdir + '/v' + src_cnt + '").map(function(e) {return e.split(" ").map(parseFloat)});\n\t';
 		} else if (process.argv[i] == 'stream') {
 			dist += 'dsource[' + src_cnt + '] = uc.stream(s[' + src_cnt + '], {N: 5}).map(textParser);\n\t';
 		} else throw new Error('Unknown source :' + process.argv[i]);
@@ -197,7 +198,7 @@ for (var i = 2; i < process.argv.length; i++) {
 			dist += 'v[' + last_source_id + '].push([v_ref[' + last_source_id + '][0][0], v_ref[' + last_source_id + '][0][1]]);\n\t';
 		} else if (last_source_type == 'stream') {
 		} else if (last_source_type == 'textFile') {
-			dist += 'fs.appendFileSync("/tmp/v' + last_source_id + '", "\\n1 2\\n");\n\t';
+			dist += 'fs.appendFileSync("' + tmpdir + '/v' + last_source_id + '", "\\n1 2\\n");\n\t';
 		} else throw new Error('Unknown source: ' + process.argv[i - 1]);
 	} else
 		throw 'Unknown command: ' + process.argv[i];
