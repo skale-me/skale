@@ -102,7 +102,6 @@ function runWorker(host, port) {
 		//	jobId = undefined;
 		//},
 		stream: function (msg) {
-			//trace('worker %d, data: %j', grid.host.id, msg.data.data);
 			if (msg.data.data === null) {
 				grid.emit(msg.data.stream + ".end", msg.data.ignore, done);
 			} else {
