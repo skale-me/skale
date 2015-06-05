@@ -15,7 +15,7 @@ co(function *() {
 		var col = db.collection('bigdata');
 		var cursor = col.find({}, {_id: false});
 
-		var out = uc.objectStream(cursor, {N: 4}).collect({stream: true});
+		var out = uc.objectStream(cursor, {N: 1}).collect({stream: true});
 
 		out.on('data', function(res) {
 			console.dir(res);
