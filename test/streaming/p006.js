@@ -14,7 +14,7 @@ co(function *() {
 
 	var dist = [], cnt = 0;
 
-	var us1 = uc.stream(s1, {N: 4});
+	var us1 = uc.lineStream(s1, {N: 4});
 	var out = uc.parallelize([5, 6, 7, 8]).union(us1).collect({stream: true});
 
 	out.on('data', function(res) {dist.push(res);});

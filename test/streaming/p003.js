@@ -16,8 +16,8 @@ co(function *() {
 
 	var dist1 = [], dist2 = [], cnt = 0;
 
-	var out1 = uc.stream(s1, {N: 4}).collect({stream: true});
-	var out2 = uc.stream(s2, {N: 4}).collect({stream: true});
+	var out1 = uc.lineStream(s1, {N: 4}).collect({stream: true});
+	var out2 = uc.lineStream(s2, {N: 4}).collect({stream: true});
 
 	out1.on('data', function(res) {dist1.push(res);});
 	out2.on('data', function(res) {dist2.push(res);});	

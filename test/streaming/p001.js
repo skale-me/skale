@@ -14,7 +14,7 @@ co(function *() {
 
 	var dist = [];
 
-	var out = uc.stream(s1, {N: 2}).collect({stream: true});
+	var out = uc.lineStream(s1, {N: 2}).collect({stream: true});
 
 	out.on('data', function(res) {
 		dist.push(res);

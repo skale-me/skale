@@ -39,7 +39,7 @@ for (var i = 2; i < process.argv.length; i++) {
 		} else if (process.argv[i] == 'textFile') {
 			dist += 'dsource[' + src_cnt + '] = uc.textFile("' + tmpdir + '/v' + src_cnt + '").map(function(e) {return e.split(" ").map(parseFloat)});\n\t';
 		} else if (process.argv[i] == 'stream') {
-			dist += 'dsource[' + src_cnt + '] = uc.stream(s[' + src_cnt + '], {N: 5}).map(textParser);\n\t';
+			dist += 'dsource[' + src_cnt + '] = uc.lineStream(s[' + src_cnt + '], {N: 5}).map(textParser);\n\t';
 		} else throw new Error('Unknown source :' + process.argv[i]);
 		loc += 'lsource[' + src_cnt + '] = v_ref[' + src_cnt + '];\n\t';
 	} else if (isTransfo) {
