@@ -21,7 +21,7 @@ co(function *() {
 		input.write(JSON.stringify(o) + "\n");
 	}
 
-	var data = uc.stream(output, {N: block_len}).collect({stream: true});
+	var data = uc.lineStream(output, {N: block_len}).collect({stream: true});
 
 	data.on('data', function(res) {
 		console.dir(res);
