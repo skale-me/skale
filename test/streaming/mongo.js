@@ -5,6 +5,8 @@ var ugrid = require('../..');
 var MongoClient = require('mongodb').MongoClient; 
 var assert = require('assert');
 
+var N = process.argv[2] || 1;
+
 co(function *() {
 	var uc = yield ugrid.context();
 	var url = 'mongodb://pc2:27017/ugrid';
@@ -15,7 +17,7 @@ co(function *() {
 		var col = db.collection('bigdata');
 		var cursor = col.find({}, {_id: false});
 
-		var out = uc.objectStream(cursor, {N: 1}).collect({stream: true});
+		var out = uc.objectStream(cursor, {N: N}).collect({stream: true});
 
 		out.on('data', function(res) {
 			console.dir(res);
