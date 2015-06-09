@@ -1,295 +1,172 @@
-var ml = require('../lib/ugrid-ml.js');
+var spawn = require('child_process').spawn;
+var assert = require('assert');
+var ugrid = require('../'); var
+data = require('./support/data.js');
+var local = require('./support/local.js');
 
-/** local version of randomSVMData  (for testing) */
-function randomSVMData(N, D, seed, nPartitions) {
-	var rng = new ml.Random(seed);
-	var res = [], tmp = [];
-	var P = nPartitions || 1;
+var server, workerController, uc, ul;
 
-	for (var p = 0; p < P; p++)
-		res[p] = [];
-	p = 0;
-	for (var i = 0; i < N; i++) {
-		res[p].push(ml.randomSVMLine(rng, D));
-		p = (p == (P - 1)) ? 0 : p + 1;
-	}
-	for (var p in res) 
-		tmp = tmp.concat(res[p]);
-	return tmp;
-}
+beforeEach(function (done) {
+	var output;
+	if (uc === undefined) {
+		server = spawn('./bin/ugrid.js');
+		server.stdout.on('data', function (d) {
+			var output2;
+			if (output) return;
+			output = true;
+			workerController = spawn('./bin/worker.js');
+			workerController.stdout.on('data', function (d) {
+				if (output2) return;
+				output2 = true;
+				ul = local.context();
+				uc = ugrid.context(done);
+			});
+		});
+	} else done();
+});
 
-function sample(v_in, P, withReplacement, frac, seed) {
-	var v = JSON.parse(JSON.stringify(v_in));
-	if (P > v.length) P = v.length;
+var sources = [
+	{name: 'parallelize', args: [data.v[0]]},
+];
 
-	function split(a, n) {
-		var len = a.length, out = [], i = 0;
-		while (i < len) {
-			var size = Math.ceil((len - i) / n--);
-			out.push(a.slice(i, i += size))
-		}
-		return out;
-	}	
-	var map = split(v_in, P);
+var sources2 = [
+	{name: 'parallelize', args: [data.v[1]]},
+];
 
-	var workerMap = [];
-	for (var i = 0; i < P; i++) {
-		workerMap[i] = {};
-		workerMap[i][i] = map[i];
-	}
+var transforms = [
+	{name: ''},
+	{name: 'distinct', args: [], sort: true},
+	{name: 'filter', args: [data.filter]},
+	{name: 'flatMap', args: [data.flatMapper]},
+	{name: 'flatMapValues',	args: [data.valueFlatMapper]},
+	{name: 'groupByKey', args: [], sort: true},
+	{name: 'keys', args: []},
+	{name: 'map', args: [data.mapper]},
+	{name: 'mapValues', args: [data.valueMapper]},
+	{name: 'persist', args: []},
+	{name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0]},
+	{name: 'sample', args: [true, 0.1]},
+	{name: 'values', args: []},
+];
 
-	var v_out = [];
-	for (var w = 0; w < P; w++) {
-		var p = 0;
-		var tmp = [];
-		var rng = new ml.Random(seed);
-		for (var i in workerMap[w]) {
-			var L = workerMap[w][i].length;
-			var L = Math.ceil(L * frac);
-			tmp[p] = {data: []};
-			var idxVect = [];
-			while (tmp[p].data.length != L) {
-				var idx = Math.round(Math.abs(rng.next()) * (L - 1));
-				if ((idxVect.indexOf(idx) != -1) &&  !withReplacement) 
-					continue;	// if already picked but no replacement mode
-				idxVect.push[idx];
-				tmp[p].data.push(workerMap[w][i][idx]);
-			}
-			v_out = v_out.concat(tmp[p].data)			
-			p++;
-		}
-	}
+var transforms2 = [
+	{name: 'coGroup', args: [], sort: true},
+	{name: 'crossProduct', args: [], sort: true},
+	{name: 'intersection', args: [], sort: true},
+	{name: 'join', args: [], sort: true},
+	{name: 'leftOuterJoin', args: [], sort: true},
+	{name: 'rightOuterJoin', args: [], sort: true},
+	{name: 'subtract', args: [], sort: true},
+	{name: 'union', args: [], sort: true},
+];
 
-	return v_out;
-}
+var actions = [
+	{name: 'collect', args: []},
+	{name: 'count', args: []},
+	{name: 'countByValue', args: []},
+	{name: 'lookup', args: [data.v[0][0][0]]},
+	{name: 'reduce', args: [data.reducer, [0, 0]]},
+// XXXXX TODO:
+// take,
+// takeOrdered,
+// takeSample,
+// top,
+// foreach,
+];
 
-function groupByKey(v_in) {
-	var v = JSON.parse(JSON.stringify(v_in));
+sources.forEach(function (source) {describe('uc.' + source.name + '()', function() {
+	transforms.forEach(function (transform) {describe(transform.name ? '.' + transform.name + '()' : '/* empty */', function () {
+		actions.forEach(function (action) {describe('.' + action.name + '()', function () {
+			var lres, dres, sres;
 
-	var keys = [];
-	for (var i = 0; i < v.length; i++)
-		if (keys.indexOf(v[i][0]) == -1)
-			keys.push(v[i][0]);
+			it('run local', function (done) {
+				var args, loc = ul[source.name].apply(ul, source.args);
+				if (transform.name) loc = loc[transform.name].apply(loc, transform.args);
+				args = [].concat(action.args, function (err, res) {lres = res; done();});
+				loc[action.name].apply(loc, args);
+			});
 
-	var res = [];
-	for (var i = 0; i < keys.length; i++) 
-		res.push([keys[i], []]);
-	for (var i = 0; i < v.length; i++) {
-		var idx = keys.indexOf(v[i][0]);
-		res[idx][1].push(v[i][1]);
-	}
-	return res;
-}
+			it('run distributed', function (done) {
+				assert(uc.worker.length > 0);
+				var args, dist = uc[source.name].apply(uc, source.args);
+				if (transform.name) dist = dist[transform.name].apply(dist, transform.args);
+				args = [].concat(action.args, function (err, res) {dres = res; done();});
+				dist[action.name].apply(dist, args);
+			});
 
-function reduceByKey(v_in, reducer, init) {
-	var v = JSON.parse(JSON.stringify(v_in));
+			it('run distributed, stream output', function (done) {
+				assert(uc.worker.length > 0);
+				var args, out, dist = uc[source.name].apply(uc, source.args);
+				if (transform.name) dist = dist[transform.name].apply(dist, transform.args);
+				args = [].concat(action.args, {stream: true});
+				out = dist[action.name].apply(dist, args);
+				sres = [];
+				out.on('data', function (d) {sres.push(d);});
+				out.on('end', done);
+			});
 
-	var keys = [];
-	for (var i = 0; i < v.length; i++)
-		if (keys.indexOf(v[i][0]) == -1)
-			keys.push(v[i][0]);
+			it('check distributed results', function () {
+				if (transform.sort) data.compareResults(lres, dres);
+				else assert.deepEqual(lres, dres);
+			});
 
-	var res = [];
-	for (var i = 0; i < keys.length; i++)
-		res.push([keys[i], init]);
-	for (var i = 0; i < v.length; i++) {
-		var idx = keys.indexOf(v[i][0]);
-		res[idx][1] = reducer(res[idx][1], v[i][1]);
-	}
-	return res;
-}
+			it('check stream results', function () {
+				if (transform.sort) data.compareResults([lres], sres);
+				else assert.deepEqual([lres], sres);
+			});
+		});});
+	});});
 
-function union(v1_in, v2_in) {
-	var v1 = JSON.parse(JSON.stringify(v1_in));
-	var v2 = JSON.parse(JSON.stringify(v2_in));	
-	return v1.concat(v2);
-}
+	sources2.forEach(function (source2) {
+		transforms2.forEach(function (transform2) {describe('.' + transform2.name + '(uc.' + source2.name + '())', function () {
+			actions.forEach(function (action) {describe('.' + action.name + '()', function () {
+				var lres, dres, sres;
 
-function join(first_in, other_in, type) {
-	var first = JSON.parse(JSON.stringify(first_in));
-	var other = JSON.parse(JSON.stringify(other_in));	
-	var v3 = [];
+				it('run local', function (done) {
+					var args, loc, loc2;
+					loc = ul[source.name].apply(ul, source.args);
+					loc2 = ul[source2.name].apply(ul, source2.args);
+					args = [].concat(loc, transform2.args);
+					loc2 = loc2[transform2.name].apply(loc2, args);
+					args = [].concat(action.args, function (err, res) {lres = res; done();});
+					loc2[action.name].apply(loc2, args);
+				});
 
-	if (type == undefined) {
-		for (var i = 0; i < first.length; i++)
-			for (var j = 0; j < other.length; j++)
-				if (first[i][0] == other[j][0])
-					v3.push([first[i][0], [first[i][1], other[j][1]]])
-	} else if (type == 'left') {
-		for (var i = 0; i < first.length; i++) {
-			var found = false;
-			for (var j = 0; j < other.length; j++) {
-				if (first[i][0] == other[j][0]) {
-					found = true;
-					v3.push([first[i][0], [first[i][1], other[j][1]]]);
-				}
-			}
-			if (!found)
-				v3.push([first[i][0], [first[i][1], null]]);				
-		}
-	} else if (type == 'right') {
-		for (var i = 0; i < other.length; i++) {
-			var found = false;
-			for (var j = 0; j < first.length; j++) {
-				if (other[i][0] == first[j][0]) {
-					found = true;
-					v3.push([other[i][0], [first[j][1], other[i][1]]]);					
-				}
-			}
-			if (!found)
-				v3.push([other[i][0], [null, other[i][1]]]);			
-		}
-	}
+				it('run distributed', function (done) {
+					assert(uc.worker.length > 0);
+					var args, dist, dist1;
+					dist = uc[source.name].apply(uc, source.args);
+					dist1 = uc[source2.name].apply(uc, source2.args);
+					args = [].concat(dist, transform2.args);
+					dist1 = dist1[transform2.name].apply(dist1, args);
+					args = [].concat(action.args, function (err, res) {dres = res; done();});
+					dist1[action.name].apply(dist1, args);
+				});
 
-	return v3;
-}
+				it('run distributed, stream output', function (done) {
+					assert(uc.worker.length > 0);
+					var args, dist, dist1, out;
+					dist = uc[source.name].apply(uc, source.args);
+					dist1 = uc[source2.name].apply(uc, source2.args);
+					args = [].concat(dist, transform2.args);
+					dist1 = dist1[transform2.name].apply(dist1, args);
+					args = [].concat(action.args, {stream: true});
+					out = dist1[action.name].apply(dist1, args);
+					sres = [];
+					out.on('data', function (d) {sres.push(d);});
+					out.on('end', done);
+				});
 
-function coGroup(v1_in, v2_in) {
-	var v1 = JSON.parse(JSON.stringify(v1_in));
-	var v2 = JSON.parse(JSON.stringify(v2_in));	
-	var v3 = [];
-	var already_v1 = [];
-	var already_v2 = [];	
+				it('check distributed results', function () {
+					if (transform2.sort) data.compareResults(lres, dres);
+					else assert.deepEqual(lres, dres);
+				});
 
-	for (var i = 0; i < v1.length; i++)
-		for (var j = 0; j < v2.length; j++)
-			if (v1[i][0] == v2[j][0]) {
-				var idx = -1;
-				for (var k = 0; k < v3.length; k++) {
-					if (v3[k][0] == v1[i][0]) {
-						idx = k;
-						break;
-					}
-				}
-				if (idx == -1) {
-					idx = v3.length;
-					v3[v3.length] = [v1[i][0], [[], []]];
-				} 
-				if (!already_v1[i]) {
-					v3[idx][1][0].push(v1[i][1]);
-					already_v1[i] = true;
-				}
-				if (!already_v2[j]) {
-					v3[idx][1][1].push(v2[j][1]);
-					already_v2[j] = true;
-				}
-			}
-	return v3;
-}
-
-function crossProduct(v1_in, v2_in) {
-	var v1 = JSON.parse(JSON.stringify(v1_in));
-	var v2 = JSON.parse(JSON.stringify(v2_in));	
-	var v3 = [];
-	var already_v1 = [];
-	var already_v2 = [];	
-
-	for (var i = 0; i < v1.length; i++)
-		for (var j = 0; j < v2.length; j++)
-			v3.push([v1[i], v2[j]])
-	return v3;
-}
-
-function distinct(v_in) {
-	var v = JSON.parse(JSON.stringify(v_in));
-	var v_out = [], v_ref = [];
-	for (var i = 0; i < v.length; i++) {
-		if (v_ref.indexOf(JSON.stringify(v[i])) != -1) continue;
-		v_ref.push(JSON.stringify(v[i]));
-		v_out.push(v[i]);
-	}
-	return v_out;
-}
-
-function intersection(v1_in, v2_in) {
-	var v1 = JSON.parse(JSON.stringify(v1_in));
-	var v2 = JSON.parse(JSON.stringify(v2_in));
-
-	var v_ref = [];
-	for (var i = 0; i < v1.length; i++) {
-		var e = JSON.stringify(v1[i]);
-		if (v_ref.indexOf(e) != -1) continue;
-		for (var j = 0; j < v2.length; j++) {
-			if (JSON.stringify(v2[j]) == e) {
-				v_ref.push(e);
-				break;
-			}
-		}
-	}
-	return v_ref.map(JSON.parse)
-}
-
-function subtract(v1_in, v2_in) {
-	var v1 = JSON.parse(JSON.stringify(v1_in));
-	var v2 = JSON.parse(JSON.stringify(v2_in));
-
-	var v_ref = [];
-	for (var i = 0; i < v1.length; i++) {
-		var e = JSON.stringify(v1[i]);
-		var found = false;
-		for (var j = 0; j < v2.length; j++)
-			if (JSON.stringify(v2[j]) == e) {
-				found = true;
-				break;
-			}
-		if (!found)
-			v_ref.push(e);
-	}
-	return v_ref.map(JSON.parse)
-}
-
-function countByValue(v_in) {
-	var v = JSON.parse(JSON.stringify(v_in));
-
-	var tmp = {};
-	for (var i = 0; i < v.length; i++) {
-		var str = JSON.stringify(v[i]);
-		if (tmp[str] == undefined) tmp[str] = [v[i], 0];
-		tmp[str][1]++;
-	}
-
-	var v_out = [];
-	for (var i in tmp)
-		v_out.push(tmp[i]);
-	return v_out;
-}
-
-function flatMapValues(v_in, mapper) {
-	var v = JSON.parse(JSON.stringify(v_in));
-
-	var out = [];
-	for (var i =0; i < v.length; i++) {
-		var t0 = mapper(v[i][1]);
-		out = out.concat(t0.map(function(e){return [v[i][0], e]}));
-	}
-	return out;
-}
-
-function arrayEqual(a1, a2) {
-	return JSON.stringify(a1) === JSON.stringify(a2);
-}   
-
-function arrayFlatEqual(a, b, flatLevel) {
-	flatLevel = flatLevel || 1;
-	for (var i = 0; i < flatLevel; i++) {
-		a = [].concat.apply([], a);	// Flatten array a
-		b = [].concat.apply([], b);	// Flatten array b
-	}
-	return arrayEqual(a.sort(), b.sort());
-}
-
-module.exports.flatMapValues = flatMapValues;
-module.exports.countByValue = countByValue;
-module.exports.randomSVMData = randomSVMData;
-module.exports.sample = sample;
-module.exports.groupByKey = groupByKey;
-module.exports.reduceByKey = reduceByKey;
-module.exports.union = union;
-module.exports.join = join;
-module.exports.coGroup = coGroup;
-module.exports.crossProduct = crossProduct;
-module.exports.distinct = distinct;
-module.exports.intersection = intersection;
-module.exports.subtract = subtract;
-module.exports.arrayEqual = arrayEqual;
-module.exports.arrayFlatEqual = arrayFlatEqual;
+				it('check stream results', function () {
+					if (transform2.sort) data.compareResults([lres], sres);
+					else assert.deepEqual([lres], sres);
+				});
+			});});
+		});});
+	});
+});});

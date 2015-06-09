@@ -9,4 +9,4 @@ ugrid.sublime-project
 ugrid.sublime-workspace
 conf/slaves
 conf/ugrid-env.sh
-test/automatic/*.js
+test-old/automatic/*.js

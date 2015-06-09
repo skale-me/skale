@@ -5,11 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "bin/start-all.sh",
-    "pretest2": "make gentest; bin/start-all.sh -c test/ugrid-env.sh",
-    "test2": "cd test; UGRID_STOP=1 ./runtests 1 || true",
-    "posttest2": "bin/stop-all.sh",
     "stop": "bin/stop-all.sh",
-    "test": "node_modules/.bin/mocha --harmony ./mocha-test"
+    "test": "node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",

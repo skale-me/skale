@@ -57,6 +57,8 @@ function reducer(a, b) {
 	} else
 		a[1] += b[1];
 	return a;
+
+	function sum(a, b) {return a + b;}
 }
 
 function sort(v) {
@@ -65,8 +67,6 @@ function sort(v) {
 	}
 	v.sort();
 }
-
-function sum(a, b) {return a + b;}
 
 function valueMapper(e) {return e * 2;}
 

@@ -21,7 +21,7 @@ function join(first, other, type) {
 				}
 			}
 			if (!found)
-				v3.push([first[i][0], [first[i][1], null]]);				
+				v3.push([first[i][0], [first[i][1], null]]);
 		}
 	} else if (type == 'right') {
 		for (i = 0; i < other.length; i++) {
@@ -29,11 +29,11 @@ function join(first, other, type) {
 			for (j = 0; j < first.length; j++) {
 				if (other[i][0] == first[j][0]) {
 					found = true;
-					v3.push([other[i][0], [first[j][1], other[i][1]]]);					
+					v3.push([other[i][0], [first[j][1], other[i][1]]]);
 				}
 			}
 			if (!found)
-				v3.push([other[i][0], [null, other[i][1]]]);			
+				v3.push([other[i][0], [null, other[i][1]]]);
 		}
 	}
 	return v3;
@@ -51,6 +51,40 @@ LocalArray.prototype.parallelize = function (v) {
 };
 
 // Actions
+LocalArray.prototype.coGroup = function (other) {
+	var v1 = this.data;
+	var v2 = other.data;
+	var v3 = [];
+	var already_v1 = [];
+	var already_v2 = [];
+
+	for (var i = 0; i < v1.length; i++)
+		for (var j = 0; j < v2.length; j++)
+			if (v1[i][0] == v2[j][0]) {
+				var idx = -1;
+				for (var k = 0; k < v3.length; k++) {
+					if (v3[k][0] == v1[i][0]) {
+						idx = k;
+						break;
+					}
+				}
+				if (idx == -1) {
+					idx = v3.length;
+					v3[v3.length] = [v1[i][0], [[], []]];
+				}
+				if (!already_v1[i]) {
+					v3[idx][1][0].push(v1[i][1]);
+					already_v1[i] = true;
+				}
+				if (!already_v2[j]) {
+					v3[idx][1][1].push(v2[j][1]);
+					already_v2[j] = true;
+				}
+			}
+	this.data = v3;
+	return this;
+}
+
 LocalArray.prototype.collect = function (opt, done) {
 	if (arguments.length < 2) done = opt;
 	done(null, this.data);
@@ -58,6 +92,15 @@ LocalArray.prototype.collect = function (opt, done) {
 
 LocalArray.prototype.count = function (done) {
 	done(null, this.data.length);
+};
+
+LocalArray.prototype.crossProduct = function (other) {
+	var v1 = this.data, v2 = other.data, v3 = [], i, j;
+	for (i = 0; i < v1.length; i++)
+		for (j = 0; j < v2.length; j++)
+			v3.push([v1[i], v2[j]])
+	this.data = v3;
+	return this;
 };
 
 LocalArray.prototype.countByValue = function (done) {
@@ -116,13 +159,34 @@ LocalArray.prototype.groupByKey = function () {
 	for (i = 0; i < this.data.length; i++)
 		if (keys.indexOf(this.data[i][0]) == -1)
 			keys.push(this.data[i][0]);
-	for (i = 0; i < keys.length; i++) 
+	for (i = 0; i < keys.length; i++)
 		res.push([keys[i], []]);
 	for (i = 0; i < this.data.length; i++) {
 		idx = keys.indexOf(this.data[i][0]);
 		res[idx][1].push(this.data[i][1]);
 	}
 	this.data = res;
+	return this;
+};
+
+LocalArray.prototype.intersection = function (other) {
+	var e, i, j, v = [], v1 = this.data, v2 = other.data;
+	for (i = 0; i < v1.length; i++) {
+		e = JSON.stringify(v1[i]);
+		if (v.indexOf(e) != -1) continue;
+		for (j = 0; j < v2.length; j++) {
+			if (JSON.stringify(v2[j]) == e) {
+				v.push(v1[i]);
+				break;
+			}
+		}
+	}
+	this.data = v;
+	return this;
+};
+
+LocalArray.prototype.join = function (other) {
+	this.data = join(this.data, other.data);
 	return this;
 };
 
@@ -165,6 +229,11 @@ LocalArray.prototype.reduceByKey = function reduceByKey(reducer, init) {
 	return this;
 };
 
+LocalArray.prototype.rightOuterJoin = function (other) {
+	this.data = join(this.data, other.data, 'right');
+	return this;
+};
+
 LocalArray.prototype.sample = function (withReplacement, frac) {
 	var P = 4, seed = 1;
 	if (P > this.data.length) P = this.data.length;
@@ -176,7 +245,7 @@ LocalArray.prototype.sample = function (withReplacement, frac) {
 			out.push(a.slice(i, i += size))
 		}
 		return out;
-	}	
+	}
 	var map = split(this.data, P);
 
 	var workerMap = [];
@@ -197,18 +266,40 @@ LocalArray.prototype.sample = function (withReplacement, frac) {
 			var idxVect = [];
 			while (tmp[p].data.length != L) {
 				var idx = Math.round(Math.abs(rng.next()) * (L - 1));
-				if ((idxVect.indexOf(idx) != -1) &&  !withReplacement) 
+				if ((idxVect.indexOf(idx) != -1) &&  !withReplacement)
 					continue;	// if already picked but no replacement mode
 				idxVect.push[idx];
 				tmp[p].data.push(workerMap[w][i][idx]);
 			}
-			out = out.concat(tmp[p].data)			
+			out = out.concat(tmp[p].data)
 			p++;
 		}
 	}
 	this.data = out;
 	return this;
 };
+
+LocalArray.prototype.subtract = function (other) {
+	var v1 = this.data, v2 = other.data, v = [], e, i, j, found;
+	for (i = 0; i < v1.length; i++) {
+		e = JSON.stringify(v1[i]);
+		found = false;
+		for (j = 0; j < v2.length; j++)
+			if (JSON.stringify(v2[j]) == e) {
+				found = true;
+				break;
+			}
+		if (!found)
+			v.push(v1[i]);
+	}
+	this.data = v;
+	return this;
+};
+
+LocalArray.prototype.union = function (other) {
+	this.data = this.data.concat(other.data);
+	return this;
+}
 
 LocalArray.prototype.values = function () {
 	this.data = this.data.map(function (e) {return e[1];});
