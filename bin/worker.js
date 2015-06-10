@@ -117,7 +117,13 @@ function runWorker(host, port) {
 	});
 
 	grid.on('shuffle', function (msg) {
-		jobs[msg.jobId].processShuffle(msg);
+		var shuffleNum = jobs[msg.jobId].stage[msg.sid].shuffleNum;
+		try {
+			jobs[msg.jobId].node[shuffleNum].transform.rx_shuffle(msg.args);
+		}
+		catch (err) {throw new Error("Lineage rx shuffle " + jobs[msg.jobId].node[shuffleNum].type + ": " + err);}
+		if (jobs[msg.jobId].stage[msg.sid].nShuffle == jobs[msg.jobId].app.worker.length)
+			jobs[msg.jobId].stage[++jobs[msg.jobId].scnt].run();
 	});
 
 	grid.on('runJob', function (msg) {
@@ -125,11 +131,11 @@ function runWorker(host, port) {
 	});
 
 	grid.on('lastLine', function (msg) {
-		jobs[msg.jobId].processLastLine(msg);
+		jobs[msg.jobId].stage[msg.args.sid].source[msg.args.lid].processLastLine(msg.args);
 	});
 
 	grid.on('action', function (msg) {
-		jobs[msg.jobId].processAction(msg);
+		jobs[msg.jobId].action.sendResult();		
 	});
 
 	grid.on('request', function (msg) {
