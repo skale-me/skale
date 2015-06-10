@@ -5,10 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "bin/start-all.sh",
-    "pretest": "make gentest; bin/start-all.sh -c test/ugrid-env.sh",
-    "test": "cd test; UGRID_STOP=1 ./runtests 1 || true",
-    "posttest": "bin/stop-all.sh",
-    "stop": "bin/stop-all.sh"
+    "stop": "bin/stop-all.sh",
+    "test": "node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -42,7 +40,8 @@
     "ws": "^0.7.1"
   },
   "devDependencies": {
-    "chance": "^0.7.5"
+    "chance": "^0.7.5",
+    "mocha": "^2.2.5"
   },
   "jshintConfig": {
     "node": true,

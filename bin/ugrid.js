@@ -118,7 +118,8 @@ var clientRequest = {
 					master = pendingMasters.shift();
 					master.data.devices = workerStock;
 					master.cmd = 'reply';
-					clients[master.data.uuid].sock.write(UgridClient.encode(master));
+					if (clients[master.data.uuid].sock)
+						clients[master.data.uuid].sock.write(UgridClient.encode(master));
 					postMaster(master.data.uuid);
 				}
 			}

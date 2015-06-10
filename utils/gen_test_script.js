@@ -17,7 +17,7 @@ function file () {
 }
 
 // Copy test files to tmp directory
-console.log('cp test/automatic/kv.data /tmp/$USER; cp test/automatic/kv2.data /tmp/$USER');
+console.log('cp test-old/automatic/kv.data /tmp/$USER; cp test-old/automatic/kv2.data /tmp/$USER');
 
 // -------------------------------------------------------------------------------------------- //
 // Single lineage
