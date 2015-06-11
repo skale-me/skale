@@ -68,7 +68,7 @@ var transforms2 = [
 var actions = [
 	{name: 'collect', args: []},
 	{name: 'count', args: []},
-	{name: 'countByValue', args: []},
+	{name: 'countByValue', args: [], sort: true},
 	{name: 'lookup', args: [data.v[0][0][0]]},
 	{name: 'reduce', args: [data.reducer, [0, 0]]},
 // XXXXX TODO:
@@ -123,12 +123,12 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 			});
 
 			it('check distributed results', function () {
-				if (transform.sort) data.compareResults(lres, dres);
+				if (transform.sort || action.sort) data.compareResults(lres, dres);
 				else assert.deepEqual(lres, dres);
 			});
 
 			it('check stream results', function () {
-				if (transform.sort) data.compareResults([lres], sres);
+				if (transform.sort || action.sort) data.compareResults([lres], sres);
 				else assert.deepEqual([lres], sres);
 			});
 		});});
@@ -193,12 +193,12 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				});
 
 				it('check distributed results', function () {
-					if (transform2.sort) data.compareResults(lres, dres);
+					if (transform2.sort || action.sort) data.compareResults(lres, dres);
 					else assert.deepEqual(lres, dres);
 				});
 
 				it('check stream results', function () {
-					if (transform2.sort) data.compareResults([lres], sres);
+					if (transform2.sort || action.sort) data.compareResults([lres], sres);
 					else assert.deepEqual([lres], sres);
 				});
 			});});
