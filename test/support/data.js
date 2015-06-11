@@ -1,28 +1,21 @@
 var assert = require('assert');
 var fs = require('fs');
-//var ut = require('../../test/ugrid-test.js');
 
-var tmpdir = '/tmp/' + process.env.USER;
-
-var files = [tmpdir + '/kv.data', tmpdir + '/kv2.data'];
+var files = [
+	__dirname + '/kv.data',
+	__dirname + '/kv2.data'
+];
 
 var raw_data = [
 	fs.readFileSync(files[0], {encoding: 'utf8'}),
 	fs.readFileSync(files[1], {encoding: 'utf8'})
 ];
-fs.writeFileSync(tmpdir + '/v0', raw_data[0]);
-fs.writeFileSync(tmpdir + '/v1', raw_data[1]);
 
 function textParser(s) {return s.split(' ').map(parseFloat);}
 
 var v = [
 	raw_data[0].split('\n').map(textParser),
 	raw_data[1].split('\n').map(textParser)
-];
-
-var v_ref = [
-	JSON.parse(JSON.stringify(v[0])),
-	JSON.parse(JSON.stringify(v[1]))
 ];
 
 // Helper functions for tests
@@ -75,7 +68,6 @@ function valueFlatMapper(e) {
 
 module.exports = {
 	v: v,
-	v_ref: v_ref,
 	compareResults: compareResults,
 	files: files,
 	filter: filter,
