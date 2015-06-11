@@ -72,11 +72,9 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 			} else if (--len === 0) done();
 		}
 	} else if (to > 1) {	// Unicast
-		if (crossbar[to]) {
-			// console.log('# Routing')
-			// console.log(chunk.slice(8).toString())
+		if (crossbar[to])
 			crossbar[to].write(chunk, done);
-		} else done();
+		else done();
 	} else if (to === 1) {	// Foreign (to be done)
 	} else if (to === 0) {	// Server request
 		try {

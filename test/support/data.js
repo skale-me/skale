@@ -4,17 +4,14 @@ var fs = require('fs');
 
 var tmpdir = '/tmp/' + process.env.USER;
 
+var files = [tmpdir + '/kv.data', tmpdir + '/kv2.data'];
+
 var raw_data = [
-	fs.readFileSync(tmpdir + '/kv.data', {encoding: 'utf8'}),
-	fs.readFileSync(tmpdir + '/kv2.data', {encoding: 'utf8'})
+	fs.readFileSync(files[0], {encoding: 'utf8'}),
+	fs.readFileSync(files[1], {encoding: 'utf8'})
 ];
 fs.writeFileSync(tmpdir + '/v0', raw_data[0]);
 fs.writeFileSync(tmpdir + '/v1', raw_data[1]);
-
-var s = [
-	fs.readFileSync(tmpdir + '/kv.data', {encoding: 'utf8'}),
-	fs.readFileSync(tmpdir + '/kv2.data', {encoding: 'utf8'})
-];
 
 function textParser(s) {return s.split(' ').map(parseFloat);}
 
@@ -78,13 +75,14 @@ function valueFlatMapper(e) {
 
 module.exports = {
 	v: v,
-	s: s,
 	v_ref: v_ref,
 	compareResults: compareResults,
+	files: files,
 	filter: filter,
 	flatMapper: flatMapper,
 	mapper: mapper,
 	reducer: reducer,
+	textParser: textParser,
 	valueMapper: valueMapper,
 	valueFlatMapper: valueFlatMapper
 };
