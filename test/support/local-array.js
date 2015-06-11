@@ -1,5 +1,7 @@
 'use strict';
 
+var fs = require('fs');
+//var Lines = require('../../lib/lines.js');
 var ml = require('../../lib/ugrid-ml.js');
 
 module.exports = LocalArray;
@@ -45,6 +47,20 @@ function LocalArray() {
 }
 
 // Sources
+LocalArray.prototype.lineStream = function(inputStream) {
+	//this.stream = new Lines();
+	//this.data = [];
+	//var self = this;
+	//inputStream.pipe(this.stream);
+	//this.stream.on('data', function (d) { self.data.push(d) });
+
+	var self = this, raw = fs.readFileSync(inputStream.path, {encoding: 'utf8'});
+	this.data = [];
+	//this.data = raw.split('\n').map(function (s) {return s.split(' ').map(parseFloat);});
+	raw.split('\n').map(function (s) {self.data.push(s);});
+	return this;
+};
+
 LocalArray.prototype.parallelize = function (v) {
 	this.data = JSON.parse(JSON.stringify(v));
 	return this;
