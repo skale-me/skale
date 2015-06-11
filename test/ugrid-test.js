@@ -29,11 +29,13 @@ beforeEach(function (done) {
 var sources = [
 	[{name: 'parallelize', args: [data.v[0]]}],
 	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
+	[{name: 'textFile', args: [data.files[0]]}, {name: 'map', args: [data.textParser]}],
 ];
 
 var sources2 = [
 	[{name: 'parallelize', args: [data.v[1]]}],
 	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
+	[{name: 'textFile', args: [data.files[1]]}, {name: 'map', args: [data.textParser]}],
 ];
 
 var transforms = [
@@ -48,7 +50,7 @@ var transforms = [
 	{name: 'mapValues', args: [data.valueMapper]},
 	{name: 'persist', args: []},
 	{name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0]},
-	{name: 'sample', args: [true, 0.1]},
+//	{name: 'sample', args: [true, 0.1]},
 	{name: 'values', args: []},
 ];
 

@@ -23,3 +23,8 @@ LocalContext.prototype.parallelize = function (data) {
 	var localArray = new LocalArray();
 	return localArray.parallelize(data);
 };
+
+LocalContext.prototype.textFile = function (path) {
+	var localArray = new LocalArray();
+	return localArray.textFile(path);
+};
