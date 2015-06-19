@@ -122,7 +122,7 @@ function runWorker(host, port) {
 	grid.on('shuffle', function (msg) {
 		var shuffleNum = jobs[msg.jobId].stage[msg.sid].shuffleNum;
 		try {
-			jobs[msg.jobId].node[shuffleNum].transform.rx_shuffle(msg.args);
+			jobs[msg.jobId].node[shuffleNum].rx_shuffle(msg.args);
 		}
 		catch (err) {throw new Error("Lineage rx shuffle " + jobs[msg.jobId].node[shuffleNum].type + ": " + err);}
 		if (jobs[msg.jobId].stage[msg.sid].nShuffle == jobs[msg.jobId].app.worker.length)

@@ -14,24 +14,16 @@ module.exports.UgridJob = function(grid, app, param) {
 	this.app = app;
 	this.action = new RDD[param.actionData.fun](grid, app, this, param.actionData);
 
-	// Instanciate Stages
-	for (var i = 0; i < param.stageData.length; i++) {
+	// console.log(param.node);
+
+	// instanciation des stages
+	for (var i = 0; i < param.stageData.length; i++)
 		this.stage[i] = new Stage(grid, app, this, {
 			sid: i,
 			stageData: param.stageData[i],
 			isLastStage: i == (param.stageData.length - 1)
 		});
-		// Instanciate transformation nodes and sources
-		for (var l = 0; l < param.stageData[i].lineages.length; l++) {
 
-			for (var j = 1; j < param.stageData[i].lineages[l].length; j++) {
-				if (this.node[param.stageData[i].lineages[l][j]].transform)
-					this.node[param.stageData[i].lineages[l][j]] = 
-						new RDD[this.node[param.stageData[i].lineages[l][j]].transform](grid, app, this, this.stage[i], this.node[param.stageData[i].lineages[l][j]]);
-			}
-		}
-	}
-	// console.log(this.node)
 	// Instanciation des noeuds du graph
 	/*
 	this.node = {};
@@ -61,9 +53,14 @@ function Stage(grid, app, job, param) {
 	this.shuffleNum = param.stageData.shuffleNum;	// shuffle node number
 
 	// toute cette boucle remonte dans ugrid job
-	for (var l = 0; l < lineages.length; l++)
+	for (var l = 0; l < lineages.length; l++) {
+		for (var j = 1; j < lineages[l].length; j++) {
+			if (typeof(job.node[lineages[l][j]].transform) == 'string')
+				job.node[lineages[l][j]].transform = 
+					new RDD[job.node[lineages[l][j]].transform](grid, app, job, this, job.node[lineages[l][j]]);
+		}
 		this.source[l] = new UgridSource[job.node[lineages[l][0]].type](grid, app, job, this, job.node[lineages[l][0]]);
-
+	}
 	// plus besoin e la structure de donnée this.source
 	this.run = function () {
 		for (var l = 0; l < this.source.length; l++) {
@@ -71,7 +68,7 @@ function Stage(grid, app, job, param) {
 				this.source[l].run(function() {
 					if ((++self.cnt < self.target_cnt) || self.locked) return;					
 					if (!param.isLastStage) {
-						job.node[shuffleNum].tx_shuffle();
+						job.node[shuffleNum].transform.tx_shuffle();
 						if (self.nShuffle == app.worker.length)
 							job.stage[++job.scnt].run();
 					} else job.action.sendResult();
@@ -115,10 +112,10 @@ function Source(grid, app, job, stage, node) {
 
 	this.pipeline = function(p, head) {
 		for (var t = 1; t < transform.length; t++) {
-			this.tmp = job.node[transform[t]].pipeline(this.tmp, p, job.node[transform[t - 1]].id);
+			this.tmp = job.node[transform[t]].transform.pipeline(this.tmp, p, job.node[transform[t - 1]].id);
 			if (this.tmp && (this.tmp.length === 0)) return;
 			if (job.node[transform[t]].persistent && (job.node[transform[t]].dependency == 'narrow'))
-				job.node[transform[t]].save(this.tmp, head);
+				job.node[transform[t]].transform.save(this.tmp, head);
 		}
 		if (node.inLastStage)
 			job.action.pipeline(this.tmp, p, head);
@@ -229,7 +226,7 @@ var UgridSource = {
 		Source.call(this, grid, app, job, stage, node);
 
 		this.run = function(callback) {
-			var input = node.SRAM || [];
+			var input = node.transform.SRAM || [];
 	 		var persistent = node.persistent;
 			for (var p = 0; p < input.length; p++) {
 				var partition = input[p].data;
@@ -239,7 +236,6 @@ var UgridSource = {
 					this.pipeline(p);
 				}
 			}
-			// on décrémente ici seulement si les stage d'avant sont terminés
 			stage.next_target_cnt--;
 			callback();
 		};
