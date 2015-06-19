@@ -74,14 +74,7 @@ LocalArray.prototype.countByValue = function (opt, done) {
 		this.stream.on('end', function () {done(null, res);});
 		return this.stream;
 	}
-	var tmp = {}, str, i, out = [];
-	for (i = 0; i < this.data.length; i++) {
-		str = JSON.stringify(this.data[i]);
-		if (tmp[str] === undefined) tmp[str] = [this.data[i], 0];
-		tmp[str][1]++;
-	}
-	for (i in tmp) out.push(tmp[i]);
-	done(null, out);
+	done(null, countByValue(this.data));
 };
 
 LocalArray.prototype.lookup = function(key, opt, done) {
@@ -266,51 +259,10 @@ LocalArray.prototype.rightOuterJoin = function (other) {
 };
 
 LocalArray.prototype.sample = function (withReplacement, frac) {
-	if (this.stream) {
+	if (this.stream)
 		this.stream = this.stream.pipe(new SampleStream(withReplacement, frac));
-		return this;
-	}
-	var P = 4, seed = 1;
-	if (P > this.data.length) P = this.data.length;
-
-	function split(a, n) {
-		var len = a.length, out = [], i = 0;
-		while (i < len) {
-			var size = Math.ceil((len - i) / n--);
-			out.push(a.slice(i, i += size))
-		}
-		return out;
-	}
-	var map = split(this.data, P);
-
-	var workerMap = [];
-	for (var i = 0; i < P; i++) {
-		workerMap[i] = {};
-		workerMap[i][i] = map[i];
-	}
-
-	var out = [];
-	for (var w = 0; w < P; w++) {
-		var p = 0;
-		var tmp = [];
-		var rng = new ml.Random(seed);
-		for (var i in workerMap[w]) {
-			var L = workerMap[w][i].length;
-			var L = Math.ceil(L * frac);
-			tmp[p] = {data: []};
-			var idxVect = [];
-			while (tmp[p].data.length != L) {
-				var idx = Math.round(Math.abs(rng.next()) * (L - 1));
-				if ((idxVect.indexOf(idx) != -1) &&  !withReplacement)
-					continue;	// if already picked but no replacement mode
-				idxVect.push[idx];
-				tmp[p].data.push(workerMap[w][i][idx]);
-			}
-			out = out.concat(tmp[p].data)
-			p++;
-		}
-	}
-	this.data = out;
+	else
+		this.data = sample(this.data, withReplacement, frac);
 	return this;
 };
 
@@ -417,7 +369,6 @@ function CountStream() {
 	if (!(this instanceof CountStream))
 		return new CountStream();
 	stream.Transform.call(this, {objectMode: true});
-	this.count = 0;
 }
 util.inherits(CountStream, stream.Transform);
 
@@ -434,14 +385,7 @@ function CountByValueStream() {
 util.inherits(CountByValueStream, stream.Transform);
 
 CountByValueStream.prototype._transform = function (msg, encoding, done) {
-	var tmp = {}, str, i, out = [];
-	for (i = 0; i < msg.length; i++) {
-		str = JSON.stringify(msg[i]);
-		if (tmp[str] === undefined) tmp[str] = [msg[i], 0];
-		tmp[str][1]++;
-	}
-	for (i in tmp) out.push(tmp[i]);
-	done(null, out);
+	done(null, countByValue(msg));
 };
 
 // Distinct
@@ -599,9 +543,8 @@ function SampleStream(withReplacement, frac) {
 }
 util.inherits(SampleStream, stream.Transform);
 
-// XXXXX FIXME: implement sampling in stream
 SampleStream.prototype._transform = function (msg, encoding, done) {
-	done(null, msg);
+	done(null, sample(msg, this.withReplacement, this.frac));
 };
 
 // Text
@@ -697,6 +640,17 @@ function coGroup(v1, v2) {
 	return v;
 }
 
+function countByValue(v) {
+	var tmp = {}, str, i, out = [];
+	for (i = 0; i < v.length; i++) {
+		str = JSON.stringify(v[i]);
+		if (tmp[str] === undefined) tmp[str] = [v[i], 0];
+		tmp[str][1]++;
+	}
+	for (i in tmp) out.push(tmp[i]);
+	return out;
+}
+
 function crossProduct(v1, v2) {
 	var v = [], i, j;
 	for (i = 0; i < v1.length; i++)
@@ -709,8 +663,6 @@ function distinct(v) {
 	var out = [], ref = {}, s;
 	for (var i = 0; i < v.length; i++) {
 		s = JSON.stringify(v[i]);
-		//if (ref.indexOf(JSON.stringify(this.data[i])) != -1) continue;
-		//ref.push(JSON.stringify(this.data[i]));
 		if (s in ref) continue;
 		ref[s] = true;
 		out.push(v[i]);
@@ -809,6 +761,50 @@ function rightOuterJoin(v1, v2) {
 			v.push([v2[i][0], [null, v2[i][1]]]);
 	}
 	return v;
+}
+
+function sample(v, withReplacement, frac) {
+	var P = process.env.UGRID_WORKER_PER_HOST || os.cpus().length, seed = 1;
+	if (P > v.length) P = v.length;
+
+	function split(a, n) {
+		var len = a.length, out = [], i = 0;
+		while (i < len) {
+			var size = Math.ceil((len - i) / n--);
+			out.push(a.slice(i, i += size))
+		}
+		return out;
+	}
+	var map = split(v, P);
+
+	var workerMap = [];
+	for (var i = 0; i < P; i++) {
+		workerMap[i] = {};
+		workerMap[i][i] = map[i];
+	}
+
+	var out = [];
+	for (var w = 0; w < P; w++) {
+		var p = 0;
+		var tmp = [];
+		var rng = new ml.Random(seed);
+		for (var i in workerMap[w]) {
+			var L = workerMap[w][i].length;
+			var L = Math.ceil(L * frac);
+			tmp[p] = {data: []};
+			var idxVect = [];
+			while (tmp[p].data.length != L) {
+				var idx = Math.round(Math.abs(rng.next()) * (L - 1));
+				if ((idxVect.indexOf(idx) != -1) &&  !withReplacement)
+					continue;	// if already picked but no replacement mode
+				idxVect.push[idx];
+				tmp[p].data.push(workerMap[w][i][idx]);
+			}
+			out = out.concat(tmp[p].data)
+			p++;
+		}
+	}
+	return out;
 }
 
 function subtract(v1, v2) {

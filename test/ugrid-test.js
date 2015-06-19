@@ -50,7 +50,7 @@ var transforms = [
 	{name: 'mapValues', args: [data.valueMapper]},
 	{name: 'persist', args: []},
 	{name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0], sort: true},
-	// {name: 'sample', args: [true, 0.1], sort: true},
+//	{name: 'sample', args: [true, 0.1], sort: true},
 	{name: 'values', args: []},
 ];
 
