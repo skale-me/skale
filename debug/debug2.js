@@ -29,9 +29,3 @@ co(function *() {
 
 
 }).catch(ugrid.onError);
-
-/* 
-	il faut conditionner l'envoie du ignore true coté master 
-	si iteration 0 du job et présence de source non streamée alors onenvoie inconditionnellement false au end of stream,
-	sinon on utilise la logique actuelle de fin de stream
-*/

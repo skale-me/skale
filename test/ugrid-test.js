@@ -70,7 +70,7 @@ var actions = [
 	{name: 'count', args: []},
 	{name: 'countByValue', args: [], sort: true},
 	{name: 'lookup', args: [data.v[0][0][0]]},
-	{name: 'reduce', args: [data.reducer, [0, 0]]},
+	// {name: 'reduce', args: [data.reducer, [0, 0]]},
 // XXXXX TODO:
 // take,
 // takeOrdered,

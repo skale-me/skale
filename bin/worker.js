@@ -99,10 +99,14 @@ function runWorker(host, port) {
 		},
 		stream: function (msg) {
 			if (msg.data.data === null) {
-				grid.emit(msg.data.stream + ".end", msg.data.ignore, done);
+				grid.emit(msg.data.stream + ".end", done);
 			} else {
 				grid.emit(msg.data.stream, msg.data.data, done);
 			}
+			function done() {try {grid.reply(msg);} catch(err) {}}
+		},
+		block: function (msg) {
+			grid.emit(msg.data.streamId + ".block", done);
 			function done() {try {grid.reply(msg);} catch(err) {}}
 		}
 	};
