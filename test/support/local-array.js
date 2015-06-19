@@ -29,7 +29,7 @@ LocalArray.prototype.parallelize = function (v) {
 LocalArray.prototype.textFile = function (path) {
 	var self = this, raw = fs.readFileSync(path, {encoding: 'utf8'});
 	this.data = [];
-	raw.split('\n').map(function (s) {self.data.push(s);});
+	raw.split('\n').map(function (s) {if (!s) return; self.data.push(s);});
 	return this;
 };
 

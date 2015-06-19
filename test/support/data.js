@@ -13,11 +13,10 @@ var raw_data = [
 ];
 
 function textParser(s) {return s.split(' ').map(parseFloat);}
-function textParser2(s) {trace(s); return (typeof s) === 'string' ? s.split(' ').map(parseFloat) : s;}
 
 var v = [
-	raw_data[0].split('\n').map(textParser),
-	raw_data[1].split('\n').map(textParser)
+	raw_data[0].split('\n').filter(function (l) {return l != '';}).map(textParser),
+	raw_data[1].split('\n').filter(function (l) {return l != '';}).map(textParser)
 ];
 
 // Helper functions for tests

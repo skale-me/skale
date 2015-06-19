@@ -1,6 +1,5 @@
 'use strict';
 
-var fs = require('fs');
 var ml = require('./ugrid-ml.js');
 
 function recompile(s) {
@@ -32,8 +31,10 @@ function Action(grid, app, job, action) {
 		this.reset();
 		this.semaphore = 0;
 
-		for (n in job.node)
-			job.node[n].reset && job.node[n].reset();
+		for (n in job.node) {			
+			if (job.node[n].transform && job.node[n].transform.reset)
+				job.node[n].transform.reset();
+		}
 
 		// reset stages
 		for (i = 0; i < job.stage.length; i++) {
@@ -213,42 +214,6 @@ module.exports.forEach = function(grid, app, job, action) {
 // Transformations
 // ------------------------------------------------------------------------------------ //
 function Transform(grid, app, job, stage, node) {
-	////////////////////////////////////////////////////////////////////////////////////
-	// Modifié pour la généricité de la persistence
-	////////////////////////////////////////////////////////////////////////////////////	
-	for (var key in node)
-		this[key] = node[key];
-	delete this.transform; // workaround
-
-	// console.log(this)
-
-	var id = node.id;
-	var ram = {};
-	var RAM_DIR = '/tmp/UGRID_RAM/';
-	var dataset_dir = RAM_DIR + id + '/' + grid.host.uuid;
-
-	// if dataset is persistent create write streams	
-	if (node.persistent) {
-		try {fs.mkdirSync(RAM_DIR);} catch (e) {};
-		try {fs.mkdirSync(RAM_DIR + id);} catch (e) {};
-		try {fs.mkdirSync(RAM_DIR + id + '/' + grid.host.uuid);} catch (e) {};
-	}
-
-	this.save = function(array, head) {
-		var partitionId = 0;
-		if (!ram[partitionId]) {
-			var file = dataset_dir + '/' + partitionId;
-			ram[partitionId] = {
-				head: fs.createWriteStream(file + '.pre'),
-				tail: fs.createWriteStream(file)
-			}
-		}
-		var s = head ? ram[partitionId].head : ram[partitionId].tail;
-		for (var i = 0; i < array.length; i++)
-			s.write(JSON.stringify(array[i]) + '\n');
-	};
-	////////////////////////////////////////////////////////////////////////////////////
-
 	if (node.src) node.src = recompile(node.src);
 
 	this.tx_shuffle = function() {
@@ -381,7 +346,8 @@ module.exports.groupByKey = function(grid, app, job, stage, node) {
 
 	this.reset();
 
-	// pendant le pipeline streamer les données directement vers le worker concerné
+	// pendant le pipeline ecrire le contenu de map directement dans un fichier
+	// faire un fichier par worker
 	this.pipeline = function(array) {
 		for (var i = 0; i < array.length; i++) {
 			var key = array[i][0];
@@ -391,7 +357,6 @@ module.exports.groupByKey = function(grid, app, job, stage, node) {
 		}
 	};
 
-	// rx_shuffle methode generale, lire le fichier de la STAGE_RAM si il existe
 	this.rx_shuffle = function(data) {
 		for (var key in data) {
 			for (var i = 0; i < SRAM.length; i++)
