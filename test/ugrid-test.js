@@ -54,7 +54,7 @@ var transforms = [
 	{name: 'values', args: []},
 ];
 
-var transforms2 = [
+var dualTransforms = [
 	{name: 'coGroup', args: [], sort: true},
 	{name: 'crossProduct', args: [], sort: true},
 	{name: 'intersection', args: [], sort: true},
@@ -85,121 +85,119 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 			var lres, dres, sres;
 
 			it('run local', function (done) {
-				var args, loc;
+				var args, rdd;
 				args = (source[0].name != 'lineStream') ? source[0].args :
 					[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
-				loc = ul[source[0].name].apply(ul, args);
-				if (source.length > 1 ) loc = loc[source[1].name].apply(loc, source[1].args);
-				if (transform.name) loc = loc[transform.name].apply(loc, transform.args);
+				rdd = ul[source[0].name].apply(ul, args);
+				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
+				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
 				args = [].concat(action.args, function (err, res) {lres = res; done();});
-				loc[action.name].apply(loc, args);
+				rdd[action.name].apply(rdd, args);
 			});
 
 			it('run distributed', function (done) {
 				assert(uc.worker.length > 0);
-				var args, dist;
+				var args, rdd;
 				args = (source[0].name != 'lineStream') ? source[0].args :
 					[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
-				dist = uc[source[0].name].apply(uc, args);
-				if (source.length > 1 ) dist = dist[source[1].name].apply(dist, source[1].args);
-				if (transform.name) dist = dist[transform.name].apply(dist, transform.args);
+				rdd = uc[source[0].name].apply(uc, args);
+				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
+				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
 				args = [].concat(action.args, function (err, res) {dres = res; done();});
-				dist[action.name].apply(dist, args);
+				rdd[action.name].apply(rdd, args);
 			});
 
 			it('run distributed, stream output', function (done) {
 				assert(uc.worker.length > 0);
-				var args, out, dist;
+				var args, out, rdd;
 				args = (source[0].name != 'lineStream') ? source[0].args :
 					[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
-				dist = uc[source[0].name].apply(uc, args);
-				if (source.length > 1 ) dist = dist[source[1].name].apply(dist, source[1].args);
-				if (transform.name) dist = dist[transform.name].apply(dist, transform.args);
+				rdd = uc[source[0].name].apply(uc, args);
+				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
+				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
 				args = [].concat(action.args, {stream: true});
-				out = dist[action.name].apply(dist, args);
+				out = rdd[action.name].apply(rdd, args);
 				sres = [];
 				out.on('data', function (d) {sres.push(d);});
 				out.on('end', done);
 			});
 
 			it('check distributed results', function () {
-				if (transform.sort || action.sort) data.compareResults(lres, dres);
-				else assert.deepEqual(lres, dres);
+				data.compareResults(lres, dres);
 			});
 
 			it('check stream results', function () {
-				if (transform.sort || action.sort) data.compareResults([lres], sres);
-				else assert.deepEqual([lres], sres);
+				data.compareResults([lres], sres);
 			});
 		});});
 	});});
 
 	sources2.forEach(function (source2) {
-		transforms2.forEach(function (transform2) {describe('.' + transform2.name + '(uc.' + source2[0].name + '())', function () {
+		dualTransforms.forEach(function (dualTransform) {describe('.' + dualTransform.name + '(uc.' + source2[0].name + '())', function () {
 			actions.forEach(function (action) {describe('.' + action.name + '()', function () {
 				var lres, dres, sres;
 
 				it('run local', function (done) {
-					var args, loc, loc2;
+					var args, rdd, other;
 					args = (source[0].name != 'lineStream') ? source[0].args :
 						[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
-					loc = ul[source[0].name].apply(ul, args);
-					if (source.length > 1) loc = loc[source[1].name].apply(loc, source[1].args);
+					rdd = ul[source[0].name].apply(ul, args);
+					if (source.length > 1) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 					args = (source2[0].name != 'lineStream') ? source2[0].args :
 						[].concat(fs.createReadStream(data.files[1], {encoding: 'utf8'}), {N: 5});
-					loc2 = ul[source2[0].name].apply(ul, args);
-					if (source2.length > 1) loc2 = loc2[source2[1].name].apply(loc2, source2[1].args);
-					args = [].concat(loc, transform2.args);
-					loc2 = loc2[transform2.name].apply(loc2, args);
+					other = ul[source2[0].name].apply(ul, args);
+					if (source2.length > 1) {
+						other = other[source2[1].name].apply(other, source2[1].args);
+					}
+					args = [].concat(other, dualTransform.args);
+					rdd = rdd[dualTransform.name].apply(rdd, args);
 					args = [].concat(action.args, function (err, res) {lres = res; done();});
-					loc2[action.name].apply(loc2, args);
+					rdd[action.name].apply(rdd, args);
 				});
 
 				it('run distributed', function (done) {
 					assert(uc.worker.length > 0);
-					var args, dist, dist2;
+					var args, rdd, other;
 					args = (source[0].name != 'lineStream') ? source[0].args :
 						[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
-					dist = uc[source[0].name].apply(uc, args);
-					if (source.length > 1) dist = dist[source[1].name].apply(dist, source[1].args);
+					rdd = uc[source[0].name].apply(uc, args);
+					if (source.length > 1) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 					args = (source2[0].name != 'lineStream') ? source2[0].args :
 						[].concat(fs.createReadStream(data.files[1], {encoding: 'utf8'}), {N: 5});
-					dist2 = uc[source2[0].name].apply(uc, args);
-					if (source2.length > 1) dist2 = dist2[source2[1].name].apply(dist2, source2[1].args);
-					args = [].concat(dist, transform2.args);
-					dist2 = dist2[transform2.name].apply(dist2, args);
+					other = uc[source2[0].name].apply(uc, args);
+					if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
+					args = [].concat(other, dualTransform.args);
+					rdd = rdd[dualTransform.name].apply(rdd, args);
 					args = [].concat(action.args, function (err, res) {dres = res; done();});
-					dist2[action.name].apply(dist2, args);
+					rdd[action.name].apply(rdd, args);
 				});
 
 				it('run distributed, stream output', function (done) {
 					assert(uc.worker.length > 0);
-					var args, dist, dist2, out;
+					var args, rdd, other, out;
 					args = (source[0].name != 'lineStream') ? source[0].args :
 						[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
-					dist = uc[source[0].name].apply(uc, args);
-					if (source.length > 1) dist = dist[source[1].name].apply(dist, source[1].args);
+					rdd = uc[source[0].name].apply(uc, args);
+					if (source.length > 1) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 					args = (source2[0].name != 'lineStream') ? source2[0].args :
 						[].concat(fs.createReadStream(data.files[1], {encoding: 'utf8'}), {N: 5});
-					dist2 = uc[source2[0].name].apply(uc, args);
-					if (source2.length > 1) dist2 = dist2[source2[1].name].apply(dist2, source2[1].args);
-					args = [].concat(dist, transform2.args);
-					dist2 = dist2[transform2.name].apply(dist2, args);
+					other = uc[source2[0].name].apply(uc, args);
+					if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
+					args = [].concat(other, dualTransform.args);
+					rdd = rdd[dualTransform.name].apply(rdd, args);
 					args = [].concat(action.args, {stream: true});
-					out = dist2[action.name].apply(dist2, args);
+					out = rdd[action.name].apply(rdd, args);
 					sres = [];
 					out.on('data', function (d) {sres.push(d);});
 					out.on('end', done);
 				});
 
 				it('check distributed results', function () {
-					if (transform2.sort || action.sort) data.compareResults(lres, dres);
-					else assert.deepEqual(lres, dres);
+					data.compareResults(lres, dres);
 				});
 
 				it('check stream results', function () {
-					if (transform2.sort || action.sort) data.compareResults([lres], sres);
-					else assert.deepEqual([lres], sres);
+					data.compareResults([lres], sres);
 				});
 			});});
 		});});
