@@ -1,0 +1,13 @@
+{
+	"parts": [
+		{
+			"index" : 0,
+			"key": "hello",
+			"tail": "p0"
+		}, {
+			"index" : 1,
+			"key": "goodbye",
+			"tail": "p1"
+		}
+	]
+}
