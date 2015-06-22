@@ -46,49 +46,40 @@ LocalArray.prototype.collect = function (opt, done) {
 };
 
 LocalArray.prototype.count = function (opt, done) {
+	opt = opt || {};
 	if (arguments.length < 2) done = opt;
-	if (opt.stream) {
-		this.stream = this.stream.pipe(new CountStream());
-		return this.stream;
-	}
+	this.stream = this.stream.pipe(new TransformStream(function (v) {return v.length;}));
+	if (opt.stream) return this.stream;
 	var res = 0;
-	this.stream = this.stream.pipe(new CountStream());
 	this.stream.on('data', function (data) {res += data;});
 	this.stream.on('end', function () {done(null, res);});
 };
 
 LocalArray.prototype.countByValue = function (opt, done) {
+	opt = opt || {};
 	if (arguments.length < 2) done = opt;
-	if (opt.stream) {
-		this.stream = this.stream.pipe(new CountByValueStream());
-		return this.stream;
-	}
+	this.stream = this.stream.pipe(new TransformStream(countByValue));
+	if (opt.stream) return this.stream;
 	var res = [];
-	this.stream = this.stream.pipe(new CountByValueStream());
 	this.stream.on('data', function (data) {res = res.concat(data);});
 	this.stream.on('end', function () {done(null, res);});
 };
 
 LocalArray.prototype.lookup = function(key, opt, done) {
+	opt = opt || {};
 	if (arguments.length < 3) done = opt;
-	if (opt.stream) {
-		this.stream = this.stream.pipe(new lookupStream(key));
-		return this.stream;
-	}
+	this.stream = this.stream.pipe(new TransformStream(lookup, [key]));
+	if (opt.stream) return this.stream;
 	var res = [];
-	this.stream = this.stream.pipe(new LookupStream(key));
 	this.stream.on('data', function (data) {res = res.concat(data);});
 	this.stream.on('end', function () {done(null, res);});
 };
 
-LocalArray.prototype.reduce = function(callback, initial, opt, done) {
+LocalArray.prototype.reduce = function(reducer, init, opt, done) {
 	if (arguments.length < 4) done = opt;
-	if (opt.stream) {
-		this.stream = this.stream.pipe(new ReduceStream(callback, initial));
-		return this.stream;
-	}
+	this.stream = this.stream.pipe(new TransformStream(reduce, [reducer, init]));
+	if (opt.stream) return this.stream;
 	var res = [];
-	this.stream = this.stream.pipe(new ReduceStream(callback, initial));
 	this.stream.on('data', function (data) {res = res.concat(data);});
 	this.stream.on('end', function () {done(null, res);});
 };
@@ -105,27 +96,27 @@ LocalArray.prototype.crossProduct = function (other) {
 };
 
 LocalArray.prototype.distinct = function () {
-	this.stream = this.stream.pipe(new DistinctStream());
+	this.stream = this.stream.pipe(new TransformStream(distinct));
 	return this;
 };
 
-LocalArray.prototype.filter = function (filter) {
-	this.stream = this.stream.pipe(new FilterStream(filter));
+LocalArray.prototype.filter = function (filterer) {
+	this.stream = this.stream.pipe(new TransformStream(filter, [filterer]));
 	return this;
 };
 
 LocalArray.prototype.flatMap = function (mapper) {
-	this.stream = this.stream.pipe(new FlatMapStream(mapper));
+	this.stream = this.stream.pipe(new TransformStream(flatMap, [mapper]));
 	return this;
 };
 
 LocalArray.prototype.flatMapValues = function (mapper) {
-	this.stream = this.stream.pipe(new FlatMapValuesStream(mapper));
+	this.stream = this.stream.pipe(new TransformStream(flatMapValues, [mapper]));
 	return this;
 };
 
 LocalArray.prototype.groupByKey = function () {
-	this.stream = this.stream.pipe(new GroupByKeyStream());
+	this.stream = this.stream.pipe(new TransformStream(groupByKey));
 	return this;
 };
 
@@ -140,7 +131,7 @@ LocalArray.prototype.join = function (other) {
 };
 
 LocalArray.prototype.keys = function () {
-	this.stream = this.stream.pipe(new KeysStream());
+	this.stream = this.stream.pipe(new TransformStream(keys));
 	return this;
 };
 
@@ -150,12 +141,12 @@ LocalArray.prototype.leftOuterJoin = function (other) {
 };
 
 LocalArray.prototype.map = function (mapper) {
-	this.stream = this.stream.pipe(new MapStream(mapper));
+	this.stream = this.stream.pipe(new TransformStream(map, [mapper]));
 	return this;
 };
 
-LocalArray.prototype.mapValues = function (valueMapper) {
-	this.stream = this.stream.pipe(new MapValuesStream(valueMapper));
+LocalArray.prototype.mapValues = function (mapper) {
+	this.stream = this.stream.pipe(new TransformStream(mapValues, [mapper]));
 	return this;
 };
 
@@ -164,7 +155,7 @@ LocalArray.prototype.persist = function () {
 };
 
 LocalArray.prototype.reduceByKey = function (reducer, init) {
-	this.stream = this.stream.pipe(new ReduceByKeyStream(reducer, init));
+	this.stream = this.stream.pipe(new TransformStream(reduceByKey, [reducer, init]));
 	return this;
 };
 
@@ -174,7 +165,7 @@ LocalArray.prototype.rightOuterJoin = function (other) {
 };
 
 LocalArray.prototype.sample = function (withReplacement, frac) {
-	this.stream = this.stream.pipe(new SampleStream(withReplacement, frac));
+	this.stream = this.stream.pipe(new TransformStream(sample, [withReplacement, frac]));
 	return this;
 };
 
@@ -189,14 +180,12 @@ LocalArray.prototype.union = function (other) {
 }
 
 LocalArray.prototype.values = function () {
-	this.stream = this.stream.pipe(new ValuesStream());
+	this.stream = this.stream.pipe(new TransformStream(values));
 	return this;
 };
 
 // Streams
 function BlockStream(len) {
-	if (!(this instanceof BlockStream))
-		return new BlockStream(len);
 	stream.Transform.call(this, {objectMode: true});
 	this.len = len;
 	this.cnt = 0;
@@ -216,8 +205,6 @@ BlockStream.prototype._transform = function (msg, encoding, done) {
 
 // dual transform
 function DualTransformStream(other, action) {
-	if (!(this instanceof DualTransformStream))
-		return new DualTransformStream(other);
 	stream.Transform.call(this, {objectMode: true});
 	this.other = other;
 	this.action = action;
@@ -261,189 +248,6 @@ DualTransformStream.prototype._flush = function (done) {
 	} else done();
 }
 
-// Count
-function CountStream() {
-	if (!(this instanceof CountStream))
-		return new CountStream();
-	stream.Transform.call(this, {objectMode: true});
-}
-util.inherits(CountStream, stream.Transform);
-
-CountStream.prototype._transform = function (msg, encoding, done) {
-	done(null, msg.length);
-};
-
-// CountByValue
-function CountByValueStream() {
-	if (!(this instanceof CountByValueStream))
-		return new CountByValueStream();
-	stream.Transform.call(this, {objectMode: true});
-}
-util.inherits(CountByValueStream, stream.Transform);
-
-CountByValueStream.prototype._transform = function (msg, encoding, done) {
-	done(null, countByValue(msg));
-};
-
-// Distinct
-function DistinctStream() {
-	if (!(this instanceof DistinctStream))
-		return new DistinctStream();
-	stream.Transform.call(this, {objectMode: true});
-}
-util.inherits(DistinctStream, stream.Transform);
-
-DistinctStream.prototype._transform = function (msg, encoding, done) {
-	done(null, distinct(msg));
-};
-
-// Filter
-function FilterStream(filter) {
-	if (!(this instanceof FilterStream))
-		return new FilterStream(filter);
-	stream.Transform.call(this, {objectMode: true});
-	this.filter = filter;
-}
-util.inherits(FilterStream, stream.Transform);
-
-FilterStream.prototype._transform = function (msg, encoding, done) {
-	done(null, msg.filter(this.filter));
-};
-
-// FlatMap
-function FlatMapStream(mapper) {
-	if (!(this instanceof FlatMapStream))
-		return new FlatMapStream(mapper);
-	stream.Transform.call(this, {objectMode: true});
-	this.mapper = mapper;
-}
-util.inherits(FlatMapStream, stream.Transform);
-
-FlatMapStream.prototype._transform = function (msg, encoding, done) {
-	done(null, msg.map(this.mapper).reduce(function (a, b) {return a.concat(b);}, []));
-};
-
-// FlatMapValues
-function FlatMapValuesStream(mapper) {
-	if (!(this instanceof FlatMapValuesStream))
-		return new FlatMapValuesStream(mapper);
-	stream.Transform.call(this, {objectMode: true});
-	this.mapper = mapper;
-}
-util.inherits(FlatMapValuesStream, stream.Transform);
-
-FlatMapValuesStream.prototype._transform = function (msg, encoding, done) {
-	done (null, flatMapValues(msg, this.mapper));
-};
-
-// GroupByKey
-function GroupByKeyStream() {
-	if (!(this instanceof GroupByKeyStream))
-		return new GroupByKeyStream();
-	stream.Transform.call(this, {objectMode: true});
-}
-util.inherits(GroupByKeyStream, stream.Transform);
-
-GroupByKeyStream.prototype._transform = function (msg, encoding, done) {
-	done(null, groupByKey(msg));
-};
-
-// Keys
-function KeysStream() {
-	if (!(this instanceof KeysStream))
-		return new KeysStream();
-	stream.Transform.call(this, {objectMode: true});
-}
-util.inherits(KeysStream, stream.Transform);
-
-KeysStream.prototype._transform = function (msg, encoding, done) {
-	done(null, msg.map(function (e) {return e[0];}));
-};
-
-// Lookup
-function LookupStream(key) {
-	if (!(this instanceof LookupStream))
-		return new LookupStream(key);
-	stream.Transform.call(this, {objectMode: true});
-	this.key = key;
-}
-util.inherits(LookupStream, stream.Transform);
-
-LookupStream.prototype._transform = function (msg, encoding, done) {
-	var key = this.key;
-	done(null, msg.filter(function (e) {return e[0] == key;}));
-};
-
-// Map
-function MapStream(mapper) {
-	if (!(this instanceof MapStream))
-		return new MapStream(mapper);
-	stream.Transform.call(this, {objectMode: true});
-	this.mapper = mapper;
-}
-util.inherits(MapStream, stream.Transform);
-
-MapStream.prototype._transform = function (msg, encoding, done) {
-	done(null, msg.map(this.mapper));
-};
-
-// MapValues
-function MapValuesStream(mapper) {
-	if (!(this instanceof MapValuesStream))
-		return new MapValuesStream(mapper);
-	stream.Transform.call(this, {objectMode: true});
-	this.mapper = mapper;
-}
-util.inherits(MapValuesStream, stream.Transform);
-
-MapValuesStream.prototype._transform = function (msg, encoding, done) {
-	var mapper = this.mapper;
-	done(null, msg.map(function (e) {return [e[0], mapper(e[1])];}));
-};
-
-// Reduce
-function ReduceStream(callback, initial) {
-	if (!(this instanceof ReduceStream))
-		return new ReduceStream(callback, initial);
-	stream.Transform.call(this, {objectMode: true});
-	this.callback = callback;
-	this.initial = initial;
-}
-util.inherits(ReduceStream, stream.Transform);
-
-ReduceStream.prototype._transform = function (msg, encoding, done) {
-	var data = JSON.parse(JSON.stringify(msg));
-	done(null, data.reduce(this.callback, this.initial));
-};
-
-// ReduceByKey
-function ReduceByKeyStream(reducer, init) {
-	if (!(this instanceof ReduceByKeyStream))
-		return new ReduceByKeyStream(callback, initial);
-	stream.Transform.call(this, {objectMode: true});
-	this.reducer = reducer;
-	this.init = init;
-}
-util.inherits(ReduceByKeyStream, stream.Transform);
-
-ReduceByKeyStream.prototype._transform = function (msg, encoding, done) {
-	done(null, reduceByKey(msg, this.reducer, this.init));
-};
-
-// Sample
-function SampleStream(withReplacement, frac) {
-	if (!(this instanceof SampleStream))
-		return new SampleStream(withReplacement, frac);
-	stream.Transform.call(this, {objectMode: true});
-	this.withReplacement = withReplacement;
-	this.frac = frac;
-}
-util.inherits(SampleStream, stream.Transform);
-
-SampleStream.prototype._transform = function (msg, encoding, done) {
-	done(null, sample(msg, this.withReplacement, this.frac));
-};
-
 // Text
 function TextStream() {
 	if (!(this instanceof TextStream))
@@ -458,8 +262,6 @@ TextStream.prototype._transform = function (msg, encoding, done) {
 
 // Object
 function ObjectStream() {
-	if (!(this instanceof ObjectStream))
-		return new ObjectStream();
 	stream.Transform.call(this, {objectMode: true});
 }
 util.inherits(ObjectStream, stream.Transform);
@@ -468,16 +270,16 @@ ObjectStream.prototype._transform = function (msg, encoding, done) {
 	done(null, JSON.parse(JSON.stringify(msg)));
 };
 
-// Values
-function ValuesStream() {
-	if (!(this instanceof ValuesStream))
-		return new ValuesStream();
+// Transform stream
+function TransformStream(action, args) {
+	this.action = action;
+	this.args = args;
 	stream.Transform.call(this, {objectMode: true});
 }
-util.inherits(ValuesStream, stream.Transform);
+util.inherits(TransformStream, stream.Transform);
 
-ValuesStream.prototype._transform = function (msg, encoding, done) {
-	done(null, msg.map(function (e) {return e[1];}));
+TransformStream.prototype._transform = function (msg, encoding, done) {
+	done(null, this.action.apply(this, [].concat([msg], this.args)));
 };
 
 // Helper functions
@@ -538,6 +340,14 @@ function distinct(v) {
 		out.push(v[i]);
 	}
 	return out;
+}
+
+function filter(v, filterer) {
+	return v.filter(filterer);
+}
+
+function flatMap(v, mapper) {
+	return v.map(mapper).reduce(function (a, b) {return a.concat(b);}, []);
 }
 
 function flatMapValues(v, mapper) {
@@ -601,6 +411,27 @@ function join(v1, v2) {
 			if (v1[i][0] == v2[j][0])
 				v.push([v1[i][0], [v1[i][1], v2[j][1]]])
 	return v;
+}
+
+function keys(v) {
+	return v.map(function (e) {return e[0];});
+}
+
+function lookup(v, key) {
+	return v.filter(function (e) {return e[0] == key;});
+}
+
+function map(v, mapper) {
+	return v.map(mapper);
+}
+
+function mapValues(v, mapper) {
+	return v.map(function (e) {return [e[0], mapper(e[1])];});
+}
+
+function reduce(v, reducer, init) {
+	var data = JSON.parse(JSON.stringify(v));
+	return data.reduce(reducer, init);
 }
 
 function reduceByKey(v, reducer, init) {
@@ -694,4 +525,8 @@ function subtract(v1, v2) {
 
 function union(v1, v2) {
 	return v1.concat(v2);
+}
+
+function values(v) {
+	return v.map(function (e) {return e[1];});
 }
