@@ -1,6 +1,7 @@
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 var assert = require('assert');
+var trace = require('line-trace');
 var ugrid = require('../');
 var data = require('./support/data.js');
 var local = require('./support/local.js');

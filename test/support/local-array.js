@@ -22,14 +22,16 @@ LocalArray.prototype.lineStream = function (inputStream, opt) {
 };
 
 LocalArray.prototype.parallelize = function (v) {
-	this.data = JSON.parse(JSON.stringify(v));
+	this.stream = new ObjectStream();
+	this.stream.end(v);
 	return this;
 };
 
 LocalArray.prototype.textFile = function (path) {
-	var self = this, raw = fs.readFileSync(path, {encoding: 'utf8'});
-	this.data = [];
-	raw.split('\n').map(function (s) {if (!s) return; self.data.push(s);});
+//	var self = this, raw = fs.readFileSync(path, {encoding: 'utf8'});
+//	this.data = [];
+//	raw.split('\n').map(function (s) {if (!s) return; self.data.push(s);});
+	this.stream = fs.createReadStream(path, {encoding: 'utf8'});
 	return this;
 };
 
@@ -340,24 +342,26 @@ DualTransformStream.prototype._transform = function (msg, encoding, done) {
 	var otherStream = this.other.stream, action = this.action;
 	if (otherStream) {
 		var data = otherStream.read();
-		if (data !== null)
-			done(null, action(data, msg));
-		else if (this.otherEnd)
+		if (data !== null) {
+			done(null, action(msg, data));
+			//done(null, res);
+		} else if (this.otherEnd) {
 			done(null, msg);
-		else {
+		} else {
 			otherStream.once('readable', function () {
 				var data = otherStream.read();
 				done(null, action(msg, data));
 			});
 		}
-	} else
+	} else {
 		done(null, action(msg, this.other.data));
 		//this.other.data = undefined;
+	}
 };
 
 DualTransformStream.prototype._flush = function (done) {
 	var self = this;
-	if (this.other.stream) {
+	if (!this.otherEnd && this.other.stream) {
 		this.other.stream.resume();
 		this.other.stream.on('data', function (d) {self.push(self.action(d, null));});
 		this.other.stream.on('end', done);
@@ -597,6 +601,18 @@ UnionStream.prototype._flush = function (done) {
 		this.other.stream.on('end', done);
 	} else done();
 }
+
+// Values
+function ObjectStream() {
+	if (!(this instanceof ObjectStream))
+		return new ObjectStream();
+	stream.Transform.call(this, {objectMode: true});
+}
+util.inherits(ObjectStream, stream.Transform);
+
+ObjectStream.prototype._transform = function (msg, encoding, done) {
+	done(null, JSON.parse(JSON.stringify(msg)));
+};
 
 // Values
 function ValuesStream() {
