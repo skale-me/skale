@@ -49,7 +49,7 @@ var transforms = [
 	{name: 'keys', args: []},
 	{name: 'map', args: [data.mapper]},
 	{name: 'mapValues', args: [data.valueMapper]},
-	{name: 'persist', args: []},
+//	{name: 'persist', args: []},
 	{name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0], sort: true},
 //	{name: 'sample', args: [true, 0.1], sort: true},
 	{name: 'values', args: []},
@@ -83,7 +83,7 @@ var actions = [
 sources.forEach(function (source) {describe('uc.' + source[0].name + '()', function() {
 	transforms.forEach(function (transform) {describe(transform.name ? '.' + transform.name + '()' : '/* empty */', function () {
 		actions.forEach(function (action) {describe('.' + action.name + '()', function () {
-			var lres, dres, sres;
+			var lres, dres, sres, pres1, pres2;
 
 			it('run local', function (done) {
 				var args, rdd;
@@ -108,6 +108,32 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				rdd[action.name].apply(rdd, args);
 			});
 
+			it('run distributed, pre-persist', function (done) {
+				assert(uc.worker.length > 0);
+				var args, rdd;
+				args = (source[0].name != 'lineStream') ? source[0].args :
+					[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
+				rdd = uc[source[0].name].apply(uc, args);
+				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
+				rdd = rdd.persist();
+				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
+				args = [].concat(action.args, function (err, res) {pres1 = res; done();});
+				rdd[action.name].apply(rdd, args);
+			});
+
+			it('run distributed, post-persist', function (done) {
+				assert(uc.worker.length > 0);
+				var args, rdd;
+				args = (source[0].name != 'lineStream') ? source[0].args :
+					[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
+				rdd = uc[source[0].name].apply(uc, args);
+				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
+				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
+				rdd = rdd.persist();
+				args = [].concat(action.args, function (err, res) {pres2 = res; done();});
+				rdd[action.name].apply(rdd, args);
+			});
+
 			it('run distributed, stream output', function (done) {
 				assert(uc.worker.length > 0);
 				var args, out, rdd;
@@ -127,6 +153,14 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				data.compareResults(lres, dres);
 			});
 
+			it('check distributed pre-persist results', function () {
+				data.compareResults(lres, pres1);
+			});
+
+			it('check distributed post-persist results', function () {
+				data.compareResults(lres, pres2);
+			});
+
 			it('check stream results', function () {
 				data.compareResults([lres], sres);
 			});
@@ -136,7 +170,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 	sources2.forEach(function (source2) {
 		dualTransforms.forEach(function (dualTransform) {describe('.' + dualTransform.name + '(uc.' + source2[0].name + '())', function () {
 			actions.forEach(function (action) {describe('.' + action.name + '()', function () {
-				var lres, dres, sres;
+				var lres, dres, sres, pres1, pres2;
 
 				it('run local', function (done) {
 					var args, rdd, other;
@@ -173,6 +207,43 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 					rdd[action.name].apply(rdd, args);
 				});
 
+				it('run distributed, pre-persist', function (done) {
+					assert(uc.worker.length > 0);
+					var args, rdd, other;
+					args = (source[0].name != 'lineStream') ? source[0].args :
+						[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
+					rdd = uc[source[0].name].apply(uc, args);
+					if (source.length > 1) rdd = rdd[source[1].name].apply(rdd, source[1].args);
+					args = (source2[0].name != 'lineStream') ? source2[0].args :
+						[].concat(fs.createReadStream(data.files[1], {encoding: 'utf8'}), {N: 5});
+					other = uc[source2[0].name].apply(uc, args);
+					if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
+					rdd = rdd.persist();
+					other = other.persist();
+					args = [].concat(other, dualTransform.args);
+					rdd = rdd[dualTransform.name].apply(rdd, args);
+					args = [].concat(action.args, function (err, res) {pres1 = res; done();});
+					rdd[action.name].apply(rdd, args);
+				});
+
+				it('run distributed, post-persist', function (done) {
+					assert(uc.worker.length > 0);
+					var args, rdd, other;
+					args = (source[0].name != 'lineStream') ? source[0].args :
+						[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
+					rdd = uc[source[0].name].apply(uc, args);
+					if (source.length > 1) rdd = rdd[source[1].name].apply(rdd, source[1].args);
+					args = (source2[0].name != 'lineStream') ? source2[0].args :
+						[].concat(fs.createReadStream(data.files[1], {encoding: 'utf8'}), {N: 5});
+					other = uc[source2[0].name].apply(uc, args);
+					if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
+					args = [].concat(other, dualTransform.args);
+					rdd = rdd[dualTransform.name].apply(rdd, args);
+					rdd = rdd.persist();
+					args = [].concat(action.args, function (err, res) {pres2 = res; done();});
+					rdd[action.name].apply(rdd, args);
+				});
+
 				it('run distributed, stream output', function (done) {
 					assert(uc.worker.length > 0);
 					var args, rdd, other, out;
@@ -195,6 +266,14 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 
 				it('check distributed results', function () {
 					data.compareResults(lres, dres);
+				});
+
+				it('check distributed pre-persist results', function () {
+					data.compareResults(lres, pres1);
+				});
+
+				it('check distributed post-persist results', function () {
+					data.compareResults(lres, pres2);
 				});
 
 				it('check stream results', function () {
