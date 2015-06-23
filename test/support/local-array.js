@@ -22,6 +22,7 @@ LocalArray.prototype.lineStream = function (inputStream, opt) {
 };
 
 LocalArray.prototype.parallelize = function (v) {
+	var self = this;
 	this.stream = new ObjectStream();
 	this.stream.end(v);
 	return this;
@@ -224,24 +225,21 @@ DualTransformStream.prototype._transform = function (msg, encoding, done) {
 		var data = otherStream.read();
 		if (data !== null) {
 			done(null, action(msg, data));
-			//done(null, res);
 		} else if (this.otherEnd) {
 			done(null, msg);
 		} else {
 			otherStream.once('readable', function () {
-				var data = otherStream.read();
-				done(null, action(msg, data));
+				done(null, action(msg, otherStream.read()));
 			});
 		}
 	} else {
 		done(null, action(msg, this.other.data));
-		//this.other.data = undefined;
 	}
 };
 
 DualTransformStream.prototype._flush = function (done) {
 	var self = this;
-	if (!this.otherEnd && this.other.stream) {
+	if (!this.otherEnd) {
 		this.other.stream.resume();
 		this.other.stream.on('data', function (d) {self.push(self.action(d, null));});
 		this.other.stream.on('end', done);
