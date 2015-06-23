@@ -134,7 +134,9 @@ function runWorker(host, port) {
 	});
 
 	grid.on('lastLine', function (msg) {
-		jobs[msg.jobId].stage[msg.args.sid].source[msg.args.lid].processLastLine(msg.args);
+		// jobs[msg.jobId].stage[msg.args.sid].source[msg.args.lid].processLastLine(msg.args);
+		var num = jobs[msg.jobId].stage[msg.args.sid].lineages[msg.args.lid][0];
+		jobs[msg.jobId].node[num].processLastLine(msg.args);
 	});
 
 	grid.on('action', function (msg) {
