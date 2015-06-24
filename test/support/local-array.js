@@ -77,8 +77,19 @@ LocalArray.prototype.lookup = function(key, opt, done) {
 };
 
 LocalArray.prototype.reduce = function(reducer, init, opt, done) {
+	opt = opt || {};
 	if (arguments.length < 4) done = opt;
 	this.stream = this.stream.pipe(new TransformStream(reduce, [reducer, init]));
+	if (opt.stream) return this.stream;
+	var res = [];
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+};
+
+LocalArray.prototype.take = function(num, opt, done) {
+	opt = opt || {};
+	if (arguments.length < 3) done = opt;
+	this.stream = this.stream.pipe(new TransformStream(take, [num]));
 	if (opt.stream) return this.stream;
 	var res = [];
 	this.stream.on('data', function (data) {res = res.concat(data);});

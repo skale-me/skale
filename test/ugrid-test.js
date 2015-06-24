@@ -72,6 +72,7 @@ var actions = [
 	{name: 'countByValue', args: [], sort: true},
 	{name: 'lookup', args: [data.v[0][0][0]]},
 	{name: 'reduce', args: [data.reducer, [0, 0]]},
+	{name: 'take', args: [2]},
 // XXXXX TODO:
 // take,
 // takeOrdered,
@@ -92,6 +93,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				rdd = ul[source[0].name].apply(ul, args);
 				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
+				//args = [].concat(action.args, function (err, res) {trace(res);lres = res; done();});
 				args = [].concat(action.args, function (err, res) {lres = res; done();});
 				rdd[action.name].apply(rdd, args);
 			});
@@ -104,10 +106,11 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				rdd = uc[source[0].name].apply(uc, args);
 				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
+				//args = [].concat(action.args, function (err, res) {trace(res);dres = res; done();});
 				args = [].concat(action.args, function (err, res) {dres = res; done();});
 				rdd[action.name].apply(rdd, args);
 			});
-
+//
 			it('run distributed, pre-persist', function (done) {
 				assert(uc.worker.length > 0);
 				var args, rdd;
@@ -148,11 +151,11 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				out.on('data', function (d) {sres.push(d);});
 				out.on('end', done);
 			});
-
+//
 			it('check distributed results', function () {
 				data.compareResults(lres, dres);
 			});
-
+//
 			it('check distributed pre-persist results', function () {
 				data.compareResults(lres, pres1);
 			});
@@ -164,6 +167,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 			it('check stream results', function () {
 				data.compareResults([lres], sres);
 			});
+//
 		});});
 	});});
 
