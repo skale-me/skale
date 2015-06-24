@@ -428,8 +428,7 @@ function mapValues(v, mapper) {
 }
 
 function reduce(v, reducer, init) {
-	var data = JSON.parse(JSON.stringify(v));
-	return data.reduce(reducer, init);
+	return v.reduce(reducer, JSON.parse(JSON.stringify(init)));
 }
 
 function reduceByKey(v, reducer, init) {
@@ -519,6 +518,10 @@ function subtract(v1, v2) {
 			v.push(v1[i]);
 	}
 	return v;
+}
+
+function take(v, num) {
+	return v.slice(0, num);
 }
 
 function union(v1, v2) {
