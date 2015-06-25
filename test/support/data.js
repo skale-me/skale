@@ -20,7 +20,12 @@ var v = [
 ];
 
 // Helper functions for tests
-function compareResults(r1, r2) {
+function compareResults(r1, r2, opt) {
+	opt = opt || {};
+	if (opt.lengthOnly) {
+		assert.equal(r1.length, r2.length);
+		return;
+	}
 	if (Array.isArray(r1)) sort(r1);
 	if (Array.isArray(r2)) sort(r2);
 	//assert.deepEqual(r1, r2);
