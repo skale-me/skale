@@ -1,45 +1,14 @@
 'use strict';
 
 var fs = require('fs');
-//var Lines = require('../../lib/lines.js');
+var stream = require('stream');
+var util = require('util');
+var trace = require('line-trace');
+var Lines = require('../../lib/lines.js');
 var ml = require('../../lib/ugrid-ml.js');
 
 module.exports = LocalArray;
-
-function join(first, other, type) {
-	var i, j, found, v3 = [];
-	if (type === undefined) {
-		for (i = 0; i < first.length; i++)
-			for (j = 0; j < other.length; j++)
-				if (first[i][0] == other[j][0])
-					v3.push([first[i][0], [first[i][1], other[j][1]]])
-	} else if (type == 'left') {
-		for (i = 0; i < first.length; i++) {
-			found = false;
-			for (j = 0; j < other.length; j++) {
-				if (first[i][0] == other[j][0]) {
-					found = true;
-					v3.push([first[i][0], [first[i][1], other[j][1]]]);
-				}
-			}
-			if (!found)
-				v3.push([first[i][0], [first[i][1], null]]);
-		}
-	} else if (type == 'right') {
-		for (i = 0; i < other.length; i++) {
-			found = false;
-			for (j = 0; j < first.length; j++) {
-				if (other[i][0] == first[j][0]) {
-					found = true;
-					v3.push([other[i][0], [first[j][1], other[i][1]]]);
-				}
-			}
-			if (!found)
-				v3.push([other[i][0], [null, other[i][1]]]);
-		}
-	}
-	return v3;
-}
+module.exports.TextStream = TextStream;
 
 function LocalArray() {
 	if (!(this instanceof LocalArray))
@@ -47,152 +16,374 @@ function LocalArray() {
 }
 
 // Sources
-LocalArray.prototype.lineStream = function(inputStream) {
-	//this.stream = new Lines();
-	//this.data = [];
-	//var self = this;
-	//inputStream.pipe(this.stream);
-	//this.stream.on('data', function (d) { self.data.push(d) });
-
-	var self = this, raw = fs.readFileSync(inputStream.path, {encoding: 'utf8'});
-	this.data = [];
-	raw.split('\n').map(function (s) {self.data.push(s);});
+LocalArray.prototype.lineStream = function (inputStream, opt) {
+	this.stream = inputStream.pipe(new Lines()).pipe(new BlockStream(opt.N));
 	return this;
 };
 
 LocalArray.prototype.parallelize = function (v) {
-	this.data = JSON.parse(JSON.stringify(v));
+	var self = this;
+	this.stream = new ObjectStream();
+	this.stream.end(v);
 	return this;
 };
 
 LocalArray.prototype.textFile = function (path) {
-	var self = this, raw = fs.readFileSync(path, {encoding: 'utf8'});
-	this.data = [];
-	raw.split('\n').map(function (s) {self.data.push(s);});
+	var raw = fs.readFileSync(path, {encoding: 'utf8'}), data = [];
+	raw.split('\n').map(function (s) {if (!s) return; data.push(s);});
+	this.stream = new ObjectStream();
+	this.stream.end(data);
 	return this;
 };
 
 // Actions
+LocalArray.prototype.collect = function (opt, done) {
+	opt = opt || {};
+	if (arguments.length < 2) done = opt;
+	if (opt.stream) return this.stream;
+	var res = [];
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+};
+
+LocalArray.prototype.count = function (opt, done) {
+	opt = opt || {};
+	if (arguments.length < 2) done = opt;
+	this.stream = this.stream.pipe(new TransformStream(function (v) {return v.length;}));
+	if (opt.stream) return this.stream;
+	var res = 0;
+	this.stream.on('data', function (data) {res += data;});
+	this.stream.on('end', function () {done(null, res);});
+};
+
+LocalArray.prototype.countByValue = function (opt, done) {
+	opt = opt || {};
+	if (arguments.length < 2) done = opt;
+	this.stream = this.stream.pipe(new TransformStream(countByValue));
+	if (opt.stream) return this.stream;
+	var res = [];
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+};
+
+LocalArray.prototype.lookup = function(key, opt, done) {
+	opt = opt || {};
+	if (arguments.length < 3) done = opt;
+	this.stream = this.stream.pipe(new TransformStream(lookup, [key]));
+	if (opt.stream) return this.stream;
+	var res = [];
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+};
+
+LocalArray.prototype.reduce = function(reducer, init, opt, done) {
+	opt = opt || {};
+	if (arguments.length < 4) done = opt;
+	this.stream = this.stream.pipe(new TransformStream(reduce, [reducer, init]));
+	if (opt.stream) return this.stream;
+	var res = [];
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+};
+
+LocalArray.prototype.take = function(num, opt, done) {
+	opt = opt || {};
+	if (arguments.length < 3) done = opt;
+	this.stream = this.stream.pipe(new TransformStream(take, [num]));
+	if (opt.stream) return this.stream;
+	var res = [];
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+};
+
+// Transformations
 LocalArray.prototype.coGroup = function (other) {
-	var v1 = this.data;
-	var v2 = other.data;
-	var v3 = [];
-	var already_v1 = [];
-	var already_v2 = [];
+	this.stream = this.stream.pipe(new DualTransformStream(other, coGroup));
+	return this;
+}
+
+LocalArray.prototype.crossProduct = function (other) {
+	this.stream = this.stream.pipe(new DualTransformStream(other, crossProduct));
+	return this;
+};
+
+LocalArray.prototype.distinct = function () {
+	this.stream = this.stream.pipe(new TransformStream(distinct));
+	return this;
+};
+
+LocalArray.prototype.filter = function (filterer) {
+	this.stream = this.stream.pipe(new TransformStream(filter, [filterer]));
+	return this;
+};
+
+LocalArray.prototype.flatMap = function (mapper) {
+	this.stream = this.stream.pipe(new TransformStream(flatMap, [mapper]));
+	return this;
+};
+
+LocalArray.prototype.flatMapValues = function (mapper) {
+	this.stream = this.stream.pipe(new TransformStream(flatMapValues, [mapper]));
+	return this;
+};
+
+LocalArray.prototype.groupByKey = function () {
+	this.stream = this.stream.pipe(new TransformStream(groupByKey));
+	return this;
+};
+
+LocalArray.prototype.intersection = function (other) {
+	this.stream = this.stream.pipe(new DualTransformStream(other, intersection));
+	return this;
+};
+
+LocalArray.prototype.join = function (other) {
+	this.stream = this.stream.pipe(new DualTransformStream(other, join));
+	return this;
+};
+
+LocalArray.prototype.keys = function () {
+	this.stream = this.stream.pipe(new TransformStream(keys));
+	return this;
+};
+
+LocalArray.prototype.leftOuterJoin = function (other) {
+	this.stream = this.stream.pipe(new DualTransformStream(other, leftOuterJoin));
+	return this;
+};
+
+LocalArray.prototype.map = function (mapper) {
+	this.stream = this.stream.pipe(new TransformStream(map, [mapper]));
+	return this;
+};
+
+LocalArray.prototype.mapValues = function (mapper) {
+	this.stream = this.stream.pipe(new TransformStream(mapValues, [mapper]));
+	return this;
+};
+
+LocalArray.prototype.persist = function () {
+	return this;
+};
+
+LocalArray.prototype.reduceByKey = function (reducer, init) {
+	this.stream = this.stream.pipe(new TransformStream(reduceByKey, [reducer, init]));
+	return this;
+};
+
+LocalArray.prototype.rightOuterJoin = function (other) {
+	this.stream = this.stream.pipe(new DualTransformStream(other, rightOuterJoin));
+	return this;
+};
+
+LocalArray.prototype.sample = function (withReplacement, frac) {
+	this.stream = this.stream.pipe(new TransformStream(sample, [withReplacement, frac]));
+	return this;
+};
+
+LocalArray.prototype.subtract = function (other) {
+	this.stream = this.stream.pipe(new DualTransformStream(other, subtract));
+	return this;
+};
+
+LocalArray.prototype.union = function (other) {
+	this.stream = this.stream.pipe(new DualTransformStream(other, union));
+	return this;
+}
+
+LocalArray.prototype.values = function () {
+	this.stream = this.stream.pipe(new TransformStream(values));
+	return this;
+};
+
+// Streams
+function BlockStream(len) {
+	stream.Transform.call(this, {objectMode: true});
+	this.len = len;
+	this.cnt = 0;
+	this.buf = [];
+}
+util.inherits(BlockStream, stream.Transform);
+
+BlockStream.prototype._transform = function (msg, encoding, done) {
+	this.buf.push(msg);
+	if (++this.cnt == this.len) {
+		this.push(this.buf);
+		this.buf = [];
+		this.cnt = 0;
+	}
+	done();
+};
+
+// dual transform
+function DualTransformStream(other, action) {
+	stream.Transform.call(this, {objectMode: true});
+	this.other = other;
+	this.action = action;
+	var self = this;
+	if (this.other.stream) {
+		this.other.stream.pause();
+		this.other.stream.on('end', function () {
+			self.otherEnd = true;
+		});
+	}
+}
+util.inherits(DualTransformStream, stream.Transform);
+
+DualTransformStream.prototype._transform = function (msg, encoding, done) {
+	var otherStream = this.other.stream, action = this.action;
+	if (otherStream) {
+		var data = otherStream.read();
+		if (data !== null) {
+			done(null, action(msg, data));
+		} else if (this.otherEnd) {
+			done(null, msg);
+		} else {
+			otherStream.once('readable', function () {
+				done(null, action(msg, otherStream.read()));
+			});
+		}
+	} else {
+		done(null, action(msg, this.other.data));
+	}
+};
+
+DualTransformStream.prototype._flush = function (done) {
+	var self = this;
+	if (!this.otherEnd) {
+		this.other.stream.resume();
+		this.other.stream.on('data', function (d) {self.push(self.action(d, null));});
+		this.other.stream.on('end', done);
+	} else done();
+}
+
+// Text
+function TextStream() {
+	if (!(this instanceof TextStream))
+		return new TextStream();
+	stream.Transform.call(this, {objectMode: true});
+}
+util.inherits(TextStream, stream.Transform);
+
+TextStream.prototype._transform = function (msg, encoding, done) {
+	done(null, msg.toString());
+};
+
+// Object
+function ObjectStream() {
+	stream.Transform.call(this, {objectMode: true});
+}
+util.inherits(ObjectStream, stream.Transform);
+
+ObjectStream.prototype._transform = function (msg, encoding, done) {
+	done(null, JSON.parse(JSON.stringify(msg)));
+};
+
+// Transform stream
+function TransformStream(action, args) {
+	this.action = action;
+	this.args = args;
+	stream.Transform.call(this, {objectMode: true});
+}
+util.inherits(TransformStream, stream.Transform);
+
+TransformStream.prototype._transform = function (msg, encoding, done) {
+	done(null, this.action.apply(this, [].concat([msg], this.args)));
+};
+
+// Helper functions
+function coGroup(v1, v2) {
+	var v = [], already_v1 = [], already_v2 = [];
 
 	for (var i = 0; i < v1.length; i++)
 		for (var j = 0; j < v2.length; j++)
 			if (v1[i][0] == v2[j][0]) {
 				var idx = -1;
-				for (var k = 0; k < v3.length; k++) {
-					if (v3[k][0] == v1[i][0]) {
+				for (var k = 0; k < v.length; k++) {
+					if (v[k][0] == v1[i][0]) {
 						idx = k;
 						break;
 					}
 				}
 				if (idx == -1) {
-					idx = v3.length;
-					v3[v3.length] = [v1[i][0], [[], []]];
+					idx = v.length;
+					v[v.length] = [v1[i][0], [[], []]];
 				}
 				if (!already_v1[i]) {
-					v3[idx][1][0].push(v1[i][1]);
+					v[idx][1][0].push(v1[i][1]);
 					already_v1[i] = true;
 				}
 				if (!already_v2[j]) {
-					v3[idx][1][1].push(v2[j][1]);
+					v[idx][1][1].push(v2[j][1]);
 					already_v2[j] = true;
 				}
 			}
-	this.data = v3;
-	return this;
+	return v;
 }
 
-LocalArray.prototype.collect = function (opt, done) {
-	if (arguments.length < 2) done = opt;
-	done(null, this.data);
-};
-
-LocalArray.prototype.count = function (done) {
-	done(null, this.data.length);
-};
-
-LocalArray.prototype.crossProduct = function (other) {
-	var v1 = this.data, v2 = other.data, v3 = [], i, j;
-	for (i = 0; i < v1.length; i++)
-		for (j = 0; j < v2.length; j++)
-			v3.push([v1[i], v2[j]])
-	this.data = v3;
-	return this;
-};
-
-LocalArray.prototype.countByValue = function (done) {
+function countByValue(v) {
 	var tmp = {}, str, i, out = [];
-	for (i = 0; i < this.data.length; i++) {
-		str = JSON.stringify(this.data[i]);
-		if (tmp[str] === undefined) tmp[str] = [this.data[i], 0];
+	for (i = 0; i < v.length; i++) {
+		str = JSON.stringify(v[i]);
+		if (tmp[str] === undefined) tmp[str] = [v[i], 0];
 		tmp[str][1]++;
 	}
 	for (i in tmp) out.push(tmp[i]);
-	done(null, out);
-};
+	return out;
+}
 
-LocalArray.prototype.lookup = function(key, done) {
-	done(null, this.data.filter(function (e) {return e[0] == key;}));
-};
+function crossProduct(v1, v2) {
+	var v = [], i, j;
+	for (i = 0; i < v1.length; i++)
+		for (j = 0; j < v2.length; j++)
+			v.push([v1[i], v2[j]])
+	return v;
+}
 
-LocalArray.prototype.reduce = function(callback, initial, done) {
-	done(null, this.data.reduce(callback, initial));
-};
-
-// Transformations
-LocalArray.prototype.distinct = function () {
-	var out = [], ref = [];
-	for (var i = 0; i < this.data.length; i++) {
-		if (ref.indexOf(JSON.stringify(this.data[i])) != -1) continue;
-		ref.push(JSON.stringify(this.data[i]));
-		out.push(this.data[i]);
+function distinct(v) {
+	var out = [], ref = {}, s;
+	for (var i = 0; i < v.length; i++) {
+		s = JSON.stringify(v[i]);
+		if (s in ref) continue;
+		ref[s] = true;
+		out.push(v[i]);
 	}
-	this.data = out;
-	return this;
-};
+	return out;
+}
 
-LocalArray.prototype.filter = function (filter) {
-	this.data = this.data.filter(filter);
-	return this;
-};
+function filter(v, filterer) {
+	return v.filter(filterer);
+}
 
-LocalArray.prototype.flatMap = function (mapper) {
-	this.data = this.data.map(mapper).reduce(function (a, b) {return a.concat(b);}, []);
-	return this;
-};
+function flatMap(v, mapper) {
+	return v.map(mapper).reduce(function (a, b) {return a.concat(b);}, []);
+}
 
-LocalArray.prototype.flatMapValues = function (mapper) {
-	var i, out = [], t0, self = this;
-	for (i = 0; i < this.data.length; i++) {
-		t0 = mapper(this.data[i][1]);
-		out = out.concat(t0.map(function (e) {return [self.data[i][0], e];}));
+function flatMapValues(v, mapper) {
+	var i, out = [], t0;
+	for (i = 0; i < v.length; i++) {
+		t0 = mapper(v[i][1]);
+		out = out.concat(t0.map(function (e) {return [v[i][0], e];}));
 	}
-	this.data = out;
-	return this;
-};
+	return out;
+}
 
-LocalArray.prototype.groupByKey = function () {
-	var i, idx, keys = [], res = [];
-	for (i = 0; i < this.data.length; i++)
-		if (keys.indexOf(this.data[i][0]) == -1)
-			keys.push(this.data[i][0]);
+function groupByKey(v) {
+	var i, idx, keys = [], out = [];
+	for (i = 0; i < v.length; i++)
+		if (keys.indexOf(v[i][0]) == -1)
+			keys.push(v[i][0]);
 	for (i = 0; i < keys.length; i++)
-		res.push([keys[i], []]);
-	for (i = 0; i < this.data.length; i++) {
-		idx = keys.indexOf(this.data[i][0]);
-		res[idx][1].push(this.data[i][1]);
+		out.push([keys[i], []]);
+	for (i = 0; i < v.length; i++) {
+		idx = keys.indexOf(v[i][0]);
+		out[idx][1].push(v[i][1]);
 	}
-	this.data = res;
-	return this;
-};
+	return out;
+}
 
-LocalArray.prototype.intersection = function (other) {
-	var e, i, j, v = [], v1 = this.data, v2 = other.data;
+function intersection(v1, v2) {
+	var e, i, j, v = [];
 	for (i = 0; i < v1.length; i++) {
 		e = JSON.stringify(v1[i]);
 		if (v.indexOf(e) != -1) continue;
@@ -203,62 +394,87 @@ LocalArray.prototype.intersection = function (other) {
 			}
 		}
 	}
-	this.data = v;
-	return this;
-};
+	return v;
+}
 
-LocalArray.prototype.join = function (other) {
-	this.data = join(this.data, other.data);
-	return this;
-};
+function leftOuterJoin(v1, v2) {
+	var i, j, found, v = [];
+	for (i = 0; i < v1.length; i++) {
+		found = false;
+		for (j = 0; j < v2.length; j++) {
+			if (v1[i][0] == v2[j][0]) {
+				found = true;
+				v.push([v1[i][0], [v1[i][1], v2[j][1]]]);
+			}
+		}
+		if (!found)
+			v.push([v1[i][0], [v1[i][1], null]]);
+	}
+	return v;
+}
 
-LocalArray.prototype.keys = function () {
-	this.data = this.data.map(function (e) {return e[0];});
-	return this;
-};
+function join(v1, v2) {
+	var i, j, found, v = [];
+	for (i = 0; i < v1.length; i++)
+		for (j = 0; j < v2.length; j++)
+			if (v1[i][0] == v2[j][0])
+				v.push([v1[i][0], [v1[i][1], v2[j][1]]])
+	return v;
+}
 
-LocalArray.prototype.leftOuterJoin = function (other) {
-	this.data = join(this.data, other.data, 'left');
-	return this;
-};
+function keys(v) {
+	return v.map(function (e) {return e[0];});
+}
 
-LocalArray.prototype.map = function (mapper) {
-	this.data = this.data.map(mapper);
-	return this;
-};
+function lookup(v, key) {
+	return v.filter(function (e) {return e[0] == key;});
+}
 
-LocalArray.prototype.mapValues = function (valueMapper) {
-	this.data = this.data.map(function (e) {return [e[0], valueMapper(e[1])];});
-	return this;
-};
+function map(v, mapper) {
+	return v.map(mapper);
+}
 
-LocalArray.prototype.persist = function () {
-	return this;
-};
+function mapValues(v, mapper) {
+	return v.map(function (e) {return [e[0], mapper(e[1])];});
+}
 
-LocalArray.prototype.reduceByKey = function reduceByKey(reducer, init) {
+function reduce(v, reducer, init) {
+	return v.reduce(reducer, JSON.parse(JSON.stringify(init)));
+}
+
+function reduceByKey(v, reducer, init) {
 	var i, idx, keys = [], res = [];
-	for (i = 0; i < this.data.length; i++)
-		if (keys.indexOf(this.data[i][0]) == -1)
-			keys.push(this.data[i][0]);
+	for (i = 0; i < v.length; i++)
+		if (keys.indexOf(v[i][0]) == -1)
+			keys.push(v[i][0]);
 	for (i = 0; i < keys.length; i++)
 		res.push([keys[i], init]);
-	for (i = 0; i < this.data.length; i++) {
-		idx = keys.indexOf(this.data[i][0]);
-		res[idx][1] = reducer(res[idx][1], this.data[i][1]);
+	for (i = 0; i < v.length; i++) {
+		idx = keys.indexOf(v[i][0]);
+		res[idx][1] = reducer(res[idx][1], v[i][1]);
 	}
-	this.data = res;
-	return this;
-};
+	return res;
+}
 
-LocalArray.prototype.rightOuterJoin = function (other) {
-	this.data = join(this.data, other.data, 'right');
-	return this;
-};
+function rightOuterJoin(v1, v2) {
+	var i, j, found, v = [];
+	for (i = 0; i < v2.length; i++) {
+		found = false;
+		for (j = 0; j < v1.length; j++) {
+			if (v2[i][0] == v1[j][0]) {
+				found = true;
+				v.push([v2[i][0], [v1[j][1], v2[i][1]]]);
+			}
+		}
+		if (!found)
+			v.push([v2[i][0], [null, v2[i][1]]]);
+	}
+	return v;
+}
 
-LocalArray.prototype.sample = function (withReplacement, frac) {
-	var P = 4, seed = 1;
-	if (P > this.data.length) P = this.data.length;
+function sample(v, withReplacement, frac) {
+	var P = process.env.UGRID_WORKER_PER_HOST || os.cpus().length, seed = 1;
+	if (P > v.length) P = v.length;
 
 	function split(a, n) {
 		var len = a.length, out = [], i = 0;
@@ -268,7 +484,7 @@ LocalArray.prototype.sample = function (withReplacement, frac) {
 		}
 		return out;
 	}
-	var map = split(this.data, P);
+	var map = split(v, P);
 
 	var workerMap = [];
 	for (var i = 0; i < P; i++) {
@@ -297,33 +513,32 @@ LocalArray.prototype.sample = function (withReplacement, frac) {
 			p++;
 		}
 	}
-	this.data = out;
-	return this;
-};
+	return out;
+}
 
-LocalArray.prototype.subtract = function (other) {
-	var v1 = this.data, v2 = other.data, v = [], e, i, j, found;
-	for (i = 0; i < v1.length; i++) {
-		e = JSON.stringify(v1[i]);
+function subtract(v1, v2) {
+	var v = [], e, i, j, found, s1 = v1.map(JSON.stringify), s2 = v2.map(JSON.stringify);
+	for (i = 0; i < s1.length; i++) {
 		found = false;
-		for (j = 0; j < v2.length; j++)
-			if (JSON.stringify(v2[j]) == e) {
+		for (j = 0; j < s2.length; j++)
+			if (s2[j] == s1[i]) {
 				found = true;
 				break;
 			}
 		if (!found)
 			v.push(v1[i]);
 	}
-	this.data = v;
-	return this;
-};
-
-LocalArray.prototype.union = function (other) {
-	this.data = this.data.concat(other.data);
-	return this;
+	return v;
 }
 
-LocalArray.prototype.values = function () {
-	this.data = this.data.map(function (e) {return e[1];});
-	return this;
-};
+function take(v, num) {
+	return v.slice(0, num);
+}
+
+function union(v1, v2) {
+	return v1.concat(v2);
+}
+
+function values(v) {
+	return v.map(function (e) {return e[1];});
+}

@@ -1,7 +1,9 @@
 'use strict';
 
 var LocalArray = require('./local-array.js');
+var trace = require('line-trace');
 
+module.exports.TextStream = LocalArray.TextStream;
 module.exports.context = LocalContext;
 
 function LocalContext(args, done) {
@@ -14,17 +16,20 @@ function LocalContext(args, done) {
 	if (done) process.nextTick(done);
 }
 
-LocalContext.prototype.lineStream = function (inputStream) {
-	var localArray = new LocalArray();
-	return localArray.lineStream(inputStream);
+LocalContext.prototype.lineStream = function (inputStream, opt) {
+	var loc = new LocalArray();
+	loc.lineStream(inputStream, opt);
+	return loc;
 };
 
 LocalContext.prototype.parallelize = function (data) {
-	var localArray = new LocalArray();
-	return localArray.parallelize(data);
+	var loc = new LocalArray();
+	loc.parallelize(data);
+	return loc;
 };
 
 LocalContext.prototype.textFile = function (path) {
-	var localArray = new LocalArray();
-	return localArray.textFile(path);
+	var loc = new LocalArray();
+	loc.textFile(path);
+	return loc;
 };
