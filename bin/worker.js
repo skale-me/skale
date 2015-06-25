@@ -7,7 +7,7 @@ var cluster = require('cluster');
 
 var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
-var UgridJob = require('../lib/ugrid-processing.js').UgridJob;
+var RDD = require('../lib/ugrid-transformation.js');
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -111,22 +111,15 @@ function runWorker(host, port) {
 		}
 	};
 
-	//grid.on('reset', function () {
-	//	process.exit(0);
-	//});
-
 	grid.on('remoteClose', function (msg) {
 		process.exit(0);
 	});
 
 	grid.on('shuffle', function (msg) {
-		var shuffleNum = jobs[msg.jobId].stage[msg.sid].shuffleNum;
-		try {
-			jobs[msg.jobId].node[shuffleNum].rx_shuffle(msg.args);
-		}
-		catch (err) {throw new Error("Lineage rx shuffle " + jobs[msg.jobId].node[shuffleNum].type + ": " + err);}
-		if (jobs[msg.jobId].stage[msg.sid].nShuffle == jobs[msg.jobId].app.worker.length)
-			jobs[msg.jobId].stage[++jobs[msg.jobId].scnt].run();
+		try {jobs[msg.jobId].node[msg.shuffleNode].rx_shuffle(msg.args);}
+		catch (err) {throw new Error("Lineage rx shuffle " + jobs[msg.jobId].node[msg.shuffleNode].type + ": " + err);}
+		if (jobs[msg.jobId].node[msg.shuffleNode].stage.nShuffle == jobs[msg.jobId].app.worker.length)
+			jobs[msg.jobId].node[msg.shuffleNode].runFromStageRam();
 	});
 
 	grid.on('runJob', function (msg) {
@@ -134,9 +127,7 @@ function runWorker(host, port) {
 	});
 
 	grid.on('lastLine', function (msg) {
-		// jobs[msg.jobId].stage[msg.args.sid].source[msg.args.lid].processLastLine(msg.args);
-		var num = jobs[msg.jobId].stage[msg.args.sid].lineages[msg.args.lid][0];
-		jobs[msg.jobId].node[num].processLastLine(msg.args);
+		jobs[msg.jobId].node[msg.args.targetNum].processLastLine(msg.args);
 	});
 
 	grid.on('action', function (msg) {
@@ -152,3 +143,25 @@ function runWorker(host, port) {
 		}
 	});
 }
+
+ function UgridJob(grid, app, param) {
+	this.id = param.jobId;
+	this.node = param.node;	
+	this.app = app;
+	this.action = new RDD[param.actionData.fun](grid, app, this, param.actionData);
+
+	for (var i in this.node)
+		this.node[i] = new RDD[this.node[i].type](grid, app, this, param.node[i]);
+
+	// Il faut lancer les noeuds source qui ne sont pas des shuffle
+	this.run = function() {
+		for (var i = 0; i < param.stageData.length; i++) {
+			for (var j = 0; j < param.stageData[i].length; j++) {
+				var node = this.node[param.stageData[i][j][0]];
+				if ((node.dependency == 'wide') && !node.inMemory) continue;
+				if (node.inMemory) node.runFromRAM();
+				else node.run();
+			}
+		}
+	};
+};
