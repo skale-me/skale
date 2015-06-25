@@ -144,24 +144,59 @@ function runWorker(host, port) {
 	});
 }
 
- function UgridJob(grid, app, param) {
+function UgridJob(grid, app, param) {
 	this.id = param.jobId;
-	this.node = param.node;	
+	this.node = param.node;
 	this.app = app;
 	this.action = new RDD[param.actionData.fun](grid, app, this, param.actionData);
 
-	for (var i in this.node)
-		this.node[i] = new RDD[this.node[i].type](grid, app, this, param.node[i]);
+	var nums = Object.keys(param.node).sort();
+	for (var i = 0; i < nums.length; i++)
+		this.node[nums[i]] = new RDD[this.node[nums[i]].type](grid, app, this, param.node[nums[i]]);
 
-	// Il faut lancer les noeuds source qui ne sont pas des shuffle
 	this.run = function() {
-		for (var i = 0; i < param.stageData.length; i++) {
-			for (var j = 0; j < param.stageData[i].length; j++) {
-				var node = this.node[param.stageData[i][j][0]];
-				if ((node.dependency == 'wide') && !node.inMemory) continue;
-				if (node.inMemory) node.runFromRAM();
-				else node.run();
+		var sources = [];
+		treewalk(this.node[nums[nums.length - 1]], null,
+		function c_out(n){
+			n.inLastStage = (n.stageNode == undefined);
+			if (n.inMemory || (n.child.length == 0)) {
+				sources.push(n);
+				var tmp = n;
+				while (tmp = tmp.anc) {
+					n.nodePath.push(tmp);
+					if (tmp.dependency == 'wide') break;
+				}
 			}
-		}
+			if ((n.dependency == 'wide') && !n.inMemory) {
+				var tmp = n;
+				while (tmp = tmp.anc) {
+					n.nodePath.push(tmp);
+					if (tmp.dependency == 'wide') break;
+				}
+			}
+		}, function end() {
+			for (var i = 0; i < sources.length; i++) {
+				if (sources[i].inMemory) sources[i].runFromRAM();
+				else sources[i].run();
+			}
+		})
 	};
+
+	function treewalk(root, c_in, c_out, callback) {
+		var n = root;
+		if (c_in) c_in(n);
+		while (1)
+			if (n.child.length && (++n.visits <= n.child.length)) {
+				n = n.child[n.visits - 1];
+				if (c_in) c_in(n);
+			} else {
+				n.visits = 0;
+				if (c_out) c_out(n);
+				if (n == root) break;
+				n = n.anc;
+			}
+		callback();
+	}
 };
+
+
