@@ -74,6 +74,7 @@ var actions = [
 	{name: 'reduce', args: [data.reducer, [0, 0]]},
 	{name: 'take', args: [2], lengthOnly: true},
 	{name: 'takeOrdered', args: [2, function (a, b) {return a < b;}]},
+	{name: 'top', args: [2]},
 // XXXXX TODO:
 // takeSample,
 // top,
