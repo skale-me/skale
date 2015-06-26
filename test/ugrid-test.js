@@ -77,7 +77,6 @@ var actions = [
 	{name: 'top', args: [2]},
 // XXXXX TODO:
 // takeSample,
-// top,
 // foreach,
 ];
 
@@ -113,7 +112,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				args = [].concat(action.args, function (err, res) {dres = res; done();});
 				rdd[action.name].apply(rdd, args);
 			});
-/*
+//
 			it('run distributed, pre-persist', function (done) {
 				assert(uc.worker.length > 0);
 				var args, rdd;
@@ -154,11 +153,11 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				out.on('data', function (d) {sres.push(d);});
 				out.on('end', done);
 			});
-*/
+//
 			it('check distributed results', function () {
 				data.compareResults(lres, dres, check);
 			});
-/*
+//
 			it('check distributed pre-persist results', function () {
 				data.compareResults(lres, pres1, check);
 			});
@@ -170,7 +169,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 			it('check stream results', function () {
 				data.compareResults([lres], sres, check);
 			});
-*/
+//
 		});});
 	});});
 
