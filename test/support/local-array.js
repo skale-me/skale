@@ -96,6 +96,26 @@ LocalArray.prototype.take = function(num, opt, done) {
 	this.stream.on('end', function () {done(null, res);});
 };
 
+LocalArray.prototype.takeOrdered = function(num, ordering, opt, done) {
+	opt = opt || {};
+	if (arguments.length < 4) done = opt;
+	this.stream = this.stream.pipe(new TransformStream(takeOrdered, [num, ordering]));
+	if (opt.stream) return this.stream;
+	var res = [];
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+};
+
+LocalArray.prototype.top = function(num, opt, done) {
+	opt = opt || {};
+	if (arguments.length < 3) done = opt;
+	this.stream = this.stream.pipe(new TransformStream(top, [num]));
+	if (opt.stream) return this.stream;
+	var res = [];
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+};
+
 // Transformations
 LocalArray.prototype.coGroup = function (other) {
 	this.stream = this.stream.pipe(new DualTransformStream(other, coGroup));
@@ -533,6 +553,19 @@ function subtract(v1, v2) {
 
 function take(v, num) {
 	return v.slice(0, num);
+}
+
+function takeOrdered(v, num, ordering) {
+	//return v.sort(ordering).slice(0, num);
+	var out = [];
+	for (var i = 0; i < v.length; i++) {
+		out = out.concat([v[i]]).sort(ordering).slice(0, num);
+	}
+	return out;
+}
+
+function top(v, num) {
+	return v.sort().slice(0, num);
 }
 
 function union(v1, v2) {

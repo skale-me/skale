@@ -39,6 +39,9 @@ if (cluster.isMaster) {
 		for (var i = 0; i < msg.n; i++)
 			cluster.fork({wsid: msg.wsid});
 	});
+	cgrid.on('close', function () {
+		process.exit(1);
+	});
 	console.log('worker controller ready');
 } else {
 	runWorker(opt.options.Host, opt.options.Port);
@@ -206,5 +209,3 @@ function UgridJob(grid, app, param) {
 		callback();
 	}
 };
-
-

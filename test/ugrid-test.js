@@ -72,18 +72,21 @@ var actions = [
 	{name: 'countByValue', args: [], sort: true},
 	{name: 'lookup', args: [data.v[0][0][0]]},
 	{name: 'reduce', args: [data.reducer, [0, 0]]},
-	// {name: 'take', args: [2]},
+	{name: 'take', args: [2], lengthOnly: true},
+	{name: 'takeOrdered', args: [2, function (a, b) {return a < b;}]},
+	{name: 'top', args: [2]},
 // XXXXX TODO:
-// takeOrdered,
 // takeSample,
-// top,
 // foreach,
 ];
 
 sources.forEach(function (source) {describe('uc.' + source[0].name + '()', function() {
 	transforms.forEach(function (transform) {describe(transform.name ? '.' + transform.name + '()' : '/* empty */', function () {
 		actions.forEach(function (action) {describe('.' + action.name + '()', function () {
-			var lres, dres, sres, pres1, pres2;
+			var lres, dres, sres, pres1, pres2, check = {};
+
+			if (transform.sort || action.sort) check.sort = true;
+			if (transform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
 
 			it('run local', function (done) {
 				var args, rdd;
@@ -152,19 +155,19 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 			});
 //
 			it('check distributed results', function () {
-				data.compareResults(lres, dres);
+				data.compareResults(lres, dres, check);
 			});
 //
 			it('check distributed pre-persist results', function () {
-				data.compareResults(lres, pres1);
+				data.compareResults(lres, pres1, check);
 			});
 
 			it('check distributed post-persist results', function () {
-				data.compareResults(lres, pres2);
+				data.compareResults(lres, pres2, check);
 			});
 
 			it('check stream results', function () {
-				data.compareResults([lres], sres);
+				data.compareResults([lres], sres, check);
 			});
 //
 		});});
@@ -173,7 +176,10 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 	sources2.forEach(function (source2) {
 		dualTransforms.forEach(function (dualTransform) {describe('.' + dualTransform.name + '(uc.' + source2[0].name + '())', function () {
 			actions.forEach(function (action) {describe('.' + action.name + '()', function () {
-				var lres, dres, sres, pres1, pres2;
+				var lres, dres, sres, pres1, pres2, check = {};
+
+				if (dualTransform.sort || action.sort) check.sort = true;
+				if (dualTransform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
 
 				it('run local', function (done) {
 					var args, rdd, other;
@@ -268,19 +274,19 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				});
 
 				it('check distributed results', function () {
-					data.compareResults(lres, dres);
+					data.compareResults(lres, dres, check);
 				});
 
 				it('check distributed pre-persist results', function () {
-					data.compareResults(lres, pres1);
+					data.compareResults(lres, pres1, check);
 				});
 
 				it('check distributed post-persist results', function () {
-					data.compareResults(lres, pres2);
+					data.compareResults(lres, pres2, check);
 				});
 
 				it('check stream results', function () {
-					data.compareResults([lres], sres);
+					data.compareResults([lres], sres, check);
 				});
 			});});
 		});});
