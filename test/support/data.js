@@ -41,7 +41,10 @@ function mapper(e) {e[1] *= 2; return e;}
 function reducer(a, b) {
 	if (Array.isArray(b[0]))
 		a[0] += b[0].reduce(sum);
-	else
+	else if (! Array.isArray(b)) {
+		if (Array.isArray(a)) a = a[0];
+		a += b;
+	} else
 		a[0] += b[0];
 
 	if (Array.isArray(b[1])) {
@@ -50,7 +53,7 @@ function reducer(a, b) {
 				return a + b.reduce(sum);
 			return a + b;
 		}, 0);
-	} else
+	} else if (Array.isArray(b))
 		a[1] += b[1];
 	return a;
 

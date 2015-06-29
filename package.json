@@ -28,6 +28,7 @@
     "co": "^4.4.0",
     "co-shell": "^0.1.2",
     "escodegen": "^1.6.1",
+    "esprima": "^2.4.0",
     "find": "^0.2.2",
     "line-trace": "^1.0.4",
     "mongodb": "^2.0.33",

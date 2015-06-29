@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var stream = require('stream');
+var os = require('os');
 var util = require('util');
 var trace = require('line-trace');
 var Lines = require('../../lib/lines.js');
@@ -81,8 +82,11 @@ LocalArray.prototype.reduce = function(reducer, init, opt, done) {
 	if (arguments.length < 4) done = opt;
 	this.stream = this.stream.pipe(new TransformStream(reduce, [reducer, init]));
 	if (opt.stream) return this.stream;
-	var res = [];
-	this.stream.on('data', function (data) {res = res.concat(data);});
+	var res;
+	this.stream.on('data', function (data) {
+		if (res === undefined) res = data;
+		else res = reducer(res, data);
+	});
 	this.stream.on('end', function () {done(null, res);});
 };
 
@@ -100,6 +104,16 @@ LocalArray.prototype.takeOrdered = function(num, ordering, opt, done) {
 	opt = opt || {};
 	if (arguments.length < 4) done = opt;
 	this.stream = this.stream.pipe(new TransformStream(takeOrdered, [num, ordering]));
+	if (opt.stream) return this.stream;
+	var res = [];
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+};
+
+LocalArray.prototype.takeSample = function(withReplacement, num, seed, opt, done) {
+	opt = opt || {};
+	if (arguments.length < 5) done = opt;
+	this.stream = this.stream.pipe(new TransformStream(sample, [withReplacement, 0, num, seed]));
 	if (opt.stream) return this.stream;
 	var res = [];
 	this.stream.on('data', function (data) {res = res.concat(data);});
@@ -196,8 +210,8 @@ LocalArray.prototype.rightOuterJoin = function (other) {
 	return this;
 };
 
-LocalArray.prototype.sample = function (withReplacement, frac) {
-	this.stream = this.stream.pipe(new TransformStream(sample, [withReplacement, frac]));
+LocalArray.prototype.sample = function (withReplacement, frac, seed) {
+	this.stream = this.stream.pipe(new TransformStream(sample, [withReplacement, frac, 0, seed]));
 	return this;
 };
 
@@ -492,9 +506,11 @@ function rightOuterJoin(v1, v2) {
 	return v;
 }
 
-function sample(v, withReplacement, frac) {
-	var P = process.env.UGRID_WORKER_PER_HOST || os.cpus().length, seed = 1;
+function sample(v, withReplacement, frac, num, seed) {
+	var P = process.env.UGRID_WORKER_PER_HOST || os.cpus().length;
 	if (P > v.length) P = v.length;
+	if (num) P = 1;
+	if (seed === undefined) seed = 1;
 
 	function split(a, n) {
 		var len = a.length, out = [], i = 0;
@@ -519,7 +535,7 @@ function sample(v, withReplacement, frac) {
 		var rng = new ml.Random(seed);
 		for (var i in workerMap[w]) {
 			var L = workerMap[w][i].length;
-			var L = Math.ceil(L * frac);
+			L = num ? num : Math.ceil(L * frac);
 			tmp[p] = {data: []};
 			var idxVect = [];
 			while (tmp[p].data.length != L) {
