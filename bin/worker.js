@@ -154,13 +154,21 @@ function UgridJob(grid, app, param) {
 	for (var i = 0; i < nums.length; i++)
 		this.node[nums[i]] = new RDD[this.node[nums[i]].type](grid, app, this, param.node[nums[i]]);
 
+	var sources = [];
+	function findSource(n) {
+		if (n.inMemory || (n.child.length == 0)) {
+			sources.push(n);
+			return;
+		}
+		for (var i = 0; i < n.child.length; i++)
+			findSource(n.child[i]);
+	}
+	findSource(this.node[nums[nums.length - 1]]);
+
 	this.run = function() {
-		var sources = [];
 		treewalk(this.node[nums[nums.length - 1]], null,
 		function c_out(n){
-			n.inLastStage = (n.stageNode == undefined);
 			if (n.inMemory || (n.child.length == 0)) {
-				sources.push(n);
 				var tmp = n;
 				while (tmp = tmp.anc) {
 					n.nodePath.push(tmp);
