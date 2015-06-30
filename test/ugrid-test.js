@@ -46,13 +46,13 @@ var transforms = [
 	{name: 'flatMap', args: [data.flatMapper]},
 	{name: 'flatMapValues',	args: [data.valueFlatMapper]},
 	{name: 'groupByKey', args: [], sort: true},
-//	{name: 'keys', args: []},
+	{name: 'keys', args: []},
 	{name: 'map', args: [data.mapper]},
 	{name: 'mapValues', args: [data.valueMapper]},
 //	{name: 'persist', args: []},
 	{name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0], sort: true},
-//	{name: 'sample', args: [true, 0.1], sort: true},
-//	{name: 'values', args: []},
+	{name: 'sample', args: [true, 0.1], sort: true},
+	{name: 'values', args: []},
 ];
 
 var dualTransforms = [
@@ -75,8 +75,8 @@ var actions = [
 	{name: 'take', args: [2], lengthOnly: true},
 	{name: 'takeOrdered', args: [2, function (a, b) {return a < b;}]},
 	{name: 'top', args: [2]},
+//	{name: 'takeSample', args: [true, 2, 1]},
 // XXXXX TODO:
-// takeSample,
 // foreach,
 ];
 
