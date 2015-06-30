@@ -121,7 +121,7 @@ function runWorker(host, port) {
 	grid.on('shuffle', function (msg) {
 		try {jobs[msg.jobId].node[msg.shuffleNode].rx_shuffle(msg.args);}
 		catch (err) {throw new Error("Lineage rx shuffle " + jobs[msg.jobId].node[msg.shuffleNode].type + ": " + err);}
-		if (jobs[msg.jobId].node[msg.shuffleNode].stage.nShuffle == jobs[msg.jobId].app.worker.length)
+		if (jobs[msg.jobId].node[msg.shuffleNode].nShuffle == jobs[msg.jobId].app.worker.length)
 			jobs[msg.jobId].node[msg.shuffleNode].runFromStageRam();
 	});
 
@@ -153,7 +153,7 @@ function UgridJob(grid, app, param) {
 	this.app = app;
 	this.action = new RDD[param.actionData.fun](grid, app, this, param.actionData);
 
-	var nums = Object.keys(param.node).sort();
+	var nums = Object.keys(param.node).sort(function(a, b){return b - a});
 	for (var i = 0; i < nums.length; i++)
 		this.node[nums[i]] = new RDD[this.node[nums[i]].type](grid, app, this, param.node[nums[i]]);
 
@@ -169,16 +169,10 @@ function UgridJob(grid, app, param) {
 	findSource(this.node[nums[nums.length - 1]]);
 
 	this.run = function() {
+		// Build pipelines then run
 		treewalk(this.node[nums[nums.length - 1]], null,
 		function c_out(n){
-			if (n.inMemory || (n.child.length == 0)) {
-				var tmp = n;
-				while (tmp = tmp.anc) {
-					n.nodePath.push(tmp);
-					if (tmp.dependency == 'wide') break;
-				}
-			}
-			if ((n.dependency == 'wide') && !n.inMemory) {
+			if (n.inMemory || (n.child.length == 0) || (n.dependency == 'wide')) {
 				var tmp = n;
 				while (tmp = tmp.anc) {
 					n.nodePath.push(tmp);
@@ -192,7 +186,6 @@ function UgridJob(grid, app, param) {
 			}
 		})
 	};
-
 	function treewalk(root, c_in, c_out, callback) {
 		var n = root;
 		if (c_in) c_in(n);
