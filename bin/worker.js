@@ -12,12 +12,13 @@ var RDD = require('../lib/ugrid-transformation.js');
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
 	['d', 'debug', 'print debug traces'],
+	['n', 'Num=ARG', 'number of workers (default: number of cpus)'],
 	['H', 'Host=ARG', 'server hostname (default localhost)'],
 	['P', 'Port=ARG', 'server port (default 12346)']
 ]).bindHelp().parseSystem();
 
 var debug = opt.options.debug || false;
-var ncpu = process.env.UGRID_WORKER_PER_HOST ? Number(process.env.UGRID_WORKER_PER_HOST) : os.cpus().length;
+var ncpu = opt.options.Num || (process.env.UGRID_WORKER_PER_HOST ? Number(process.env.UGRID_WORKER_PER_HOST) : os.cpus().length);
 var cgrid;
 
 if (cluster.isMaster) {
