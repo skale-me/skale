@@ -95,8 +95,7 @@ function runWorker(host, port) {
 			};
 			jobs[msg.data.jobId] = new UgridJob(grid, app, {
 				node: msg.data.args.node,
-				stageData: msg.data.args.stageData,
-				actionData: msg.data.args.actionData,
+				action: msg.data.args.action,
 				jobId: msg.data.jobId
 			});
 			grid.reply(msg, null, 'worker ready to process job');
@@ -152,7 +151,7 @@ function UgridJob(grid, app, param) {
 	this.id = param.jobId;
 	this.node = param.node;
 	this.app = app;
-	this.action = new RDD[param.actionData.fun](grid, app, this, param.actionData);
+	this.action = new RDD[param.action.fun](grid, app, this, param.action);
 
 	var nums = Object.keys(param.node).sort(function(a, b){return b - a});
 	for (var i = 0; i < nums.length; i++)

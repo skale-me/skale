@@ -10,14 +10,15 @@ co(function *() {
 	var N = 203472 * 4;					// Number of observations
 	var D = 16;							// Number of features
 	var seed = 1;
-	var ITERATIONS = 20;				// Number of iterations
+	var nIterations = 1;				// Number of iterations
 
 	var points = uc.randomSVMData(N, D, seed).persist();
+	// var points = uc.randomSVMData(N, D, seed);
 	var model = new ugrid.ml.LogisticRegression(points, D, N);
 
-	yield model.train(ITERATIONS);
+	yield model.train(nIterations);
 
 	console.log(model.w);
 
-	uc.end();
+	// uc.end();
 }).catch(ugrid.onError);
