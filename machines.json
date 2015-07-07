@@ -1,0 +1,5 @@
+{
+	"server": [ {"host": "localhost"} ],
+	"worker": [{"host": "localhost"} ],
+	"controller": [{"host": "localhost"} ]
+}
