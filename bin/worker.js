@@ -12,6 +12,7 @@ var RDD = require('../lib/ugrid-transformation.js');
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
 	['d', 'debug', 'print debug traces'],
+	['m', 'MyHost=ARG', 'advertised hostname'],
 	['n', 'Num=ARG', 'number of workers (default: number of cpus)'],
 	['H', 'Host=ARG', 'server hostname (default localhost)'],
 	['P', 'Port=ARG', 'server port (default 12346)']
@@ -19,6 +20,7 @@ var opt = require('node-getopt').create([
 
 var debug = opt.options.debug || false;
 var ncpu = opt.options.Num || (process.env.UGRID_WORKER_PER_HOST ? Number(process.env.UGRID_WORKER_PER_HOST) : os.cpus().length);
+var hostname = opt.options.MyHost || os.hostname();
 var cgrid;
 
 if (cluster.isMaster) {
@@ -29,6 +31,7 @@ if (cluster.isMaster) {
 		port: opt.options.Port,
 		data: {
 			type: 'worker-controller',
+			hostname: hostname,
 			ncpu: ncpu
 		}
 	});
@@ -65,7 +68,7 @@ function runWorker(host, port) {
 			arch: os.arch(),
 			usedmem: process.memoryUsage().rss,
 			totalmem: os.totalmem(),
-			hostname: os.hostname(),
+			hostname: hostname,
 			type: 'worker',
 			wsid: process.env.wsid,
 			jobId: ''
