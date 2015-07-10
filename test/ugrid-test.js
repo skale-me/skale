@@ -166,7 +166,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 						src_args = source[0].args; break;
 					}
 					rdd = uc[source[0].name].apply(uc, src_args);
-					if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
+					if (source.length > 1) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 					rdd = rdd.persist();
 					if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
 					action_args = [].concat(action.args, function (err, res) {

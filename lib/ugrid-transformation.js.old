@@ -7,8 +7,6 @@ var trace = require('line-trace');
 var Lines = require('./lines.js');
 var Lines2 = require('./lines2.js');
 
-var RAM_ONLY = true;
-
 function recompile(s) {
 	var args = s.match(/\(([^)]*)/)[1];
 	var body = s.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
@@ -81,7 +79,6 @@ function Transform(grid, app, job, node) {
 	this.nextTargetPathCount = this.targetPathCount;	// next iteration lineage target count
 	this.nShuffle = 0;									// Number of received shuffle (must match target to call next runSource)
 	if (this.src) this.src = recompile(this.src);
-	this.pipelineSemaphore = 1;							// For DiskOnlyMode
 
 	// Replace child id and child anc id by references
 	for (var i = 0; i < this.child.length; i++) {
@@ -103,8 +100,9 @@ function Transform(grid, app, job, node) {
 		}
 	}
 
-	this.saveDiskOnlyMode = function(p, array, head, done) {
-		var partitionId = 0, ret;
+	// TODO
+	this.save = function(array, head, done) {
+		var partitionId = 0;
 		if (!ram[partitionId]) {
 			var file = datasetDirectory + partitionId;
 			ram[partitionId] = {
@@ -114,51 +112,24 @@ function Transform(grid, app, job, node) {
 		}
 		var s = head ? ram[partitionId].head : ram[partitionId].tail;
 		for (var i = 0; i < array.length; i++)
-			ret = s.write(JSON.stringify(array[i]) + '\n');
-		if (ret) process.nextTick(done);
-		else s.once('drain', done)
+			s.write(JSON.stringify(array[i]) + '\n');
+			// s.write(JSON.stringify(array[i]) + '\n', done);
 	};
-
-	this.saveRamOnlyMode = function(p, array, head, done) {
-		if (app.ram[this.id] == undefined) app.ram[this.id] = {};
-		if (app.ram[this.id][p] == undefined) app.ram[this.id][p] = [];
-		var dest = app.ram[this.id][p];
-
-		if (head) for (var i = array.length - 1; i >= 0; i--) dest.unshift(array[i]);
-		else for (var i = 0; i < array.length; i++) dest.push(array[i]);
-
-		// immutable version
-		// if (head) for (var i = array.length - 1; i > 0; i--) dest.unshift(JSON.stringify(array[i]));
-		// else for (var i = 0; i < array.length; i++) dest.push(JSON.stringify(array[i]));
-	};
-
-	this.save = RAM_ONLY ? this.saveRamOnlyMode : this.saveDiskOnlyMode;
 
 	this.pipelineToAction = function(p, head, done) {
 		for (var t = 1; t < this.nodePath.length; t++) {
 			this.tmp = this.nodePath[t].pipeline(this.tmp, p, this.nodePath[t - 1].id);
 			if (this.tmp && (this.tmp.length === 0)) return;
 			if (this.nodePath[t].persistent && (this.nodePath[t].dependency == 'narrow'))
-				this.nodePath[t].save(p, this.tmp, head, done);
+				this.nodePath[t].save(this.tmp, head, done);
 		}
 		if (this.inLastStage) job.action.pipeline(this.tmp, p, head);
 	};
 
-	this.runFromRAMRamOnlyMode = function() {
-		var dataset = app.ram[this.id];
-		for (var p in dataset) {
-			var partition = app.ram[this.id][p];
-			for (var i = 0; i < partition.length; i++) {				
-				// this.tmp = [JSON.parse(partition[i])];	// Immutabilité
-				this.tmp = [partition[i]];
-				this.pipelineToAction(p, false);
-			}
-		}
-		if (this.stageNode) job.node[this.stageNode].lineageEnd(true);
-		else job.action.lineageEnd(true);
-	}
+	this.pipelineSemaphore = 1;
+	// this.targetPipelineSemaphore = 1;
 
-	this.runFromRAMDiskOnlyMode = function() {
+	this.runFromRAM = function() {
 		function readFile(path, p, end, cbk) {
 			function finished() {
 				if (end) {
@@ -168,19 +139,11 @@ function Transform(grid, app, job, node) {
 				cbk && cbk();
 			}
 			if (fs.existsSync(path)) {
-				var lines = new Lines2();
+				var lines = new Lines();
 				fs.createReadStream(path, {encoding: 'utf8'}).pipe(lines);
-				lines.on('data', function(line, done) {
-					function done2() {
-						if (--self.pipelineSemaphore != 0) return;
-						// TODO: compute during treewalk (== number of persist on graph path between source and stageNode)
-						// self.pipelineSemaphore = self.targetPipelineSemaphore;		
-						self.pipelineSemaphore = 1;
-						done();
-					}
+				lines.on('data', function(line) {
 					self.tmp = [JSON.parse(line)];
-					self.pipelineToAction(0, false, done2);
-					done2();
+					self.pipelineToAction(0, false);
 				});
 				lines.on('end', finished);
 			} else finished();
@@ -195,7 +158,41 @@ function Transform(grid, app, job, node) {
 		});
 	}
 
-	this.runFromRAM = RAM_ONLY ? this.runFromRAMRamOnlyMode : this.runFromRAMDiskOnlyMode;
+	// this.runFromRAM = function() {
+	// 	function readFile(path, p, end, cbk) {
+	// 		function finished() {
+	// 			if (end) {
+	// 				if (self.stageNode) job.node[self.stageNode].lineageEnd(true);
+	// 				else job.action.lineageEnd(true);
+	// 			}
+	// 			cbk && cbk();
+	// 		}
+	// 		if (fs.existsSync(path)) {
+	// 			var lines = new Lines2();
+	// 			fs.createReadStream(path, {encoding: 'utf8'}).pipe(lines);
+	// 			lines.on('data', function(line, done) {
+	// 				function done2() {
+	// 					if (--self.pipelineSemaphore != 0) return;
+	// 					// self.pipelineSemaphore = self.targetPipelineSemaphore;
+	// 					self.pipelineSemaphore = 1;
+	// 					done();
+	// 				}
+	// 				self.tmp = [JSON.parse(line)];
+	// 				self.pipelineToAction(0, false, done2);
+	// 				done2();
+	// 			});
+	// 			lines.on('end', finished);
+	// 		} else finished();
+	// 	}
+	// 	// Read pre partition then partition
+	// 	var p = 0;
+	// 	var path = ramDirectory + this.id + '/' + grid.host.uuid + '/' + p + '.pre';
+	// 	readFile(path, p, false, function () {
+	// 		var p = 0;
+	// 		var path = ramDirectory + self.id + '/' + grid.host.uuid + '/' + p;
+	// 		readFile(path, p, true);
+	// 	});
+	// }
 
 	this.runFromStageRam = function () {
 		var input = this.SRAM || [];
@@ -203,7 +200,7 @@ function Transform(grid, app, job, node) {
 			var partition = input[p].data;
 			for (var i = 0; i < partition.length; i++) {
 				this.tmp = [partition[i]];
-				if (this.persistent) this.save(p, this.tmp);
+				if (this.persistent) this.save(this.tmp);
 				this.pipelineToAction(p);
 			}
 		}
@@ -235,42 +232,40 @@ module.exports.randomSVMData = function(grid, app, job, node) {
 	var p = 0, i = 0, self = this;
 	var rng = new ml.Random(partition[p].seed);
 
-	this.runRamOnlyMode = function() {
+	this.pipelineSemaphore = 1;
+	this.targetPipelineSemaphore = 2;
+
+	// this.run = function () {
+	// 	if (--self.pipelineSemaphore != 0) return;
+	// 	self.pipelineSemaphore = self.targetPipelineSemaphore;
+
+	// 	i = (i + 1) % partition[p].n;
+	// 	if (i == 0) {
+	// 		p = (p + 1) % partition.length;
+	// 		if (p == 0) {
+	// 			if (self.stageNode) job.node[self.stageNode].lineageEnd(true);
+	// 			else job.action.lineageEnd(true);
+	// 			return;
+	// 		}
+	// 	}
+	// 	self.tmp = [ml.randomSVMLine(rng, D)];
+	// 	if (self.persistent) self.save(self.tmp, false, self.run);
+	// 	self.pipelineToAction(p, false, self.run);
+	// 	process.nextTick(self.run);
+	// };	
+
+	this.run = function() {
 		for (var p = 0; p < partition.length; p++) {
 			var rng = new ml.Random(partition[p].seed);
 			for (var i = 0; i < partition[p].n; i++) {
 				this.tmp = [ml.randomSVMLine(rng, D)];
-				if (this.persistent) this.save(p, this.tmp);
+				if (this.persistent) this.save(this.tmp);
 				this.pipelineToAction(p);
 			}
 		}
 		if (this.stageNode) job.node[this.stageNode].lineageEnd(true);
-		else job.action.lineageEnd(true);		
-	}
-
-	// Experiment for DiskOnlyMode
-	this.targetPipelineSemaphore = 2;			// Must be computed during treewalk
-	this.runDiskOnlyMode = function() {
-		if (--self.pipelineSemaphore != 0) return;
-		self.pipelineSemaphore = self.targetPipelineSemaphore;
-
-		if (++i > partition[p].n) {
-			i = 0;
-			p = (p + 1) % partition.length;
-			if (p == 0) {
-				if (self.stageNode) job.node[self.stageNode].lineageEnd(true);
-				else job.action.lineageEnd(true);
-				return;
-			}
-		}
-		self.tmp = [ml.randomSVMLine(rng, D)];
-		if (self.persistent) self.save(p, self.tmp, false, self.run);
-		self.pipelineToAction(p, false, self.run);
-		process.nextTick(self.run);
-	}
-
-	// this.run = this.runRamOnlyMode;
-	this.run = RAM_ONLY ? this.runRamOnlyMode : this.runDiskOnlyMode;	
+		else job.action.lineageEnd(true);
+	};
 }
 
 module.exports.collect = function(grid, app, job, action) {
@@ -423,7 +418,7 @@ module.exports.parallelize = function(grid, app, job, node) {
 			var partition = input[p];
 			for (var i = 0; i < partition.length; i++) {
 				this.tmp = [partition[i]];
-				if (this.persistent) this.save(p, this.tmp);
+				if (this.persistent) this.save(this.tmp);
 				this.pipelineToAction(p);
 			}
 		}
@@ -443,7 +438,7 @@ module.exports.stream = function(grid, app, job, node) {
 
 	var onData = function(data, done) {			
 		self.tmp = [data];
-		if (self.persistent) self.save(0, self.tmp);
+		if (self.persistent) self.save(self.tmp);
 		self.pipelineToAction(0);
 		if (++n == N) {
 			n = 0;
@@ -497,7 +492,7 @@ module.exports.textFile = function(grid, app, job, node) {
 
 	function processLine(p, line, first) {
 		self.tmp = [line];
-		if (self.persistent) self.save(p, self.tmp, first);
+		if (self.persistent) self.save(self.tmp, first);
 		self.pipelineToAction(p, first);
 	}
 
@@ -511,7 +506,7 @@ module.exports.textFile = function(grid, app, job, node) {
 				blocks[bid].lastLine = line;
 				lines.on("data", function (line) {
 					self.tmp = [blocks[bid].lastLine];
-					if (self.persistent) self.save(blocks[bid].p, self.tmp);
+					if (self.persistent) self.save(self.tmp);
 					self.pipelineToAction(blocks[bid].p);
 					blocks[bid].lastLine = line;
 				});
@@ -611,17 +606,11 @@ module.exports.map = function(grid, app, job, node) {
 	var mapper = this.src;
 	var args = this.args;
 
-	// this.pipeline = function(array) {
-	// 	for (var i = 0; i < array.length; i++)
-	// 		array[i] = mapper(array[i], args[0]);
-	// 	return array;
-	// };
 	this.pipeline = function(array) {
-		var tmp = []
 		for (var i = 0; i < array.length; i++)
-			tmp[i] = mapper(array[i], args[0]);
-		return tmp;
-	};	
+			array[i] = mapper(array[i], args[0]);
+		return array;
+	};
 };
 
 module.exports.filter = function(grid, app, job, node) {
@@ -652,18 +641,11 @@ module.exports.mapValues = function(grid, app, job, node) {
 	Transform.call(this, grid, app, job, node);
 	var mapper = this.src;
 
-	// this.pipeline = function(array) {
-	// 	for (var i = 0; i < array.length; i++)
-	// 		array[i][1] = mapper(array[i][1]);
-	// 	return array;
-	// };
 	this.pipeline = function(array) {
-		var tmp = [];
 		for (var i = 0; i < array.length; i++)
-			tmp[i] = [array[i][0], mapper(array[i][1])];
-			// array[i][1] = mapper(array[i][1]);
-		return tmp;
-	};	
+			array[i][1] = mapper(array[i][1]);
+		return array;
+	};
 };
 
 module.exports.flatMapValues = function(grid, app, job, node) {
@@ -973,7 +955,8 @@ module.exports.crossProduct = function(grid, app, job, node) {
 	this.pipeline = function(array, p, from_id) {
 		var dest = (from_id == left_dataset) ? residentPartitions : shuffledPartitions;
 		if (dest[p] === undefined) dest[p] = [];
-		for (var i = 0; i < array.length; i++) dest[p].push(array[i]);
+		for (var i = 0; i < array.length; i++)
+			dest[p].push(array[i]);
 	};
 
 	function crossProduct(a, b) {

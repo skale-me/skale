@@ -52,7 +52,7 @@ function handleExit(worker, code, signal) {
 }
 
 function runWorker(host, port) {
-	var jobs = {}, jobId;
+	var jobs = {}, jobId, ram = {};
 
 	var grid = new UgridClient({
 		debug: debug,
@@ -90,7 +90,8 @@ function runWorker(host, port) {
 				wid: wid,
 				master_uuid: msg.data.master_uuid,
 				dones: {},
-				completedStreams: {}
+				completedStreams: {},
+				ram: ram
 			};
 			jobs[msg.data.jobId] = new UgridJob(grid, app, {
 				node: msg.data.args.node,

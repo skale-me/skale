@@ -34,9 +34,15 @@ function compareResults(r1, r2, opt) {
 
 function filter(e) {return e[1] % 2 === 0;}
 
-function flatMapper(e) {return [e, e];}
+function flatMapper(e) {
+	return [e, e];
+}
 
-function mapper(e) {e[1] *= 2; return e;}
+function mapper(e) {
+	// copy input
+	var cpy = JSON.parse(JSON.stringify(e));
+	cpy[1] *= 2; return cpy;
+}
 
 function reducer(a, b) {
 	if (Array.isArray(b[0]))
@@ -67,7 +73,10 @@ function sort(v) {
 	v.sort();
 }
 
-function valueMapper(e) {return e * 2;}
+function valueMapper(e) {
+	// console.log(e);
+	return e * 2;
+}
 
 function valueFlatMapper(e) {
 	var i, out = [];

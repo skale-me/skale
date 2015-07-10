@@ -7,10 +7,11 @@ var ugrid = require('../..');
 co(function *() {
 	var uc = yield ugrid.context();
 
-	var N = 203472 * 4;					// Number of observations
+	var N = 800000;
+	// var N = 203472 * 4;					// Number of observations
 	var D = 16;							// Number of features
 	var seed = 1;
-	var nIterations = 1;				// Number of iterations
+	var nIterations = 100;				// Number of iterations
 
 	var points = uc.randomSVMData(N, D, seed).persist();
 	// var points = uc.randomSVMData(N, D, seed);
@@ -20,5 +21,5 @@ co(function *() {
 
 	console.log(model.w);
 
-	// uc.end();
+	uc.end();
 }).catch(ugrid.onError);
