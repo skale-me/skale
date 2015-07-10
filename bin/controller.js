@@ -23,6 +23,8 @@ var ugrid = require('../lib/ugrid-client.js')({
 	data: {type: 'controller'}
 });
 
+console.log('app controller ready');
+
 ugrid.on('start', function (msg) {
 	var cmd = __dirname + '/../examples/web/' + msg.data.app + '.js';
 	var prog = fork(cmd, [JSON.stringify(msg.data)], {silent: true});
