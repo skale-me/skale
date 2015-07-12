@@ -22,10 +22,8 @@ function writeChunk() {
 		line += ' ' + rng.randn(D).join(' ') + '\n';
 	}
 	var lineSize = Buffer.byteLength(line, 'utf8');
-	if ((fileSize + lineSize) > maxSize)
-		fd.end();
-	else
-		fd.write(line, function() {fileSize += lineSize; writeChunk();});
+	if ((fileSize + lineSize) > maxSize) fd.end();
+	else fd.write(line, function() {fileSize += lineSize; writeChunk();});
 }
 
 writeChunk();
