@@ -7,7 +7,7 @@ var cluster = require('cluster');
 
 var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
-var RDD = require('../lib/ugrid-transformation.js');
+var UgridJob = require('../lib/ugrid-transformation.js').UgridJob;
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -150,59 +150,3 @@ function runWorker(host, port) {
 		}
 	});
 }
-
-function UgridJob(grid, app, param) {
-	this.id = param.jobId;
-	this.node = param.node;
-	this.app = app;
-	this.action = new RDD[param.action.fun](grid, app, this, param.action);
-
-	var nums = Object.keys(param.node).sort(function(a, b){return b - a});
-	for (var i = 0; i < nums.length; i++)
-		this.node[nums[i]] = new RDD[this.node[nums[i]].type](grid, app, this, param.node[nums[i]]);
-
-	var sources = [];
-	function findSource(n) {
-		if (n.inMemory || (n.child.length == 0)) {
-			sources.push(n);
-			return;
-		}
-		for (var i = 0; i < n.child.length; i++)
-			findSource(n.child[i]);
-	}
-	findSource(this.node[nums[nums.length - 1]]);
-
-	this.run = function() {
-		// Build pipelines then run
-		treewalk(this.node[nums[nums.length - 1]], null,
-		function c_out(n){
-			if (n.inMemory || (n.child.length == 0) || (n.dependency == 'wide')) {
-				var tmp = n;
-				while (tmp = tmp.anc) {
-					n.nodePath.push(tmp);
-					if (tmp.dependency == 'wide') break;
-				}
-			}
-		}, function end() {
-			for (var i = 0; i < sources.length; i++) {
-				if (sources[i].inMemory) sources[i].runFromRAM();
-				else sources[i].run();
-			}
-		})
-	};
-	function treewalk(root, c_in, c_out, callback) {
-		var n = root;
-		if (c_in) c_in(n);
-		while (1)
-			if (n.child.length && (++n.visits <= n.child.length)) {
-				n = n.child[n.visits - 1];
-				if (c_in) c_in(n);
-			} else {
-				n.visits = 0;
-				if (c_out) c_out(n);
-				if (n == root) break;
-				n = n.anc;
-			}
-		callback();
-	}
-};
