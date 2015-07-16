@@ -10,7 +10,7 @@ var webid = process.env.UGRID_WEBID;
 var prompt = webid ? '' : 'ugrid> ';
 
 co(function *() {
-	var uc = yield ugrid.context({noworker: true});
+	var uc = yield ugrid.context();
 	var r = coshell({
 		prompt: prompt,
 		ignoreUndefined: true,
