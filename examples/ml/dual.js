@@ -4,32 +4,42 @@
 var co = require('co');
 var ugrid = require('../..');
 
-// Example with graph cycles
 // co(function *() {
 //     var uc = yield ugrid.context();
 
-//     // var a = uc.parallelize([1, 2]);
-//     // var b = a.map(function(v) {return v * v});
+//     var a = uc.parallelize([[1, 1], [1, 1], [2, 3], [2, 4], [3, 5]]);
+//     var b = uc.parallelize([[0, 5], [1, 6], [2, 7], [3, 9], [0, 9]]);
 
-//     var a = uc.parallelize([2, 3]);
-//     var b = uc.parallelize([4, 9]);
-
-//     var res = yield a.union(b).collect();
+//     var res = yield a.coGroup(b).collect();
 //     console.log(res);
 //     uc.end();
 // }).catch(ugrid.onError);
 
-// Simple example
+// Example with graph cycles
 co(function *() {
     var uc = yield ugrid.context();
 
     var a = uc.parallelize([1, 2]);
-    var res = yield a.map(function(v) {return v * v}).collect();
+    var b = a.map(function(v) {return v * v});
 
+    // var a = uc.parallelize([2, 3]);
+    // var b = uc.parallelize([4, 9]);
+
+    var res = yield a.union(b).collect();
     console.log(res);
     uc.end();
 }).catch(ugrid.onError);
 
+// Simple example
+// co(function *() {
+//     var uc = yield ugrid.context();
+
+//     var a = uc.parallelize([1, 2]);
+//     var res = yield a.map(function(v) {return v * v}).collect();
+
+//     console.log(res);
+//     uc.end();
+// }).catch(ugrid.onError);
 
 // Example with shuffle node
 // co(function *() {
