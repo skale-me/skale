@@ -4,50 +4,28 @@
 var co = require('co');
 var ugrid = require('../..');
 
-// co(function *() {
-//     var uc = yield ugrid.context();
-
-//     var a = uc.parallelize([[1, 1], [1, 1], [2, 3], [2, 4], [3, 5]]);
-//     var b = uc.parallelize([[0, 5], [1, 6], [2, 7], [3, 9], [0, 9]]);
-
-//     var res = yield a.coGroup(b).collect();
-//     console.log(res);
-//     uc.end();
-// }).catch(ugrid.onError);
-
 // Example with graph cycles
 co(function *() {
     var uc = yield ugrid.context();
 
-    var a = uc.parallelize([1, 2]);
-    var b = a.map(function(v) {return v * v});
+	// var v1 = [['www.binge.fr', ['wwww.google.com']], ['www.yahoo.fr', ['wwww.google.com']], ['www.google.fr', ['wwww.binge.fr']]];
+	var v1 = [['www.binge.fr', 1], ['www.yahoo.fr', 1], ['www.google.fr', 1]];	
+	var v2 = [['www.binge.fr', 1], ['www.yahoo.fr', 1], ['www.google.fr', 1]];
 
-    // var a = uc.parallelize([2, 3]);
-    // var b = uc.parallelize([4, 9]);
+    var links = uc.parallelize(v1);
+    var ranks = uc.parallelize(v2);
 
-    var res = yield a.union(b).collect();
-    console.log(res);
+	ranks = links.join(ranks).mapValues(function(a) {return a[0] + a[1]});
+	// console.log('iteration 1')
+ //    var res = yield ranks.collect();
+ //    for (var i in res) console.log(res[i]);
+
+	ranks = links.join(ranks).mapValues(function(a) {return a[0] + a[1]});
+	ranks = links.join(ranks).mapValues(function(a) {return a[0] + a[1]});	
+	ranks = links.join(ranks).mapValues(function(a) {return a[0] + a[1]});	
+	// console.log('iteration 2')
+    var res = yield ranks.collect();
+    for (var i in res) console.log(res[i]);
+
     uc.end();
 }).catch(ugrid.onError);
-
-// Simple example
-// co(function *() {
-//     var uc = yield ugrid.context();
-
-//     var a = uc.parallelize([1, 2]);
-//     var res = yield a.map(function(v) {return v * v}).collect();
-
-//     console.log(res);
-//     uc.end();
-// }).catch(ugrid.onError);
-
-// Example with shuffle node
-// co(function *() {
-//     var uc = yield ugrid.context();
-
-//     var a = uc.parallelize([[1,1],[2,3],[2,4],[3,5]]).distinct();
-//     var res = yield a.collect();
-
-//     console.log(res);
-//     uc.end();
-// }).catch(ugrid.onError);
