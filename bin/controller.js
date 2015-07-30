@@ -50,46 +50,47 @@ ugrid.on('remoteClose', function (msg) {
 var sessions = {};
 
 ugrid.on('shell', function (msg) {
-	var lines = new Lines() , shell, id = msg.userId + '.' + msg.appId;
-	if (sessions[id]) {
+	var lines = new Lines(), shell;
+	if (sessions[msg.webid]) {
+		trace('reconnect attempt')
 		// Reconnect to an existing shell
 		ugrid.send(0, {cmd: 'shell', id: msg.from});
 		ugrid.send(0, {cmd: 'notify', data: msg.data});
-		shell = sessions[id];
+		shell = sessions[msg.webid];
 		shell.stdout.pipe(lines);
-		shell.stdin.write(JSON.stringify({data: 'webid = ' + msg.from + ';'}));
-		ugrid.on('stdin-' + msg.from, function (msg) {
-			shell.stdin.write(JSON.stringify(msg));
-		});
-		lines.on('data', function (data) {
-			data = JSON.parse(data);
-			ugrid.send(0, {cmd: 'stdout', id: msg.from, file: data.file, data: data.data + '\n'});
-		});
+		shell.stdin.write(JSON.stringify({data: 'webid = "' + msg.webid + '"; dest = "' + msg.from + '";'}));
+		ugrid.on('stdin-' + msg.webid, inputCmd);
+		lines.on('data', outputCmd);
 		return;
 	}
 	// Create a new shell
-	process.env.UGRID_WEBID = msg.from;
+	process.env.UGRID_WEBID = msg.webid;
+	process.env.UGRID_DEST = msg.from;
 	//var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
 	shell = fork(__dirname + '/../lib/copro.js', {silent: true});
 	shells[msg.data] = shell;
-	sessions[id] = shell;
+	sessions[msg.webid] = shell;
 	ugrid.send(0, {cmd: 'shell', id: msg.from});
 	ugrid.send(0, {cmd: 'notify', data: msg.data});
 	shell.stdout.pipe(lines);
 
-	lines.on('data', function (data) {
-		data = JSON.parse(data);
-		ugrid.send(0, {cmd: 'stdout', id: msg.from, file: data.file, data: data.data + '\n'});
-	});
+	lines.on('data', outputCmd);
+
 	shell.stderr.on('data', function (data) {
 		console.log("# shell pid %d stderr: %s", shell.pid, data);
 	});
 	shell.on('close', function (code) {
 		console.log("# shell %d exited with code: %d", shell.pid, code);
 	});
-	ugrid.on('stdin-' + msg.from, function (msg) {
-		//shell.stdin.write(msg.data + "\n");
-		shell.stdin.write(JSON.stringify(msg));
-	});
+	ugrid.on('stdin-' + msg.webid, inputCmd);
 	console.log('forked ugrid-shell.js pid ' + shell.pid);
+
+	function inputCmd(cmd) {
+		shell.stdin.write(JSON.stringify(cmd));
+	}
+
+	function outputCmd(data) {
+		data = JSON.parse(data);
+		ugrid.send(0, {cmd: 'stdout-' + msg.webid, id: msg.from, file: data.file, data: data.data + '\n'});
+	}
 });
