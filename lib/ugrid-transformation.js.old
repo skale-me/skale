@@ -4,7 +4,10 @@ var fs = require('fs');
 
 var ml = require('./ugrid-ml.js');
 var trace = require('line-trace');
-var Lines = require('./lines.js'), Lines2 = require('./lines2.js');
+var Lines = require('./lines.js');
+var Lines2 = require('./lines2.js');
+
+var RAM_ONLY = true, self = this;
 
 function recompile(s) {
 	var args = s.match(/\(([^)]*)/)[1];
@@ -12,537 +15,93 @@ function recompile(s) {
 	return new Function(args, body);
 }
 
-function Partition(source, data, key) {
-	this.source = source;		// {id: 1234, p: 0}
-	this.data = data;
-	this.key = key;
-	var self = this;	// when class method is called with a different 'this'
+function RDD(grid, app, param) {
+	// probleme dans les args de parallelize
+	param.args = [[param.args[0][0], param.args[1][0]]];
 
-	this.save = function(array) {
-		for (var i = 0; i < array.length; i++)
-			self.data.push(array[i]);
-		return array;
+	this.id = param.id;									// RDD unique ID
+	this.partitions = param.args[0];					// list of partitions
+	this.dependencies = param.child;					// list of parent rdds id
+	this.partitioner = 'range';							// hash or range partitioned
+
+	if (param.persistent) app.rdd[param.id] = this;		// store in memory if needed
+
+	this.iterator = function(p, action) {
+		for (var i = 0; i < this.partitions[p].length; i++)
+			action(this.partitions[p][i]);
 	}
 
-	this.iterate = function(pipeline, done, callback) {
-		var buffer;
-		for (var i = 0; i < self.data.length; i++) {
-			buffer = [self.data[i]];
-			for (var t = 0; t < pipeline.length; t++) 
-				buffer = pipeline[t](buffer);
-			callback && callback(buffer);
+	this.collect = function() {
+		var result = {};
+		for (var p = 0; p < this.partitions.length; p++) {
+			result[p] = [];
+			this.iterator(p, function(data) {result[p].push(data);});
 		}
-		done();
+		return result;
 	}
-}
-
-function ParallelizedRDD(grid, app, job, param) {
-	RDD.call(this, grid, app, job, param);
-
-	this.partitions = [];
-	var partitions = param.args || [];
-	for (var p = 0; p < partitions.length; p++)
-		this.partitions.push(new Partition(null, partitions[p]));
-}
-
-function RandomSVMData(grid, app, job, param) {
-	RDD.call(this, grid, app, job, param);
-
-	var D = param.args[0];
-	var partitions = param.args[1] || [];
-
-	this.partitions = [];
-	for (var p = 0; p < partitions.length; p++)
-		this.partitions.push(new Partition(null));
-
-	this.iterate = function(p, pipeline, done, callback) {
-		var rng = new ml.Random(partitions[p].seed), buffer;
-
-		for (var i = 0; i < partitions[p].n; i++) {
-			buffer = [ml.randomSVMLine(rng, D)];
-			for (var t = 0; t < pipeline.length; t++)
-				buffer = pipeline[t](buffer);
-			callback && callback(buffer);
-		}
-		done();
-	}
-}
-
-function TextFileRDD(grid, app, job, param) {
-	RDD.call(this, grid, app, job, param);
-
-	var self = this, blocks = param.args[2], hashedBlocks = {};
-
-	this.partitions = [];
-	for (var p = 0; p < blocks.length; p++) {
-		this.partitions.push(new Partition(null));
-		blocks[p].p = p;
-		hashedBlocks[blocks[p].bid] = blocks[p];
-	}
-
-	this.iterate = function(p, pipeline, done, callback) {
-		self.pipeline = pipeline;
-		self.callback = callback;
-		self.done = done;
-
-		var lines = new Lines(), buffer;
-		fs.createReadStream(blocks[p].file, blocks[p].opt).pipe(lines);
-
-		lines.once("data", function (line) {
-			blocks[p].firstLine = line;
-			lines.once("data", function (line) {
-				blocks[p].lastLine = line;
-				lines.on("data", function (line) {
-					buffer = [blocks[p].lastLine];
-					for (var t = 0; t < pipeline.length; t++)
-						buffer = pipeline[t](buffer);
-					callback && callback(buffer);
-					blocks[p].lastLine = line;					
-				});
-			});
-		});
-
-		function shuffleLine(shuffledLine) {
-			var shuffleTo = blocks[p].shuffleTo;
-			if (shuffleTo != app.wid) {
-				grid.send(app.worker[shuffleTo].uuid, {
-					cmd: 'lastLine', 
-					args: {lastLine: shuffledLine, rddId: self.id, bid: blocks[p].bid + 1}, 
-					jobId: job.id
-				});
-			} else processLastLine({lastLine: shuffledLine, bid: blocks[p].bid + 1});
-		}
-
-		lines.on("endNewline", function(lastLineComplete) {
-			var firstLineProcessed;
-			var isFirstBlock = (blocks[p].skipFirstLine === false);
-			var isLastBlock = (blocks[p].shuffleLastLine === false);
-			var hasLastLine = blocks[p].lastLine !== undefined;
-
-			blocks[p].hasScannedFile = true;
-			// FIRST LINE
-			if (isFirstBlock) {
-				firstLineProcessed = true;
-				if (hasLastLine || lastLineComplete || isLastBlock)
-					processLine(blocks[p].p, blocks[p].firstLine, true, pipeline, callback);
-				if (!hasLastLine && !lastLineComplete && !isLastBlock)
-					shuffleLine(blocks[p].firstLine);
-			} else {
-				blocks[p].forward = (!hasLastLine && !lastLineComplete) ? true : false;
-				firstLineProcessed = processFirstLine(blocks[p].bid);
-			}
-			// LAST LINE
-			if (hasLastLine) {
-				if (isLastBlock) processLine(blocks[p].p, blocks[p].lastLine, undefined, pipeline, callback);
-				else if (lastLineComplete) {
-					processLine(blocks[p].p, blocks[p].lastLine, undefined, pipeline, callback);
-					shuffleLine('');
-				} else shuffleLine(blocks[p].lastLine);
-			} else if (lastLineComplete && !isLastBlock) shuffleLine('');
-
-			if (firstLineProcessed) done();
-		});
-	}
-
-	function processLine(p, line, first, pipeline, callback) {
-		var buffer = [line];
-		for (var t = 0; t < pipeline.length; t++)
-			buffer = pipeline[t](buffer);
-		callback && callback(buffer);		
-	}
-
-	var processLastLine = this.processLastLine = function(data) {
-		var targetBlock = hashedBlocks[data.bid];
-		targetBlock.rxLastLine = data.lastLine;
-		targetBlock.hasReiceivedLastLine = true;
-		var firstLineProcessed = processFirstLine(data.bid);
-
-		if (firstLineProcessed) self.done();
-	};
-
-	function processFirstLine(bid) {
-		var targetBlock = hashedBlocks[bid];
-		if (!targetBlock.hasReiceivedLastLine || !targetBlock.hasScannedFile) return false;
-		if (targetBlock.forward && targetBlock.shuffleLastLine) {
-			var shuffledLine = targetBlock.rxLastLine + targetBlock.firstLine;
-			if (targetBlock.shuffleTo != app.wid) {
-				grid.send(app.worker[targetBlock.shuffleTo].uuid, {
-					cmd: 'lastLine', 
-					args: {lastLine: shuffledLine, rddId: self.id, bid: bid + 1}
-				});
-			} else processLastLine({lastLine: shuffledLine, bid: bid + 1});
-		} else {
-			var str = (targetBlock.rxLastLine === undefined) ? targetBlock.firstLine : targetBlock.rxLastLine + targetBlock.firstLine;
-			processLine(targetBlock.p, str, true, self.pipeline, self.callback);
-		}
-		return true;
-	}
-}
-
-function RDD(grid, app, job, param) {
-	this.id = param.id;
-	this.dependencies = param.dependencies;
-	this.persistent = param.persistent;
-	this.partitions;
-	this.nShuffle = 0;
-	this.nextStage;
-	this.type = param.type;
-
-	var self = this;
-
-	function findPartitions(n) {
-		if (n.partitions == undefined) {
-			n.partitions = [];
-			for (var i = 0; i < n.dependencies.length; i++) {
-				var parentPartitions = findPartitions(job.rdd[n.dependencies[i]]);
-				for (var p = 0; p < parentPartitions.length; p++)
-					n.partitions.push(new Partition({id: n.dependencies[i], p: p}));
-			}
-		}
-		return n.partitions;
-	}
-
-	// Attention à la gestion de la mise en tete de la data dans le cas du textFile
-	this.collect = function(callback) {
-		var result = {}, p = -1;
-
-		findPartitions(this);
-		(function action() {
-			if (++p < self.partitions.length) {
-				var dest = result[p] = [];
-				self.pipeline(p, function() {process.nextTick(action)}, function (data) {
-					for (var i = 0; i < data.length; i++) dest.push(data[i]);
-				});
-			} else callback(result);
-		})();
-	}
-
-	this.count = function(callback) {
-		var result = 0, p = -1;
-
-		findPartitions(this);
-		(function action() {
-			if (++p < self.partitions.length) 
-				self.pipeline(p, action, function (data) {
-					result += data.length;
-				});
-			else callback(result);
-		})();
-	};
-
-	this.reduce = function(callback, param) {
-		var result = JSON.parse(JSON.stringify(param.args[0])), p = -1;
-		var reducer = recompile(param.src);
-
-		findPartitions(this);
-		(function action() {
-			if (++p < self.partitions.length) {
-				self.pipeline(p, function() {process.nextTick(action)}, function (data) {
-					for (var i = 0; i < data.length; i++) 
-						result = reducer(result, data[i]);
-				});
-			} else callback(result);
-		})();
-	};
-
-	this.countByValue = function(callback) {
-		var result = {}, p = -1;
-
-		findPartitions(this);
-		(function action() {
-			if (++p < self.partitions.length) {
-				self.pipeline(p, action, function (data) {
-					for (var i = 0; i < data.length; i++) {
-						var str = JSON.stringify(data[i]);
-						if (result[str] === undefined) result[str] = [data[i], 0];
-						result[str][1]++;
-					}
-				});
-			} else callback(result);
-		})();
-	};
-
-	this.lookup = function(callback, param) {
-		var result = {}, key = param.args[0], p = -1;
-
-		findPartitions(this);
-		(function action() {
-			if (++p < self.partitions.length) {
-				var dest = result[p] = [];
-				self.pipeline(p, action, function (data) {
-					for (var i = 0; i < data.length; i++)
-						if (data[i][0] == key) dest.push(data[i]);
-				});
-			} else callback(result);
-		})();
-	};
-
-	this.take = function(callback, param) {
-		var result = [], num = param.args[0], p = -1;
-
-		findPartitions(this);
-		(function action() {
-			if (++p < self.partitions.length) {
-				self.pipeline(p, action, function (data) {
-					if (result.length < num)
-						result = result.concat(data).slice(0, num);
-				});
-			} else callback(result);
-		})();
-	};
-
-	this.takeOrdered = function(callback, param) {
-		var result = [], num = param.args[0], p = -1;
-		var sorter = recompile(param.src);
-
-		findPartitions(this);
-		(function action() {
-			if (++p < self.partitions.length) {
-				self.pipeline(p, action, function (data) {
-					result = result.concat(data).sort(sorter).slice(0, num);
-				});
-			} else callback(result);
-		})();
-	};
-
-	this.top = function(callback, param) {
-		var result = [], num = param.args[0], p = -1;
-		var sorter;
-		// var sorter = recompile(param.src);	// BUG ICI le sorter n'existe pas dans les paramètres
-
-		findPartitions(this);
-		(function action() {
-			if (++p < self.partitions.length) {
-				self.pipeline(p, action, function (data) {
-					result = result.concat(data).sort(sorter).slice(0, num);
-				});
-			} else callback(result);
-		})();
-	};
-
-	this.forEach = function(callback, param) {
-		var each = recompile(param.src), p = -1;
-
-		findPartitions(this);
-		(function action() {
-			if (++p < self.partitions.length) self.pipeline(p, action, function (data) {data.forEach(each);});
-			else callback(result);
-		})();
-	};
-
-	this.run = function(nextStage) {
-		this.nextStage = nextStage;		// nextStage() will be called elsewhere
-		var p = -1;
-
-		findPartitions(this);
-		(function run() {
-			if (++p < self.partitions.length) self.pipeline(p, run);
-			else {
-				for (var i = 0; i < self.map.length; i++)
-					if (grid.host.uuid == app.worker[i].uuid) self.rx_shuffle(self.map[i]);
-					else grid.send(app.worker[i].uuid, {cmd: 'shuffle', args: self.map[i], jobId: job.id, rddId: self.id});
-			}
-		})();
-	}
-
-	this.pipeline = function(p, done, callback) {
-		var pipeline = [], sourceRDD = self, sourcePartitionIdx = p, sourcePartition = self.partitions[p];
-
-		// Build p-th partition pipeline
-		while ((sourcePartition.data == undefined) && sourcePartition.source) {
-			if (sourceRDD.persistent) {
-			// if (sourceRDD.persistent && (p  % 4)) {								// DEBUG partial RAM storage, remove (p == 0) for target version
-				sourcePartition.data = [];
-				pipeline.unshift(sourcePartition.save);
-			}
-			if (sourceRDD.transform) pipeline.unshift(sourceRDD.transform);
-			sourceRDD = job.rdd[sourcePartition.source.id];
-			sourcePartitionIdx = sourcePartition.source.p;
-			sourcePartition = sourceRDD.partitions[sourcePartitionIdx];
-		}
-
-		if (sourcePartition.data) sourcePartition.iterate(pipeline, done, callback);
-		else {
-			if (sourceRDD.persistent) {
-			// if (sourceRDD.persistent && (p % 4)) {	// Add source partition save if needed
-				sourcePartition.data = [];
-				pipeline.unshift(sourcePartition.save);
-			}
-			sourceRDD.iterate(sourcePartitionIdx, pipeline, done, callback);
-		}
-	}
-
-	if (this.persistent) app.rdd[param.id] = this;
 }
 
 module.exports.UgridJob = function(grid, app, param) {
 	this.id = param.jobId;
-	this.sendResultSemaphore = 0;
-	this.rdd = {};
+	this.node = {};
+	this.app = app;
+	this.action = new self[param.action.fun](grid, app, this, param.action);
 
-	var stream = grid.createWriteStream(this.id, app.master_uuid), stageBoundaries = [], stages = [], self = this;
-
-	// Step 1: Spawn RDDs from top to bottom
 	for (var i = 0; i < param.node.length; i++) {
-		if (app.rdd[param.node[i].id] == undefined) {
-			switch (param.node[i].type) {
-			case 'parallelize': this.rdd[param.node[i].id] = new ParallelizedRDD(grid, app, this, param.node[i]); break;
-			case 'randomSVMData': this.rdd[param.node[i].id] = new RandomSVMData(grid, app, this, param.node[i]); break;
-			case 'textFile': this.rdd[param.node[i].id] = new TextFileRDD(grid, app, this, param.node[i]); break;
-			case 'map': this.rdd[param.node[i].id] = new MappedRDD(grid, app, this, param.node[i]); break;
-			case 'union': this.rdd[param.node[i].id] = new UnionedRDD(grid, app, this, param.node[i]); break;
-			case 'groupByKey': this.rdd[param.node[i].id] = new GroupedByKeyRDD(grid, app, this, param.node[i]); break;
-			case 'reduceByKey': this.rdd[param.node[i].id] = new ReducedByKeyRDD(grid, app, this, param.node[i]); break;
-			case 'distinct': this.rdd[param.node[i].id] = new DistinctRDD(grid, app, this, param.node[i]); break;
-			default: console.error('Not yet implemented');
-			}
-		} else this.rdd[param.node[i].id] = app.rdd[param.node[i].id];
-		if (this.rdd[param.node[i].id].shuffling) stageBoundaries.unshift(this.rdd[param.node[i].id]);
+		if (app.rdd[param.node[i].id] == undefined)
+			this.node[param.node[i].id] = new RDD(grid, app, param.node[i])
+		else console.log('Dataset already in RAM');
 	}
 
-	// Step 2: Find stages
-	for (var i = 0; i < stageBoundaries.length; i++) {
-		if (stageBoundaries[i].partitions) break;
-		stages.unshift(stageBoundaries[i]);
-	}
+	var root = this.node[param.node[param.node.length - 1].id];
+
+	console.log(param.node);
+	console.log('Action required: ' + param.action.fun);
 
 	this.run = function() {
-		var root = this.rdd[param.node[param.node.length - 1].id], s = 0;
-		(function nextStage() {
-			if (s < stages.length) stages[s++].run(nextStage);
-			else root[param.action.fun](self.sendResult, param.action);
-		})();
+		console.log(root[param.action.fun]());
 	}
 
-	this.sendResult = function(result) {
-		if (result) self.result = result;
-		if ((app.wid != 0) && (++self.sendResultSemaphore != 2)) return;
-		stream.write(self.result);
-		if (app.worker[app.wid + 1])
-			grid.send(app.worker[app.wid + 1].uuid, {cmd: 'action', jobId: self.id});
-		grid.send(app.master_uuid, {cmd: 'endJob', data: self.id});
-	}	
+	// var root = param.node[param.node.length - 1].num;
+
+	// // Spawn datasets
+	// var stageNodeNums = [];
+	// for (var i = 0; i < param.node.length; i++) {
+	// 	this.node[param.node[i].num] = new self[param.node[i].type](grid, app, this, param.node[i]);
+	// 	if (this.node[param.node[i].num].dependency == 'wide') stageNodeNums.push(param.node[i].num);
+	// }
+
+	// // Build pipelines de chaque partition
+	// this.link = function(from, n) {
+	// 	if (from) {
+	// 		for (var i = 0; i < n.next.length; i++)
+	// 			if (n.next[i].num == from.num) return;
+	// 		n.next.push(from);
+	// 	} else n.next.push(this.action);
+	// 	for (var i = 0; i < n.child.length; i++)
+	// 		this.link(n, n.child[i]);
+	// }
+	// this.link(null, this.node[root]);
+
+	// // Set flush semaphores
+	// this.setSemaphore = function(stageNode, n) {
+	// 	if (n.inMemory || (n.dependency == 'wide') || (n.child.length == 0)) {
+	// 		if (stageNode.sourceNodes.indexOf(n.num) == -1) {
+	// 			stageNode.sourceNodes.push(n.num);
+	// 			stageNode.targetPathCount++;
+	// 			stageNode.nextTargetPathCount = stageNode.targetPathCount;
+	// 		}
+	// 		return;
+	// 	}
+	// 	for (var i = 0; i < n.child.length; i++) this.setSemaphore(stageNode, n.child[i]);
+	// }
+	// this.setSemaphore(this.action, this.node[root]);
+	// for (var i = 0; i < stageNodeNums.length; i++)
+	// 	for (var j = 0; j < this.node[stageNodeNums[i]].child.length; j++)
+	// 		this.setSemaphore(this.node[stageNodeNums[i]], this.node[stageNodeNums[i]].child[j]);
+
+	// this.run = function() {this.node[root].exec();}
 };
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-// Transformations
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-function MappedRDD(grid, app, job, param) {
-	RDD.call(this, grid, app, job, param);
-
-	var mapper = recompile(param.src);
-
-	this.transform = function(data) {
-		var tmp = [];
-		for (var i = 0; i < data.length; i++)
-			tmp[i] = mapper(data[i], param.args[0]);
-		return tmp;
-	}
-}
-
-function UnionedRDD(grid, app, job, param) {
-	RDD.call(this, grid, app, job, param);
-}
-
-function ReducedByKeyRDD(grid, app, job, param) {
-	RDD.call(this, grid, app, job, param);
-
-	this.shuffling = true;
-	var self = this;
-	var map = this.map = app.worker.map(function() {return {};});
-	var SRAM = [];
-
-	var reducer = recompile(param.src);
-	var initVal = param.args[0];
-
-	this.transform = function(data) {
-		for (var i = 0; i < data.length; i++) {
-			var key = data[i][0];
-			var wid = ml.cksum(key) % app.worker.length;
-			if (map[wid][key] === undefined)
-				map[wid][key] = [[key, JSON.parse(JSON.stringify(initVal))]];
-			map[wid][key][0][1] = reducer(map[wid][key][0][1], data[i][1]);
-		}
-	};
-
-	this.rx_shuffle = function(data) {
-		for (var key in data) {
-			for (var i = 0; i < SRAM.length; i++) {
-				if (SRAM[i].key == key)  {
-					SRAM[i].data[0][1] = reducer(SRAM[i].data[0][1], data[key[0][1]]);
-					break;
-				}
-			}
-			if (i == SRAM.length) SRAM.push(new Partition(null, data[key], key));
-		}
-		if (++self.nShuffle < app.worker.length) return;
-		self.partitions = SRAM;
-		self.nextStage();
-	};
-}
-
-function GroupedByKeyRDD(grid, app, job, param) {
-	RDD.call(this, grid, app, job, param);
-
-	this.shuffling = true;
-	var self = this;
-	var map = this.map = app.worker.map(function() {return {};});
-	var SRAM = [];
-
-	this.transform = function(data) {
-		for (var i = 0; i < data.length; i++) {
-			var key = data[i][0];
-			var wid = ml.cksum(key) % app.worker.length;
-			if (map[wid][key] === undefined)		// ATTENTION car la clé 1 et "1" ira dans la meme partition
-				map[wid][key] = [[key, []]];
-			map[wid][key][0][1].push(data[i][1]);
-		}
-	};
-
-	this.rx_shuffle = function(data) {
-		for (var key in data) {
-			for (var i = 0; i < SRAM.length; i++) {
-				if (SRAM[i].key == key)  {
-					SRAM[i].data = SRAM[i].data.concat(data[key][0][1]);
-					break;
-				}
-			}
-			if (i == SRAM.length) SRAM.push(new Partition(null, data[key], key));
-		}
-		if (++self.nShuffle < app.worker.length) return;
-		self.partitions = SRAM;
-		self.nextStage();
-	};
-}
-
-function DistinctRDD(grid, app, job, param) {
-	RDD.call(this, grid, app, job, param);
-
-	this.shuffling = true;
-	var map = this.map = app.worker.map(function() {return [];});;
-	var tmp = [];	
-	var SRAM = [];
-
-	this.transform = function(data) {
-		for (var i = 0; i < data.length; i++) {
-			var str = JSON.stringify(data[i]);
-			var wid = ml.cksum(str) % app.worker.length;
-			if (map[wid].indexOf(str) == -1) map[wid].push(str);
-		}
-	};
-
-	// CREER LES PARTITIONS ICI
-	// this.rx_shuffle = function (data) {
-	// 	for (var i = 0; i < data.length; i++)
-	// 		if (tmp.indexOf(data[i]) == -1) tmp.push(data[i]);
-	// 	if (++self.nShuffle < app.worker.length) return;
-	// 	this.SRAM = [{data: tmp.map(JSON.parse)}];
-	// };
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Old
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
 function Action(grid, app, job, action) {
 	var stream = grid.createWriteStream(job.id, app.master_uuid);
@@ -618,6 +177,13 @@ function Transform(grid, app, job, node) {
 	this.pipelineSemaphore = 1;							// For DiskOnlyMode
 	this.running = false;
 
+	// ========================================================================================== //
+	// NEW RAM
+	// ========================================================================================== //	
+	this.partitions = [];
+	if (this.persistent) app.dataset[this.id] = this;
+	// ========================================================================================== //	
+
 	for (var i = 0; i < this.child.length; i++) this.child[i] = job.node[this.child[i]];
 
 	// if dataset is persistent create write streams destination directory	
@@ -661,6 +227,13 @@ function Transform(grid, app, job, node) {
 		if (ret) process.nextTick(done);
 		else s.once('drain', done);
 	};
+
+	// this.saveRamOnlyMode = function(p, array, head, done) {
+	// 	if (this.partitions[p] == undefined) this.partitions[p] = [];
+	// 	var dest = this.partitions[p];
+	// 	if (head) for (var i = array.length - 1; i >= 0; i--) dest.unshift(array[i]);
+	// 	else for (var i = 0; i < array.length; i++) dest.push(array[i]);
+	// };
 
 	this.saveRamOnlyMode = function(p, array, head, done) {
 		if (app.ram[this.id] == undefined) app.ram[this.id] = {};
@@ -772,8 +345,209 @@ function Transform(grid, app, job, node) {
 }
 
 // ------------------------------------------------------------------------------------ //
+// Actions
+// ------------------------------------------------------------------------------------ //
+this.collect = function(grid, app, job, action) {
+	Action.call(this, grid, app, job, action);
+	this.result = {};
+
+	this.reset = function() {
+		this.result = {};
+	};
+
+	this.pipeline = function(array, p, from_id, head) {
+		if (this.result[p] === undefined) this.result[p] = [];
+		var i, dest = this.result[p];
+		if (head)
+			for (i = array.length - 1; i >= 0; i--) dest.unshift(array[i]);
+		else
+			for (i = 0; i < array.length; i++) dest.push(array[i]);
+	};
+};
+
+this.takeOrdered = function(grid, app, job, action) {
+	Action.call(this, grid, app, job, action);
+	var num = action.args[0];
+	var sorter = action.src;
+	this.result = [];
+
+	this.reset = function() {
+		this.result = [];
+	};
+
+	this.pipeline = function(array) {
+		this.result = this.result.concat(array).sort(sorter).slice(0, num);
+	};
+};
+
+this.top = function(grid, app, job, action) {
+	Action.call(this, grid, app, job, action);
+	var num = action.args[0];
+	var sorter = action.src;
+	this.result = [];
+
+	this.reset = function() {
+		this.result = [];
+	};
+
+	this.pipeline = function(array) {
+		this.result = this.result.concat(array).sort(sorter).slice(0, num);
+	};
+};
+
+this.take = function(grid, app, job, action) {
+	Action.call(this, grid, app, job, action);
+	this.result = [];
+	var num = action.args[0];
+	var self = this;
+
+	this.reset = function() {
+		this.result = [];
+	};
+
+	this.pipeline = function(array) {
+		if (this.result.length < num)
+			this.result = this.result.concat(array).slice(0, num);
+	};
+};
+
+this.count = function(grid, app, job, action) {
+	Action.call(this, grid, app, job, action);
+	this.result = 0;
+
+	this.reset = function() {
+		this.result = 0;
+	};
+
+	this.pipeline = function(array) {
+		this.result += array.length;
+	};
+};
+
+this.reduce = function(grid, app, job, action) {
+	Action.call(this, grid, app, job, action);
+	this.result = JSON.parse(JSON.stringify(action.args[0]));
+	var reduce = action.src;
+
+	this.reset = function() {
+		this.result = JSON.parse(JSON.stringify(action.args[0]));
+	};
+
+	this.pipeline = function(array) {
+		for (var i = 0; i < array.length; i++)
+			this.result = reduce(this.result, array[i]);
+	};
+};
+
+this.lookup = function(grid, app, job, action) {
+	Action.call(this, grid, app, job, action);
+	this.result = {};
+	var key = action.args[0];
+
+	this.reset = function() {
+		this.result = {};
+	};
+
+	this.pipeline = function (array, p) {
+		if (this.result[p] === undefined) this.result[p] = [];
+		var dest = this.result[p];
+		for (var i = 0; i < array.length; i++)
+			if (array[i][0] == key) dest.push(array[i]);
+	};
+};
+
+this.countByValue = function(grid, app, job, action) {
+	Action.call(this, grid, app, job, action);
+	this.result = {};
+
+	this.reset = function() {
+		this.result = {};
+	};
+
+	this.pipeline = function(array) {
+		for (var i = 0; i < array.length; i++) {
+			var str = JSON.stringify(array[i]);
+			if (this.result[str] === undefined)
+				this.result[str] = [array[i], 0];
+			this.result[str][1]++;
+		}
+	};
+};
+
+this.forEach = function(grid, app, job, action) {
+	Action.call(this, grid, app, job, action);
+	var each = action.src;
+
+	this.reset = function() {;};
+
+	this.pipeline = function(array) {
+		array.forEach(each);
+	};
+};
+
+// ------------------------------------------------------------------------------------ //
 // Sources
 // ------------------------------------------------------------------------------------ //
+this.randomSVMData = function(grid, app, job, node) {
+	Transform.call(this, grid, app, job, node);
+	var D = this.args[0];
+	var partition = this.args[1] || [];
+
+	var p = 0, i = 0, self = this;
+	var rng = new ml.Random(partition[p].seed);
+
+	this.runRamOnlyMode = function() {
+		for (var p = 0; p < partition.length; p++) {
+			var rng = new ml.Random(partition[p].seed);
+			for (var i = 0; i < partition[p].n; i++) {
+				this.tmp = [ml.randomSVMLine(rng, D)];
+				if (this.persistent) this.save(p, this.tmp);
+				this.pipelineToAction(p);
+			}
+		}
+		this.flush(true);
+	}
+
+	// Experiment for DiskOnlyMode
+	this.targetPipelineSemaphore = 2;			// Must be computed during treewalk
+	this.runDiskOnlyMode = function() {
+		if (--self.pipelineSemaphore != 0) return;
+		self.pipelineSemaphore = self.targetPipelineSemaphore;
+
+		if (++i > partition[p].n) {
+			i = 0;
+			p = (p + 1) % partition.length;
+			if (p == 0) {
+				this.flush(true);
+				return;
+			}
+		}
+		self.tmp = [ml.randomSVMLine(rng, D)];
+		if (self.persistent) self.save(p, self.tmp, false, self.run);
+		self.pipelineToAction(p, false, self.run);
+		process.nextTick(self.run);
+	}
+
+	this.run = RAM_ONLY ? this.runRamOnlyMode : this.runDiskOnlyMode;	
+}
+
+this.parallelize = function(grid, app, job, node) {
+	Transform.call(this, grid, app, job, node);
+
+	this.run = function() {
+		var input = this.args[0] || [];
+		for (var p = 0; p < input.length; p++) {
+			var partition = input[p];
+			for (var i = 0; i < partition.length; i++) {
+				this.tmp = [partition[i]];
+				if (this.persistent) this.save(p, this.tmp);
+				this.pipelineToAction(p);
+			}
+		}
+		this.flush(true);
+	};
+}
+
 this.stream = function(grid, app, job, node) {
 	Transform.call(this, grid, app, job, node);
  	var self = this;
@@ -815,9 +589,150 @@ this.stream = function(grid, app, job, node) {
 	this.run = function () {;};
 };
 
+this.textFile = function(grid, app, job, node) {
+	Transform.call(this, grid, app, job, node);
+	var self = this;
+ 	var blocks = this.args[2];
+	var hashedBlocks = {};
+	var blockIdx = 0;
+
+	for (var i = 0; i < blocks.length; i++) {
+		blocks[i].p = i;
+		hashedBlocks[blocks[i].bid] = blocks[i];
+	}
+
+	this.run = function() {
+		if (blocks.length === 0) this.flush(true);
+		else processBlock(blockIdx);
+	};
+
+	function processLine(p, line, first) {
+		self.tmp = [line];
+		if (self.persistent) self.save(p, self.tmp, first);
+		self.pipelineToAction(p, first);
+	}
+
+	function processBlock(bid) {
+		var lines = new Lines();
+		fs.createReadStream(blocks[bid].file, blocks[bid].opt).pipe(lines);
+
+		lines.once("data", function (line) {
+			blocks[bid].firstLine = line;
+			lines.once("data", function (line) {
+				blocks[bid].lastLine = line;
+				lines.on("data", function (line) {
+					self.tmp = [blocks[bid].lastLine];
+					if (self.persistent) self.save(blocks[bid].p, self.tmp);
+					self.pipelineToAction(blocks[bid].p);
+					blocks[bid].lastLine = line;
+				});
+			});
+		});
+
+		function shuffleLine(shuffledLine) {
+			var shuffleTo = blocks[bid].shuffleTo;
+			if (shuffleTo != app.wid) {
+				grid.send(app.worker[shuffleTo].uuid, {
+					cmd: 'lastLine', 
+					args: {lastLine: shuffledLine, targetNum: self.num, bid: blocks[bid].bid + 1}, 
+					jobId: job.id
+				});
+			} else processLastLine({lastLine: shuffledLine, bid: blocks[bid].bid + 1});
+		}
+
+		lines.on("endNewline", function(lastLineComplete) {
+			var firstLineProcessed;
+			var isFirstBlock = (blocks[bid].skipFirstLine === false);
+			var isLastBlock = (blocks[bid].shuffleLastLine === false);
+			var hasLastLine = blocks[bid].lastLine !== undefined;
+
+			blocks[bid].hasScannedFile = true;
+			// FIRST LINE
+			if (isFirstBlock) {	// First block
+				firstLineProcessed = true;
+				if (hasLastLine || lastLineComplete || isLastBlock)
+					processLine(blocks[bid].p, blocks[bid].firstLine, true);
+				if (!hasLastLine && !lastLineComplete && !isLastBlock)
+					shuffleLine(blocks[bid].firstLine);
+			} else {
+				blocks[bid].forward = (!hasLastLine && !lastLineComplete) ? true : false;
+				firstLineProcessed = processFirstLine(blocks[bid].bid);
+			}
+			// LAST LINE
+			if (hasLastLine) {
+				if (isLastBlock) processLine(blocks[bid].p, blocks[bid].lastLine);
+				else if (lastLineComplete) {
+					processLine(blocks[bid].p, blocks[bid].lastLine);
+					shuffleLine('');
+				} else shuffleLine(blocks[bid].lastLine);
+			} else if (lastLineComplete && !isLastBlock)
+				shuffleLine('');
+
+			if (!firstLineProcessed) return;
+			if ((blockIdx + 1) < blocks.length) {
+				processBlock(++blockIdx);
+			} else self.flush(true);
+		});
+	}
+
+	var processLastLine = this.processLastLine = function(data) {
+		var targetBlock = hashedBlocks[data.bid];
+		targetBlock.rxLastLine = data.lastLine;
+		targetBlock.hasReiceivedLastLine = true;
+		var firstLineProcessed = processFirstLine(data.bid);
+
+		if (!firstLineProcessed) return;
+		if ((blockIdx + 1) < blocks.length) {
+			processBlock(++blockIdx);
+		} else self.flush(true);
+	};
+
+	function processFirstLine(bid) {
+		var targetBlock = hashedBlocks[bid];
+		if (!targetBlock.hasReiceivedLastLine || !targetBlock.hasScannedFile) return false;
+		if (targetBlock.forward && targetBlock.shuffleLastLine) {
+			var shuffledLine = targetBlock.rxLastLine + targetBlock.firstLine;
+			if (targetBlock.shuffleTo != app.wid) {
+				grid.send(app.worker[targetBlock.shuffleTo].uuid, {
+					cmd: 'lastLine', 
+					args: {lastLine: shuffledLine, targetNum: self.num, bid: bid + 1}
+				});
+			} else processLastLine({lastLine: shuffledLine, bid: bid + 1});
+		} else {
+			var str = (targetBlock.rxLastLine === undefined) ? targetBlock.firstLine : targetBlock.rxLastLine + targetBlock.firstLine;
+			processLine(targetBlock.p, str, true);
+		}
+		return true;
+	}
+}
+
 // ------------------------------------------------------------------------------------ //
 // Transformation
 // ------------------------------------------------------------------------------------ //
+this.union = function(grid, app, job, node) {
+	Transform.call(this, grid, app, job, node);
+	this.pipeline = function (array, p, from_id, head, done) {
+		if (this.persistent) this.save(p, array, head, done);
+		for (var i = 0; i < this.next.length; i++)
+			this.next[i].pipeline(array, p, this.id, head, done);
+	};
+};
+
+this.map = function(grid, app, job, node) {
+	Transform.call(this, grid, app, job, node);
+	var mapper = this.src;
+	var args = this.args;
+
+	this.pipeline = function(array, p, from_id, head, done) {
+		var tmp = [];
+		for (var i = 0; i < array.length; i++)
+			tmp[i] = mapper(array[i], args[0]);
+		if (this.persistent) this.save(p, tmp, head, done);
+		for (var i = 0; i < this.next.length; i++)
+			this.next[i].pipeline(tmp, p, this.id, head, done);
+	};
+};
+
 this.filter = function(grid, app, job, node) {
 	Transform.call(this, grid, app, job, node);
 	var filter = this.src;
@@ -876,6 +791,98 @@ this.flatMapValues = function(grid, app, job, node) {
 	};
 };
 
+this.distinct = function(grid, app, job, node) {
+	Transform.call(this, grid, app, job, node);
+	var tmp, map;
+
+	this.reset = function() {
+		this.SRAM = [];
+		tmp = [];
+		map = this.map = app.worker.map(function() {return [];});
+	};
+
+	this.reset();
+
+	this.pipeline = function(array) {
+		for (var i = 0; i < array.length; i++) {
+			var str = JSON.stringify(array[i]);
+			var wid = ml.cksum(str) % app.worker.length;
+			if (map[wid].indexOf(str) == -1) map[wid].push(str);
+		}
+	};
+
+	this.rx_shuffle = function (data) {
+		for (var i = 0; i < data.length; i++)
+			if (tmp.indexOf(data[i]) == -1) tmp.push(data[i]);
+		if (++this.nShuffle < app.worker.length) return;
+		this.SRAM = [{data: tmp.map(JSON.parse)}];
+	};
+};
+
+this.reduceByKey = function(grid, app, job, node) {
+	Transform.call(this, grid, app, job, node);
+	var reducer = this.src;
+	var initVal = this.args[0];
+	var SRAM, map;
+
+	this.reset = function() {
+		SRAM = this.SRAM = [];
+		map = this.map = app.worker.map(function() {return {};});
+	};
+
+	this.reset();
+
+	this.pipeline = function(array) {
+		for (var i = 0; i < array.length; i++) {
+			var key = array[i][0];
+			var wid = ml.cksum(key) % app.worker.length;
+			if (map[wid][key] === undefined)
+				map[wid][key] = [[key, JSON.parse(JSON.stringify(initVal))]];
+			map[wid][key][0][1] = reducer(map[wid][key][0][1], array[i][1]);
+		}
+	};
+
+	this.rx_shuffle = function(data) {
+		for (var key in data) {
+			for (var i = 0; i < SRAM.length; i++)
+				if (SRAM[i].key == key) break;
+			if (i == SRAM.length) SRAM.push({key: key, data: data[key]});
+			else SRAM[i].data[0][1] = reducer(SRAM[i].data[0][1], data[key][0][1]);
+		}
+		this.nShuffle++;
+	};
+};
+
+this.groupByKey = function(grid, app, job, node) {
+	Transform.call(this, grid, app, job, node);
+	var SRAM, map;
+
+	this.reset = function() {
+		SRAM = this.SRAM = [];
+		map = this.map = app.worker.map(function() {return {};});
+	};
+
+	this.reset();
+
+	this.pipeline = function(array) {
+		for (var i = 0; i < array.length; i++) {
+			var key = array[i][0];
+			var wid = ml.cksum(key) % app.worker.length;
+			if (map[wid][key] === undefined) map[wid][key] = [[key, []]];
+			map[wid][key][0][1].push(array[i][1]);
+		}
+	};
+
+	this.rx_shuffle = function(data) {
+		for (var key in data) {
+			for (var i = 0; i < SRAM.length; i++)
+				if (SRAM[i].key == key) break;
+			if (i == SRAM.length) SRAM.push({key: key, data: data[key]});
+			else SRAM[i].data[0][1] = SRAM[i].data[0][1].concat(data[key][0][1]);
+		}
+		this.nShuffle++;
+	};
+};
 
 this.coGroup = function(grid, app, job, node) {
 	Transform.call(this, grid, app, job, node);

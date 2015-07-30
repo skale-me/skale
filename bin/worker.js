@@ -56,7 +56,7 @@ function handleExit(worker, code, signal) {
 }
 
 function runWorker(host, port) {
-	var jobs = {}, jobId, ram = {};
+	var jobs = {}, jobId, ram = {}, rdd = {};
 
 	var grid = new UgridClient({
 		debug: debug,
@@ -95,7 +95,8 @@ function runWorker(host, port) {
 				master_uuid: msg.data.master_uuid,
 				dones: {},
 				completedStreams: {},
-				ram: ram
+				ram: ram,
+				rdd: rdd
 			};
 			jobs[msg.data.jobId] = new UgridJob(grid, app, {
 				node: msg.data.args.node,
@@ -123,10 +124,8 @@ function runWorker(host, port) {
 	});
 
 	grid.on('shuffle', function (msg) {
-		try {jobs[msg.jobId].node[msg.shuffleNode].rx_shuffle(msg.args);}
-		catch (err) {throw new Error("Lineage rx shuffle " + jobs[msg.jobId].node[msg.shuffleNode].type + ": " + err);}
-		if (jobs[msg.jobId].node[msg.shuffleNode].nShuffle == jobs[msg.jobId].app.worker.length)
-			jobs[msg.jobId].node[msg.shuffleNode].runFromStageRam();
+		try {jobs[msg.jobId].rdd[msg.rddId].rx_shuffle(msg.args);}
+		catch (err) {throw new Error("Rx shuffle " + jobs[msg.jobId].rdd[msg.rddId].constructor.name + ": " + err);}
 	});
 
 	grid.on('runJob', function (msg) {
@@ -134,11 +133,12 @@ function runWorker(host, port) {
 	});
 
 	grid.on('lastLine', function (msg) {
-		jobs[msg.jobId].node[msg.args.targetNum].processLastLine(msg.args);
+		jobs[msg.jobId].rdd[msg.args.rddId].processLastLine(msg.args);
+		// jobs[msg.jobId].node[msg.args.targetNum].processLastLine(msg.args);
 	});
 
-	grid.on('action', function (msg) {
-		jobs[msg.jobId].action.sendResult();		
+	grid.on('action', function (msg) {			// OK FOR NEW DESIGN
+		jobs[msg.jobId].sendResult();
 	});
 
 	grid.on('request', function (msg) {

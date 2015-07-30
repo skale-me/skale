@@ -17,6 +17,7 @@ var N = Number(opt.options.N) || 842000;
 var D = Number(opt.options.D) || 16;
 var nIterations = Number(opt.options.I) ||  4;
 var seed = 1;
+var P = 1;
 
 console.log('Input data: ' + (file || 'random'));
 console.log('Number of observations: ' + N);
@@ -28,7 +29,7 @@ co(function *() {
 	var points = file ? uc.textFile(file).map(function (e) {
 		var tmp = e.split(' ').map(parseFloat);
 		return [tmp.shift(), tmp];
-	}).persist() : uc.randomSVMData(N, D, seed).persist();
+	}).persist() : uc.randomSVMData(N, D, seed, P).persist();
 	var model = new ugrid.ml.LogisticRegression(points, D, N);
 	yield model.train(nIterations);
 	console.log(model.w);
