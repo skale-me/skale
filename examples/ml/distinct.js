@@ -8,7 +8,7 @@ co(function *() {
     var uc = yield ugrid.context();
 
     var nPartitions = 2;
-    var N = 10000;
+    var N = 1000000;
     var vect = [];
     // for (var i = 0; i < N; i++) vect.push(i);
     for (var i = 0; i < N; i++) vect.push(Math.floor(Math.random() * N));
