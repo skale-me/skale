@@ -33,13 +33,13 @@ co(function *() {
     // v.push(4);
     // console.log(yield a.collect());
 
-    console.log('\n# union collect')
-    var a = uc.parallelize([1, 2, 3], 1);
-    var b = uc.parallelize([4, 5, 6], 1);
-    var c = a.union(b).persist();
-    yield c.collect();
-    var res = yield c.collect();
-    console.log(res);
+    // console.log('\n# union collect')
+    // var a = uc.parallelize([1, 2, 3], 1);
+    // var b = uc.parallelize([4, 5, 6], 1);
+    // var c = a.union(b).persist();
+    // yield c.collect();
+    // var res = yield c.collect();
+    // console.log(res);
 
     // var v = [['hello', 1], ['hello', 2]];
     // console.log('\n# groupByKey collect on ' + JSON.stringify(v))
@@ -66,11 +66,11 @@ co(function *() {
     // var res = yield a.groupByKey().reduceByKey(r2, [0]).collect();
     // console.log(res);
     
-    // console.log('\n# RandomSVMData')
-    // var N = 4, D = 2, seed = 1,  P = 2;
-    // var a = uc.randomSVMData(N, D, seed, P);
-    // var res = yield a.collect();
-    // console.log(res)
+    console.log('\n# RandomSVMData')
+    var N = 4, D = 2, seed = 1,  P = 2;
+    var a = uc.randomSVMData(N, D, seed, P);
+    var res = yield a.collect();
+    console.log(res)
 
     // var file = '/Users/cedricartigue/work/ugrid/examples/ml/rank.data';
     // console.log('\n# textFile on ' + file)
