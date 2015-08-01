@@ -124,7 +124,7 @@ function runWorker(host, port) {
 	});
 
 	grid.on('shuffle', function (msg) {
-		try {jobs[msg.jobId].rdd[msg.rddId].rx_shuffle(msg.args);}
+		try {jobs[msg.jobId].rdd[msg.rddId].shuffle(msg.args);}
 		catch (err) {throw new Error("Rx shuffle " + jobs[msg.jobId].rdd[msg.rddId].constructor.name + ": " + err);}
 	});
 

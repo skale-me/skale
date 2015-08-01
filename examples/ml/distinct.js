@@ -8,10 +8,11 @@ co(function *() {
     var uc = yield ugrid.context();
 
     var nPartitions = 2;
-    var N = 1000000;
+    var N = 100;
+    // var N = 1000000;
     var vect = [];
-    // for (var i = 0; i < N; i++) vect.push(i);
-    for (var i = 0; i < N; i++) vect.push(Math.floor(Math.random() * N));
+    for (var i = 0; i < N; i++) vect.push(i);
+    // for (var i = 0; i < N; i++) vect.push(Math.floor(Math.random() * N));
 
     // var vect = [1, 2, 1, 4, 2];
     var a = uc.parallelize(vect, nPartitions).distinct();

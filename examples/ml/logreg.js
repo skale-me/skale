@@ -17,7 +17,7 @@ var N = Number(opt.options.N) || 842000;
 var D = Number(opt.options.D) || 16;
 var nIterations = Number(opt.options.I) ||  4;
 var seed = 1;
-var P = 1;
+var P = 4;		// increasing improve performances
 
 console.log('Input data: ' + (file || 'random'));
 console.log('Number of observations: ' + N);
