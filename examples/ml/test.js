@@ -80,5 +80,9 @@ co(function *() {
     var res = yield uc.textFile(file).collect();
     console.log(res)
 
+    console.log('\n# parallelize sample collect')
+    var res = yield uc.parallelize([1, 2, 3, 4], 2).sample(true, 0.5).collect();
+    console.log(res);
+
     uc.end();
 }).catch(ugrid.onError);
