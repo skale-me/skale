@@ -3,6 +3,7 @@
 
 var co = require('co');
 var ugrid = require('../..');
+var sizeOf = require('../../utils/sizeof.js');
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -20,11 +21,16 @@ var D = Number(opt.options.D) || 16;
 var nIterations = Number(opt.options.I) || 4;
 var seed = 1;
 
+var sample = [1, []];
+for (var i = 0; i < D; i++) sample[1].push(Math.random());
+var approx_data_size = N * sizeOf(sample);
+
 console.log('Input data: ' + (file || 'random'));
 console.log('Number of observations: ' + N);
 console.log('Number of clusters: ' + K);
 console.log('Features per observation: ' + D);
 console.log('Iterations: ' + nIterations + '\n');
+console.log('Approximate dataset size: ' + Math.ceil(approx_data_size / (1024 * 1024)) + ' Mb');
 
 co(function *() {
 	var uc = yield ugrid.context();

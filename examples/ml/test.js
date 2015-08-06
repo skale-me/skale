@@ -44,13 +44,13 @@ co(function *() {
     // var res = yield c.collect();
     // console.log(res);
 
-    // var v = [['hello', 1], ['hello', 2]];
+    // var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
     // console.log('\n# groupByKey collect on ' + JSON.stringify(v))
     // var a = uc.parallelize(v, 2);
     // var res = yield a.groupByKey().collect();
     // console.log(res);
 
-    var v = [['hello', 1], ['hello', 2], ['world', 3], ['world', 4]]
+    var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
     console.log('\n# reduceByKey collect on ' + JSON.stringify(v))
     function r1(a, b) {return a + b;}
     var a = uc.parallelize(v, 2);
@@ -83,6 +83,38 @@ co(function *() {
     // console.log('\n# parallelize sample collect')
     // var res = yield uc.parallelize([1, 2, 3, 4], 2).sample(true, 0.5).collect();
     // console.log(res);
+
+    // var v1 = [['hello', 1], ['world', 2]];
+    // var v2 = [['hello', 3], ['world', 4]];
+    // console.log('\n# coGroup collect')
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.coGroup(b).collect();
+    // console.log(JSON.stringify(res));
+
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    // var v2 = [['hello', 3], ['world', 4], ['world', 5]];
+    // console.log('\n# join collect')
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.join(b).collect();
+    // console.log(JSON.stringify(res));
+
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    // var v2 = [['hello', 3], ['world', 4], ['world', 5]];
+    // console.log('\n# leftOuterJoin collect')
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.leftOuterJoin(b).collect();
+    // console.log(JSON.stringify(res));
+
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    // var v2 = [['hello', 3], ['world', 4], ['world', 5]];
+    // console.log('\n# rightOuterJoin collect')
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.rightOuterJoin(b).collect();
+    // console.log(JSON.stringify(res));
 
     uc.end();
 }).catch(ugrid.onError);
