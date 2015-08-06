@@ -44,18 +44,18 @@ co(function *() {
     // var res = yield c.collect();
     // console.log(res);
 
-    // var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
-    // console.log('\n# groupByKey collect on ' + JSON.stringify(v))
-    // var a = uc.parallelize(v, 2);
-    // var res = yield a.groupByKey().collect();
-    // console.log(res);
-
     var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
     console.log('\n# reduceByKey collect on ' + JSON.stringify(v))
     function r1(a, b) {return a + b;}
     var a = uc.parallelize(v, 2);
     var res = yield a.reduceByKey(r1, 0).collect();
     console.log(res);
+
+    // var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
+    // console.log('\n# groupByKey collect on ' + JSON.stringify(v))
+    // var a = uc.parallelize(v, 2);
+    // var res = yield a.groupByKey().collect();
+    // console.log(res);
 
     // var v = [['hello', 1], ['hello', 2], ['world', 3], ['world', 4]]
     // console.log('\n# groupByKey reduceByKey collect on ' + JSON.stringify(v));
