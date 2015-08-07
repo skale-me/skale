@@ -44,12 +44,12 @@ co(function *() {
     // var res = yield c.collect();
     // console.log(res);
 
-    var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
-    console.log('\n# reduceByKey collect on ' + JSON.stringify(v))
-    function r1(a, b) {return a + b;}
-    var a = uc.parallelize(v, 2);
-    var res = yield a.reduceByKey(r1, 0).collect();
-    console.log(res);
+    // var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
+    // console.log('\n# reduceByKey collect on ' + JSON.stringify(v))
+    // function r1(a, b) {return a + b;}
+    // var a = uc.parallelize(v, 2);
+    // var res = yield a.reduceByKey(r1, 0).collect();
+    // console.log(res);
 
     // var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
     // console.log('\n# groupByKey collect on ' + JSON.stringify(v))
@@ -115,6 +115,22 @@ co(function *() {
     // var b = uc.parallelize(v2, 2);
     // var res = yield a.rightOuterJoin(b).collect();
     // console.log(JSON.stringify(res));
+
+    var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    console.log('\n# sample WITHOUT replacement collect')
+    var a = uc.parallelize(v1, 2);
+    var frac = 0.5;
+    var withReplacement = false;
+    var res = yield a.sample(withReplacement, frac).collect();
+    console.log(JSON.stringify(res));
+
+    var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    console.log('\n# sample WITH replacement collect')
+    var a = uc.parallelize(v1, 2);
+    var frac = 1.1;
+    var withReplacement = true;
+    var res = yield a.sample(withReplacement, frac).collect();
+    console.log(JSON.stringify(res));
 
     uc.end();
 }).catch(ugrid.onError);
