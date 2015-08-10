@@ -116,20 +116,26 @@ co(function *() {
     // var res = yield a.rightOuterJoin(b).collect();
     // console.log(JSON.stringify(res));
 
-    var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
-    console.log('\n# sample WITHOUT replacement collect')
-    var a = uc.parallelize(v1, 2);
-    var frac = 0.5;
-    var withReplacement = false;
-    var res = yield a.sample(withReplacement, frac).collect();
-    console.log(JSON.stringify(res));
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    // console.log('\n# sample WITHOUT replacement collect')
+    // var a = uc.parallelize(v1, 2);
+    // var frac = 0.5;
+    // var withReplacement = false;
+    // var res = yield a.sample(withReplacement, frac).collect();
+    // console.log(JSON.stringify(res));
 
-    var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
-    console.log('\n# sample WITH replacement collect')
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    // console.log('\n# sample WITH replacement collect')
+    // var a = uc.parallelize(v1, 2);
+    // var frac = 1.1;
+    // var withReplacement = true;
+    // var res = yield a.sample(withReplacement, frac).collect();
+    // console.log(JSON.stringify(res));
+
+    var v1 = [['hello', 1], ['hello', 1], ['world', 0]];
+    console.log('\n# distinct collect')
     var a = uc.parallelize(v1, 2);
-    var frac = 1.1;
-    var withReplacement = true;
-    var res = yield a.sample(withReplacement, frac).collect();
+    var res = yield a.distinct().collect();
     console.log(JSON.stringify(res));
 
     uc.end();

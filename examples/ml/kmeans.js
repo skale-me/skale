@@ -15,7 +15,7 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var file = opt.options.F;
-var N = Number(opt.options.N) || 842000;
+var N = Number(opt.options.N) || 1000000;
 var K = Number(opt.options.K) || 10;
 var D = Number(opt.options.D) || 16;
 var nIterations = Number(opt.options.I) || 4;
