@@ -27,7 +27,7 @@ case 0:
 	lines.on('end', function() {console.log(cnt)})
 	break;
 case 1:
-	console.log('Linecount using readstream and split method')
+	console.log('Linecount using readstream and split method, FASTEST solution')
 	var buffer = '';
 	rs.on('data', function(chunk) {
 		// var lines = (buffer + chunk).split(/\r?\n/g);
