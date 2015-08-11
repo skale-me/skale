@@ -132,10 +132,16 @@ co(function *() {
     // var res = yield a.sample(withReplacement, frac).collect();
     // console.log(JSON.stringify(res));
 
-    var v1 = [['hello', 1], ['hello', 1], ['world', 0]];
-    console.log('\n# distinct collect')
+    // var v1 = [['hello', 1], ['hello', 1], ['world', 0]];
+    // console.log('\n# distinct collect')
+    // var a = uc.parallelize(v1, 2);
+    // var res = yield a.distinct().collect();
+    // console.log(JSON.stringify(res));
+
+    var v1 = [['hello', 1], ['hello', 1], ['world', 0], ['world', 4], ['world', 1]];
+    console.log('\n# lookup')
     var a = uc.parallelize(v1, 2);
-    var res = yield a.distinct().collect();
+    var res = yield a.lookup('world');
     console.log(JSON.stringify(res));
 
     uc.end();
