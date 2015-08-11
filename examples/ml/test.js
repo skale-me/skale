@@ -138,10 +138,16 @@ co(function *() {
     // var res = yield a.distinct().collect();
     // console.log(JSON.stringify(res));
 
-    var v1 = [['hello', 1], ['hello', 1], ['world', 0], ['world', 4], ['world', 1]];
-    console.log('\n# lookup')
+    // var v1 = [['hello', 1], ['hello', 1], ['world', 0], ['world', 4], ['world', 1]];
+    // console.log('\n# lookup')
+    // var a = uc.parallelize(v1, 2);
+    // var res = yield a.lookup('world');
+    // console.log(JSON.stringify(res));
+
+    var v1 = [['hello', 1], ['hello', 1], ['world', 0], ['world', 1]];
+    console.log('\n# countByValue')
     var a = uc.parallelize(v1, 2);
-    var res = yield a.lookup('world');
+    var res = yield a.countByValue();
     console.log(JSON.stringify(res));
 
     uc.end();
