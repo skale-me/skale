@@ -172,10 +172,22 @@ co(function *() {
     // var res = yield a.subtract(b).collect();
     // console.log(JSON.stringify(res));
 
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // console.log('\n# saveAsTextFile')
+    // var a = uc.parallelize(v1, 2);
+    // var res = yield a.saveAsTextFile('/tmp/myOutputFile');
+
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // console.log('\n# keys collect')
+    // var a = uc.parallelize(v1, 2);
+    // var res = yield a.keys().collect();
+    // console.log(res);
+
     var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
-    console.log('\n# saveAsTextFile')
+    console.log('\n# values collect')
     var a = uc.parallelize(v1, 2);
-    var res = yield a.saveAsTextFile('/tmp/myOutputFile');
+    var res = yield a.values().collect();
+    console.log(res);    
 
     uc.end();
 }).catch(ugrid.onError);
