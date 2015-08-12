@@ -156,13 +156,26 @@ co(function *() {
     // var res = yield a.countByKey();
     // console.log(JSON.stringify(res));
 
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // var v2 = [['hello', 1], ['world', 4], ['solo', 0]];
+    // console.log('\n# intersection collect')
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.intersection(b).collect();
+    // console.log(JSON.stringify(res));
+
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // var v2 = [['hello', 1], ['world', 4], ['solo', 0]];
+    // console.log('\n# subtract collect')
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.subtract(b).collect();
+    // console.log(JSON.stringify(res));
+
     var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
-    var v2 = [['hello', 1], ['world', 4], ['solo', 0]];
-    console.log('\n# intersection collect')
+    console.log('\n# saveAsTextFile')
     var a = uc.parallelize(v1, 2);
-    var b = uc.parallelize(v2, 2);
-    var res = yield a.intersection(b).collect();
-    console.log(JSON.stringify(res));
+    var res = yield a.saveAsTextFile('/tmp/myOutputFile');
 
     uc.end();
 }).catch(ugrid.onError);
