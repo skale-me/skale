@@ -10,9 +10,9 @@ execSync('rm -rf /tmp/ugrid/');
 co(function *() {
     var uc = yield ugrid.context();
 
-    // console.log('\n# parallelize collect')
-    // var res = yield uc.parallelize([1, 2, 3], 2).collect();
-    // console.log(res);
+    console.log('\n# parallelize collect')
+    var res = yield uc.parallelize([1, 2, 3], 2).collect();
+    console.log(res);
 
     // console.log('\n# parallelize reduce')
     // var res = yield uc.parallelize([1, 2, 3], 3).reduce(function(a, b) {return a + b}, 0);
@@ -183,11 +183,11 @@ co(function *() {
     // var res = yield a.keys().collect();
     // console.log(res);
 
-    var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
-    console.log('\n# values collect')
-    var a = uc.parallelize(v1, 2);
-    var res = yield a.values().collect();
-    console.log(res);    
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // console.log('\n# values collect')
+    // var a = uc.parallelize(v1, 2);
+    // var res = yield a.values().collect();
+    // console.log(res);    
 
     uc.end();
 }).catch(ugrid.onError);
