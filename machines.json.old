@@ -1,5 +1,0 @@
-{
-	"server": ["localhost"],
-	"worker": ["localhost"],
-	"controller": ["localhost"]
-}
