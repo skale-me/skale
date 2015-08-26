@@ -1,0 +1,19 @@
+{
+	"nodebin": "/usr/bin/node",
+	"path": "/home/ugrid/ugrid",
+	"user": "ugrid",
+	"server": [
+		{ "host": "ug200" }
+	],
+	"worker": [
+		{ "host": "ug001" },
+		{ "host": "ug002" },
+		{ "host": "ug003" },
+		{ "host": "ug004" },
+		{ "host": "ug005" },
+		{ "host": "ug007" }
+	],
+	"controller": [
+		{ "host": "ug200" }
+	]
+}

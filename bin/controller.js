@@ -25,19 +25,19 @@ var ugrid = require('../lib/ugrid-client.js')({
 
 console.log('app controller ready');
 
-ugrid.on('start', function (msg) {
-	var cmd = __dirname + '/../examples/web/' + msg.data.app + '.js';
-	var prog = fork(cmd, [JSON.stringify(msg.data)], {silent: true});
-	prog.stdout.on('data', function(data) {
-		console.log('# stdout: ' + data);
-	});
-	prog.stderr.on('data', function(data) {
-		console.log('# stderr: ' + data);
-	});
-	prog.on('close', function (code) {
-		console.log('child process exited with code ' + code);
-	});
-});
+//ugrid.on('start', function (msg) {
+//	var cmd = __dirname + '/../examples/web/' + msg.data.app + '.js';
+//	var prog = fork(cmd, [JSON.stringify(msg.data)], {silent: true});
+//	prog.stdout.on('data', function(data) {
+//		console.log('# stdout: ' + data);
+//	});
+//	prog.stderr.on('data', function(data) {
+//		console.log('# stderr: ' + data);
+//	});
+//	prog.on('close', function (code) {
+//		console.log('child process exited with code ' + code);
+//	});
+//});
 
 ugrid.on('remoteClose', function (msg) {
 	if (msg.data in shells) {
@@ -58,7 +58,7 @@ ugrid.on('shell', function (msg) {
 		ugrid.send(0, {cmd: 'notify', data: msg.data});
 		shell = sessions[msg.webid];
 		shell.stdout.pipe(lines);
-		shell.stdin.write(JSON.stringify({data: 'webid = "' + msg.webid + '"; dest = "' + msg.from + '";'}));
+		shell.stdin.write(JSON.stringify({data: 'webid = "' + msg.webid + '"; dest = "' + msg.from + '";'}) + '\n');
 		ugrid.on('stdin-' + msg.webid, inputCmd);
 		lines.on('data', outputCmd);
 		return;
@@ -86,7 +86,7 @@ ugrid.on('shell', function (msg) {
 	console.log('forked ugrid-shell.js pid ' + shell.pid);
 
 	function inputCmd(cmd) {
-		shell.stdin.write(JSON.stringify(cmd));
+		shell.stdin.write(JSON.stringify(cmd) + '\n');
 	}
 
 	function outputCmd(data) {
