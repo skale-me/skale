@@ -87,42 +87,42 @@ co(function *() {
     // console.log(res);
 
 //OK
-    var v1 = [['hello', 1], ['world', 2]];
-    var v2 = [['hello', 3], ['world', 4]];
-    console.log('\n# coGroup collect')
-    var a = uc.parallelize(v1, 2);
-    var b = uc.parallelize(v2, 2);
-    var res = yield a.coGroup(b).collect();
-    console.log(JSON.stringify(res));
+    // var v1 = [['hello', 1], ['world', 2]];
+    // var v2 = [['hello', 3], ['world', 4]];
+    // console.log('\n# coGroup collect')
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.coGroup(b).collect();
+    // console.log(JSON.stringify(res));
 
 //OK
-    var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
-    var v2 = [['hello', 3], ['world', 4], ['world', 5]];
-    console.log('\n# join collect on')
-    console.log(v1);
-    console.log(v2);
-    var a = uc.parallelize(v1, 2);
-    var b = uc.parallelize(v2, 2);
-    var res = yield a.join(b).collect();
-    console.log(JSON.stringify(res));
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    // var v2 = [['hello', 3], ['world', 4], ['world', 5]];
+    // console.log('\n# join collect on')
+    // console.log(v1);
+    // console.log(v2);
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.join(b).collect();
+    // console.log(JSON.stringify(res));
 
 //OK
-    var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
-    var v2 = [['hello', 3], ['world', 4], ['world', 5]];
-    console.log('\n# leftOuterJoin collect')
-    var a = uc.parallelize(v1, 2);
-    var b = uc.parallelize(v2, 2);
-    var res = yield a.leftOuterJoin(b).collect();
-    console.log(JSON.stringify(res));
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    // var v2 = [['hello', 3], ['world', 4], ['world', 5]];
+    // console.log('\n# leftOuterJoin collect')
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.leftOuterJoin(b).collect();
+    // console.log(JSON.stringify(res));
 
 //OK
-    var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
-    var v2 = [['hello', 3], ['world', 4], ['world', 5]];
-    console.log('\n# rightOuterJoin collect')
-    var a = uc.parallelize(v1, 2);
-    var b = uc.parallelize(v2, 2);
-    var res = yield a.rightOuterJoin(b).collect();
-    console.log(JSON.stringify(res));
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    // var v2 = [['hello', 3], ['world', 4], ['world', 5]];
+    // console.log('\n# rightOuterJoin collect')
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.rightOuterJoin(b).collect();
+    // console.log(JSON.stringify(res));
 
     // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
     // console.log('\n# sample WITHOUT replacement collect')
@@ -140,12 +140,12 @@ co(function *() {
     // var res = yield a.sample(withReplacement, frac).collect();
     // console.log(JSON.stringify(res));
 
-    var v1 = [['hello', 1], ['hello', 1], ['world', 0]];
-    console.log('\n# distinct collect on ');
-    console.log(v1);
-    var a = uc.parallelize(v1, 2);
-    var res = yield a.distinct().collect();
-    console.log(JSON.stringify(res));
+    // var v1 = [['hello', 1], ['hello', 1], ['world', 0]];
+    // console.log('\n# distinct collect on ');
+    // console.log(v1);
+    // var a = uc.parallelize(v1, 2);
+    // var res = yield a.distinct().collect();
+    // console.log(JSON.stringify(res));
 
     // var v1 = [['hello', 1], ['hello', 1], ['world', 0], ['world', 4], ['world', 1]];
     // console.log('\n# lookup')
@@ -165,27 +165,35 @@ co(function *() {
     // var res = yield a.countByKey();
     // console.log(JSON.stringify(res));
 
-//OK
-    var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
-    var v2 = [['hello', 1], ['world', 4], ['solo', 0]];
-    console.log('\n# intersection collect')
-    console.log(v1);
-    console.log(v2);
-    var a = uc.parallelize(v1, 2);
-    var b = uc.parallelize(v2, 2);
-    var res = yield a.intersection(b).collect();
-    console.log(JSON.stringify(res));
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // var v2 = [['hello', 1], ['world', 4], ['solo', 0]];
+    // console.log('\n# intersection collect')
+    // console.log(v1);
+    // console.log(v2);
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.intersection(b).collect();
+    // console.log(JSON.stringify(res));
 
-//OK
-    var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
-    var v2 = [['hello', 1], ['world', 4], ['solo', 0]];    
-    console.log('\n# subtract collect on')
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // var v2 = [['hello', 1], ['world', 4], ['solo', 0]];    
+    // console.log('\n# subtract collect on')
+    // console.log(v1);
+    // console.log(v2);
+    // var a = uc.parallelize(v1, 2);
+    // var b = uc.parallelize(v2, 2);
+    // var res = yield a.subtract(b).collect();
+    // console.log(JSON.stringify(res));
+
+    var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    var v2 = [['hello', 3], ['world', 4], ['world', 5]];
+    console.log('\n# crossProduct collect on')
     console.log(v1);
     console.log(v2);
     var a = uc.parallelize(v1, 2);
     var b = uc.parallelize(v2, 2);
-    var res = yield a.subtract(b).collect();
-    console.log(JSON.stringify(res));
+    var res = yield a.crossProduct(b).collect();
+    console.log(res);
 
     // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
     // console.log('\n# saveAsTextFile')
