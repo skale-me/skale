@@ -28,8 +28,8 @@ co(function *() {
 	function flatMapper(line) {
 		var tmp = [], data = line.split(' ');
 		for (var i = 0; i < data.length; i++) {
-			if ((data[i].length < 5) || (data[i].length > 5)) continue;	// Find words between 4 to 25 letters long
-			if (data[i].indexOf('/') != -1) continue;					// Skip keys containing '/' character
+			// if ((data[i].length < 5) || (data[i].length > 5)) continue;	// Find words between 4 to 25 letters long
+			// if (data[i].indexOf('/') != -1) continue;					// Skip keys containing '/' character
 			tmp.push([data[i], 1]);
 		}
 		return tmp;

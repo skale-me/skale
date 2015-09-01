@@ -12,6 +12,7 @@ co(function *() {
     console.log('RandomSVMData ReduceByKey')
 
     var N = 1000 * 1000 * 10;
+    // var N = 1000;    
     var D = 10;
     var seed = 1;
     var P = 2;

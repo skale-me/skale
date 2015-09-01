@@ -3,9 +3,8 @@
 
 var co = require('co');
 var ugrid = require('../..');
-var execSync = require('child_process').execSync;
 
-execSync('rm -rf /tmp/ugrid/');
+require('child_process').execSync('rm -rf /tmp/ugrid/');
 
 co(function *() {
     var uc = yield ugrid.context();
@@ -44,6 +43,7 @@ co(function *() {
     // var res = yield c.collect();
     // console.log(res);
 
+//OK
     // var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
     // console.log('\n# reduceByKey collect on ' + JSON.stringify(v))
     // function r1(a, b) {return a + b;}
@@ -51,12 +51,14 @@ co(function *() {
     // var res = yield a.reduceByKey(r1, 0).collect();
     // console.log(res);
 
+//OK
     // var v = [['hello', 1], ['world', 3], ['hello', 2], ['world', 4]]
     // console.log('\n# groupByKey collect on ' + JSON.stringify(v))
     // var a = uc.parallelize(v, 2);
     // var res = yield a.groupByKey().collect();
     // console.log(res);
 
+//OK
     // var v = [['hello', 1], ['hello', 2], ['world', 3], ['world', 4]]
     // console.log('\n# groupByKey reduceByKey collect on ' + JSON.stringify(v));
     // function r2(a, b) {
@@ -68,7 +70,7 @@ co(function *() {
     // var a = uc.parallelize(v, 2);
     // var res = yield a.groupByKey().reduceByKey(r2, [0]).collect();
     // console.log(res);
-    
+ 
     // console.log('\n# RandomSVMData')
     // var N = 4, D = 2, seed = 1,  P = 2;
     // var a = uc.randomSVMData(N, D, seed, P);
@@ -84,6 +86,7 @@ co(function *() {
     // var res = yield uc.parallelize([1, 2, 3, 4], 2).sample(true, 0.5).collect();
     // console.log(res);
 
+//OK
     // var v1 = [['hello', 1], ['world', 2]];
     // var v2 = [['hello', 3], ['world', 4]];
     // console.log('\n# coGroup collect')
@@ -92,14 +95,18 @@ co(function *() {
     // var res = yield a.coGroup(b).collect();
     // console.log(JSON.stringify(res));
 
+//OK
     // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
     // var v2 = [['hello', 3], ['world', 4], ['world', 5]];
-    // console.log('\n# join collect')
+    // console.log('\n# join collect on')
+    // console.log(v1);
+    // console.log(v2);
     // var a = uc.parallelize(v1, 2);
     // var b = uc.parallelize(v2, 2);
     // var res = yield a.join(b).collect();
     // console.log(JSON.stringify(res));
 
+//OK
     // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
     // var v2 = [['hello', 3], ['world', 4], ['world', 5]];
     // console.log('\n# leftOuterJoin collect')
@@ -108,6 +115,7 @@ co(function *() {
     // var res = yield a.leftOuterJoin(b).collect();
     // console.log(JSON.stringify(res));
 
+//OK
     // var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
     // var v2 = [['hello', 3], ['world', 4], ['world', 5]];
     // console.log('\n# rightOuterJoin collect')
@@ -133,7 +141,8 @@ co(function *() {
     // console.log(JSON.stringify(res));
 
     // var v1 = [['hello', 1], ['hello', 1], ['world', 0]];
-    // console.log('\n# distinct collect')
+    // console.log('\n# distinct collect on ');
+    // console.log(v1);
     // var a = uc.parallelize(v1, 2);
     // var res = yield a.distinct().collect();
     // console.log(JSON.stringify(res));
@@ -159,23 +168,49 @@ co(function *() {
     // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
     // var v2 = [['hello', 1], ['world', 4], ['solo', 0]];
     // console.log('\n# intersection collect')
+    // console.log(v1);
+    // console.log(v2);
     // var a = uc.parallelize(v1, 2);
     // var b = uc.parallelize(v2, 2);
     // var res = yield a.intersection(b).collect();
     // console.log(JSON.stringify(res));
 
     // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
-    // var v2 = [['hello', 1], ['world', 4], ['solo', 0]];
-    // console.log('\n# subtract collect')
+    // var v2 = [['hello', 1], ['world', 4], ['solo', 0]];    
+    // console.log('\n# subtract collect on')
+    // console.log(v1);
+    // console.log(v2);
     // var a = uc.parallelize(v1, 2);
     // var b = uc.parallelize(v2, 2);
     // var res = yield a.subtract(b).collect();
     // console.log(JSON.stringify(res));
 
-    var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
-    console.log('\n# saveAsTextFile')
+    var v1 = [['hello', 1], ['world', 2], ['solo', 0]];
+    var v2 = [['hello', 3], ['world', 4], ['world', 5]];
+    console.log('\n# crossProduct collect on')
+    console.log(v1);
+    console.log(v2);
     var a = uc.parallelize(v1, 2);
-    var res = yield a.saveAsTextFile('/tmp/myOutputFile');
+    var b = uc.parallelize(v2, 2);
+    var res = yield a.crossProduct(b).collect();
+    console.log(res);
+
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // console.log('\n# saveAsTextFile')
+    // var a = uc.parallelize(v1, 2);
+    // var res = yield a.saveAsTextFile('/tmp/myOutputFile');
+
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // console.log('\n# keys collect')
+    // var a = uc.parallelize(v1, 2);
+    // var res = yield a.keys().collect();
+    // console.log(res);
+
+    // var v1 = [['hello', 1], ['world', 2], ['solo', 0], ['solo', 0]];
+    // console.log('\n# values collect')
+    // var a = uc.parallelize(v1, 2);
+    // var res = yield a.values().collect();
+    // console.log(res);    
 
     uc.end();
 }).catch(ugrid.onError);
