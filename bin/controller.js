@@ -50,7 +50,7 @@ ugrid.on('remoteClose', function (msg) {
 var sessions = {};
 
 ugrid.on('shell', function (msg) {
-	var lines = new Lines(), shell;
+	var lines = new Lines(), shell, cwd;
 	if (sessions[msg.webid]) {
 		trace('reconnect attempt')
 		// Reconnect to an existing shell
@@ -59,15 +59,13 @@ ugrid.on('shell', function (msg) {
 		shell = sessions[msg.webid];
 		shell.stdout.pipe(lines);
 		shell.stdin.write(JSON.stringify({data: 'webid = "' + msg.webid + '"; dest = "' + msg.from + '";'}) + '\n');
-		ugrid.on('stdin-' + msg.webid, inputCmd);
 		lines.on('data', outputCmd);
 		return;
 	}
 	// Create a new shell
 	process.env.UGRID_WEBID = msg.webid;
-	process.env.UGRID_DEST = msg.from;
-	//var shell = fork(__dirname + '/ugrid-shell.js', {silent: true});
-	shell = fork(__dirname + '/../lib/copro.js', {silent: true});
+	cwd = './users/' + msg.webid.replace(":", "/");
+	shell = fork(__dirname + '/../lib/copro.js', {silent: true, cwd: cwd});
 	shells[msg.data] = shell;
 	sessions[msg.webid] = shell;
 	ugrid.send(0, {cmd: 'shell', id: msg.from});
@@ -91,6 +89,9 @@ ugrid.on('shell', function (msg) {
 
 	function outputCmd(data) {
 		data = JSON.parse(data);
-		ugrid.send(0, {cmd: 'stdout-' + msg.webid, id: msg.from, file: data.file, data: data.data + '\n'});
+		if (data.plot)
+			ugrid.send(0, {cmd: 'plot-' + msg.webid, id: msg.from, data: data.plot, file: data.file});
+		else
+			ugrid.send(0, {cmd: 'stdout-' + msg.webid, id: msg.from, file: data.file, data: data.data + '\n'});
 	}
 });
