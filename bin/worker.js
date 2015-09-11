@@ -2,8 +2,10 @@
 
 'use strict';
 
+var fs = require('fs');
 var os = require('os');
 var cluster = require('cluster');
+var Ssh2 = require('ssh2');
 
 var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
@@ -24,6 +26,44 @@ var hostname = opt.options.MyHost || os.hostname();
 var cgrid;
 
 ncpu = Number(ncpu);
+var sshUser = process.env.USER;
+var sshPrivateKey = fs.readFileSync(process.env.HOME + '/.ssh/id_rsa');
+var ssh = {};
+var sftp = {};
+var transferQueue = [];		// File transfer queue, on controller, to serialize concurrent worker requests during init
+var ftid = 0;				// File transfer id, set on worker to handle controller responses.
+var ftcb = {}				// File transfer callback, on worker, indexed by ftid.
+
+// On controller, file transfer function
+function scp(msg, done) {
+	if (sftp[msg.from])			// ssh ok and sftp session ready
+		return sftp[msg.from].fastGet(msg.remote, msg.local, {}, done);
+
+	// sftp session not yet established, enqueue the request, init session once
+	transferQueue.push([msg.remote, msg.local, done]);
+	if (!ssh[msg.from]) {		// ssh connection not yet established
+		var cnx = ssh[msg.from] = new Ssh2();
+		cnx.connect({
+			host: msg.from,
+			username: sshUser,
+			privateKey: sshPrivateKey
+		});
+		cnx.on('ready', function () {
+			cnx.sftp(function (err, res) {
+				if (err) {
+					for (var i = 0; i < transferQueue.length; i++)
+						transferQueue[i][2](err);
+					return;
+				}
+				sftp[msg.from] = res;
+				transferQueue.forEach(function (req) {
+					res.fastGet(req[0], req[1], {}, req[2]);
+				});
+			});
+		});
+	}
+}
+
 if (cluster.isMaster) {
 	cluster.on('exit', handleExit);
 	cgrid = new UgridClient({
@@ -37,12 +77,24 @@ if (cluster.isMaster) {
 		}
 	});
 	cgrid.on('connect', function (msg) {
+		var worker = [];
 		for (var i = 0; i < ncpu; i++)
-			cluster.fork({wsid: msg.wsid});
+			worker[i] = cluster.fork({wsid: msg.wsid});
+		worker.forEach(function (w) {
+			w.on('message', function (msg) {
+				scp(msg, function (err, res) {w.send({ftid: msg.ftid, err: err, res: res});});
+			});
+		});
 	});
 	cgrid.on('getWorker', function (msg) {
+		var worker = [];
 		for (var i = 0; i < msg.n; i++)
-			cluster.fork({wsid: msg.wsid});
+			worker[i] = cluster.fork({wsid: msg.wsid});
+		worker.forEach(function (w) {
+			w.on('message', function (msg) {
+				scp(msg, function (err, res) {w.send({ftid: msg.ftid, err: err, res: res});});
+			});
+		});
 	});
 	cgrid.on('close', function () {
 		process.exit(1);
@@ -56,8 +108,15 @@ function handleExit(worker, code, signal) {
 	console.log("worker %d exited: %s", worker.process.pid, signal || code);
 }
 
+// On worker, file transfer function: send a request to controller, handle
+// response in callback
+function transfer(host, remote, local, done) {
+	ftcb[ftid] = done;
+	process.send({cmd: 'scp', from: host, remote: remote, local: local, ftid: ftid++});
+}
+
 function runWorker(host, port) {
-	var jobs = {}, jobId, ram = {};
+	var jobs = {}, jobId, ram = {}, rdd = {};
 
 	var grid = new UgridClient({
 		debug: debug,
@@ -77,6 +136,7 @@ function runWorker(host, port) {
 	}, function (err, res) {
 		console.log('id: ' + res.id + ', uuid: ' + res.uuid);
 		grid.host = {uuid: res.uuid, id: res.id};
+		grid.workerHost = {};
 	});
 
 	grid.on('error', function (err) {
@@ -96,7 +156,9 @@ function runWorker(host, port) {
 				master_uuid: msg.data.master_uuid,
 				dones: {},
 				completedStreams: {},
-				ram: ram
+				transfer: transfer,
+				ram: ram,
+				rdd: rdd
 			};
 			jobs[msg.data.jobId] = new UgridJob(grid, app, {
 				node: msg.data.args.node,
@@ -124,10 +186,8 @@ function runWorker(host, port) {
 	});
 
 	grid.on('shuffle', function (msg) {
-		try {jobs[msg.jobId].node[msg.shuffleNode].rx_shuffle(msg.args);}
-		catch (err) {throw new Error("Lineage rx shuffle " + jobs[msg.jobId].node[msg.shuffleNode].type + ": " + err);}
-		if (jobs[msg.jobId].node[msg.shuffleNode].nShuffle == jobs[msg.jobId].app.worker.length)
-			jobs[msg.jobId].node[msg.shuffleNode].runFromStageRam();
+		try {jobs[msg.jobId].rdd[msg.rddId].shuffle(msg.args);}
+		catch (err) {throw new Error("Rx shuffle " + jobs[msg.jobId].rdd[msg.rddId].constructor.name + ": " + err);}
 	});
 
 	grid.on('runJob', function (msg) {
@@ -135,19 +195,34 @@ function runWorker(host, port) {
 	});
 
 	grid.on('lastLine', function (msg) {
-		jobs[msg.jobId].node[msg.args.targetNum].processLastLine(msg.args);
+		jobs[msg.jobId].rdd[msg.args.rddId].processLastLine(msg.args);
+		// jobs[msg.jobId].node[msg.args.targetNum].processLastLine(msg.args);
 	});
 
-	grid.on('action', function (msg) {
-		jobs[msg.jobId].action.sendResult();		
+	grid.on('action', function (msg) {			// OK FOR NEW DESIGN
+		jobs[msg.jobId].sendResult();
 	});
 
 	grid.on('request', function (msg) {
+		if (msg.first) {
+			for (var i = 0; i < msg.first.length; i++)
+				grid.workerHost[i] = msg.first[i].hostname;
+		}
 		try {
 			request[msg.data.cmd](msg);
 		} catch (error) {
 			console.error(error.stack);
 			grid.reply(msg, error, null);
 		}
+	});
+
+	// Handle messages from worker controller (replies to scp requests)
+	process.on('message', function (msg) {
+		if (!ftcb[msg.ftid]) {
+			console.error('no callback found: %j', msg)
+			return;
+		}
+		ftcb[msg.ftid](msg.err, msg.res);
+		ftcb[msg.ftid] = undefined;
 	});
 }

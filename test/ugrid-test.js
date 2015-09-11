@@ -126,6 +126,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
 				action_args = [].concat(action.args, function (err, res) {dres = res; done();});
 				rdd[action.name].apply(rdd, action_args);
+				// uc.startStreams();
 			});
 
 			it('check distributed results', function () {
