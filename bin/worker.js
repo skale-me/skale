@@ -19,10 +19,11 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var debug = opt.options.debug || false;
-var ncpu = opt.options.Num || (process.env.UGRID_WORKER_PER_HOST ? Number(process.env.UGRID_WORKER_PER_HOST) : os.cpus().length);
+var ncpu = opt.options.Num || (process.env.UGRID_WORKER_PER_HOST ? process.env.UGRID_WORKER_PER_HOST : os.cpus().length);
 var hostname = opt.options.MyHost || os.hostname();
 var cgrid;
 
+ncpu = Number(ncpu);
 if (cluster.isMaster) {
 	cluster.on('exit', handleExit);
 	cgrid = new UgridClient({

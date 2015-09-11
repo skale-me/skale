@@ -4,5 +4,5 @@ var ugrid = require('../..');
 
 var uc = ugrid.context(function () {
 	console.log("Connected");
-	uc.end();
+	process.exit(0);
 });

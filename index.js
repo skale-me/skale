@@ -14,5 +14,5 @@ ugrid.context = thenify.withCallback(ugrid.Context);
 
 ugrid.onError = function (err) {
 	console.error(err.stack);
-	process.exit(1);
+	uc.end();
 };
