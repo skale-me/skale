@@ -13,6 +13,7 @@ var child_process = require('child_process');
 var fs = require('fs');
 var net = require('net');
 var util = require('util');
+var os = require('os');
 var trace = require('line-trace');
 var stream = require('stream');
 var tmp = require('tmp');
@@ -245,8 +246,11 @@ if (wsport) {
 }
 
 // Start local workers if required
-if (opt.options.local > 0)
-	child_process.spawn(__dirname + '/worker.js', ['-n', opt.options.local], {stdio: 'inherit'});
+if (opt.options.local) {
+	var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
+	trace(nworker)
+	child_process.spawn(__dirname + '/worker.js', ['-n', nworker], {stdio: 'inherit'});
+}
 
 // Start web server
 var webServer = app.listen(8000, function () {
