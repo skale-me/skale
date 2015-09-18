@@ -9,14 +9,25 @@
 
 'use strict';
 
+var child_process = require('child_process');
+var fs = require('fs');
 var net = require('net');
 var util = require('util');
 var trace = require('line-trace');
 var stream = require('stream');
+var tmp = require('tmp');
 var uuidGen = require('node-uuid');
 var UgridClient = require('../lib/ugrid-client.js');
 var webSocketServer = require('ws').Server;
 var websocket = require('websocket-stream');
+
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+
 var wsid = 1;	// worker stock id
 var expectedWorkers = 0;	// number of expected workers per stock
 var workerStock = [];
@@ -26,6 +37,7 @@ var pendingMasters = [];
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
 	['H', 'Host=ARG', 'primary server host (default none)'],
+	['l', 'local=ARG', 'start local worker and master controllers (default ncpu workers)'],
 	['n', 'name=ARG', 'advertised server name (default localhost)'],
 	['P', 'Port=ARG', 'primary server port (default none)'],
 	['p', 'port=ARG', 'server port (default 12346)'],
@@ -232,6 +244,26 @@ if (wsport) {
 	});
 }
 
+// Start local workers if required
+if (opt.options.local > 0)
+	child_process.spawn(__dirname + '/worker.js', ['-n', opt.options.local], {stdio: 'inherit'});
+
+// Start web server
+var webServer = app.listen(8000, function () {
+	var addr = webServer.address();
+	trace('webserver listening at %j', addr);
+});
+
+app.get('/', function (req, res) {res.send('Hello from ugrid server\n');});
+
+app.post('/run', function (req, res) {
+	var name = tmp.tmpNameSync({template: __dirname + '/tmp/XXXXXX.js'});
+	fs.writeFileSync(name, req.body.src, {mode: 493});
+	child_process.execFile(name, function (err, stdout, stderr) {
+		res.send({err: err, stdout: stdout, stderr: stderr});
+	});
+});
+
 function handleClose(sock) {
 	var i, cli = sock.client;
 	if (cli) {
@@ -379,4 +411,7 @@ function unsubscribe(client, topic) {
 	if (!(topic in topicIndex)) return;
 	var sub = topics[topicIndex[topic]].sub, i = sub.indexOf(client.index);
 	if (i >= 0) sub.splice(i, 1);
+}
+
+function runMaster(path) {
 }

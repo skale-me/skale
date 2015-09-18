@@ -3,6 +3,7 @@
 cscope.out
 node_modules
 npm-debug.log
+bin/tmp/*.js
 test/*.json
 TODO
 ugrid.sublime-project
