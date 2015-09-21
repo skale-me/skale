@@ -260,11 +260,32 @@ var webServer = app.listen(8000, function () {
 
 app.get('/', function (req, res) {res.send('Hello from ugrid server\n');});
 
+// Exec a master from an already existing file
+app.post('/exec', function (req, res) {
+	try {
+		child_process.execFile(req.body.src, req.body.args, function (err, stdout, stderr) {
+			res.send({err: err, stdout: stdout, stderr: stderr});
+		});
+	} catch (err) {
+		res.send({err: 1, stdout: null, stderr: 'exec failed on server: ' + err.message});
+	}
+});
+
+// Exec a master using src embedded in request. A temporary file is used.
 app.post('/run', function (req, res) {
 	var name = tmp.tmpNameSync({template: __dirname + '/tmp/XXXXXX.js'});
-	fs.writeFileSync(name, req.body.src, {mode: 493});
-	child_process.execFile(name, function (err, stdout, stderr) {
-		res.send({err: err, stdout: stdout, stderr: stderr});
+	fs.writeFile(name, req.body.src, {mode: 493}, function (err) {
+		if (err) {
+			res.send({err: 1, stdout: null, stderr: 'write failed on server: ' + err.message});
+			return;
+		}
+		try {
+			child_process.execFile(name, req.body.args, function (err, stdout, stderr) {
+				res.send({err: err, stdout: stdout, stderr: stderr});
+			});
+		} catch (err) {
+			res.send({err: 1, stdout: null, stderr: 'exec failed on server: ' + err.message});
+		}
 	});
 });
 
