@@ -5,7 +5,7 @@ var http = require('http');
 var url = require('url');
 
 if (process.argv.length < 4) {
-	console.log("Usage: submit.js ugrid_server_url program_file [args...]");
+	console.log('Usage: submit.js ugrid_server_url program_file [args...]');
 	process.exit(1);
 }
 
@@ -21,10 +21,7 @@ fs.readFile(process.argv[3], {encoding: 'utf8'}, function (err, data) {
 		port: href.port,
 		path: '/run',
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Content-Length': postdata.length
-		}
+		headers: {'Content-Type': 'application/json'}
 	};
 
 	var response = '';
