@@ -3,6 +3,7 @@
 
 /*
 	CSV file contains stripe events gathered from stripe API,
+	this programm parse raw CSV and populate a mongoDB collection
 */
 
 var parseCSV = require('papaparse').parse;
