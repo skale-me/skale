@@ -260,6 +260,10 @@ var webServer = app.listen(8000, function () {
 
 app.get('/', function (req, res) {res.send('Hello from ugrid server\n');});
 
+app.get('/test', function (req, res) {req.query.from = "ugrid get test"; res.json(req.query);});
+
+app.post('/test', function (req, res) {req.body.from = "ugrid post test"; res.json(req.body);});
+
 // Exec a master from an already existing file
 app.post('/exec', function (req, res) {
 	try {
@@ -436,7 +440,4 @@ function unsubscribe(client, topic) {
 	if (!(topic in topicIndex)) return;
 	var sub = topics[topicIndex[topic]].sub, i = sub.indexOf(client.index);
 	if (i >= 0) sub.splice(i, 1);
-}
-
-function runMaster(path) {
 }

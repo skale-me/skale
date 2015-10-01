@@ -1,0 +1,13 @@
+#!/usr/local/bin/node
+
+var MongoClient = require('mongodb').MongoClient;
+var ugrid = require('../../');
+
+var monghost = process.env.MONGO_PORT_27017_TCP_ADDR;
+var mongport = process.env.MONGO_PORT_27017_TCP_PORT;
+
+MongoClient.connect('mongodb://' + monghost + ':' + mongport + '/test', function (err, db) {
+	console.assert(err == null);
+	console.assert(db != null);
+	console.log('test ok');
+});
