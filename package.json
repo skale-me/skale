@@ -1,9 +1,10 @@
 {
   "name": "ugrid",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "ugrid client and server",
   "main": "index.js",
   "scripts": {
+    "preinstall": "mkdir -p node_modules/ugrid && cat index-self-ugrid.js > node_modules/ugrid/index.js",
     "start": "bin/start-all.sh",
     "stop": "bin/stop-all.sh",
     "test": "node_modules/.bin/mocha"
