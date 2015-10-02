@@ -278,6 +278,7 @@ app.post('/exec', function (req, res) {
 // Exec a master using src embedded in request. A temporary file is used.
 app.post('/run', function (req, res) {
 	var name = tmp.tmpNameSync({template: __dirname + '/tmp/XXXXXX.js'});
+	req.setTimeout(0);
 	fs.writeFile(name, req.body.src, {mode: 493}, function (err) {
 		if (err) {
 			res.send({err: 1, stdout: null, stderr: 'write failed on server: ' + err.message});

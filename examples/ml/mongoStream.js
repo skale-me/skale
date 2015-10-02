@@ -13,17 +13,30 @@ var MongoConnect = thenify(MongoClient.connect);
 co(function *() {
     var uc = yield ugrid.context();
     var db = yield MongoConnect('mongodb://localhost:27017/ugrid');
-    var N = 100;
 
-    var cursor = db.collection('ugrid').find({}, {_id: false});
-    var out = uc.objectStream(cursor, {N: N}).collect({stream: true});
+    var query = {type: 'invoice.payment_succeeded'};
+    var projection = {"stripe_customer_id": 1, "value.data.object.lines.subscriptions": 1, _id: 0};
 
-    out.on('data', function(res) {
-        console.log(res);
-    });
+    var cursor = db.collection('buffer').find(query, projection)
+        // .limit(N);
+
+    var out = uc.objectStream(cursor).count({stream: true});
+
+    out.on('data', console.log);
 
     out.on('end', function(res) {
         db.close();
         uc.end();
     });
+
+    // var out = uc.objectStream(cursor, {N: N}).collect({stream: true});
+
+    // out.on('data', function(res) {
+    //     console.log(res);
+    // });
+
+    // out.on('end', function(res) {
+    //     db.close();
+    //     uc.end();
+    // });
 }).catch(ugrid.onError);
