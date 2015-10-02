@@ -5,7 +5,7 @@ var co = require('co');
 var fs = require('fs');
 var thenify = require('thenify');
 var MongoClient = require('mongodb').MongoClient; 
-var ugrid = require('../..');
+var ugrid = require('ugrid');
 require('child_process').execSync('rm -rf /tmp/ugrid/');
 
 var MongoConnect = thenify(MongoClient.connect);
