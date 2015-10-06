@@ -12,7 +12,7 @@ RUN apt-get update && apt-get -y install \
  openssh-server \
  python \
  python-numpy \
- && curl -s http://nodejs.org/dist/v4.1.2/node-v4.1.2-linux-x64.tar.gz \
+ && curl -s http://nodejs.org/dist/v4.1.2/node-v4.1.2-linux-x64.tar.xz \
     | tar -xJ -C /usr/local --strip-components=1
 
 # Build a simple sudo, create ugrid user
