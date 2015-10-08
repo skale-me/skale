@@ -33,13 +33,7 @@ fs.readFile(process.argv[3], {encoding: 'utf8'}, function (err, data) {
 
 	var req = proto[href.protocol].request(options, function (res) {
 		res.setEncoding('utf8');
-		res.on('data', function (d) {response += d;});
-		res.on('end', function () {
-			var resp = JSON.parse(response);
-			if (resp.stdout) process.stdout.write(resp.stdout);
-			if (resp.stderr) process.stderr.write(resp.stderr);
-			process.exit(resp.err);
-		});
+		res.pipe(process.stdout);
 	});
 
 	req.on('error', function (err) {throw err;});

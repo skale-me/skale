@@ -267,11 +267,11 @@ app.post('/test', function (req, res) {req.body.from = "ugrid post test"; res.js
 // Exec a master from an already existing file
 app.post('/exec', function (req, res) {
 	try {
-		child_process.execFile(req.body.src, req.body.args, function (err, stdout, stderr) {
-			res.send({err: err, stdout: stdout, stderr: stderr});
-		});
+		var child = child_process.spawn(req.body.src, req.body.args);
+		child.stderr.pipe(res);
+		child.stdout.pipe(res);
 	} catch (err) {
-		res.send({err: 1, stdout: null, stderr: 'exec failed on server: ' + err.message});
+		res.status(500.)send('exec failed on server: ' + err.message);
 	}
 });
 
@@ -285,11 +285,11 @@ app.post('/run', function (req, res) {
 			return;
 		}
 		try {
-			child_process.execFile(name, req.body.args, function (err, stdout, stderr) {
-				res.send({err: err, stdout: stdout, stderr: stderr});
-			});
+			var child = child_process.spawn(name, req.body.args);
+			child.stderr.pipe(res);
+			child.stdout.pipe(res);
 		} catch (err) {
-			res.send({err: 1, stdout: null, stderr: 'exec failed on server: ' + err.message});
+			res.status(500.)send('exec failed on server: ' + err.message);
 		}
 	});
 });
