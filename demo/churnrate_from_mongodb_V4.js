@@ -3,21 +3,17 @@
 
 var co = require('co'), thenify = require('thenify');
 var MongoClient = require('mongodb').MongoClient;
-// var ugrid = require('../');      // local use
-
-var ugrid = require('../..');
+var ugrid = require('ugrid');
 
 require('child_process').execSync('rm -rf /tmp/ugrid/');
 var MongoConnect = thenify(MongoClient.connect);
 
 co(function *() {
     var uc = yield ugrid.context();
-    // var db = yield MongoConnect('mongodb://localhost:27017/ugrid');
-    var db = yield MongoConnect('mongodb://ugrid:luca-sas@172.17.0.20:27017/ugrid');        // mongodb server url inside docker cluster
-    var N = 98726;  // Hard limit to be released in ugrid stream engine
+    var db = yield MongoConnect('mongodb://localhost:27017/ugrid');
+    // var db = yield MongoConnect('mongodb://ugrid:luca-sas@172.17.0.20:27017/ugrid');        // mongodb server url inside docker cluster
 
-    var cursor = db.collection('customers').find({}, {_id: 0}).limit(N - 1);
-        // .limit(1000);
+    var cursor = db.collection('customers').find({}, {_id: 0});
 
     var init = [];
     var end = new Date("August 31, 2015 23:59:59");
@@ -30,7 +26,6 @@ co(function *() {
     }
 
     function reducer(period, data) {
-        // var subscription = data[1];
         var subscription = data.subscriptions;
         for (var i = 0; i < subscription.length; i++) {
             var elapsed_time = (subscription[i].end - subscription[i].start) / (3600 * 24);  // Duration of subscription period in days 
@@ -62,10 +57,8 @@ co(function *() {
         return a;
     }
 
-    var data = yield uc.objectStream(cursor, {N: N}).aggregate(reducer, combiner, init);
-    // var data = yield uc.objectStream(cursor, {N: N}).map(mapper).groupByKey().aggregate(reducer, combiner, init);
+    var data = yield uc.objectStream(cursor).aggregate(reducer, combiner, init);
 
-    // console.log(data)
     console.log('Monthly churn rate up to August 31, 2015 23:59:59')
     for (var i = 30; i < data.length; i++) {
         var rr = Math.round((data[i].kept_customers / data[i].customers) * 10000) / 100;
