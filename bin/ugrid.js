@@ -271,7 +271,7 @@ app.post('/exec', function (req, res) {
 		child.stderr.pipe(res);
 		child.stdout.pipe(res);
 	} catch (err) {
-		res.status(500.)send('exec failed on server: ' + err.message);
+		res.status(500).send('exec failed on server: ' + err.message + '\n');
 	}
 });
 
@@ -289,7 +289,7 @@ app.post('/run', function (req, res) {
 			child.stderr.pipe(res);
 			child.stdout.pipe(res);
 		} catch (err) {
-			res.status(500.)send('exec failed on server: ' + err.message);
+			res.status(500).send('exec failed on server: ' + err.message + '\n');
 		}
 	});
 });
