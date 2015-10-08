@@ -39,9 +39,9 @@ WORKDIR /home/ugrid
 
 RUN echo "alias vi='busybox vi'" >> /home/ugrid/.bash_aliases \
  && echo "alias netstat='busybox netstat'" >> /home/ugrid/.bash_aliases \
- && echo 1 \
- && git clone ssh://git@gitlab.ugrid.net:10022/ugrid/ugrid.git \
- && cd ugrid \
+ && mkdir ugrid && cd ugrid \
+ && git archive --format=tar --remote=ssh://git@gitlab.ugrid.net:10022/ugrid/ugrid.git master \
+    | tar xf - \
  && npm install
 
 COPY start-demo.sh /home/ugrid/
