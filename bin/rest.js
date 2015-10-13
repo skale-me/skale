@@ -7,13 +7,15 @@ var fs = require('fs');
 var trace = require('line-trace');
 var tmp = require('tmp');
 
-var express = require('express');
 var bodyParser = require('body-parser');
+var busboy = require('connect-busboy');
+var express = require('express');
 var morgan = require('morgan');
-var app = express();
 
+var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(busboy());
 app.use(morgan('dev'));
 
 // Start web server
@@ -45,6 +47,19 @@ app.post('/install', function (req, res) {
 	} catch (err) {
 		res.status(500).send('installed failed on server: ' + err.message + '\n');
 	}
+});
+
+// Upload a data file from client site
+app.post('/upload', function (req, res) {
+	req.pipe(req.busboy);
+	req.busboy.on('file', function (fieldname, file, filename) {
+		trace('uploading ' + filename);
+		var fstream = fs.createWriteStream(__dirname + '/tmp/' + filename);
+		file.pipe(fstream);
+		fstream.on('close', function () {
+			res.send('uploaded ' + filename + '\n');
+		});
+	});
 });
 
 // Exec a master from an already existing file
