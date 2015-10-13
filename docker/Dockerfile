@@ -8,6 +8,7 @@ RUN apt-get update && apt-get -y install \
  busybox \
  curl \
  git \
+ libkrb5-dev \
  openssh-client \
  openssh-server \
  python \
