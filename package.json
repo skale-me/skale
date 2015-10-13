@@ -1,6 +1,7 @@
 {
   "name": "ugrid",
-  "version": "0.0.3",
+  "version": "0.0.5",
+  "license": "MIT",
   "description": "ugrid client and server",
   "main": "index.js",
   "scripts": {

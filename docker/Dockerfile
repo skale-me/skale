@@ -12,9 +12,7 @@ RUN apt-get update && apt-get -y install \
  openssh-client \
  openssh-server \
  python \
- python-numpy \
- && curl -s http://nodejs.org/dist/v4.1.2/node-v4.1.2-linux-x64.tar.xz \
-    | tar -xJ -C /usr/local --strip-components=1
+ python-numpy
 
 # Build a simple sudo, create ugrid user
 RUN cc -o /bin/sudo /root/sudo.c \
@@ -22,6 +20,10 @@ RUN cc -o /bin/sudo /root/sudo.c \
  && chmod u+s /bin/sudo \
  && useradd -m -u 1000 ugrid \
  && mkdir /home/ugrid/.ssh
+
+# Install node runtime
+RUN curl -s http://nodejs.org/dist/v4.2.0/node-v4.2.0-linux-x64.tar.xz \
+    | tar -xJ -C /usr/local --strip-components=1
 
 # SSH setup for git access (read-only)
 COPY id_rsa* config /home/ugrid/.ssh/
