@@ -11,8 +11,7 @@ RUN apt-get update && apt-get -y install \
  libkrb5-dev \
  openssh-client \
  openssh-server \
- python \
- python-numpy
+ python
 
 # Build a simple sudo, create ugrid user
 RUN cc -o /bin/sudo /root/sudo.c \
@@ -22,7 +21,7 @@ RUN cc -o /bin/sudo /root/sudo.c \
  && mkdir /home/ugrid/.ssh
 
 # Install node runtime
-RUN curl -s http://nodejs.org/dist/v4.2.0/node-v4.2.0-linux-x64.tar.xz \
+RUN curl -s http://nodejs.org/dist/v4.2.1/node-v4.2.1-linux-x64.tar.xz \
     | tar -xJ -C /usr/local --strip-components=1
 
 # SSH setup for git access (read-only)
