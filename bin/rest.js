@@ -20,6 +20,8 @@ app.use(morgan('dev'));
 
 var access = process.env.UGRID_ACCESS;
 
+process.on('disconnect', process.exit);	// exit on parent death
+
 // Start web server
 var webServer = app.listen(8000, function () {
 	var addr = webServer.address();
@@ -27,7 +29,6 @@ var webServer = app.listen(8000, function () {
 });
 
 function authenticate(req, res, next) {
-	console.log(req)
 	if (!access || access == req.body.access || access == req.query.access)
 		return next();
 	res.status(403).send('Invalid access key\n');

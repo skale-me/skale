@@ -93,7 +93,13 @@ function startWorkers(msg) {
 		worker[i] = cluster.fork({wsid: msg.wsid});
 	worker.forEach(function (w) {
 		w.on('message', function (msg) {
-			scp(msg, function (err, res) {w.send({ftid: msg.ftid, err: err, res: res});});
+			switch (msg.cmd) {
+			case 'scp':
+				scp(msg, function (err, res) {w.send({ftid: msg.ftid, err: err, res: res});});
+				break;
+			default:
+				console.log('unexpected msg %j', msg);
+			}
 		});
 	});
 }
@@ -139,7 +145,7 @@ function runWorker(host, port) {
 	});
 
 	var request = {
-		setJob: function (msg) {
+		setJob: function setJob(msg) {
 			// TODO: app object must be created once per application, and reset on worker release
 			var worker = msg.data.args.worker;
 			for (var wid = 0; wid < worker.length; wid++)

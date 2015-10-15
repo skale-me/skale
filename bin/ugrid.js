@@ -109,11 +109,13 @@ var clientRequest = {
 			clients[msg.data.notify].sock.write(UgridClient.encode({cmd: 'notify', data: msg.data}));
 			clients[msg.data.notify].closeListeners[msg.data.uuid] = true;
 		}
-		if (msg.data.type == 'worker-controller') {
+		switch (msg.data.type) {
+		case 'worker-controller':
 			msg.data.wsid = wsid;
 			expectedWorkers += msg.data.ncpu;
 			workerControllers.push(msg.data);
-		} else if (msg.data.type == 'worker') {
+			break;
+		case 'worker':
 			if (wsid == msg.data.wsid) {
 				workerStock.push(msg.data);
 				if (pendingMasters.length && workerStock.length >= expectedWorkers) {
@@ -125,7 +127,8 @@ var clientRequest = {
 					postMaster(master.data.uuid);
 				}
 			}
-		} else if (msg.data.type == 'master') {
+			break;
+		case 'master':
 			if (expectedWorkers && workerStock.length >= expectedWorkers) {
 				msg.data.devices = workerStock;
 				postMaster(msg.data.uuid);
@@ -133,14 +136,18 @@ var clientRequest = {
 				pendingMasters.push(msg);
 				ret = false;
 			}
+			break;
 		}
 		console.log('## Connect %s %s %s', msg.data.type, msg.data.id, msg.data.uuid);
 		return ret;
 
 		function postMaster(muuid) {
+			var wuuid;
 			// Setup notifications to terminate workers on master end
 			for (i = 0; i < workerStock.length; i++) {
-				clients[muuid].closeListeners[workerStock[i].uuid] = true;
+				wuuid = workerStock[i].uuid;
+				clients[muuid].closeListeners[wuuid] = true;
+				clients[wuuid].closeListeners[muuid] = true;
 			}
 			// Pre-fork new workers to renew the stock
 			wsid++;
@@ -239,9 +246,9 @@ if (wsport) {
 // Start local workers if required
 if (opt.options.local) {
 	var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
-	trace(nworker)
 	child_process.spawn(__dirname + '/worker.js', ['-n', nworker], {stdio: 'inherit'});
-	child_process.spawn(__dirname + '/rest.js', {stdio: 'inherit'});
+	// We use fork() so the the child can catch 'disconnect' event if we die
+	child_process.fork(__dirname + '/rest.js', {stdio: 'inherit'});
 }
 
 function handleClose(sock) {
@@ -251,7 +258,8 @@ function handleClose(sock) {
 		pubmon({event: 'disconnect', uuid: cli.uuid});
 		cli.sock = null;
 		releaseWorkers(cli.uuid);
-		if (cli.data.type == 'worker-controller') {
+		switch (cli.data.type) {
+		case 'worker-controller':
 			// resize stock capacity
 			expectedWorkers -= cli.data.ncpu;
 			for (i = 0; i < workerControllers.length; i++) {
@@ -259,13 +267,15 @@ function handleClose(sock) {
 					workerControllers.splice(i, 1);
 				}
 			}
-		} else if (cli.data.type == 'worker') {
+			break;
+		case 'worker':
 			// remove worker from stock
 			for (i = 0; i < workerStock.length; i++) {
 				if (cli.uuid == workerStock[i].uuid)
 					workerStock.splice(i, 1);
 			}
-		} else if (cli.data.type == 'master') {
+			break;
+		case 'master':
 			// remove master from pending masters, avoiding future useless workers start
 			for (i in pendingMasters) {
 				if (pendingMasters[i].data.uuid == cli.uuid) {
@@ -273,9 +283,10 @@ function handleClose(sock) {
 					break;
 				}
 			}
+			break;
 		}
 		for (i in cli.closeListeners) {
-			if (clients[i].sock)
+			if (i in clients && clients[i].sock)
 				clients[i].sock.write(UgridClient.encode({cmd: 'remoteClose', data: cli.uuid}));
 		}
 		for (i in cli.topics) {		// remove owned topics
