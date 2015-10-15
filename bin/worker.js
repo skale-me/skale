@@ -78,9 +78,7 @@ if (cluster.isMaster) {
 	});
 	cgrid.on('connect', startWorkers);
 	cgrid.on('getWorker', startWorkers);
-	cgrid.on('close', function () {
-		process.exit(1);
-	});
+	cgrid.on('close', process.exit);
 	console.log('worker controller ready');
 } else {
 	runWorker(opt.options.Host, opt.options.Port);
@@ -116,7 +114,13 @@ function transfer(host, remote, local, done) {
 }
 
 function runWorker(host, port) {
-	var jobs = {}, jobId, ram = {}, rdd = {};
+	var jobs = {}, jobId, ram = {}, rdd = {}, muuid;
+
+	process.on('uncaughtException', function (err) {
+		console.error(err.stack)
+		grid.send(muuid, {cmd: 'workerError', args: err.stack});
+		process.exit();
+	});
 
 	var grid = new UgridClient({
 		debug: debug,
@@ -148,6 +152,7 @@ function runWorker(host, port) {
 		setJob: function setJob(msg) {
 			// TODO: app object must be created once per application, and reset on worker release
 			var worker = msg.data.args.worker;
+			muuid = msg.data.master_uuid;
 			for (var wid = 0; wid < worker.length; wid++)
 				if (worker[wid].uuid == grid.host.uuid) break;
 			var app = {
