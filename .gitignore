@@ -12,3 +12,4 @@ conf/slaves
 conf/ugrid-env.sh
 test-old/automatic/*.js
 demo/*.data
+docker/*.tar.*
