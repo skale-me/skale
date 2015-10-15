@@ -4,14 +4,16 @@ COPY *.c /root/
 
 # C, C++, make, curl, ssh, python
 RUN apt-get update && apt-get -y install \
- build-essential \
  busybox \
  curl \
+ g++ \
  git \
  libkrb5-dev \
+ make \
  openssh-client \
  openssh-server \
- python
+ python \
+ xz-utils
 
 # Build a simple sudo, create ugrid user
 RUN cc -o /bin/sudo /root/sudo.c \
