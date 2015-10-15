@@ -76,32 +76,26 @@ if (cluster.isMaster) {
 			ncpu: ncpu
 		}
 	});
-	cgrid.on('connect', function (msg) {
-		var worker = [];
-		for (var i = 0; i < ncpu; i++)
-			worker[i] = cluster.fork({wsid: msg.wsid});
-		worker.forEach(function (w) {
-			w.on('message', function (msg) {
-				scp(msg, function (err, res) {w.send({ftid: msg.ftid, err: err, res: res});});
-			});
-		});
-	});
-	cgrid.on('getWorker', function (msg) {
-		var worker = [];
-		for (var i = 0; i < msg.n; i++)
-			worker[i] = cluster.fork({wsid: msg.wsid});
-		worker.forEach(function (w) {
-			w.on('message', function (msg) {
-				scp(msg, function (err, res) {w.send({ftid: msg.ftid, err: err, res: res});});
-			});
-		});
-	});
+	cgrid.on('connect', startWorkers);
+	cgrid.on('getWorker', startWorkers);
 	cgrid.on('close', function () {
 		process.exit(1);
 	});
 	console.log('worker controller ready');
 } else {
 	runWorker(opt.options.Host, opt.options.Port);
+}
+
+function startWorkers(msg) {
+	var worker = [];
+	var n = msg.n || ncpu;
+	for (var i = 0; i < n; i++)
+		worker[i] = cluster.fork({wsid: msg.wsid});
+	worker.forEach(function (w) {
+		w.on('message', function (msg) {
+			scp(msg, function (err, res) {w.send({ftid: msg.ftid, err: err, res: res});});
+		});
+	});
 }
 
 function handleExit(worker, code, signal) {
@@ -186,8 +180,11 @@ function runWorker(host, port) {
 	});
 
 	grid.on('shuffle', function (msg) {
-		try {jobs[msg.jobId].rdd[msg.rddId].shuffle(msg.args);}
-		catch (err) {throw new Error("Rx shuffle " + jobs[msg.jobId].rdd[msg.rddId].constructor.name + ": " + err);}
+		try {
+			jobs[msg.jobId].rdd[msg.rddId].shuffle(msg.args);
+		} catch (err) {
+			throw new Error("Rx shuffle " + jobs[msg.jobId].rdd[msg.rddId].constructor.name + ": " + err);
+		}
 	});
 
 	grid.on('runJob', function (msg) {
