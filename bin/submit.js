@@ -12,11 +12,12 @@ if (process.argv.length < 4) {
 
 var proto = {"http:": http, "https:": https};
 var href = url.parse(process.argv[2]);
+var access = process.env.UGRID_ACCESS;
 
 fs.readFile(process.argv[3], {encoding: 'utf8'}, function (err, data) {
 	if (err) throw err;
 
-	var postdata = JSON.stringify({src: data, args: process.argv.slice(4)});
+	var postdata = JSON.stringify({access: access, src: data, args: process.argv.slice(4)});
 
 	var options = {
 		hostname: href.hostname,
