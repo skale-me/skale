@@ -117,9 +117,8 @@ function runWorker(host, port) {
 	var jobs = {}, jobId, ram = {}, rdd = {}, muuid;
 
 	process.on('uncaughtException', function (err) {
-		console.error(err.stack)
 		grid.send(muuid, {cmd: 'workerError', args: err.stack});
-		process.exit();
+		process.exit(2);
 	});
 
 	var grid = new UgridClient({
