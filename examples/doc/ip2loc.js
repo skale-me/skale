@@ -21,15 +21,15 @@ ugrid.context(function(err, uc) {
   	var obj = {};	// objet remplaçant
 
 	function mapper(data, arg, wc) {
-		if (wc.trace == undefined) {
-			console.log('Requiring package only once');
-			wc.trace = wc.require('line-trace');
+		if (wc.maxmind == undefined) {
+			console.log('Requiring maxmind');
+			wc.maxmind = wc.require('maxmind');
+			wc.maxmind.init(process.env.HOME + '/Downloads/GeoIP.dat');
 			// var mmdb = wc.require('mmdb');
 			// wc.reader = new mmdb('~/GeoIP2-City_20151006/GeoIP2-City.mmdb');
 		}
-		// return wc.reader.lookup(data).country.iso_code;		
-		wc.trace('toto');
-		return data;
+		// return wc.reader.lookup(data).country.iso_code;
+		return wc.maxmind.getCountry(data);
 	}
 
 	uc.parallelize(vect)
@@ -46,3 +46,5 @@ ugrid.context(function(err, uc) {
 		uc.end();
 	}
 });
+
+// ~ est uniquement résolu par le shell, dans node il faut passer par process
