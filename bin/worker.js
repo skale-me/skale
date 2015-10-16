@@ -103,7 +103,7 @@ function startWorkers(msg) {
 }
 
 function handleExit(worker, code, signal) {
-	console.log("worker %d exited: %s", worker.process.pid, signal || code);
+	console.log("worker pid %d exited: %s", worker.process.pid, signal || code);
 }
 
 // On worker, file transfer function: send a request to controller, handle
