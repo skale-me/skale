@@ -318,7 +318,6 @@ function handleConnect(sock) {
 	sock.on('error', function sockError(error) {
 		console.log('## connection error');
 		console.log(error.stack);
-		//sock._writeGeneric = sock._write = function () {}; // To avoid EPIPE
 	});
 	sock.pipe(new UgridClient.FromGrid()).pipe(new SwitchBoard(sock));
 }
