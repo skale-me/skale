@@ -63,17 +63,9 @@ app.post('/install', authenticate, function (req, res) {
 
 // Upload a data file from client site
 app.post('/upload', authenticate, function (req, res) {
-	//var isAuthenticated = (access == undefined);
-	//var uploading = false;
 	req.pipe(req.busboy);
-	//req.busboy.on('field', function (key, value) {
-	//	if (key == 'access' && access && value == access)
-	//		isAuthenticated = true;
-	//});
 	req.busboy.on('file', function (fieldname, file, filename) {
-		//if (!isAuthenticated) return res.status(403).send('invalid access key\n');
 		trace('uploading ' + filename);
-		//uploading = true;
 		var fstream = fs.createWriteStream(__dirname + '/tmp/' + filename);
 		file.pipe(fstream);
 		fstream.on('close', function () {
