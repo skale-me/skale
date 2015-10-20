@@ -2,4 +2,4 @@
 
 echo $0
 
-curl -F "file=@$0" http://localhost:8000/upload
+curl -H "X-Auth: $UGRID_ACCESS" -F "file=@$0" http://localhost:8000/upload

@@ -25,6 +25,7 @@ fs.readFile(process.argv[3], {encoding: 'utf8'}, function (err, data) {
 		path: '/run',
 		method: 'POST',
 		headers: {
+			'X-Auth': process.env.UGRID_ACCESS,
 			'Content-Type': 'application/json',
 			'Content-Length': Buffer.byteLength(postdata)
 		}
