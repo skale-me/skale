@@ -214,8 +214,13 @@ var clientRequest = {
 var mstream = new SwitchBoard({});
 var monid =  getTopicId('monitoring') + minMulticast;
 function pubmon(data) {
-	mstream.write(UgridClient.encode({cmd: 'monitoring', id: monid, data: data}));
+	//mstream.write(UgridClient.encode({cmd: 'monitoring', id: monid, data: data}));
 }
+
+process.on('uncaughtException', function uncaughtException(err) {
+	trace(err);
+	console.error(err.stack);
+});
 
 console.log("## Started " + Date());
 // Start a TCP server
@@ -257,7 +262,6 @@ function handleClose(sock) {
 		console.log('## Close: %s %s %s', cli.data.type, cli.index, cli.uuid);
 		pubmon({event: 'disconnect', uuid: cli.uuid});
 		cli.sock = null;
-		releaseWorkers(cli.uuid);
 		switch (cli.data.type) {
 		case 'worker-controller':
 			// resize stock capacity
@@ -308,14 +312,14 @@ function handleConnect(sock) {
 		console.log('## Connect tcp ' + sock.remoteAddress + ' ' + sock.remotePort);
 		sock.setNoDelay();
 	}
-	sock.pipe(new UgridClient.FromGrid()).pipe(new SwitchBoard(sock));
 	sock.on('end', function () {
 		handleClose(sock);
 	});
-	sock.on('error', function (error) {
+	sock.on('error', function sockError(error) {
 		console.log('## connection error');
-		console.log(error);
+		console.log(error.stack);
 	});
+	sock.pipe(new UgridClient.FromGrid()).pipe(new SwitchBoard(sock));
 }
 
 function getClientNumber() {
@@ -345,14 +349,6 @@ function register(from, msg, sock)
 	msg.data.uuid = uuid;
 	msg.data.token = 0;
 	msg.data.id = sock.index;
-}
-
-function releaseWorkers(master) {
-	for (var i in clients) {
-		var d = clients[i].data;
-		if (d && d.jobId == master)
-			d.jobId = "";
-	}
 }
 
 function devices(msg) {

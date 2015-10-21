@@ -29,7 +29,7 @@ var webServer = app.listen(8000, function () {
 });
 
 function authenticate(req, res, next) {
-	if (!access || access == req.body.access || access == req.query.access)
+	if (!access || access == req.headers['x-auth'])
 		return next();
 	res.status(403).send('Invalid access key\n');
 }
@@ -62,18 +62,10 @@ app.post('/install', authenticate, function (req, res) {
 });
 
 // Upload a data file from client site
-app.post('/upload', function (req, res) {
-	var isAuthenticated = (access == undefined);
-	var uploading = false;
+app.post('/upload', authenticate, function (req, res) {
 	req.pipe(req.busboy);
-	req.busboy.on('field', function (key, value) {
-		if (key == 'access' && access && value == access)
-			isAuthenticated = true;
-	});
 	req.busboy.on('file', function (fieldname, file, filename) {
-		if (!isAuthenticated) return res.status(403).send('invalid access key\n');
 		trace('uploading ' + filename);
-		uploading = true;
 		var fstream = fs.createWriteStream(__dirname + '/tmp/' + filename);
 		file.pipe(fstream);
 		fstream.on('close', function () {
