@@ -10,11 +10,8 @@ ugrid.context(function(err, uc) {
 		return data * obj.scaling;
 	}
 
-	uc.parallelize([1, 2, 3, 4])
-		.map(mapper, {scaling: 1.2})
-		.collect(function(err, res) {
-			if (err) {console.log(err); process.exit();}
-			console.log(res);
-			uc.end();
-		});
+	var res = uc.parallelize([1, 2, 3, 4]).map(mapper, {scaling: 1.2}).collect();
+
+	res.on('data', console.log);
+	res.on('end', uc.end);
 });

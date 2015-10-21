@@ -13,11 +13,10 @@ ugrid.context(function(err, uc) {
 		return tmp;
 	}
 
-	uc.parallelize([['hello', 1], ['world', 2]])
+	var res = uc.parallelize([['hello', 1], ['world', 2]])
 		.flatMapValues(valueFlatMapper, {N: 2, fact: 2})
-		.collect(function(err, res) {
-			if (err) {console.log(err); process.exit();}
-			console.log(res);
-			uc.end();
-		});
+		.collect();
+
+	res.on('data', console.log);
+	res.on('end', uc.end);		
 })

@@ -10,11 +10,10 @@ ugrid.context(function(err, uc) {
 		return a = a + b;
 	}
 
-	uc.parallelize([['hello', 1], ['world', 2], ['hello', 3]])
+	var res = uc.parallelize([['hello', 1], ['world', 2], ['hello', 3]])
 		.reduceByKey(reducer, 0)
-		.collect(function(err, res) {
-			if (err) {console.log(err); process.exit();}
-			console.log(res);
-			uc.end();
-		});
+		.collect();
+
+	res.on('data', console.log);
+	res.on('end', uc.end);		
 });
