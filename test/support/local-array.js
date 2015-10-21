@@ -4,6 +4,7 @@ var fs = require('fs');
 var stream = require('stream');
 var os = require('os');
 var util = require('util');
+var toArray = require('stream-to-array');
 var trace = require('line-trace');
 var Lines = require('../../lib/lines.js');
 var ml = require('../../lib/ugrid-ml.js');
@@ -25,7 +26,10 @@ LocalArray.prototype.lineStream = function (inputStream, opt) {
 LocalArray.prototype.parallelize = function (v) {
 	var self = this;
 	this.stream = new ObjectStream();
-	this.stream.end(v);
+	for (var i = 0; i < v.length; i++)
+		this.stream.write(v[i]);
+	this.stream.end();
+	//this.stream.end(v);
 	return this;
 };
 
@@ -40,11 +44,13 @@ LocalArray.prototype.textFile = function (path) {
 // Actions
 LocalArray.prototype.collect = function (opt, done) {
 	opt = opt || {};
-	if (arguments.length < 2) done = opt;
-	if (opt.stream) return this.stream;
-	var res = [];
-	this.stream.on('data', function (data) {res = res.concat(data);});
-	this.stream.on('end', function () {done(null, res);});
+	this.stream.toArray = toArray;
+	return this.stream;
+	//if (arguments.length < 2) done = opt;
+	//if (opt.stream) return this.stream;
+	//var res = [];
+	//this.stream.on('data', function (data) {res = res.concat(data);});
+	//this.stream.on('end', function () {done(null, res);});
 };
 
 LocalArray.prototype.count = function (opt, done) {
@@ -61,10 +67,12 @@ LocalArray.prototype.countByValue = function (opt, done) {
 	opt = opt || {};
 	if (arguments.length < 2) done = opt;
 	this.stream = this.stream.pipe(new TransformStream(countByValue));
-	if (opt.stream) return this.stream;
-	var res = [];
-	this.stream.on('data', function (data) {res = res.concat(data);});
-	this.stream.on('end', function () {done(null, res);});
+	this.stream.toArray = toArray;
+	return this.stream;
+	//if (opt.stream) return this.stream;
+	//var res = [];
+	//this.stream.on('data', function (data) {res = res.concat(data);});
+	//this.stream.on('end', function () {done(null, res);});
 };
 
 LocalArray.prototype.lookup = function(key, opt, done) {
