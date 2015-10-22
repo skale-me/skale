@@ -34,7 +34,7 @@ var sources = [
 ];
 
 var sources2 = [
-//	[{name: 'parallelize', args: [data.v[1]]}],
+	[{name: 'parallelize', args: [data.v[1]]}],
 //	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
 //	[{name: 'textFile', args: [data.files[1]]}, {name: 'map', args: [data.textParser]}],
 ];
@@ -51,7 +51,7 @@ var transforms = [
 	{name: 'mapValues', args: [data.valueMapper]},
 //	{name: 'persist', args: []},
 	{name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0], sort: true},
-	{name: 'sample', args: [true, 0.1], sort: true, lengthOnly: true},
+//	{name: 'sample', args: [true, 0.1], sort: true, lengthOnly: true},
 	{name: 'values', args: []},
 ];
 
@@ -70,7 +70,7 @@ var actions = [
 	{name: 'collect', args: [], stream: true},
 	{name: 'count', args: []},
 	{name: 'countByValue', args: [], sort: true, stream: true},
-	{name: 'lookup', args: [data.v[0][0][0]], stream: true},
+//	{name: 'lookup', args: [data.v[0][0][0]], stream: true},
 	{name: 'reduce', args: [data.reducer, [0, 0]]},
 //	{name: 'take', args: [2], lengthOnly: true, stream: true},
 //	{name: 'takeOrdered', args: [2, function (a, b) {return a < b;}], stream: true},
@@ -95,7 +95,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 					src_args = [fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5}];
 					break;
 				case 'parallelize':
-					trace(data.v[0])
 					src_args = [JSON.parse(JSON.stringify(data.v[0]))];
 					break;
 				default:
@@ -104,10 +103,9 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				rdd = ul[source[0].name].apply(ul, src_args);
 				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
-				//args = [].concat(action.args, function (err, res) {trace(res);lres = res; done();});
 				if (action.stream) {
 					rdd = rdd[action.name].apply(rdd, action_args);
-					rdd['toArray'].apply(rdd, [function(err, res) {trace(res);lres = res; done();}]);
+					rdd['toArray'].apply(rdd, [function(err, res) {lres = res; done();}]);
 				} else {
 					action_args = [].concat(action.args, function (err, res) {lres = res; done();});
 					rdd[action.name].apply(rdd, action_args);
@@ -130,12 +128,10 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				rdd = uc[source[0].name].apply(uc, src_args);
 				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
-				//action_args = [].concat(action.args, function (err, res) {dres = res; done();});
-				//rdd[action.name].apply(rdd, action_args);
 				// uc.startStreams();
 				if (action.stream) {
 					rdd = rdd[action.name].apply(rdd, action_args);
-					rdd['toArray'].apply(rdd, [function(err, res) {trace(res);dres = res; done();}]);
+					rdd['toArray'].apply(rdd, [function(err, res) {dres = res; done();}]);
 				} else {
 					action_args = [].concat(action.args, function (err, res) {dres = res; done();});
 					rdd[action.name].apply(rdd, action_args);
@@ -162,7 +158,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 			});
 
 			it('check stream results', function () {
-				data.compareResults([lres], sres, check);
+				data.compareResults(lres, sres, check);
 			});
 
 			if (source[0].name != 'lineStream') {
@@ -270,8 +266,15 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 					}
 					transform_args = [].concat(other, dualTransform.args);
 					rdd = rdd[dualTransform.name].apply(rdd, transform_args);
-					action_args = [].concat(action.args, function (err, res) {lres = res; done();});
-					rdd[action.name].apply(rdd, action_args);
+					//action_args = [].concat(action.args, function (err, res) {lres = res; done();});
+					//rdd[action.name].apply(rdd, action_args);
+					if (action.stream) {
+						rdd = rdd[action.name].apply(rdd, action_args);
+						rdd['toArray'].apply(rdd, [function(err, res) {trace(res);lres = res; done();}]);
+					} else {
+						action_args = [].concat(action.args, function (err, res) {trace(res); lres = res; done();});
+						rdd[action.name].apply(rdd, action_args);
+					}
 				});
 
 				it('run distributed', function (done) {
@@ -303,14 +306,21 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 					if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
 					transform_args = [].concat(other, dualTransform.args);
 					rdd = rdd[dualTransform.name].apply(rdd, transform_args);
-					action_args = [].concat(action.args, function (err, res) {dres = res; done();});
-					rdd[action.name].apply(rdd, action_args);
+					//action_args = [].concat(action.args, function (err, res) {dres = res; done();});
+					//rdd[action.name].apply(rdd, action_args);
+					if (action.stream) {
+						rdd = rdd[action.name].apply(rdd, action_args);
+						rdd['toArray'].apply(rdd, [function(err, res) {trace(res);dres = res; done();}]);
+					} else {
+						action_args = [].concat(action.args, function (err, res) {trace(res); dres = res; done();});
+						rdd[action.name].apply(rdd, action_args);
+					}
 				});
 
 				it('check distributed results', function () {
 					data.compareResults(lres, dres, check);
 				});
-
+/*
 				it('run distributed, stream output', function (done) {
 					assert(uc.worker.length > 0);
 					var src_args, src2_args, transform_args, action_args, rdd, other, out;
@@ -448,6 +458,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 						data.compareResults(lres, pres2, check);
 					});
 				}
+*/
 			});});
 		});});
 	});
