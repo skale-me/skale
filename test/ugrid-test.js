@@ -46,13 +46,13 @@ var transforms = [
 	{name: 'flatMap', args: [data.flatMapper]},
 	{name: 'flatMapValues',	args: [data.valueFlatMapper]},
 	{name: 'groupByKey', args: [], sort: true},
-	{name: 'keys', args: []},
+//	{name: 'keys', args: []},
 	{name: 'map', args: [data.mapper]},
 	{name: 'mapValues', args: [data.valueMapper]},
 //	{name: 'persist', args: []},
 	{name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0], sort: true},
 //	{name: 'sample', args: [true, 0.1], sort: true, lengthOnly: true},
-	{name: 'values', args: []},
+//	{name: 'values', args: []},
 ];
 
 var dualTransforms = [
@@ -87,6 +87,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 
 			if (transform.sort || action.sort) check.sort = true;
 			if (transform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
+			if (transform.name == 'groupByKey' && action.name == 'reduce') check.lengthOnly = true;
 
 			it('run local', function (done) {
 				var src_args, action_args, rdd;
@@ -235,6 +236,8 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 
 				if (dualTransform.sort || action.sort) check.sort = true;
 				if (dualTransform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
+				if (dualTransform.name == 'coGroup' && action.name == 'reduce') check.lengthOnly = true;
+				if (dualTransform.name == 'crossProduct' && action.name == 'reduce') check.lengthOnly = true;
 
 				it('run local', function (done) {
 					var transform_args, src_args, src2_args, action_args, rdd, other;
@@ -270,9 +273,9 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 					//rdd[action.name].apply(rdd, action_args);
 					if (action.stream) {
 						rdd = rdd[action.name].apply(rdd, action_args);
-						rdd['toArray'].apply(rdd, [function(err, res) {trace(res);lres = res; done();}]);
+						rdd['toArray'].apply(rdd, [function(err, res) {lres = res; done();}]);
 					} else {
-						action_args = [].concat(action.args, function (err, res) {trace(res); lres = res; done();});
+						action_args = [].concat(action.args, function (err, res) {lres = res; done();});
 						rdd[action.name].apply(rdd, action_args);
 					}
 				});
@@ -310,9 +313,9 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 					//rdd[action.name].apply(rdd, action_args);
 					if (action.stream) {
 						rdd = rdd[action.name].apply(rdd, action_args);
-						rdd['toArray'].apply(rdd, [function(err, res) {trace(res);dres = res; done();}]);
+						rdd['toArray'].apply(rdd, [function(err, res) {dres = res; done();}]);
 					} else {
-						action_args = [].concat(action.args, function (err, res) {trace(res); dres = res; done();});
+						action_args = [].concat(action.args, function (err, res) {dres = res; done();});
 						rdd[action.name].apply(rdd, action_args);
 					}
 				});

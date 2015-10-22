@@ -19,7 +19,8 @@ ugrid.context(function (err, uc) {
 	b = uc.parallelize(v[1]);
 
 	// s = a.collect();
-	s = a.coGroup(b).collect();
+	//s = a.coGroup(b).collect();
+	s = a.join(b).collect();
 
 	s.on('data', console.log)
 	s.on('end', uc.end)
