@@ -162,7 +162,8 @@ function runWorker(host, port) {
 				completedStreams: {},
 				transfer: transfer,
 				ram: ram,
-				rdd: rdd
+				rdd: rdd,
+				contextId: msg.data.contextId
 			};
 			jobs[msg.data.jobId] = new UgridJob(grid, app, {
 				node: msg.data.args.node,

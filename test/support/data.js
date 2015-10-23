@@ -47,23 +47,25 @@ function mapper(e) {
 function reducer(a, b) {
 	if (Array.isArray(b[0]))
 		a[0] += b[0].reduce(sum);
-	else if (! Array.isArray(b)) {
-		if (Array.isArray(a)) a = a[0];
-		a += b;
-	} else
+	else if (Array.isArray(b)) {
 		a[0] += b[0];
-
+	} else {
+		//if (Array.isArray(a)) a = a[0];
+		a += b;
+	}
 	if (Array.isArray(b[1])) {
 		a[1] += b[1].reduce(function (a, b) {
 			if (Array.isArray(b))
-				return a + b.reduce(sum);
+				return a + b.reduce(sum, []);
 			return a + b;
-		}, 0);
+		}, []);
 	} else if (Array.isArray(b))
 		a[1] += b[1];
 	return a;
 
-	function sum(a, b) {return a + b;}
+	function sum(a, b) {
+		return a + b;
+	}
 }
 
 function sort(v) {

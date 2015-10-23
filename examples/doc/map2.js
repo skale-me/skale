@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var ugrid = require('ugrid');
+var ugrid = require('../../test/support/local.js');
 
 ugrid.context(function(err, uc) {
 	if (err) {console.log(err); process.exit();}

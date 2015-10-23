@@ -13,7 +13,11 @@ function LocalContext(args, done) {
 		done = args;
 		args = undefined;
 	}
-	if (done) process.nextTick(done);
+	var self = this;
+	function callback() {
+		done(null, self);
+	}
+	if (done) process.nextTick(callback);
 }
 
 LocalContext.prototype.lineStream = function (inputStream, opt) {
@@ -33,3 +37,5 @@ LocalContext.prototype.textFile = function (path) {
 	loc.textFile(path);
 	return loc;
 };
+
+LocalContext.prototype.end = function () {};

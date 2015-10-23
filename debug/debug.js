@@ -1,4 +1,4 @@
-#!/usr/local/bin/node --harmony
+#!/usr/bin/env node
 
 var co = require('co');
 var fs = require('fs');

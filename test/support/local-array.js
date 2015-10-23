@@ -4,6 +4,7 @@ var fs = require('fs');
 var stream = require('stream');
 var os = require('os');
 var util = require('util');
+var toArray = require('stream-to-array');
 var trace = require('line-trace');
 var Lines = require('../../lib/lines.js');
 var ml = require('../../lib/ugrid-ml.js');
@@ -40,11 +41,16 @@ LocalArray.prototype.textFile = function (path) {
 // Actions
 LocalArray.prototype.collect = function (opt, done) {
 	opt = opt || {};
-	if (arguments.length < 2) done = opt;
-	if (opt.stream) return this.stream;
-	var res = [];
-	this.stream.on('data', function (data) {res = res.concat(data);});
-	this.stream.on('end', function () {done(null, res);});
+	this.stream = this.stream.pipe(new TransformStream(function (v) {
+		for (var i = 0; i < v.length; i++) this.push(v[i]);
+	}));
+	this.stream.toArray = toArray;
+	return this.stream;
+	//if (arguments.length < 2) done = opt;
+	//if (opt.stream) return this.stream;
+	//var res = [];
+	//this.stream.on('data', function (data) {res = res.concat(data);});
+	//this.stream.on('end', function () {done(null, res);});
 };
 
 LocalArray.prototype.count = function (opt, done) {
@@ -61,20 +67,24 @@ LocalArray.prototype.countByValue = function (opt, done) {
 	opt = opt || {};
 	if (arguments.length < 2) done = opt;
 	this.stream = this.stream.pipe(new TransformStream(countByValue));
-	if (opt.stream) return this.stream;
-	var res = [];
-	this.stream.on('data', function (data) {res = res.concat(data);});
-	this.stream.on('end', function () {done(null, res);});
+	this.stream.toArray = toArray;
+	return this.stream;
+	//if (opt.stream) return this.stream;
+	//var res = [];
+	//this.stream.on('data', function (data) {res = res.concat(data);});
+	//this.stream.on('end', function () {done(null, res);});
 };
 
 LocalArray.prototype.lookup = function(key, opt, done) {
 	opt = opt || {};
 	if (arguments.length < 3) done = opt;
 	this.stream = this.stream.pipe(new TransformStream(lookup, [key]));
-	if (opt.stream) return this.stream;
-	var res = [];
-	this.stream.on('data', function (data) {res = res.concat(data);});
-	this.stream.on('end', function () {done(null, res);});
+	this.stream.toArray = toArray;
+	return this.stream;
+	//if (opt.stream) return this.stream;
+	//var res = [];
+	//this.stream.on('data', function (data) {res = res.concat(data);});
+	//this.stream.on('end', function () {done(null, res);});
 };
 
 LocalArray.prototype.reduce = function(reducer, init, opt, done) {
@@ -327,31 +337,33 @@ TransformStream.prototype._transform = function (msg, encoding, done) {
 
 // Helper functions
 function coGroup(v1, v2) {
-	var v = [], already_v1 = [], already_v2 = [];
-
-	for (var i = 0; i < v1.length; i++)
-		for (var j = 0; j < v2.length; j++)
-			if (v1[i][0] == v2[j][0]) {
-				var idx = -1;
-				for (var k = 0; k < v.length; k++) {
-					if (v[k][0] == v1[i][0]) {
-						idx = k;
-						break;
-					}
-				}
-				if (idx == -1) {
-					idx = v.length;
-					v[v.length] = [v1[i][0], [[], []]];
-				}
-				if (!already_v1[i]) {
-					v[idx][1][0].push(v1[i][1]);
-					already_v1[i] = true;
-				}
-				if (!already_v2[j]) {
-					v[idx][1][1].push(v2[j][1]);
-					already_v2[j] = true;
-				}
+	var i, j, v = [], I, J, idx;
+	for (i = 0; i < v1.length; i++) {
+		I = v1[i][0];
+		J = v1[i][1];
+		idx = -1;
+		for (j = 0; j < v.length; j++) {
+			if (v[j][0] == I) {
+				idx = j;
+				break;
 			}
+		}
+		if (idx != -1) v[idx][1][0].push(J);
+		else v[v.length] = [I, [[J], []]];
+	}
+	for (i = 0; i < v2.length; i++) {
+		I = v2[i][0];
+		J = v2[i][1];
+		idx = -1;
+		for (j = 0; j < v.length; j++) {
+			if (v[j][0] == I) {
+				idx = j;
+				break;
+			}
+		}
+		if (idx != -1) v[idx][1][1].push(J);
+		else v[v.length] = [I, [[], [J]]];
+	}
 	return v;
 }
 
@@ -362,8 +374,9 @@ function countByValue(v) {
 		if (tmp[str] === undefined) tmp[str] = [v[i], 0];
 		tmp[str][1]++;
 	}
-	for (i in tmp) out.push(tmp[i]);
-	return out;
+	//for (i in tmp) out.push(tmp[i]);
+	for (i in tmp) this.push(tmp[i]);
+	//return out;
 }
 
 function crossProduct(v1, v2) {
