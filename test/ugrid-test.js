@@ -21,7 +21,8 @@ beforeEach(function (done) {
 				if (output2) return;
 				output2 = true;
 				ul = local.context();
-				uc = ugrid.context(done);
+				uc = ugrid.context();
+				done();
 			});
 		});
 	} else done();
@@ -114,7 +115,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 			});
 
 			it('run distributed', function (done) {
-				assert(uc.worker.length > 0);
 				var src_args, action_args, rdd;
 				switch (source[0].name) {
 				case 'lineStream':
@@ -144,7 +144,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 			});
 /*
 			it('run distributed, stream output', function (done) {
-				assert(uc.worker.length > 0);
 				var args, out, rdd;
 				args = (source[0].name != 'lineStream') ? source[0].args :
 					[].concat(fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5});
@@ -191,7 +190,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				});
 
 				it('run distributed, post-persist', function (done) {
-					assert(uc.worker.length > 0);
 					var src_args, action_args, rdd;
 					switch (source[0].name) {
 					case 'lineStream':
@@ -281,7 +279,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				});
 
 				it('run distributed', function (done) {
-					assert(uc.worker.length > 0);
 					var src_args, src2_args, transform_args, action_args, rdd, other;
 					switch (source[0].name) {
 					case 'lineStream':
@@ -325,7 +322,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				});
 /*
 				it('run distributed, stream output', function (done) {
-					assert(uc.worker.length > 0);
 					var src_args, src2_args, transform_args, action_args, rdd, other, out;
 					switch (source[0].name) {
 					case 'lineStream':
@@ -366,7 +362,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 
 				if (source[0].name != 'lineStream' && source2[0].name != 'lineStream') {
 					it('run distributed, pre-persist', function (done) {
-						assert(uc.worker.length > 0);
 						var src_args, src2_args, transform_args, action_args, action2_args, rdd, other;
 						switch (source[0].name) {
 						case 'lineStream':
@@ -410,7 +405,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 					});
 
 					it('run distributed, post-persist', function (done) {
-						assert(uc.worker.length > 0);
 						var src_args, src2_args, transform_args, action_args, action2_args, rdd, other;
 						switch (source[0].name) {
 						case 'lineStream':
