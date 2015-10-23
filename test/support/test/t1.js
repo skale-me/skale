@@ -12,16 +12,15 @@ var v = [
 	[[0, 5], [1, 6], [2, 7], [3, 9], [0, 9]],
 ];
 
-ugrid.context(function (err, uc) {
-	var a, b, s;
+var uc = ugrid.context();
+var a, b, s;
 
-	a = uc.parallelize(v[0]);
-	b = uc.parallelize(v[1]);
+a = uc.parallelize(v[0]);
+b = uc.parallelize(v[1]);
 
-	// s = a.collect();
-	//s = a.coGroup(b).collect();
-	s = a.join(b).collect();
+// s = a.collect();
+//s = a.coGroup(b).collect();
+s = a.join(b).collect();
 
-	s.on('data', console.log)
-	s.on('end', uc.end)
-})
+s.on('data', console.log)
+s.on('end', uc.end)

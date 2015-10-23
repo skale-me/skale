@@ -6,18 +6,9 @@ var trace = require('line-trace');
 module.exports.TextStream = LocalArray.TextStream;
 module.exports.context = LocalContext;
 
-function LocalContext(args, done) {
+function LocalContext(args) {
 	if (!(this instanceof LocalContext))
-		return new LocalContext(args, done);
-	if (arguments.length < 3) {
-		done = args;
-		args = undefined;
-	}
-	var self = this;
-	function callback() {
-		done(null, self);
-	}
-	if (done) process.nextTick(callback);
+		return new LocalContext(args);
 }
 
 LocalContext.prototype.lineStream = function (inputStream, opt) {
