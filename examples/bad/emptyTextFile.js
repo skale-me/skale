@@ -4,8 +4,9 @@
 var ugrid = require('ugrid');
 var co = require('co');
 
+var uc = ugrid.context();
+
 co(function *() {
-	var uc = yield ugrid.context();
 	var res = yield uc.textFile('/tmp/ugrid_test/emptyFile')
 		.count();
 	console.log(res);
