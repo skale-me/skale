@@ -202,11 +202,6 @@ function runWorker(host, port) {
 		jobs[msg.data.jobId].run();
 	});
 
-	grid.on('lastLine', function (msg) {
-		jobs[msg.jobId].rdd[msg.args.rddId].processLastLine(msg.args);
-		// jobs[msg.jobId].node[msg.args.targetNum].processLastLine(msg.args);
-	});
-
 	grid.on('action', function (msg) {			// OK FOR NEW DESIGN
 		jobs[msg.jobId].sendResult();
 	});

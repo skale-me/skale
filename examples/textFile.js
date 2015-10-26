@@ -1,15 +1,10 @@
-#!/usr/local/bin/node --harmony
+#!/usr/local/bin/node
 'use strict';
 
-var ugrid = require('ugrid');
+var uc = new require('ugrid').Context();
 
-ugrid.context(function(err, uc) {
-	if (err) {console.log(err); process.exit();}
-	console.log('# Connected to ugrid');
+// var res = uc.textFile2("/Users/cedricartigue/work/ugrid/examples/less_than_a_line_with_4_workers").collect();
+var res = uc.textFile2("/Users/cedricartigue/work/ugrid/examples/less_bytes_than_workers").collect();
 
-	var file = uc.textFile("/Users/cedricartigue/Documents/debug/biglog.txt");
-	var res = file.collect();
-
-	res.on('data', console.log);
-	res.on('end', uc.end);
-});
+res.on('data', console.log);
+res.on('end', uc.end);
