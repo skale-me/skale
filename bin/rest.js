@@ -5,7 +5,7 @@
 var child_process = require('child_process');
 var fs = require('fs');
 var trace = require('line-trace');
-var tmp = require('tmp');
+//var tmp = require('tmp');
 
 var bodyParser = require('body-parser');
 var busboy = require('connect-busboy');
@@ -39,13 +39,13 @@ app.get('/', authenticate, function (req, res) {
 });
 
 app.get('/test', authenticate, function (req, res) {
-	trace(req.query)
+	trace(req.query);
 	req.query.from = "ugrid get test";
 	res.json(req.query);
 });
 
 app.post('/test', authenticate, function (req, res) {
-	trace(req.body)
+	trace(req.body);
 	req.body.from = "ugrid post test";
 	res.json(req.body);
 });
@@ -53,7 +53,7 @@ app.post('/test', authenticate, function (req, res) {
 // Exec a npm install command for master and workers
 app.post('/install', authenticate, function (req, res) {
 	try {
-		var child = child_process.spawn('npm', ['install', req.body.pkg])
+		var child = child_process.spawn('npm', ['install', req.body.pkg]);
 		child.stderr.pipe(res);
 		child.stdout.pipe(res);
 	} catch (err) {
@@ -87,7 +87,8 @@ app.post('/exec', authenticate, function (req, res) {
 
 // Exec a master using src embedded in request. A temporary file is used.
 app.post('/run', authenticate, function (req, res) {
-	var name = tmp.tmpNameSync({template: __dirname + '/tmp/XXXXXX.js'});
+	//var name = tmp.tmpNameSync({template: __dirname + '/tmp/XXXXXX.js'});
+	var name = __dirname + '/tmp/' + Date.now() + '.js';
 	req.setTimeout(0);
 	fs.writeFile(name, req.body.src, {mode: 493}, function (err) {
 		if (err) return res.send({err: 1, stdout: null, stderr: 'write failed on server: ' + err.message});

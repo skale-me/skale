@@ -7,7 +7,7 @@ var os = require('os');
 var cluster = require('cluster');
 var Ssh2 = require('ssh2');
 
-var trace = require('line-trace');
+//var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
 var UgridJob = require('../lib/ugrid-transformation.js').UgridJob;
 
@@ -32,7 +32,7 @@ var ssh = {};
 var sftp = {};
 var transferQueue = [];		// File transfer queue, on controller, to serialize concurrent worker requests during init
 var ftid = 0;				// File transfer id, set on worker to handle controller responses.
-var ftcb = {}				// File transfer callback, on worker, indexed by ftid.
+var ftcb = {};				// File transfer callback, on worker, indexed by ftid.
 
 // On controller, file transfer function
 function scp(msg, done) {
@@ -114,7 +114,7 @@ function transfer(host, remote, local, done) {
 }
 
 function runWorker(host, port) {
-	var jobs = {}, jobId, ram = {}, rdd = {}, muuid;
+	var jobs = {}, ram = {}, rdd = {}, muuid;
 
 	process.on('uncaughtException', function (err) {
 		grid.send(muuid, {cmd: 'workerError', args: err.stack});
@@ -186,9 +186,7 @@ function runWorker(host, port) {
 		}
 	};
 
-	grid.on('remoteClose', function (msg) {
-		process.exit(0);
-	});
+	grid.on('remoteClose', process.exit);
 
 	grid.on('shuffle', function (msg) {
 		try {
@@ -222,7 +220,7 @@ function runWorker(host, port) {
 	// Handle messages from worker controller (replies to scp requests)
 	process.on('message', function (msg) {
 		if (!ftcb[msg.ftid]) {
-			console.error('no callback found: %j', msg)
+			console.error('no callback found: %j', msg);
 			return;
 		}
 		ftcb[msg.ftid](msg.err, msg.res);

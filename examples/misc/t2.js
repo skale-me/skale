@@ -1,9 +1,9 @@
-#!/usr/local/bin/node --harmony
+#!/usr/bin/env node
 
-var ugrid = require('../..');
+var ugrid = require('ugrid');
 
-var uc = ugrid.context(function () {
-	console.log("Connected");
-	console.error("sample error message");
-	process.exit(0);
-});
+var uc = new ugrid.Context();
+var res = uc.parallelize([1]).collect();
+
+res.on('data', console.log);
+res.on('end', uc.end);

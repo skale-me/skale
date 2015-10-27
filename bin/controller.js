@@ -1,4 +1,4 @@
-#!/usr/local/bin/node --harmony
+#!/usr/bin/env node
 
 'use strict';
 
@@ -15,7 +15,6 @@ var opt = require('node-getopt').create([
 var host = opt.options.Host || 'localhost';
 var port = opt.options.Port || 12346;
 var shells = {};
-var workerControllers;
 
 var ugrid = require('../lib/ugrid-client.js')({
 	host: host,
@@ -52,7 +51,7 @@ var sessions = {};
 ugrid.on('shell', function (msg) {
 	var lines = new Lines(), shell, cwd;
 	if (sessions[msg.webid]) {
-		trace('reconnect attempt')
+		trace('reconnect attempt');
 		// Reconnect to an existing shell
 		ugrid.send(0, {cmd: 'shell', id: msg.from});
 		ugrid.send(0, {cmd: 'notify', data: msg.data});
