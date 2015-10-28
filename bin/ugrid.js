@@ -214,7 +214,7 @@ var clientRequest = {
 var mstream = new SwitchBoard({});
 var monid =  getTopicId('monitoring') + minMulticast;
 function pubmon(data) {
-	//mstream.write(UgridClient.encode({cmd: 'monitoring', id: monid, data: data}));
+	mstream.write(UgridClient.encode({cmd: 'monitoring', id: monid, data: data}));
 }
 
 process.on('uncaughtException', function uncaughtException(err) {
@@ -352,8 +352,7 @@ function register(from, msg, sock)
 }
 
 function devices(msg) {
-	var query = msg.data.query, result = [], master;
-	var workers = [];
+	var query = msg.data.query, result = [];
 
 	for (var i in clients) {
 		if (!clients[i].sock) continue;
