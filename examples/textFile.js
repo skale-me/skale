@@ -21,8 +21,7 @@ res.on('end', function() {
 	else {
 		console.log('TEST FAILED !!');
 		console.log('Expected : ')
-		console.log(expected)
-
+		console.log(expected);
 		console.log('\nresult: ')
 		console.log(str);
 	}
