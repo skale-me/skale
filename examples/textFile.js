@@ -6,8 +6,8 @@ var uc = new require('ugrid').Context();
 
 
 // var file = "/Users/cedricartigue/work/ugrid/examples/less_than_a_line_with_4_workers";
-// var file = "/Users/cedricartigue/work/ugrid/examples/less_bytes_than_workers";
-var file = "/Users/cedricartigue/work/ugrid/examples/random";
+var file = "/Users/cedricartigue/work/ugrid/examples/less_bytes_than_workers";
+// var file = "/Users/cedricartigue/work/ugrid/examples/random";
 
 var expected = fs.readFileSync(file, {encoding: 'utf8'});
 
