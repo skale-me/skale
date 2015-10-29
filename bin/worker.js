@@ -114,7 +114,7 @@ function transfer(host, remote, local, done) {
 }
 
 function runWorker(host, port) {
-	var jobs = {}, ram = {}, rdd = {}, muuid;
+	var jobs = {}, ram = {}, da = {}, muuid;
 
 	process.on('uncaughtException', function (err) {
 		grid.send(muuid, {cmd: 'workerError', args: err.stack});
@@ -162,7 +162,7 @@ function runWorker(host, port) {
 				completedStreams: {},
 				transfer: transfer,
 				ram: ram,
-				rdd: rdd,
+				da: da,
 				contextId: msg.data.contextId
 			};
 			jobs[msg.data.jobId] = new UgridJob(grid, app, {
@@ -190,9 +190,9 @@ function runWorker(host, port) {
 
 	grid.on('shuffle', function (msg) {
 		try {
-			jobs[msg.jobId].rdd[msg.rddId].shuffle(msg.args);
+			jobs[msg.jobId].da[msg.daId].shuffle(msg.args);
 		} catch (err) {
-			throw new Error("Rx shuffle " + jobs[msg.jobId].rdd[msg.rddId].constructor.name + ": " + err);
+			throw new Error("Rx shuffle " + jobs[msg.jobId].da[msg.daId].constructor.name + ": " + err);
 		}
 	});
 
