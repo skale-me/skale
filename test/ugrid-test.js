@@ -234,8 +234,16 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 
 				if (dualTransform.sort || action.sort) check.sort = true;
 				if (dualTransform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
-				if (dualTransform.name == 'coGroup' && action.name == 'reduce') check.lengthOnly = true;
-				if (dualTransform.name == 'crossProduct' && action.name == 'reduce') check.lengthOnly = true;
+				if (action.name == 'reduce') {
+					switch (dualTransform.name) {
+					case 'coGroup':
+					case 'crossProduct':
+					case 'join':
+					case 'leftOuterJoin':
+					case 'rightOuterJoin':
+						check.lengthOnly = true;
+					}
+				}
 
 				it('run local', function (done) {
 					var transform_args, src_args, src2_args, action_args, rdd, other;
