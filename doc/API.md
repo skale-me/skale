@@ -1,4 +1,112 @@
-# Working with Key-Values Distributed Arrays
+# Ugrid Reference
+
+## Overview
+
+Ugrid is a fast and general purpose distributed data processing system. It provides a high-level API in Javascript and an optimized parallel execution engine.
+
+A Ugrid application consist of a *master* program that runs the user code and executes various *parallel operations* on a cluster of *workers*.
+
+The main abstraction Ugrid provides is a *distributed array* (DA) which is similar to a Javascript *array*, but partitioned accross the workers that can be operated in parallel. Think to DAs as Javascript arrays on steroids, with no limits on size and scalability.
+
+There are several ways to create a DA: *parallelizing* an existing array in the master program, or referencing a dataset in a distributed storage system (such as HDFS), or *streaming* the content of any source that can be processed through Node.js *Streams*. We call *source* a function which initializes a DA.
+
+DAs support two kinds of operations: *transformations*, which create a new distributed array from an existing one, and *actions*, which return a value to the *master* program after running a computation on the DA (all DA content remains in workers memory and/or storage, master stores only DA metadata).
+
+For example, `map` is a transformation that applies a function to each element of a DA, returning a new DA. On the other hand, `reduce` is an action that aggregates all elements of a DA using some function, and returns the final result to the master.
+
+*Sources* and *transformations* in Ugrid are *lazy*. They do not start right away, but are triggered by *actions*, thus allowing efficient pipelined execution and optimized data transfers.
+
+### A first program
+
+```js
+var uc = require('ugrid').context();		// create a new context
+uc.parallelize([1, 2, 3, 4])				// source
+  .map(function (x) {return x+1})			// transform
+  .reduce(function (a, b) {return a+b}, 0)	// action
+  .then(console.log);						// process result: 14
+```
+
+Following, the list of UgridContext methods
+
+## Ugrid module
+
+The Ugrid module is the main entry point for Ugrid functionality. To use it, one must `require('ugrid')`.
+
+### `ugrid.context([config])`
+
+Returns of a new instance of UgridContext class, which represents the connection to the Ugrid cluster, and which can be used to create DAs on that cluster.
+
+#### Parameters
+- config *Object* - defines the cluster server, with the following defaults:
+
+```js
+{
+  host: 'localhost',	// Cluster server host, settable also by UGRID_HOST env
+  port: '12346'			// Cluster server port, settable also by UGRID_PORT env
+}
+```
+
+#### Example
+```js
+var ugrid = require('ugrid');
+var uc = ugrid.context();
+```
+
+### `uc.end()`
+
+Closes the connection to the cluster.
+
+### `uc.parallelize(array)`
+
+This source returns a new DA initialized from the content of array.
+
+#### Parameters
+- array *Array* - content of the DA
+
+#### Example
+```js
+var a = uc.parallelize(['Hello', 'World']);
+```
+
+### `uc.randomSVMData(nb_entries, dimension, seed)`
+This source returns a DA containig random support vector machine data (see https://en.wikipedia.org/wiki/Support_vector_machine), suitable for machine learning tests.
+
+Each entry is an array where the first element is a label with a value of -1 or 1, and the second element is an array of random numerical values between -1 and 1, the features.
+
+#### Parameters
+- nb_entries *Number* - total number of entries
+- dimension *Number* - number of feature values per entry
+- seed *Number* - value of random seed
+
+#### Example
+```js
+uc.randomSVMData(3, 2, 0).collect().toArray().then(console.log)
+// [ [ -1, [ 0.9485365136351902, -0.5998388026555403 ] ],
+//   [ 1, [ 0.5145067372322956, 0.690036021483138 ] ],
+//   [ 1, [ 0.16493246763639036, -0.6302951648685848 ] ] ]
+```
+
+### `uc.textFile(path)`
+This source returns a DA of lines composing the file.
+
+#### Parameters
+* path *String* - the pathname of the file to load. 
+
+#### Example
+```js
+var lines = uc.textFile('data.txt');
+
+```
+
+### `uc.lineStream(input_stream, config)`
+
+### `uc.objectStream(input_stream, config)`
+
+## Distributed Arrays
+
+Users may also *persist* a DA in memory, allowing efficient reuse accross parallel operations.
+
+### Working with Key-Values Distributed Arrays
 
 A Key-values distributed array is structured as follow:
 
@@ -6,32 +114,25 @@ A Key-values distributed array is structured as follow:
 
 It can be seen as an arbitrary-sized Javascript Array where each element is a Javascript Array containing 2 elements, the key and the value, which can be of any serializable type. The developper must ensure that data passed to transformations working on key-value pairs are well-structured.
 
-## Sources
-
-
-### `parallelize(array)`
-
-### `randomSVMData()`
-
-### `textFile(path)`
+All sources are methods of UgridContext and return a new DA.
 
 ## Transformations
 
-All transformations operate on a DA and return a DA, so they can be chained. A transformation is called with the following parameters:
+Transformations are methods of the DA class. They all operate on a DA and return a new DA, so they can be chained. A transformation can take the following parameters:
 
-- a user provided helper function, called for each element. The helper function must be
-  self-contained, or rely on dependencies accessible through the worker context (see below).
-- a user provided additional data, which will be passed to helper function. Those data must be
-  serializable (it must be possible to apply `JSON.stringify()` on it)
+- An helper function, called for each element. The helper function must be self-contained, or rely on dependencies accessible through the worker context (see below).
+- An additional data object, which will be passed to the helper function. Those data must be serializable (it must be possible to apply `JSON.stringify()` on it)
 
-the helper function, if any, has a form of `helper(element, [[data] [, wc]])`, where:
+An helper function has a form of `function helper(element, [[data] [, wc]])`, where:
 
+- *element* is the next element of the DA on which the transformation operates.
 - *data* is the user additional data as passed to the transformation. It must be serializable.
-- *wc* is the worker context, a global object defined in each worker and persistent accross
-  transformations. It can be used to extend the worker capabilities through the `wc.require()`
-  function as in the following example:
+- *wc* is the worker context, a global object defined in each worker and persistent accross transformations. It can be used to extend the worker capabilities through `wc.require()`.
 
-```
+Example:
+```js
+var uc = require('ugrid').context();
+
 function mapper(element, data, wc) {
 	if (!wc.maxmind) wc.maxmind = wc.reqire('maxmind');
 	return wc.maxmind.getCountry(element);
@@ -39,7 +140,9 @@ function mapper(element, data, wc) {
 var res = uc.parallelize(vect).map(mapper).collect();
 ```
 
-### `map(mapper [, obj])`
+Following is the detailed description of each transformation.
+
+### `da.map(mapper [, obj])`
 
 Applies the provided mapper function to each element of the source DA and returns a new DA.
 
@@ -60,7 +163,7 @@ between all transformations during application execution*
 
 The following program
 
-```
+```js
 var uc = require('ugrid').context();
 
 function mapper(data, obj) { return data * obj.scaling }
@@ -71,6 +174,7 @@ var res = uc.parallelize([1, 2, 3, 4])
 
 res.on('data', console.log);
 res.on('end', uc.end);
+// 
 ```
 
 will display
@@ -82,7 +186,7 @@ will display
 4.8
 ```
 
-### `DA.flatMap(flatMapper [, obj])`
+### `da.flatMap(flatMapper [, obj])`
 
 Applies the provided mapper function to each element of the source DA and returns a new DA.
 
@@ -116,7 +220,7 @@ between all transformations during application execution*
 		});
     })
 
-* ##**DA.mapValues(mapper [, obj])**
+### DA.mapValues(mapper [, obj])**
 
 Applies the provided mapper function to the value of each [key, value] element of the source DA
 and return a new DA containing elements defined as [key, mapper(value)], keeping the key

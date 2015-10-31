@@ -129,7 +129,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				rdd = uc[source[0].name].apply(uc, src_args);
 				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
-				// uc.startStreams();
 				if (action.stream) {
 					rdd = rdd[action.name].apply(rdd, action_args);
 					rdd['toArray'].apply(rdd, [function(err, res) {dres = res; done();}]);
