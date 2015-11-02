@@ -2,31 +2,23 @@
 
 <!-- toc -->
 - [Overview](#overview)
-  * [A first program](#a-first-program)
-- [Ugrid module](#ugrid-module)
-  * [ugrid.context([config])](#ugridcontext--config--)
-  * [uc.end()](#ucend--)
-  * [uc.parallelize(array)](#ucparallelize-array-)
-  * [uc.randomSVMData(nb_entries, dimension, seed)](#ucrandomsvmdata-nb-entries--dimension--seed-)
-  * [`uc.textFile(path)`](#-uctextfile-path--)
-  * [`uc.lineStream(input_stream, config)`](#-uclinestream-input-stream--config--)
-  * [`uc.objectStream(input_stream, config)`](#-ucobjectstream-input-stream--config--)
+- [Working with distributed arrays](#working_with_da)
+- [Ugrid module](#ugrid_module)
+  * [ugrid.context([config])](#ugrid-context)
+  * [uc.end()](#uc-end)
+  * [uc.parallelize(array)](#uc-parallelize)
+  * [uc.randomSVMData(nb_entries, dimension, seed)](#uc-randomsvmdata)
+  * [uc.textFile(path)](#uc-textfile)
+  * [uc.lineStream(input_stream, config)](#uc-linestream)
+  * [uc.objectStream(input_stream, config)](#uc-objectstream)
 - [Distributed Arrays](#distributed-arrays)
-  * [Working with Key-Values Distributed Arrays](#working-with-key-values-distributed-arrays)
-- [Transformations](#transformations)
-  * [`da.map(mapper [, obj])`](#-damap-mapper----obj---)
-  * [`da.flatMap(flatMapper [, obj])`](#-daflatmap-flatmapper----obj---)
-  * [** Exemple:**](#---exemple---)
-  * [DA.mapValues(mapper [, obj])**](#damapvalues-mapper----obj----)
-  * [** Arguments:**](#---arguments---)
-  * [** Exemple:**](#---exemple---)
-  * [** Arguments:**](#---arguments---)
-  * [** Exemple:**](#---exemple---)
-  * [** Arguments:**](#---arguments---)
-  * [** Exemple:**](#---exemple---)
+  * [da.map(mapper [, obj])](#da-map)
+  * [da.flatMap(flatMapper [, obj])](#da-flatmap)
+  * [da.mapValues(mapper [, obj])](#da-mapvalues)
+
 <!-- tocstop -->
 
-## Overview
+## [Overview](id:overview)
 Ugrid is a fast and general purpose distributed data processing system. It provides a high-level API in Javascript and an optimized parallel execution engine.
 
 A Ugrid application consist of a *master* program that runs the user code and executes various *parallel operations* on a cluster of *workers*.
@@ -41,8 +33,9 @@ For example, `map` is a transformation that applies a function to each element o
 
 *Sources* and *transformations* in Ugrid are *lazy*. They do not start right away, but are triggered by *actions*, thus allowing efficient pipelined execution and optimized data transfers.
 
-### A first program
-```js
+A first example:
+
+```
 var uc = require('ugrid').context();		// create a new context
 uc.parallelize([1, 2, 3, 4])				// source
   .map(function (x) {return x+1})			// transform
@@ -50,84 +43,116 @@ uc.parallelize([1, 2, 3, 4])				// source
   .then(console.log);						// process result: 14
 ```
 
-Following, the list of UgridContext methods
+## [Working with Distributed Arrays](id:working_with_da)
 
-## Ugrid module
+After having initialized a cluster context using [ugrid.context()](#ugrid-context), one can create a distributed array
+using the following sources:
+
+Source Name                                       | Description 
+--------------------------------------------------|--------------------------------------
+[uc.parallelize(array)](#uc-parallelize)          | creates a DA from an array
+[uc.textFile(path)](#uc-textfile)	              | creates a DA from a regular text file
+[uc.lineStream(stream)](#uc-linestream)           | creates a DA from a text stream
+[uc.objectStream(stream)](#uc-objectstream)       | creates a DA from an object stream
+[uc.randomSVMData(N, D, seed)](#uc-randomsvmdata) | creates a DA from random data
+
+Transformations:
+
+Transformation Name | Description | in | out
+--------------------|-------------|-------|------
+[da.map(func)](#da.map)|Apply a function on each element of DA| v | V
+[da.flatMap(func)](#da.flatmap)| | v | [V]
+[da.mapValues(func)](#da.flatmap)| | [k, v] | [k, V]
+
+Actions:
+
+Action Name | Description | Returns
+-----|-------------|--------
+
+
+## [Ugrid module](id:ugrid_module)
 The Ugrid module is the main entry point for Ugrid functionality. To use it, one must `require('ugrid')`.
 
-### ugrid.context([config])
-Returns of a new instance of UgridContext class, which represents the connection to the Ugrid cluster, and which can be used to create DAs on that cluster.
 
-#### Parameters
-- config *Object* - defines the cluster server, with the following defaults:
+### [ugrid.context([config])](id:ugrid-context)
+Creates and returns a new context which represents the connection to the Ugrid cluster, and which can be
+used to create DAs on that cluster. Config is an *Object* which defines the cluster server, with the following defaults:
 
-```js
+```
 {
   host: 'localhost',	// Cluster server host, settable also by UGRID_HOST env
   port: '12346'			// Cluster server port, settable also by UGRID_PORT env
 }
 ```
 
-#### Example
-```js
+Example:
+
+```
 var ugrid = require('ugrid');
 var uc = ugrid.context();
 ```
 
-### uc.end()
+#### [uc.end()](id:uc-end)
 Closes the connection to the cluster.
 
-### uc.parallelize(array)
-This source returns a new DA initialized from the content of array.
+#### [uc.parallelize(array)](id:uc-parallelize)
+Returns a new DA containing elements from the *Array* array.
 
-#### Parameters
-- array *Array* - content of the DA
+Example:
 
-#### Example
-```js
+```
 var a = uc.parallelize(['Hello', 'World']);
 ```
 
-### uc.randomSVMData(nb_entries, dimension, seed)
-This source returns a DA containig random support vector machine data (see https://en.wikipedia.org/wiki/Support_vector_machine), suitable for machine learning tests.
-
-Each entry is an array where the first element is a label with a value of -1 or 1, and the second element is an array of random numerical values between -1 and 1, the features.
-
-#### Parameters
+#### [uc.randomSVMData(nb_entries, dimension, seed)](id:uc-randomsvmdata)
 - nb_entries *Number* - total number of entries
 - dimension *Number* - number of feature values per entry
 - seed *Number* - value of random seed
 
-#### Example
-```js
+Returns a new DA containig random support vector machine data (see https://en.wikipedia.org/wiki/Support_vector_machine), suitable for machine learning tests.
+
+Each entry is an array where the first element is a label with a value of -1 or 1, and the second element is an array of random numerical values between -1 and 1, the features.
+
+Example:
+
+```
 uc.randomSVMData(3, 2, 0).collect().toArray().then(console.log)
 // [ [ -1, [ 0.9485365136351902, -0.5998388026555403 ] ],
 //   [ 1, [ 0.5145067372322956, 0.690036021483138 ] ],
 //   [ 1, [ 0.16493246763639036, -0.6302951648685848 ] ] ]
 ```
 
-### `uc.textFile(path)`
-This source returns a DA of lines composing the file.
+#### [uc.textFile(path)](id:uc-textfile)
+Returns a DA of lines composing the file specified by path *String*.
 
-*Note*: If using a path on the local filesystem, the file must also be accessible at the same path on worker nodes. Either copy the file to all workers or use a network-mounted shared file system.
+Note: If using a path on the local filesystem, the file must also be accessible at the same path on worker nodes. Either copy the file to all workers or use a network-mounted shared file system.
 
-#### Parameters
-* path *String* - the pathname of the file to load. 
+Example, the following program prints the length of a text file:
 
-#### Example
-The following program prints the length of a text file:
-
-```js
+```
 var lines = uc.textFile('data.txt');
-lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log)
+lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log);
 ```
 
-### `uc.lineStream(input_stream, config)`
-This source returns a DA of lines of text read from input_stream. 
+#### [uc.lineStream(input_stream)](id:uc-linestream)
+Returns a DA of lines of text read from input_stream *Object*, which is a [readable stream](https://nodejs.org/api/stream.html#stream_class_stream_readable) where DA content is read from.
 
-### `uc.objectStream(input_stream, config)`
+Example:
 
-## Distributed Arrays
+```
+var stream = fs.createReadStream('data.txt', 'utf8');
+uc.lineStream(stream).map(s => s.length).reduce((a, b) => a + b, 0).then(console.log);
+```
+
+#### [uc.objectStream(input_stream)](id:uc-objectstream)
+Returns a DA of Javascript *Objects* read from input_stream *Object*, which is a [readable stream](https://nodejs.org/api/stream.html#stream_class_stream_readable) where DA content is read from.
+
+The following example counts the number of objects returned in an object stream using the mongodb native Javascript driver:
+
+```
+var cursor = db.collection('clients').find();
+uc.objectStream(cursor).count().then(console.log);
+```
 
 Users may also *persist* a DA in memory, allowing efficient reuse accross parallel operations.
 
@@ -155,7 +180,7 @@ DA callback function has a form of `function helper(element, [[data] [, wc]])`, 
 - *wc* is the worker context, a global object defined in each worker and persistent accross transformations. It can be used to extend the worker capabilities through `wc.require()`.
 
 Example:
-```js
+```
 var uc = require('ugrid').context();
 
 function mapper(element, data, wc) {
@@ -167,28 +192,22 @@ var res = uc.parallelize(vect).map(mapper).collect();
 
 Following is the detailed description of each transformation.
 
-### `da.map(mapper [, obj])`
-
-Applies the provided mapper function to each element of the source DA and returns a new DA.
-
-#### Arguments
-
- - *mapper*: a function of the form `mapper(element [[,obj] [, wc]])`. It returns an element, and its argument are:
+### [da.map(mapper [, obj])](id:da-map)
+ - *mapper*: a function of the form `callback(element [[,obj] [, wc]])`, returning an element and where:
    - *element*: the next element of the DA on which `map()` operates
    - *obj*: the same parameter *obj* passed to `map()`
-   - *wc*: the worker context, a persistent object local to each worker, where user can store and
-	 access worker local dependencies.
+   - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
  - *obj*: user provided data. Data will be passed to carrying serializable data from master to workers, obj is shared amongst mapper executions over each element of the DA
+
+Applies the provided mapper function to each element of the source DA and returns a new DA.
 
 ***NB:***
 *wc is an optional object carrying the require method and able to store references and share them
 between all transformations during application execution*
 
-#### Exemple
+The following example program
 
-The following program
-
-```js
+```
 var uc = require('ugrid').context();
 
 function mapper(data, obj) { return data * obj.scaling }
@@ -211,11 +230,9 @@ will display
 4.8
 ```
 
-### `da.flatMap(flatMapper [, obj])`
+### [da.flatMap(flatMapper [, obj])](id:da-flatmap)
 
 Applies the provided mapper function to each element of the source DA and returns a new DA.
-
-#### Arguments
 
    - *mapper*: a function, defined as function `flatMapper(data [[,obj] [, wc]])`, to be applied to each element of the dataset and which returns an array of elements
    - *obj*: optional object carrying serializable data from master to workers, obj is shared amongst mapper executions over each element of the DA

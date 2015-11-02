@@ -396,7 +396,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 					da = da[dualTransform.name].apply(da, transform_args);
 					da = da.persist();
 					action_args = [].concat(action.args, function (err, res) {
-						//pres2 = res; done();
 						switch (source2[0].name) {
 						case 'parallelize': src2_args[0].push([3, 4]); break;
 						}
