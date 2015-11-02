@@ -129,7 +129,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				rdd = uc[source[0].name].apply(uc, src_args);
 				if (source.length > 1 ) rdd = rdd[source[1].name].apply(rdd, source[1].args);
 				if (transform.name) rdd = rdd[transform.name].apply(rdd, transform.args);
-				// uc.startStreams();
 				if (action.stream) {
 					rdd = rdd[action.name].apply(rdd, action_args);
 					rdd['toArray'].apply(rdd, [function(err, res) {dres = res; done();}]);
@@ -234,8 +233,16 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 
 				if (dualTransform.sort || action.sort) check.sort = true;
 				if (dualTransform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
-				if (dualTransform.name == 'coGroup' && action.name == 'reduce') check.lengthOnly = true;
-				if (dualTransform.name == 'crossProduct' && action.name == 'reduce') check.lengthOnly = true;
+				if (action.name == 'reduce') {
+					switch (dualTransform.name) {
+					case 'coGroup':
+					case 'crossProduct':
+					case 'join':
+					case 'leftOuterJoin':
+					case 'rightOuterJoin':
+						check.lengthOnly = true;
+					}
+				}
 
 				it('run local', function (done) {
 					var transform_args, src_args, src2_args, action_args, rdd, other;

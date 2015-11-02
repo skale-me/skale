@@ -5,7 +5,7 @@
   "description": "ugrid client and server",
   "main": "index.js",
   "scripts": {
-    "preinstall": "mkdir -p node_modules/ugrid && cat index-self-ugrid.js > node_modules/ugrid/index.js",
+    "preinstall": "echo 'module.exports = require(\"..\")' > node_modules/ugrid.js",
     "start": "bin/start-all.sh",
     "stop": "bin/stop-all.sh",
     "test": "node_modules/.bin/mocha"
@@ -41,7 +41,6 @@
     "morgan": "^1.6.1",
     "node-getopt": "^0.2.3",
     "node-uuid": "^1.4.1",
-    "npm": "^2.14.8",
     "pg": "^4.4.1",
     "rand-token": "^0.2.1",
     "ssh2": "^0.4.4",
