@@ -30,13 +30,13 @@ beforeEach(function (done) {
 
 var sources = [
 	[{name: 'parallelize', args: [data.v[0]]}],
-//	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
+	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
 	[{name: 'textFile', args: [data.files[0]]}, {name: 'map', args: [data.textParser]}],
 ];
 
 var sources2 = [
 	[{name: 'parallelize', args: [data.v[1]]}],
-//	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
+	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
 	[{name: 'textFile', args: [data.files[1]]}, {name: 'map', args: [data.textParser]}],
 ];
 
@@ -119,6 +119,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				switch (source[0].name) {
 				case 'lineStream':
 					src_args = [fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5}];
+					//src_args = [fs.createReadStream(data.files[0], {encoding: 'utf8'})];
 					break;
 				case 'parallelize':
 					src_args = [JSON.parse(JSON.stringify(data.v[0]))];

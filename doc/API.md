@@ -1,7 +1,32 @@
 # Ugrid Reference
 
-## Overview
+<!-- toc -->
+- [Overview](#overview)
+  * [A first program](#a-first-program)
+- [Ugrid module](#ugrid-module)
+  * [ugrid.context([config])](#ugridcontext--config--)
+  * [uc.end()](#ucend--)
+  * [uc.parallelize(array)](#ucparallelize-array-)
+  * [uc.randomSVMData(nb_entries, dimension, seed)](#ucrandomsvmdata-nb-entries--dimension--seed-)
+  * [`uc.textFile(path)`](#-uctextfile-path--)
+  * [`uc.lineStream(input_stream, config)`](#-uclinestream-input-stream--config--)
+  * [`uc.objectStream(input_stream, config)`](#-ucobjectstream-input-stream--config--)
+- [Distributed Arrays](#distributed-arrays)
+  * [Working with Key-Values Distributed Arrays](#working-with-key-values-distributed-arrays)
+- [Transformations](#transformations)
+  * [`da.map(mapper [, obj])`](#-damap-mapper----obj---)
+  * [`da.flatMap(flatMapper [, obj])`](#-daflatmap-flatmapper----obj---)
+  * [** Exemple:**](#---exemple---)
+  * [DA.mapValues(mapper [, obj])**](#damapvalues-mapper----obj----)
+  * [** Arguments:**](#---arguments---)
+  * [** Exemple:**](#---exemple---)
+  * [** Arguments:**](#---arguments---)
+  * [** Exemple:**](#---exemple---)
+  * [** Arguments:**](#---arguments---)
+  * [** Exemple:**](#---exemple---)
+<!-- tocstop -->
 
+## Overview
 Ugrid is a fast and general purpose distributed data processing system. It provides a high-level API in Javascript and an optimized parallel execution engine.
 
 A Ugrid application consist of a *master* program that runs the user code and executes various *parallel operations* on a cluster of *workers*.
@@ -17,7 +42,6 @@ For example, `map` is a transformation that applies a function to each element o
 *Sources* and *transformations* in Ugrid are *lazy*. They do not start right away, but are triggered by *actions*, thus allowing efficient pipelined execution and optimized data transfers.
 
 ### A first program
-
 ```js
 var uc = require('ugrid').context();		// create a new context
 uc.parallelize([1, 2, 3, 4])				// source
@@ -29,11 +53,9 @@ uc.parallelize([1, 2, 3, 4])				// source
 Following, the list of UgridContext methods
 
 ## Ugrid module
-
 The Ugrid module is the main entry point for Ugrid functionality. To use it, one must `require('ugrid')`.
 
-### `ugrid.context([config])`
-
+### ugrid.context([config])
 Returns of a new instance of UgridContext class, which represents the connection to the Ugrid cluster, and which can be used to create DAs on that cluster.
 
 #### Parameters
@@ -52,12 +74,10 @@ var ugrid = require('ugrid');
 var uc = ugrid.context();
 ```
 
-### `uc.end()`
-
+### uc.end()
 Closes the connection to the cluster.
 
-### `uc.parallelize(array)`
-
+### uc.parallelize(array)
 This source returns a new DA initialized from the content of array.
 
 #### Parameters
@@ -68,7 +88,7 @@ This source returns a new DA initialized from the content of array.
 var a = uc.parallelize(['Hello', 'World']);
 ```
 
-### `uc.randomSVMData(nb_entries, dimension, seed)`
+### uc.randomSVMData(nb_entries, dimension, seed)
 This source returns a DA containig random support vector machine data (see https://en.wikipedia.org/wiki/Support_vector_machine), suitable for machine learning tests.
 
 Each entry is an array where the first element is a label with a value of -1 or 1, and the second element is an array of random numerical values between -1 and 1, the features.
@@ -89,16 +109,21 @@ uc.randomSVMData(3, 2, 0).collect().toArray().then(console.log)
 ### `uc.textFile(path)`
 This source returns a DA of lines composing the file.
 
+*Note*: If using a path on the local filesystem, the file must also be accessible at the same path on worker nodes. Either copy the file to all workers or use a network-mounted shared file system.
+
 #### Parameters
 * path *String* - the pathname of the file to load. 
 
 #### Example
+The following program prints the length of a text file:
+
 ```js
 var lines = uc.textFile('data.txt');
-
+lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log)
 ```
 
 ### `uc.lineStream(input_stream, config)`
+This source returns a DA of lines of text read from input_stream. 
 
 ### `uc.objectStream(input_stream, config)`
 
@@ -120,10 +145,10 @@ All sources are methods of UgridContext and return a new DA.
 
 Transformations are methods of the DA class. They all operate on a DA and return a new DA, so they can be chained. A transformation can take the following parameters:
 
-- An helper function, called for each element. The helper function must be self-contained, or rely on dependencies accessible through the worker context (see below).
+- A DA callback  function, called for each element. The helper function must be self-contained, or rely on dependencies accessible through the worker context (see below).
 - An additional data object, which will be passed to the helper function. Those data must be serializable (it must be possible to apply `JSON.stringify()` on it)
 
-An helper function has a form of `function helper(element, [[data] [, wc]])`, where:
+DA callback function has a form of `function helper(element, [[data] [, wc]])`, where:
 
 - *element* is the next element of the DA on which the transformation operates.
 - *data* is the user additional data as passed to the transformation. It must be serializable.
