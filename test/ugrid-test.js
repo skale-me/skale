@@ -58,7 +58,7 @@ var transforms = [
 
 var dualTransforms = [
 	{name: 'coGroup', args: [], sort: true},
-	{name: 'crossProduct', args: [], sort: true},
+	{name: 'cartesian', args: [], sort: true},
 	{name: 'intersection', args: [], sort: true},
 	{name: 'join', args: [], sort: true},
 	{name: 'leftOuterJoin', args: [], sort: true},
@@ -143,8 +143,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				data.compareResults(lres, dres, check);
 			});
 
-			if (source[0].name == 'lineStream') return;
-
 			it('run distributed, pre-persist', function (done) {
 				var src_args, action_args, da;
 				switch (source[0].name) {
@@ -228,7 +226,7 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				if (action.name == 'reduce') {
 					switch (dualTransform.name) {
 					case 'coGroup':
-					case 'crossProduct':
+					case 'cartesian':
 					case 'join':
 					case 'leftOuterJoin':
 					case 'rightOuterJoin':
@@ -315,8 +313,6 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 				it('check distributed results', function () {
 					data.compareResults(lres, dres, check);
 				});
-
-				if (source[0].name != 'lineStream' && source2[0].name != 'lineStream') return;
 
 				it('run distributed, pre-persist', function (done) {
 					var src_args, src2_args, transform_args, action_args, action2_args, da, other;

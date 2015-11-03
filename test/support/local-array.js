@@ -146,8 +146,8 @@ LocalArray.prototype.coGroup = function (other) {
 	return this;
 }
 
-LocalArray.prototype.crossProduct = function (other) {
-	this.stream = this.stream.pipe(new DualTransformStream(other, crossProduct));
+LocalArray.prototype.cartesian = function (other) {
+	this.stream = this.stream.pipe(new DualTransformStream(other, cartesian));
 	return this;
 };
 
@@ -379,7 +379,7 @@ function countByValue(v) {
 	//return out;
 }
 
-function crossProduct(v1, v2) {
+function cartesian(v1, v2) {
 	var v = [], i, j;
 	for (i = 0; i < v1.length; i++)
 		for (j = 0; j < v2.length; j++)
