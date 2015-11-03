@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Ugrid protocol](#ugrid-protocol)
+    - [Header format](#header-format)
+        - [Destination index](#destination-index)
+        - [Body size](#body-size)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Ugrid protocol
 
 Motivation: define a simple, low overhead and fast protocol on top of TCP

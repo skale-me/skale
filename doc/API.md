@@ -1,23 +1,26 @@
 # Ugrid Reference
 
-<!-- toc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
 - [Overview](#overview)
 - [Working with Distributed Arrays](#working-with-distributed-arrays)
 - [Ugrid module](#ugrid-module)
-  * [ugrid.context([config])](#ugridcontext--config--)
-    + [uc.end()](#ucend--)
-    + [uc.parallelize(array)](#ucparallelize-array-)
-    + [uc.textFile(path)](#uctextfile-path-)
-    + [uc.lineStream(input_stream)](#uclinestream-input-stream-)
-    + [uc.objectStream(input_stream)](#ucobjectstream-input-stream-)
-  * [Distributed Arrays methods](#distributed-arrays-methods)
-    + [da.map(mapper [, obj])](#damap-mapper----obj--)
-    + [da.flatMap(flatMapper [, obj])](#daflatmap-flatmapper----obj--)
-    + [da.mapValues(mapper [, obj])](#damapvalues-mapper----obj--)
-    + [da.flatMapValues(flatMapper [, obj])](#daflatmapvalues-flatmapper----obj--)
-    + [da.filter(filter [, obj])](#dafilter-filter----obj--)
+    - [ugrid.context([config])](#ugrid-context-config)
+        - [uc.end()](#uc-end)
+        - [uc.parallelize(array)](#uc-parallelize-array)
+        - [uc.textFile(path)](#uc-textfile-path)
+        - [uc.lineStream(input_stream)](#uc-linestream-input_stream)
+        - [uc.objectStream(input_stream)](#uc-objectstream-input_stream)
+    - [Distributed Arrays methods](#distributed-arrays-methods)
+        - [da.map(mapper [, obj])](#da-map-mapper-obj)
+        - [da.flatMap(flatMapper [, obj])](#da-flatmap-flatmapper-obj)
+        - [da.mapValues(mapper [, obj])](#da-mapvalues-mapper-obj)
+        - [da.flatMapValues(flatMapper [, obj])](#da-flatmapvalues-flatmapper-obj)
+        - [da.filter(filter [, obj])](#da-filter-filter-obj)
 
-<!-- tocstop -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Overview
 
