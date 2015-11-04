@@ -33,6 +33,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+<a name=overview></a>
 ## Overview
 
 Ugrid is a fast and general purpose distributed data processing system. It provides a high-level API in Javascript and an optimized parallel execution engine.
@@ -60,6 +61,7 @@ uc.parallelize([1, 2, 3, 4])				// source
   .then(console.log);						// process result: 14
 ```
 
+<a name=working-with-distributed-arrays></a>
 ## Working with Distributed Arrays
 
 After having initialized a cluster context using [ugrid.context()](#ugrid-context), one can create a distributed array
@@ -110,11 +112,12 @@ Action Name | Description | out
 [da.lookup(k)](#dalookup)          | Return the list of values `v` for key `k` in a `[k,v]` DA | stream of v
 [da.reduce(func, init)](#dareduce) | Apply a function against an accumulator and each element of DA, return a single value | value
 
+<a name=ugrid-module></a>
 ## Ugrid module
 
 The Ugrid module is the main entry point for Ugrid functionality. To use it, one must `require('ugrid')`.
 
-
+<a name=ugrid-context-config></a>
 ### ugrid.context([config])
 
 Creates and returns a new context which represents the connection to the Ugrid cluster, and which can be
@@ -244,15 +247,15 @@ Returns a DA where duplicates are removed.
 Example:
 
 ```js
-uc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ])
-  .distinct()
-  .collect().on('data', console.log);
+uc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
+   distinct().
+   collect().on('data', console.log);
 
 ```
 
 #### da.filter(filter[,obj])
 
- - *filter*: a function of the form `callback(element [[,obj] [, wc]])`, returning a *Boolean* and where:
+ - *filter*: a function of the form `callback(element[,obj[,wc]])`, returning a *Boolean* and where:
    - *element*: the next element of the DA on which `filter()` operates
    - *obj*: the same parameter *obj* passed to `filter()`
    - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
@@ -266,14 +269,14 @@ Example:
 ```js
 function filter(data, obj) { return data % obj.modulo; }
 
-uc.parallelize([1, 2, 3, 4])
-  .filter(filter, {modulo: 2})
-  .collect().on('data', console.log);
+uc.parallelize([1, 2, 3, 4]).
+   filter(filter, {modulo: 2}).
+   collect().on('data', console.log);
 ```
 
 #### da.flatMap(flatMapper[,obj])
 
- - *flatMapper*: a function of the form `callback(element [[,obj] [, wc]])`, returning an *Array* and where:
+ - *flatMapper*: a function of the form `callback(element[,obj[,wc]])`, returning an *Array* and where:
    - *element*: the next element of the DA on which `flatMap()` operates
    - *obj*: the same parameter *obj* passed to `flatMap()`
    - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
@@ -290,14 +293,14 @@ function flatMapper(data, obj) {
 	return tmp;
 }
 
-uc.parallelize([1, 2, 3, 4])
-  .flatMap(flatMapper, {N: 2})
-  .collect().on('data', console.log);
+uc.parallelize([1, 2, 3, 4]).
+   flatMap(flatMapper, {N: 2}).
+   collect().on('data', console.log);
 ```
 
 #### da.flatMapValues(flatMapper[,obj])
 
- - *flatMapper*: a function of the form `callback(element [[,obj] [, wc]])`, returning an *Array* and where:
+ - *flatMapper*: a function of the form `callback(element[,obj[,wc]])`, returning an *Array* and where:
    - *element*: the value v of the next [k,v] element of the DA on which `flatMapValues()` operates
    - *obj*: the same parameter *obj* passed to `flatMapValues()`
    - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
@@ -316,9 +319,9 @@ function valueFlatMapper(data, obj) {
 	return tmp;
 }
 
-uc.parallelize([['hello', 1], ['world', 2]])
-  .flatMapValues(valueFlatMapper, {N: 2, fact: 2})
-  .collect().on('data', console.log);
+uc.parallelize([['hello', 1], ['world', 2]]).
+   flatMapValues(valueFlatMapper, {N: 2, fact: 2}).
+   collect().on('data', console.log);
 ```
 
 #### da.groupByKey()
@@ -328,8 +331,8 @@ When called on a DA of type `[k,v]`, returns a DA of type `[k, [v]]` where value
 Example:
 
 ```js
-uc.parallelize([[10, 1], [20, 2], [10, 4]])
-  .groupByKey().collect().on('data', console.log);
+uc.parallelize([[10, 1], [20, 2], [10, 4]]).
+   groupByKey().collect().on('data', console.log);
 // [ 10, [ 1, 4 ] ]
 // [ 20, [ 2 ] ]
 ```
@@ -367,8 +370,8 @@ When called on source DA of type `[k,v]`, returns a DA with just the elements `k
 Example:
 
 ```js
-uc.parallelize([[10, 'world'], [30, 3]])
-  .keys.collect().on('data', console.log);
+uc.parallelize([[10, 'world'], [30, 3]]).
+   keys.collect().on('data', console.log);
 // 10
 // 30
 ```
@@ -380,8 +383,8 @@ When called on source DA of type `[k,v]`, returns a DA with just the elements `v
 Example:
 
 ```js
-uc.parallelize([[10, 'world'], [30, 3]])
-  .keys.collect().on('data', console.log);
+uc.parallelize([[10, 'world'], [30, 3]]).
+   keys.collect().on('data', console.log);
 // 'world'
 // 3
 ```
@@ -418,7 +421,7 @@ da1.rightOuterJoin(da2).collect().on('data', console.log);
 
 #### da.map(mapper[,obj])
 
- - *mapper*: a function of the form `callback(element [[,obj] [, wc]])`, returning an element and where:
+ - *mapper*: a function of the form `callback(element[,obj[,wc]])`, returning an element and where:
    - *element*: the next element of the DA on which `map()` operates
    - *obj*: the same parameter *obj* passed to `map()`
    - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
@@ -433,9 +436,9 @@ var uc = require('ugrid').context();
 
 function mapper(data, obj) { return data * obj.scaling }
 
-var res = uc.parallelize([1, 2, 3, 4])
-	.map(mapper, {scaling: 1.2})
-	.collect();
+var res = uc.parallelize([1, 2, 3, 4]).
+	 map(mapper, {scaling: 1.2}).
+	 collect();
 
 res.on('data', console.log);
 res.on('end', uc.end);
@@ -452,7 +455,7 @@ will display
 
 #### da.mapValues(mapper[,obj])
 
- - *mapper*: a function of the form `callback(element [[,obj] [, wc]])`, returning an element and where:
+ - *mapper*: a function of the form `callback(element[,obj[,wc]])`, returning an element and where:
    - *element*: the value v of the next [k,v] element of the DA on which `mapValues()` operates
    - *obj*: the same parameter *obj* passed to `mapValues()`
    - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
@@ -465,15 +468,54 @@ unchanged for each source element.
 Example:
 
 ```js
-function valueMapper(data, obj) { return data * obj.fact; }
-
-uc.parallelize([['hello', 1], ['world', 2]])
-  .mapValues(valueMapper, {fact: 2})
-  .collect().on('data', console.log)
+uc.parallelize([['hello', 1], ['world', 2]]).
+   mapValues((a, obj) => a*obj.fact, {fact: 2}).
+   collect().on('data', console.log);
+// ['hello', 2]
+// ['world', 4]
 ```
 
-#### da.reduceByKey(reducer[,obj])
+#### da.reduceByKey(reducer, init[, obj])
 
+ - *reducer*: a function of the form `callback(acc,val[,obj[,wc]])`, returning the next value of the accumulator (which must be of the same type as *acc* and *val*) and where:
+   - *acc*: the value of the accumulator, initially set to *init*
+   - *val*: the value `v` of the next `[k,v]` element of the DA on which `reduceByKey()` operates
+   - *obj*: the same parameter *obj* passed to `reduceByKey()`
+   - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
+ - *init*: the initial value of accumulator for each key. Will be passed to *reducer*.
+ - *obj*: user provided data. Data will be passed to carrying serializable data from master to workers, obj is shared amongst mapper executions over each element of the DA
+
+When called on a DA of type `[k,v]`, returns a DA of type `[k,v]` where the values of each key are aggregated using the *reducer* function and the *init* initial value.
+
+Example:
+
+```js
+uc.parallelize([[10, 1], [10, 2], [10, 4]]).
+   reduceByKey((a,b) => a+b, 0).
+   collect().on('data', console.log);
+// [10, 7]
+```
+
+#### da.sample(withReplacement, frac, seed)
+
+- *withReplacement*: *Boolean* value, *true* if data must be sampled with replacement
+- *frac*: *Number* value of the fraction of source DA to return
+- *seed*: *Number* value of pseudo-random seed
+
+Returns a DA by sampling a fraction *frac* of source DA, with or without replacement, using a given random generator *seed*.
+
+Example:
+
+```js
+uc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
+   sample(true, 0.5, 0).
+   collect().toArray().then(console.log);
+// [ 1, 1, 3, 4, 4, 5, 7 ]
+```
+
+#### da.subtract(other)
+
+#### da.union(other)
 
 Supported transformations, not yet documented:
 
