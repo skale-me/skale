@@ -46,7 +46,6 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Overview
-<a name=overview></a>
 
 Ugrid is a fast and general purpose distributed data processing
 system. It provides a high-level API in Javascript and an optimized
@@ -97,8 +96,8 @@ After having initialized a cluster context using
 [ugrid.context()](#ugrid-context), one can create a distributed
 array using the following sources:
 
-Source Name                                       | Description 
---------------------------------------------------|--------------------------------------
+Source Name                                    | Description
+-----------------------------------------------|--------------------------------------
 [lineStream(stream)](#uc-linestream-stream)    | Create a DA from a text stream
 [objectStream(stream)](#uc-objectstream-stream)| Create a DA from an object stream
 [parallelize(array)](#uc-parallelize-array)    | Create a DA from an array
@@ -153,13 +152,11 @@ stream].
 |[reduce(func, init)](#dareduce) | Aggregates DA elements using a function, return a single value | value|
 
 ## Ugrid module
-<a name=ugrid-module></a>
 
 The Ugrid module is the main entry point for Ugrid functionality.
 To use it, one must `require('ugrid')`.
 
 ### ugrid.context([config])
-<a name=ugrid-context-config></a>
 
 Creates and returns a new context which represents the connection
 to the Ugrid cluster, and which can be used to create DAs on that
@@ -299,9 +296,11 @@ is in the source DA and `b` is in the *other* DA.
 Example:
 
 ```javascript
-var da1 = uc.parallelize([1, 2, 3, 4]);
+var da1 = uc.parallelize([1, 2]);
 var da2 = uc.parallelize(['a', 'b', 'c']);
-da1.cartesian(da2).count().then(console.log);
+da1.cartesian(da2).collect().toArray().then(console.log);
+// [ [ 1, 'a' ], [ 1, 'b' ], [ 1, 'c' ],
+//   [ 2, 'a' ], [ 2, 'b' ], [ 2, 'c' ] ]
 ```
 
 #### da.coGroup(other)
@@ -315,6 +314,9 @@ Example:
 var da1 = uc.parallelize([[10, 1], [20, 2]]);
 var da2 = uc.parallelize([[10, 'world'], [30, 3]]);
 da1.coGroup(da2).collect().on('data', console.log);
+// [ 10, [ [ 1 ], [ 'world' ] ] ]
+// [ 20, [ [ 2 ], [] ] ]
+// [ 30, [ [], [ 3 ] ] ]
 ```
 
 #### da.collect([opt])
@@ -330,6 +332,10 @@ Example:
 ```javascript
 uc.parallelize([1, 2, 3, 4]).
    collect({text: true}).pipe(process.stdout);
+// 1
+// 2
+// 3
+// 4
 ```
 
 #### da.count([callback])
@@ -444,6 +450,10 @@ function flatMapper(data, obj) {
 uc.parallelize([1, 2, 3, 4]).
    flatMap(flatMapper, {N: 2}).
    collect().on('data', console.log);
+// [ 'hello', 2 ]
+// [ 'hello', 2 ]
+// [ 'world', 4 ]
+// [ 'world', 4 ]
 ```
 
 #### da.flatMapValues(flatMapper[,obj])
@@ -530,8 +540,8 @@ Example:
 ```javascript
 var da1 = uc.parallelize([1, 2, 3, 4, 5]);
 var da2 = uc.parallelize([3, 4, 5, 6, 7]);
-da1.intersection(da2).collect();
-// 3 4 5
+da1.intersection(da2).collect().toArray().then(console.log);
+// [ 3, 4, 5 ]
 ```
 
 #### da.join(other)
