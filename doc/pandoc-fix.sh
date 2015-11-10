@@ -8,7 +8,7 @@ geometry: margin=1in
 header-includes:
  - \usepackage{fancyhdr}
  - \pagestyle{fancy}
- - \fancyfoot[LE,LO]{v0.1.1}
+ - \fancyfoot[LE,LO]{v0.2.0}
 ---
 
 \pagebreak
