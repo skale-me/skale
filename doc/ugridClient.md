@@ -1,20 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [UgridClient class](#ugridclient-class)
-- [wsConnect_cb([callback])](#wsconnect_cb-callback)
-- [connect_cb([callback])](#connect_cb-callback)
-- [disconnect()](#disconnect)
-- [send_cb(uuid, object, [callback])](#send_cb-uuid-object-callback)
-- [devices_cb(object, [number], [callback])](#devices_cb-object-number-callback)
-- [on(event, callback(msg))](#on-event-callback-msg)
-- [publish_cb(data, [callback])](#publish_cb-data-callback)
-- [request_cb(host, data, [callback])](#request_cb-host-data-callback)
-- [reply_cb(msg, error, data, [callback])](#reply_cb-msg-error-data-callback)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## UgridClient class
 Example:
 

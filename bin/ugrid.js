@@ -47,7 +47,7 @@ var UInt32Max = 4294967296;
 var topicMax = UInt32Max - minMulticast;
 var topicIndex = {};
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
-var port = opt.options.port || 12346;
+var port = opt.options.port || 12346;
 var wss;
 var wsport = opt.options.wsport || port + 2;
 var crossbar = {};
@@ -62,7 +62,7 @@ function SwitchBoard(sock) {
 }
 util.inherits(SwitchBoard, stream.Transform);
 
-SwitchBoard.prototype._transform = function (chunk, encoding, done) {
+SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 	var o = {}, to = chunk.readUInt32LE(0, true);
 	if (to >= minMulticast)	{	// Multicast
 		var sub = topics[to - minMulticast].sub, len = sub.length, n = 0;
@@ -222,16 +222,16 @@ process.on('uncaughtException', function uncaughtException(err) {
 	console.error(err.stack);
 });
 
-console.log("## Started " + Date());
+console.log('## Started ' + Date());
 // Start a TCP server
 if (port) {
 	net.createServer(handleConnect).listen(port);
-	console.log("## Listening TCP on " + port);
+	console.log('## Listening TCP on ' + port);
 }
 
 // Start a websocket server if a listening port is specified on command line
 if (wsport) {
-	console.log("## Listening WebSocket on " + wsport);
+	console.log('## Listening WebSocket on ' + wsport);
 	wss = new webSocketServer({port: wsport});
 	wss.on('connection', function (ws) {
 		var sock = websocket(ws);
@@ -306,9 +306,9 @@ function handleClose(sock) {
 }
 
 function handleConnect(sock) {
-	if (sock.ws) { 
+	if (sock.ws) {
 		console.log('## Connect websocket from ' + sock.socket.upgradeReq.headers.origin);
-	} else {
+	} else {
 		console.log('## Connect tcp ' + sock.remoteAddress + ' ' + sock.remotePort);
 		sock.setNoDelay();
 	}
@@ -327,13 +327,13 @@ function getClientNumber() {
 	do {
 		clientNum = (clientNum < clientMax) ? clientNum + 1 : 2;
 	} while (clientNum in crossbar && --n);
-	if (!n) throw new Error("getClientNumber failed");
+	if (!n) throw new Error('getClientNumber failed');
 	return clientNum;
 }
 
 function register(from, msg, sock)
 {
-	var uuid = msg.uuid || uuidGen.v1();
+	var uuid = msg.uuid || uuidGen.v1();
 	sock.client = clients[uuid] = {
 		index: sock.index,
 		uuid: uuid,
@@ -358,7 +358,7 @@ function devices(msg) {
 		if (!clients[i].sock) continue;
 		var match = true;
 		for (var j in query) {
-			if (!clients[i].data || clients[i].data[j] != query[j]) {
+			if (!clients[i].data || clients[i].data[j] != query[j]) {
 				match = false;
 				break;
 			}
@@ -381,7 +381,7 @@ function getTopicId(topic) {
 	do {
 		topicNum = (topicNum < topicMax) ? topicNum + 1 : 0;
 	} while (topicNum in topics && --n);
-	if (!n) throw new Error("getTopicId failed");
+	if (!n) throw new Error('getTopicId failed');
 	topics[topicNum] = {name: topic, id: topicNum, sub: []};
 	topicIndex[topic] = topicNum;
 	return topicIndex[topic];
