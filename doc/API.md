@@ -51,7 +51,7 @@ Ugrid is a fast and general purpose distributed data processing
 system. It provides a high-level API in Javascript and an optimized
 parallel execution engine.
 
-A Ugrid application consist of a *master* program that runs the
+A Ugrid application consists of a *master* program that runs the
 user code and executes various *parallel operations* on a cluster
 of *workers*.
 
@@ -96,12 +96,12 @@ After having initialized a cluster context using
 [ugrid.context()](#ugrid-context), one can create a distributed
 array using the following sources:
 
-Source Name                                    | Description
------------------------------------------------|--------------------------------------
-[lineStream(stream)](#uc-linestream-stream)    | Create a DA from a text stream
-[objectStream(stream)](#uc-objectstream-stream)| Create a DA from an object stream
-[parallelize(array)](#uc-parallelize-array)    | Create a DA from an array
-[textFile(path)](#uc-textfile-path)            | Create a DA from a regular text file
+| Source Name                                  | Description                          |
+| -------------------                          | ----------------------------------   |
+|[lineStream(stream)](#uc-linestream-stream)    | Create a DA from a text stream      |
+|[objectStream(stream)](#uc-objectstream-stream)| Create a DA from an object stream   |
+|[parallelize(array)](#uc-parallelize-array)    | Create a DA from an array           |
+|[textFile(path)](#uc-textfile-path)            | Create a DA from a regular text file|
 
 Transformations operate on a DA and return a new DA. Note that some
 transformation operate only on DA where each element is in the form
@@ -112,10 +112,10 @@ of 2 elements array of key and value (`[k,v]` DA):
 A special transformation `persist()` enables one to *persist* a DA
 in memory, allowing efficient reuse accross parallel operations.
 
-|Transformation Name | Description | in | out|
---------------------|-------------|-------|------|
+|Transformation Name              | Description                                   | in    | out   |
+| -----------------               |-----------------------------------------------|-------|-------|
 |[cartesian(other)](#dacartesian) | Perform a cartesian product with the other DA | v w | [v,w]|
-|[coGroup(other)](#dacogroup) | Group data from both DAs sharing the same key | [k,v] [k,w] | [k,[[v],[w]]]|
+|[coGroup(other)](#dacogroup) | Group data from both DAs sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|
 |[distinct()](#dadistinct)    | Return a DA where duplicates are removed | v | w|
 |[filter(func)](#dafilter)    | Return a DA of elements on which function returns true | v | w|
 |[flatMap(func)](#daflatmap)  | Pass the DA elements to a function which returns a sequence | v | w|
@@ -141,8 +141,8 @@ case of multiple value results, the action returns a [readable
 stream].
 
 |Action Name | Description | out|
-|-----|-------------|---|
-|[aggregate(func, func, init)](#daaggregate)| Similar to reduce() but may return a different type| value|
+|------------------             |----------------------------------------------|--------------|
+|[aggregate(func, func, init)](#daaggregate)| Similar to reduce() but may return a different type| value |
 |[collect()](#dacollect)         | Return the content of DA | stream of elements|
 |[count()](#dacount)             | Return the number of elements from DA | number|
 |[countByKey()](#dacountbykey)     | Return the number of occurrences for each key in a `[k,v]` DA | stream of [k,number]|
@@ -253,17 +253,17 @@ an [ES6 promise] is returned.
 - *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
   which returns the next value of the accumulator (which must be
   of the same type as *acc*) and with:
-   - *acc*: the value of the accumulator, initially set to *init*
-   - *val*: the value of the next element of the DA on which
-     `aggregate()` operates
-   - *obj*: the same parameter *obj* passed to `aggregate()`
-   - *wc*: the worker context, a persistent object local to each
-     worker, where user can store and access worker local dependencies.
+     - *acc*: the value of the accumulator, initially set to *init*
+     - *val*: the value of the next element of the DA on which
+       `aggregate()` operates
+     - *obj*: the same parameter *obj* passed to `aggregate()`
+     - *wc*: the worker context, a persistent object local to each
+       worker, where user can store and access worker local dependencies.
 - *combiner*: a function of the form `function(acc1,acc2[,obj])`,
   which returns the merged value of accumulators and with:
-   - *acc1*: the value of an accumulator, computed locally on a worker
-   - *acc2*: the value of an other accumulator, issued by another worker
-   - *obj*: the same parameter *obj* passed to `aggregate()`
+     - *acc1*: the value of an accumulator, computed locally on a worker
+     - *acc2*: the value of an other accumulator, issued by another worker
+     - *obj*: the same parameter *obj* passed to `aggregate()`
 - *init*: the initial value of the accumulators that are used by
   *reducer()* and *combiner()*. It should be the identity element
   of the operation (i.e. applying it through the function should
@@ -400,10 +400,10 @@ uc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
 
 - *filter*: a function of the form `callback(element[,obj[,wc]])`,
   returning a *Boolean* and where:
-  - *element*: the next element of the DA on which `filter()` operates
-  - *obj*: the same parameter *obj* passed to `filter()`
-  - *wc*: the worker context, a persistent object local to each
-    worker, where user can store and access worker local dependencies.
+    - *element*: the next element of the DA on which `filter()` operates
+    - *obj*: the same parameter *obj* passed to `filter()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the DA
@@ -430,10 +430,10 @@ DA and returns a new DA.
 
 - *flatMapper*: a function of the form `callback(element[,obj[,wc]])`,
   returning an *Array* and where:
-  - *element*: the next element of the DA on which `flatMap()` operates
-  - *obj*: the same parameter *obj* passed to `flatMap()`
-  - *wc*: the worker context, a persistent object local to each
-    worker, where user can store and access worker local dependencies.
+    - *element*: the next element of the DA on which `flatMap()` operates
+    - *obj*: the same parameter *obj* passed to `flatMap()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the DA
@@ -465,11 +465,11 @@ for each source element.
 
 - *flatMapper*: a function of the form `callback(element[,obj[,wc]])`,
   returning an *Array* and where:
-  - *element*: the value v of the next [k,v] element of the DA on
-    which `flatMapValues()` operates
-  - *obj*: the same parameter *obj* passed to `flatMapValues()`
-  - *wc*: the worker context, a persistent object local to each
-    worker, where user can store and access worker local dependencies.
+    - *element*: the value v of the next [k,v] element of the DA on
+      which `flatMapValues()` operates
+    - *obj*: the same parameter *obj* passed to `flatMapValues()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the DA
@@ -496,11 +496,11 @@ This action applies a *callback* function on each element of the DA.
 
 - *callback*: a function of the form `function(val[,obj[,wc]])`,
   which returns *null* and with:
-   - *val*: the value of the next element of the DA on which
-     `foreach()` operates
-   - *obj*: the same parameter *obj* passed to `foreach()`
-   - *wc*: the worker context, a persistent object local to each
-     worker, where user can store and access worker local dependencies.
+     - *val*: the value of the next element of the DA on which
+       `foreach()` operates
+     - *obj*: the same parameter *obj* passed to `foreach()`
+     - *wc*: the worker context, a persistent object local to each
+       worker, where user can store and access worker local dependencies.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the DA
@@ -610,10 +610,10 @@ DA and returns a new DA.
 
 - *mapper*: a function of the form `callback(element[,obj[,wc]])`,
   returning an element and where:
-  - *element*: the next element of the DA on which `map()` operates
-  - *obj*: the same parameter *obj* passed to `map()`
-  - *wc*: the worker context, a persistent object local to each
-    worker, where user can store and access worker local dependencies.
+    - *element*: the next element of the DA on which `map()` operates
+    - *obj*: the same parameter *obj* passed to `map()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the DA
@@ -631,11 +631,11 @@ uc.parallelize([1, 2, 3, 4]).
 
 - *mapper*: a function of the form `callback(element[,obj[,wc]])`,
   returning an element and where:
-  - *element*: the value v of the next [k,v] element of the DA on
-    which `mapValues()` operates
-  - *obj*: the same parameter *obj* passed to `mapValues()`
-  - *wc*: the worker context, a persistent object local to each
-    worker, where user can store and access worker local dependencies
+    - *element*: the value v of the next [k,v] element of the DA on
+      which `mapValues()` operates
+    - *obj*: the same parameter *obj* passed to `mapValues()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the DA
@@ -664,12 +664,12 @@ if provided, otherwise an [ES6 promise] is returned.
 - *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
   which returns the next value of the accumulator (which must be
   of the same type as *acc* and *val*) and with:
-   - *acc*: the value of the accumulator, initially set to *init*
-   - *val*: the value of the next element of the DA on which
-     `reduce()` operates
-   - *obj*: the same parameter *obj* passed to `reduce()`
-   - *wc*: the worker context, a persistent object local to each
-     worker, where user can store and access worker local dependencies.
+     - *acc*: the value of the accumulator, initially set to *init*
+     - *val*: the value of the next element of the DA on which
+       `reduce()` operates
+     - *obj*: the same parameter *obj* passed to `reduce()`
+     - *wc*: the worker context, a persistent object local to each
+       worker, where user can store and access worker local dependencies.
 - *init*: the initial value of the accumulators that are used by
   *reducer()*. It should be the identity element of the operation
   (i.e. applying it through the function should not change result).
@@ -694,12 +694,12 @@ uc.parallelize([1, 2, 4, 8]).
 - *reducer*: a function of the form `callback(acc,val[,obj[,wc]])`,
   returning the next value of the accumulator (which must be of the
   same type as *acc* and *val*) and where:
-  - *acc*: the value of the accumulator, initially set to *init*
-  - *val*: the value `v` of the next `[k,v]` element of the DA on
-    which `reduceByKey()` operates
-  - *obj*: the same parameter *obj* passed to `reduceByKey()`
-  - *wc*: the worker context, a persistent object local to each
-    worker, where user can store and access worker local dependencies.
+    - *acc*: the value of the accumulator, initially set to *init*
+    - *val*: the value `v` of the next `[k,v]` element of the DA on
+      which `reduceByKey()` operates
+    - *obj*: the same parameter *obj* passed to `reduceByKey()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
 - *init*: the initial value of accumulator for each key. Will be
   passed to *reducer*.
 - *obj*: user provided data. Data will be passed to carrying
