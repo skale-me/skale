@@ -1,15 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [UgridContext class](#ugridcontext-class)
-- [ugrid.init_cb([callback])](#ugrid-init_cb-callback)
-- [ugrid.parallelize(localArray, [P])](#ugrid-parallelize-localarray-p)
-- [ugrid.textFile(file, [P])](#ugrid-textfile-file-p)
-- [ugrid.randomSVMData(N, D, [seed, P])](#ugrid-randomsvmdata-n-d-seed-p)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## UgridContext class
 Example:
 

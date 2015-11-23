@@ -1,20 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [Transformations](#transformations)
-    - [map(func, args)](#map-func-args)
-    - [union(array)](#union-array)
-    - [reduceByKey(key, func, [initValue])](#reducebykey-key-func-initvalue)
-- [Actions](#actions)
-    - [reduce(func)](#reduce-func)
-    - [collect()](#collect)
-    - [count()](#count)
-    - [sample(fraction)](#sample-fraction)
-    - [takeSample(num)](#takesample-num)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Transformations
 
 ## map(func, args)

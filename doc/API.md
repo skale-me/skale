@@ -7,48 +7,51 @@
 - [Overview](#overview)
 - [Working with Distributed Arrays](#working-with-distributed-arrays)
 - [Ugrid module](#ugrid-module)
-    - [ugrid.context([config])](#ugrid-context-config)
-        - [uc.end()](#uc-end)
-        - [uc.parallelize(array)](#uc-parallelize-array)
-        - [uc.textFile(path)](#uc-textfile-path)
-        - [uc.lineStream(input_stream)](#uc-linestream-input_stream)
-        - [uc.objectStream(input_stream)](#uc-objectstream-input_stream)
+    - [ugrid.context([config])](#ugridcontextconfig)
+        - [uc.end()](#ucend)
+        - [uc.parallelize(array)](#ucparallelizearray)
+        - [uc.textFile(path)](#uctextfilepath)
+        - [uc.lineStream(input_stream)](#uclinestreaminput_stream)
+        - [uc.objectStream(input_stream)](#ucobjectstreaminput_stream)
     - [Distributed Arrays methods](#distributed-arrays-methods)
-        - [da.aggregate(reducer, combiner, init[,obj][,done])](#da-aggregate-reducer-combiner-init-obj-done)
-        - [da.cartesian(other)](#da-cartesian-other)
-        - [da.coGroup(other)](#da-cogroup-other)
-        - [da.collect([opt])](#da-collect-opt)
-        - [da.count([callback])](#da-count-callback)
-        - [da.countByKey()](#da-countbykey)
-        - [da.distinct()](#da-distinct)
-        - [da.filter(filter[,obj])](#da-filter-filter-obj)
-        - [da.flatMap(flatMapper[,obj])](#da-flatmap-flatmapper-obj)
-        - [da.flatMapValues(flatMapper[,obj])](#da-flatmapvalues-flatmapper-obj)
-        - [da.groupByKey()](#da-groupbykey)
-        - [da.intersection(other)](#da-intersection-other)
-        - [da.join(other)](#da-join-other)
-        - [da.keys()](#da-keys)
-        - [da.values()](#da-values)
-        - [da.leftOuterJoin(other)](#da-leftouterjoin-other)
-        - [da.rightOuterJoin(other)](#da-rightouterjoin-other)
-        - [da.map(mapper[,obj])](#da-map-mapper-obj)
-        - [da.mapValues(mapper[,obj])](#da-mapvalues-mapper-obj)
-        - [da.reduceByKey(reducer, init[, obj])](#da-reducebykey-reducer-init-obj)
-        - [da.sample(withReplacement, frac, seed)](#da-sample-withreplacement-frac-seed)
-        - [da.subtract(other)](#da-subtract-other)
-        - [da.union(other)](#da-union-other)
+        - [da.aggregate(reducer, combiner, init[,obj][,done])](#daaggregatereducer-combiner-initobjdone)
+        - [da.cartesian(other)](#dacartesianother)
+        - [da.coGroup(other)](#dacogroupother)
+        - [da.collect([opt])](#dacollectopt)
+        - [da.count([callback])](#dacountcallback)
+        - [da.countByKey()](#dacountbykey)
+        - [da.countByValue()](#dacountbyvalue)
+        - [da.distinct()](#dadistinct)
+        - [da.filter(filter[,obj])](#dafilterfilterobj)
+        - [da.flatMap(flatMapper[,obj])](#daflatmapflatmapperobj)
+        - [da.flatMapValues(flatMapper[,obj])](#daflatmapvaluesflatmapperobj)
+        - [da.foreach(callback[, obj][, done])](#daforeachcallback-obj-done)
+        - [da.groupByKey()](#dagroupbykey)
+        - [da.intersection(other)](#daintersectionother)
+        - [da.join(other)](#dajoinother)
+        - [da.keys()](#dakeys)
+        - [da.leftOuterJoin(other)](#daleftouterjoinother)
+        - [da.lookup(k)](#dalookupk)
+        - [da.map(mapper[,obj])](#damapmapperobj)
+        - [da.mapValues(mapper[,obj])](#damapvaluesmapperobj)
+        - [da.reduce(reducer, init[,obj][,done])](#dareducereducer-initobjdone)
+        - [da.reduceByKey(reducer, init[, obj])](#dareducebykeyreducer-init-obj)
+        - [da.rightOuterJoin(other)](#darightouterjoinother)
+        - [da.sample(withReplacement, frac, seed)](#dasamplewithreplacement-frac-seed)
+        - [da.subtract(other)](#dasubtractother)
+        - [da.union(other)](#daunionother)
+        - [da.values()](#davalues)
 - [References](#references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Overview
-<a name=overview></a>
 
 Ugrid is a fast and general purpose distributed data processing
 system. It provides a high-level API in Javascript and an optimized
 parallel execution engine.
 
-A Ugrid application consist of a *master* program that runs the
+A Ugrid application consists of a *master* program that runs the
 user code and executes various *parallel operations* on a cluster
 of *workers*.
 
@@ -78,7 +81,7 @@ efficient pipelined execution and optimized data transfers.
 
 A first example:
 
-```
+```javascript
 var uc = require('ugrid').context();		// create a new context
 uc.parallelize([1, 2, 3, 4]).				// source
    map(function (x) {return x+1}).			// transform
@@ -93,66 +96,74 @@ After having initialized a cluster context using
 [ugrid.context()](#ugrid-context), one can create a distributed
 array using the following sources:
 
-Source Name                                       | Description 
---------------------------------------------------|--------------------------------------
-[lineStream(stream)](#uc-linestream-stream)    | Create a DA from a text stream
-[objectStream(stream)](#uc-objectstream-stream)| Create a DA from an object stream
-[parallelize(array)](#uc-parallelize-array)    | Create a DA from an array
-[textFile(path)](#uc-textfile-path)            | Create a DA from a regular text file
+| Source Name                                  | Description                          |
+| -------------------                          | ----------------------------------   |
+|[lineStream(stream)](#uc-linestream-stream)    | Create a DA from a text stream      |
+|[objectStream(stream)](#uc-objectstream-stream)| Create a DA from an object stream   |
+|[parallelize(array)](#uc-parallelize-array)    | Create a DA from an array           |
+|[textFile(path)](#uc-textfile-path)            | Create a DA from a regular text file|
 
-Transformations operate on a DA and return a new DA. Note that some transformation operate only on DA where each element
-is in the form of 2 elements array of key and value (`[k,v]` DA): `[[Ki,Vi], ..., [Kj, Vj]]`
+Transformations operate on a DA and return a new DA. Note that some
+transformation operate only on DA where each element is in the form
+of 2 elements array of key and value (`[k,v]` DA):
 
-Transformation Name | Description | in | out
---------------------|-------------|-------|------
- [cartesian(other)](#dacartesian) | Cartesian product with the other DA | v w | [v,w]
- [coGroup(other)](#dacogroup) | Group data from both DAs sharing the same key | [k,v] [k,w] | [k,[[v],[w]]]
- [distinct()](#dadistinct)    | Return a DA where duplicates are removed | v | w
- [filter(func)](#dafilter)    | Return a DA of elements on which function returns true | v | w
- [flatMap(func)](#daflatmap)  | Similar to map(), but where function returns a sequence of elements | v | w
- [groupByKey()](#dagroupbykey)| Group values with the same key | [k,v] | [k,[v]]
- [intersection(other)](#daintersection) | Return a DA containing only elements found in both DAs | v w | v
- [join(other)](#dajoin)       | Perform an inner join between 2 DAs | [k,v] | [k,[v,w]]
- [leftOuterJoin(other)](#daleftouterjoin) | Perform a join between 2 DAs where the key must be present in the other DA | [k,v] | [k,[v,w]]
- [rightOuterJoin(other)](#darightouterjoin) | Perform a join between 2 DAs where the key must be present in the first DA | [k,v] | [k,[v,w]]
- [keys()](#dakeys)            | Return a DA of just the keys | [k,v] | k
- [map(func)](#damap)          | Return a DA where elements are passed through a function | v | w
- [mapValues(func)](#daflatmap)| Similar to map(), but where function is applied to value of key-value DA | [k,v] | [k,w]
- [reduceByKey(func, init)](#dareducebykey)	| Combine values with the same key | [k,v] | [k,w]
- [persist()](#dapersist)      | Idempotent. Keep content of DA in cache for further reuse. | v | v
- [sample(rep, frac, seed)](#dasample) | Sample a DA, with or without replacement | v | w
- [subtract(other)](#dasubract) | Remove the content of one DA | v w | v
- [union(other)](#daunion)     | Return a DA containing elements from both DAs | v | v w
- [values()](#davalues)        | Return a DA of just the values | [k,v] | v
+	[[Ki,Vi], ..., [Kj, Vj]]
 
-Actions:
+A special transformation `persist()` enables one to *persist* a DA
+in memory, allowing efficient reuse accross parallel operations.
 
-Action Name | Description | out
------|-------------|---
-[aggregate(func, func, init)](#daaggregate)| Similar to reduce() but may return a different type| value
-[collect()](#dacollect)         | Return the content of DA | stream of elements
-[count()](#dacount)             | Return the number of elements from DA | number
-[countByKey()](#dacountbykey)     | Return the number of occurrences of elements for each key in a `[k,v]` DA | stream of [k,number]
-[countByValue()](#dacountbyvalue) | Return the number of occurrences of elements from DA | stream of [v,number]
-[foreach(func)](#daforeach)     | Apply the provided function to each element of the DA | null
-[lookup(k)](#dalookup)          | Return the list of values `v` for key `k` in a `[k,v]` DA | stream of v
-[reduce(func, init)](#dareduce) | Apply a function against an accumulator and each element of DA, return a single value | value
+|Transformation Name              | Description                                   | in    | out   |
+| -----------------               |-----------------------------------------------|-------|-------|
+|[cartesian(other)](#dacartesian) | Perform a cartesian product with the other DA | v w | [v,w]|
+|[coGroup(other)](#dacogroup) | Group data from both DAs sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|
+|[distinct()](#dadistinct)    | Return a DA where duplicates are removed | v | w|
+|[filter(func)](#dafilter)    | Return a DA of elements on which function returns true | v | w|
+|[flatMap(func)](#daflatmap)  | Pass the DA elements to a function which returns a sequence | v | w|
+|[groupByKey()](#dagroupbykey)| Group values with the same key | [k,v] | [k,[v]]|
+|[intersection(other)](#daintersection) | Return a DA containing only elements found in both DAs | v w | v|
+|[join(other)](#dajoin)       | Perform an inner join between 2 DAs | [k,v] | [k,[v,w]]|
+|[leftOuterJoin(other)](#daleftouterjoin) | Join 2 DAs where the key must be present in the other | [k,v] | [k,[v,w]]|
+|[rightOuterJoin(other)](#darightouterjoin) | Join 2 DAs where the key must be present in the first | [k,v] | [k,[v,w]]|
+|[keys()](#dakeys)            | Return a DA of just the keys | [k,v] | k|
+|[map(func)](#damap)          | Return a DA where elements are passed through a function | v | w|
+|[mapValues(func)](#daflatmap)| Map a function to the value field of key-value DA | [k,v] | [k,w]|
+|[reduceByKey(func, init)](#dareducebykey)	| Combine values with the same key | [k,v] | [k,w]|
+|[persist()](#dapersist)      | Idempotent. Keep content of DA in cache for further reuse. | v | v|
+|[sample(rep, frac, seed)](#dasample) | Sample a DA, with or without replacement | v | w|
+|[subtract(other)](#dasubract) | Remove the content of one DA | v w | v|
+|[union(other)](#daunion)     | Return a DA containing elements from both DAs | v | v w|
+|[values()](#davalues)        | Return a DA of just the values | [k,v] | v|
+
+Actions operate on a DA and return a result to the *master*. Results
+are always returned asynchronously. In a case of a single result,
+it is returned through a either a callback, or an [ES6 promise].  In the
+case of multiple value results, the action returns a [readable
+stream].
+
+|Action Name | Description | out|
+|------------------             |----------------------------------------------|--------------|
+|[aggregate(func, func, init)](#daaggregate)| Similar to reduce() but may return a different type| value |
+|[collect()](#dacollect)         | Return the content of DA | stream of elements|
+|[count()](#dacount)             | Return the number of elements from DA | number|
+|[countByKey()](#dacountbykey)     | Return the number of occurrences for each key in a `[k,v]` DA | stream of [k,number]|
+|[countByValue()](#dacountbyvalue) | Return the number of occurrences of elements from DA | stream of [v,number]|
+|[foreach(func)](#daforeach)     | Apply the provided function to each element of the DA | **not implemented**|
+|[lookup(k)](#dalookup)          | Return the list of values `v` for key `k` in a `[k,v]` DA | stream of v|
+|[reduce(func, init)](#dareduce) | Aggregates DA elements using a function, return a single value | value|
 
 ## Ugrid module
-<a name=ugrid-module></a>
 
 The Ugrid module is the main entry point for Ugrid functionality.
 To use it, one must `require('ugrid')`.
 
 ### ugrid.context([config])
-<a name=ugrid-context-config></a>
 
 Creates and returns a new context which represents the connection
 to the Ugrid cluster, and which can be used to create DAs on that
 cluster. Config is an *Object* which defines the cluster server,
 with the following defaults:
 
-```
+```javascript
 {
   host: 'localhost',	// Cluster server host, settable also by UGRID_HOST env
   port: '12346'			// Cluster server port, settable also by UGRID_PORT env
@@ -161,7 +172,7 @@ with the following defaults:
 
 Example:
 
-```
+```javascript
 var ugrid = require('ugrid');
 var uc = ugrid.context();
 ```
@@ -176,7 +187,7 @@ Returns a new DA containing elements from the *Array* array.
 
 Example:
 
-```js
+```javascript
 var a = uc.parallelize(['Hello', 'World']);
 ```
 
@@ -190,7 +201,7 @@ file to all workers or use a network-mounted shared file system.
 
 Example, the following program prints the length of a text file:
 
-```js
+```javascript
 var lines = uc.textFile('data.txt');
 lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log);
 ```
@@ -202,7 +213,7 @@ is a [readable stream] where DA content is read from.
 
 The following example computes the size of a file using streams:
 
-```js
+```javascript
 var stream = fs.createReadStream('data.txt', 'utf8');
 uc.lineStream(stream).
    map(s => s.length).
@@ -218,50 +229,17 @@ which is a [readable stream] where DA content is read from.
 The following example counts the number of objects returned in an
 object stream using the mongodb native Javascript driver:
 
-```js
+```javascript
 var cursor = db.collection('clients').find();
 uc.objectStream(cursor).count().then(console.log);
 ```
 
-Users may also *persist* a DA in memory, allowing efficient reuse
-accross parallel operations.
-
 ### Distributed Arrays methods
 
-Transformations are methods of the DA class. They all operate on a
-DA and return a new DA, so they can be chained. A transformation
-can take the following parameters:
-
-- A DA callback  function, called for each element. The helper
-  function must be self-contained, or rely on dependencies accessible
-  through the worker context (see below).
-- An additional data object, which will be passed to the helper
-  function. Those data must be serializable (it must be possible
-  to apply `JSON.stringify()` on it)
-
-DA callback function has a form of `function helper(element, [[data] [, wc]])`, where:
-
-- *element* is the next element of the DA on which the transformation
-  operates.
-- *data* is the user additional data as passed to the transformation.
-  It must be serializable.
-- *wc* is the worker context, a global object defined in each worker
-  and persistent accross transformations. It can be used to extend
-  the worker capabilities through `wc.require()`.
-
-Example:
-
-```js
-var uc = require('ugrid').context();
-
-function mapper(element, data, wc) {
-	if (!wc.maxmind) wc.maxmind = wc.reqire('maxmind');
-	return wc.maxmind.getCountry(element);
-}
-var res = uc.parallelize(vect).map(mapper).collect();
-```
-
-Following is the detailed description of each transformation.
+DA objects, as created initially by above ugrid context source
+functions, have the following methods, allowing either to instantiate
+a new DA through a transformation, or to return results to the
+master program.
 
 #### da.aggregate(reducer, combiner, init[,obj][,done])
 
@@ -275,16 +253,17 @@ an [ES6 promise] is returned.
 - *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
   which returns the next value of the accumulator (which must be
   of the same type as *acc*) and with:
-   - *acc*: the value of the accumulator, initially set to *init*
-   - *val*: the value of the next element of the DA on which `aggregate()` operates
-   - *obj*: the same parameter *obj* passed to `aggregate()`
-   - *wc*: the worker context, a persistent object local to each
-     worker, where user can store and access worker local dependencies.
+     - *acc*: the value of the accumulator, initially set to *init*
+     - *val*: the value of the next element of the DA on which
+       `aggregate()` operates
+     - *obj*: the same parameter *obj* passed to `aggregate()`
+     - *wc*: the worker context, a persistent object local to each
+       worker, where user can store and access worker local dependencies.
 - *combiner*: a function of the form `function(acc1,acc2[,obj])`,
   which returns the merged value of accumulators and with:
-   - *acc1*: the value of an accumulator, computed locally on a worker
-   - *acc2*: the value of an other accumulator, issued by another worker
-   - *obj*: the same parameter *obj* passed to `aggregate()`
+     - *acc1*: the value of an accumulator, computed locally on a worker
+     - *acc2*: the value of an other accumulator, issued by another worker
+     - *obj*: the same parameter *obj* passed to `aggregate()`
 - *init*: the initial value of the accumulators that are used by
   *reducer()* and *combiner()*. It should be the identity element
   of the operation (i.e. applying it through the function should
@@ -298,7 +277,7 @@ an [ES6 promise] is returned.
 
 The following example computes the average of a DA, avoiding a `map()`:
 
-```js
+```javascript
 uc.parallelize([3, 5, 2, 7, 4, 8]).
    aggregate((a, v) => [a[0] + v, a[1] + 1],
 		(a1, a2) => [a1[0] + a2[0], a1[1] + a2[1]],
@@ -316,10 +295,12 @@ is in the source DA and `b` is in the *other* DA.
 
 Example:
 
-```js
-var da1 = uc.parallelize([1, 2, 3, 4]);
+```javascript
+var da1 = uc.parallelize([1, 2]);
 var da2 = uc.parallelize(['a', 'b', 'c']);
-da1.cartesian(da2).count().then(console.log);
+da1.cartesian(da2).collect().toArray().then(console.log);
+// [ [ 1, 'a' ], [ 1, 'b' ], [ 1, 'c' ],
+//   [ 2, 'a' ], [ 2, 'b' ], [ 2, 'c' ] ]
 ```
 
 #### da.coGroup(other)
@@ -329,10 +310,13 @@ When called on DA of type `[k,v]` and `[k,w]`, returns a DA of type
 
 Example:
 
-```js
+```javascript
 var da1 = uc.parallelize([[10, 1], [20, 2]]);
 var da2 = uc.parallelize([[10, 'world'], [30, 3]]);
 da1.coGroup(da2).collect().on('data', console.log);
+// [ 10, [ [ 1 ], [ 'world' ] ] ]
+// [ 20, [ [ 2 ], [] ] ]
+// [ 30, [ [], [ 3 ] ] ]
 ```
 
 #### da.collect([opt])
@@ -340,14 +324,18 @@ da1.coGroup(da2).collect().on('data', console.log);
 Returns a [readable stream] of all elements of the DA. Optional
 *opt* parameter is an object with the default content `{text:
 false}`. if `text` option is `true`, each element is passed through
-`JSON.stringify()` and a '\n' is appended, making it possible to
+`JSON.stringify()` and a 'newline' is appended, making it possible to
 pipe to standard output or any text stream.
 
 Example:
 
-```js
+```javascript
 uc.parallelize([1, 2, 3, 4]).
    collect({text: true}).pipe(process.stdout);
+// 1
+// 2
+// 3
+// 4
 ```
 
 #### da.count([callback])
@@ -360,7 +348,7 @@ promise] is returned.
 
 Example:
 
-```js
+```javascript
 uc.parallelize([10, 20, 30, 40]).count().then(console.log);
 // 4
 ```
@@ -373,7 +361,7 @@ of elements of type `[k,w]` where `w` is the result count.
 
 Example:
 
-```js
+```javascript
 uc.parallelize([[10, 1], [20, 2], [10, 4]]).
    countByKey().on('data', console.log);
 // [ 10, 2 ]
@@ -382,7 +370,18 @@ uc.parallelize([[10, 1], [20, 2], [10, 4]]).
 
 #### da.countByValue()
 
-Computes the number of occurences of each 
+Computes the number of occurences of each element in DA and returns
+a [readable stream] of elements of type `[v,n]` where `v` is the
+element and `n` its number of occurrences.
+
+Example:
+
+```javascript
+uc.parallelize([ 1, 2, 3, 1, 3, 2, 5 ]).
+   countByValue().
+   toArray().then(console.log);
+// [ [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 5, 1 ] ]
+```
 
 #### da.distinct()
 
@@ -390,7 +389,7 @@ Returns a DA where duplicates are removed.
 
 Example:
 
-```js
+```javascript
 uc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
    distinct().
    collect().toArray().then(console.log);
@@ -399,18 +398,23 @@ uc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
 
 #### da.filter(filter[,obj])
 
- - *filter*: a function of the form `callback(element[,obj[,wc]])`, returning a *Boolean* and where:
-   - *element*: the next element of the DA on which `filter()` operates
-   - *obj*: the same parameter *obj* passed to `filter()`
-   - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
- - *obj*: user provided data. Data will be passed to carrying serializable data from master to workers, obj is shared amongst mapper executions over each element of the DA
+- *filter*: a function of the form `callback(element[,obj[,wc]])`,
+  returning a *Boolean* and where:
+    - *element*: the next element of the DA on which `filter()` operates
+    - *obj*: the same parameter *obj* passed to `filter()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the DA
 
-Applies the provided filter function to each element of the source DA and returns a new DA
-containing the elements that passed the test.
+Applies the provided filter function to each element of the source
+DA and returns a new DA containing the elements that passed the
+test.
 
 Example:
 
-```js
+```javascript
 function filter(data, obj) { return data % obj.modulo; }
 
 uc.parallelize([1, 2, 3, 4]).
@@ -421,17 +425,22 @@ uc.parallelize([1, 2, 3, 4]).
 
 #### da.flatMap(flatMapper[,obj])
 
-Applies the provided mapper function to each element of the source DA and returns a new DA.
+Applies the provided mapper function to each element of the source
+DA and returns a new DA.
 
- - *flatMapper*: a function of the form `callback(element[,obj[,wc]])`, returning an *Array* and where:
-   - *element*: the next element of the DA on which `flatMap()` operates
-   - *obj*: the same parameter *obj* passed to `flatMap()`
-   - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
- - *obj*: user provided data. Data will be passed to carrying serializable data from master to workers, obj is shared amongst mapper executions over each element of the DA
+- *flatMapper*: a function of the form `callback(element[,obj[,wc]])`,
+  returning an *Array* and where:
+    - *element*: the next element of the DA on which `flatMap()` operates
+    - *obj*: the same parameter *obj* passed to `flatMap()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the DA
 
 Example:
 
-```js
+```javascript
 function flatMapper(data, obj) {
 	var tmp = [];
 	for (var i = 0; i < obj.N; i++) tmp.push(data);
@@ -441,6 +450,10 @@ function flatMapper(data, obj) {
 uc.parallelize([1, 2, 3, 4]).
    flatMap(flatMapper, {N: 2}).
    collect().on('data', console.log);
+// [ 'hello', 2 ]
+// [ 'hello', 2 ]
+// [ 'world', 4 ]
+// [ 'world', 4 ]
 ```
 
 #### da.flatMapValues(flatMapper[,obj])
@@ -450,15 +463,20 @@ value] element of the source DA and return a new DA containing
 elements defined as [key, mapper(value)], keeping the key unchanged
 for each source element.
 
- - *flatMapper*: a function of the form `callback(element[,obj[,wc]])`, returning an *Array* and where:
-   - *element*: the value v of the next [k,v] element of the DA on which `flatMapValues()` operates
-   - *obj*: the same parameter *obj* passed to `flatMapValues()`
-   - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
- - *obj*: user provided data. Data will be passed to carrying serializable data from master to workers, obj is shared amongst mapper executions over each element of the DA
+- *flatMapper*: a function of the form `callback(element[,obj[,wc]])`,
+  returning an *Array* and where:
+    - *element*: the value v of the next [k,v] element of the DA on
+      which `flatMapValues()` operates
+    - *obj*: the same parameter *obj* passed to `flatMapValues()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the DA
 
 Example:
 
-```js
+```javascript
 function valueFlatMapper(data, obj) {
 	var tmp = [];
 	for (var i = 0; i < obj.N; i++) tmp.push(data * obj.fact);
@@ -470,13 +488,42 @@ uc.parallelize([['hello', 1], ['world', 2]]).
    collect().on('data', console.log);
 ```
 
+#### da.foreach(callback[, obj][, done])
+
+***not implemented***
+
+This action applies a *callback* function on each element of the DA.
+
+- *callback*: a function of the form `function(val[,obj[,wc]])`,
+  which returns *null* and with:
+     - *val*: the value of the next element of the DA on which
+       `foreach()` operates
+     - *obj*: the same parameter *obj* passed to `foreach()`
+     - *wc*: the worker context, a persistent object local to each
+       worker, where user can store and access worker local dependencies.
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the DA
+- *done*: a callback of the form `function (error, result)` which
+  is called at completion. If *undefined*, `foreach()` returns
+  an [ES6 promise].
+
+In the following example, the `console.log()` callback provided
+to `foreach()` is executed on workers and may be not visible:
+
+```javascript
+uc.parallelize([1, 2, 3, 4]).
+   foreach(console.log).then(console.log('finished'));
+```
+
 #### da.groupByKey()
 
-When called on a DA of type `[k,v]`, returns a DA of type `[k, [v]]` where values with the same key are grouped.
+When called on a DA of type `[k,v]`, returns a DA of type `[k, [v]]`
+where values with the same key are grouped.
 
 Example:
 
-```js
+```javascript
 uc.parallelize([[10, 1], [20, 2], [10, 4]]).
    groupByKey().collect().on('data', console.log);
 // [ 10, [ 1, 4 ] ]
@@ -485,24 +532,27 @@ uc.parallelize([[10, 1], [20, 2], [10, 4]]).
 
 #### da.intersection(other)
 
-Returns a DA containing only elements found in source DA and *other* DA.
+Returns a DA containing only elements found in source DA and *other*
+DA.
 
 Example:
 
-```js
+```javascript
 var da1 = uc.parallelize([1, 2, 3, 4, 5]);
 var da2 = uc.parallelize([3, 4, 5, 6, 7]);
-da1.intersection(da2).collect();
-// 3 4 5
+da1.intersection(da2).collect().toArray().then(console.log);
+// [ 3, 4, 5 ]
 ```
 
 #### da.join(other)
 
-When called on source DA of type `[k,v]` and *other* DA of type `[k,w]`, returns a DA of type `[k, [v, w]]` pairs with all pairs of elements for each key.
+When called on source DA of type `[k,v]` and *other* DA of type
+`[k,w]`, returns a DA of type `[k, [v, w]]` pairs with all pairs
+of elements for each key.
 
 Example:
 
-```js
+```javascript
 var da1 = uc.parallelize([[10, 1], [20, 2]]);
 var da2 = uc.parallelize([[10, 'world'], [30, 3]]);
 da1.join(da2).collect().on('data', console.log);
@@ -511,38 +561,27 @@ da1.join(da2).collect().on('data', console.log);
 
 #### da.keys()
 
-When called on source DA of type `[k,v]`, returns a DA with just the elements `k`.
+When called on source DA of type `[k,v]`, returns a DA with just
+the elements `k`.
 
 Example:
 
-```js
+```javascript
 uc.parallelize([[10, 'world'], [30, 3]]).
    keys.collect().on('data', console.log);
 // 10
 // 30
 ```
 
-#### da.values()
-
-When called on source DA of type `[k,v]`, returns a DA with just the elements `v`.
-
-Example:
-
-```js
-uc.parallelize([[10, 'world'], [30, 3]]).
-   keys.collect().on('data', console.log);
-// 'world'
-// 3
-```
-
 #### da.leftOuterJoin(other)
 
-When called on source DA of type `[k,v]` and *other* DA of type `[k,w]`, returns a DA of type `[k, [v, w]]` pairs where
-the key must be present in the *other* DA.
+When called on source DA of type `[k,v]` and *other* DA of type
+`[k,w]`, returns a DA of type `[k, [v, w]]` pairs where the key
+must be present in the *other* DA.
 
 Example:
 
-```js
+```javascript
 var da1 = uc.parallelize([[10, 1], [20, 2]]);
 var da2 = uc.parallelize([[10, 'world'], [30, 3]]);
 da1.leftOuterJoin(da2).collect().on('data', console.log);
@@ -550,34 +589,38 @@ da1.leftOuterJoin(da2).collect().on('data', console.log);
 // [ 20, [ 2, null ] ]
 ```
 
-#### da.rightOuterJoin(other)
+#### da.lookup(k)
 
-When called on source DA of type `[k,v]` and *other* DA of type `[k,w]`, returns a DA of type `[k, [v, w]]` pairs where
-the key must be present in the *source* DA.
+When called on source DA of type `[k,v]`, returns a [readable stream]
+of values `v` for key `k`.
 
 Example:
 
-```js
-var da1 = uc.parallelize([[10, 1], [20, 2]]);
-var da2 = uc.parallelize([[10, 'world'], [30, 3]]);
-da1.rightOuterJoin(da2).collect().on('data', console.log);
-// [ 10, [ 1, 'world' ] ]
-// [ 30, [ null, 2 ] ]
+```javascript
+uc.parallelize([[10, 'world'], [20, 2], [10, 1], [30, 3]]).
+   lookup(10).on('data', console.log);
+// world
+// 1
 ```
 
 #### da.map(mapper[,obj])
 
-Applies the provided mapper function to each element of the source DA and returns a new DA.
+Applies the provided mapper function to each element of the source
+DA and returns a new DA.
 
- - *mapper*: a function of the form `callback(element[,obj[,wc]])`, returning an element and where:
-   - *element*: the next element of the DA on which `map()` operates
-   - *obj*: the same parameter *obj* passed to `map()`
-   - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
- - *obj*: user provided data. Data will be passed to carrying serializable data from master to workers, obj is shared amongst mapper executions over each element of the DA
+- *mapper*: a function of the form `callback(element[,obj[,wc]])`,
+  returning an element and where:
+    - *element*: the next element of the DA on which `map()` operates
+    - *obj*: the same parameter *obj* passed to `map()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the DA
 
 The following example program
 
-```js
+```javascript
 uc.parallelize([1, 2, 3, 4]).
    map((data, obj) => data * obj.scaling, {scaling: 1.2}).
    collect().toArray().then(console.log);
@@ -586,19 +629,25 @@ uc.parallelize([1, 2, 3, 4]).
 
 #### da.mapValues(mapper[,obj])
 
- - *mapper*: a function of the form `callback(element[,obj[,wc]])`, returning an element and where:
-   - *element*: the value v of the next [k,v] element of the DA on which `mapValues()` operates
-   - *obj*: the same parameter *obj* passed to `mapValues()`
-   - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
- - *obj*: user provided data. Data will be passed to carrying serializable data from master to workers, obj is shared amongst mapper executions over each element of the DA
+- *mapper*: a function of the form `callback(element[,obj[,wc]])`,
+  returning an element and where:
+    - *element*: the value v of the next [k,v] element of the DA on
+      which `mapValues()` operates
+    - *obj*: the same parameter *obj* passed to `mapValues()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the DA
 
-Applies the provided mapper function to the value of each [key, value] element of the source DA
-and return a new DA containing elements defined as [key, mapper(value)], keeping the key
-unchanged for each source element.
+Applies the provided mapper function to the value of each `[k,v]`
+element of the source DA and return a new DA containing elements
+defined as `[k, mapper(v)]`, keeping the key unchanged for each
+source element.
 
 Example:
 
-```js
+```javascript
 uc.parallelize([['hello', 1], ['world', 2]]).
    mapValues((a, obj) => a*obj.fact, {fact: 2}).
    collect().on('data', console.log);
@@ -606,38 +655,99 @@ uc.parallelize([['hello', 1], ['world', 2]]).
 // ['world', 4]
 ```
 
-#### da.reduceByKey(reducer, init[, obj])
+#### da.reduce(reducer, init[,obj][,done])
 
- - *reducer*: a function of the form `callback(acc,val[,obj[,wc]])`, returning the next value of the accumulator (which must be of the same type as *acc* and *val*) and where:
-   - *acc*: the value of the accumulator, initially set to *init*
-   - *val*: the value `v` of the next `[k,v]` element of the DA on which `reduceByKey()` operates
-   - *obj*: the same parameter *obj* passed to `reduceByKey()`
-   - *wc*: the worker context, a persistent object local to each worker, where user can store and access worker local dependencies.
- - *init*: the initial value of accumulator for each key. Will be passed to *reducer*.
- - *obj*: user provided data. Data will be passed to carrying serializable data from master to workers, obj is shared amongst mapper executions over each element of the DA
+Returns the aggregated value of the elements of the DA using a
+*reducer()* function.  The result is passed to the *done()* callback
+if provided, otherwise an [ES6 promise] is returned.
 
-When called on a DA of type `[k,v]`, returns a DA of type `[k,v]` where the values of each key are aggregated using the *reducer* function and the *init* initial value.
+- *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
+  which returns the next value of the accumulator (which must be
+  of the same type as *acc* and *val*) and with:
+     - *acc*: the value of the accumulator, initially set to *init*
+     - *val*: the value of the next element of the DA on which
+       `reduce()` operates
+     - *obj*: the same parameter *obj* passed to `reduce()`
+     - *wc*: the worker context, a persistent object local to each
+       worker, where user can store and access worker local dependencies.
+- *init*: the initial value of the accumulators that are used by
+  *reducer()*. It should be the identity element of the operation
+  (i.e. applying it through the function should not change result).
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the DA
+- *done*: a callback of the form `function (error, result)` which
+  is called at completion. If *undefined*, `reduce()` returns
+  an [ES6 promise].
 
 Example:
 
-```js
+```javascript
+uc.parallelize([1, 2, 4, 8]).
+   reduce((a, b) => a + b, 0).
+   then(console.log);
+// 15
+```
+
+#### da.reduceByKey(reducer, init[, obj])
+
+- *reducer*: a function of the form `callback(acc,val[,obj[,wc]])`,
+  returning the next value of the accumulator (which must be of the
+  same type as *acc* and *val*) and where:
+    - *acc*: the value of the accumulator, initially set to *init*
+    - *val*: the value `v` of the next `[k,v]` element of the DA on
+      which `reduceByKey()` operates
+    - *obj*: the same parameter *obj* passed to `reduceByKey()`
+    - *wc*: the worker context, a persistent object local to each
+      worker, where user can store and access worker local dependencies.
+- *init*: the initial value of accumulator for each key. Will be
+  passed to *reducer*.
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the DA
+
+When called on a DA of type `[k,v]`, returns a DA of type `[k,v]`
+where the values of each key are aggregated using the *reducer*
+function and the *init* initial value.
+
+Example:
+
+```javascript
 uc.parallelize([[10, 1], [10, 2], [10, 4]]).
    reduceByKey((a,b) => a+b, 0).
    collect().on('data', console.log);
 // [10, 7]
 ```
 
-#### da.sample(withReplacement, frac, seed)
+#### da.rightOuterJoin(other)
 
-- *withReplacement*: *Boolean* value, *true* if data must be sampled with replacement
-- *frac*: *Number* value of the fraction of source DA to return
-- *seed*: *Number* value of pseudo-random seed
-
-Returns a DA by sampling a fraction *frac* of source DA, with or without replacement, using a given random generator *seed*.
+When called on source DA of type `[k,v]` and *other* DA of type
+`[k,w]`, returns a DA of type `[k, [v, w]]` pairs where the key
+must be present in the *source* DA.
 
 Example:
 
-```js
+```javascript
+var da1 = uc.parallelize([[10, 1], [20, 2]]);
+var da2 = uc.parallelize([[10, 'world'], [30, 3]]);
+da1.rightOuterJoin(da2).collect().on('data', console.log);
+// [ 10, [ 1, 'world' ] ]
+// [ 30, [ null, 2 ] ]
+```
+
+#### da.sample(withReplacement, frac, seed)
+
+- *withReplacement*: *Boolean* value, *true* if data must be sampled
+  with replacement
+- *frac*: *Number* value of the fraction of source DA to return
+- *seed*: *Number* value of pseudo-random seed
+
+Returns a DA by sampling a fraction *frac* of source DA, with or
+without replacement, using a given random generator *seed*.
+
+Example:
+
+```javascript
 uc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
    sample(true, 0.5, 0).
    collect().toArray().then(console.log);
@@ -646,9 +756,12 @@ uc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
 
 #### da.subtract(other)
 
-Returns a DA containing only elements of source DA which are not in *other* DA.
+Returns a DA containing only elements of source DA which are not
+in *other* DA.
 
-```js
+Example:
+
+```javascript
 var da1 = uc.parallelize([1, 2, 3, 4, 5]);
 var da2 = uc.parallelize([3, 4, 5, 6, 7]);
 da1.subtract(da2).collect().on('data', console.log);
@@ -657,43 +770,34 @@ da1.subtract(da2).collect().on('data', console.log);
 
 #### da.union(other)
 
-Returns a DA that contains the union of the elements in the source DA and the *other* DA.
+Returns a DA that contains the union of the elements in the source
+DA and the *other* DA.
 
-```js
+Example:
+
+```javascript
 var da1 = uc.parallelize([1, 2, 3, 4, 5]);
 var da2 = uc.parallelize([3, 4, 5, 6, 7]);
 da1.union(da2).collect().toArray().then(console.log);
 // [ 1, 2, 3, 4, 5, 3, 4, 5, 6, 7 ]
 ```
 
-Supported transformations, not yet documented:
+#### da.values()
 
-*    sample(withReplacement, frac, seed)
-*    groupByKey()
-*    reduceByKey()
-*    union()
-*    join(other)
-*    leftOuterJoin(other)
-*    rightOuterJoin(other)
-*    coGroup(other)
-*    crossProduct(other)
-*    intersection(other)
-*    subtract(other)
-*    keys()
-*    values()
+When called on source DA of type `[k,v]`, returns a DA with just
+the elements `v`.
 
-Actions:
+Example:
 
-*    aggregate()
-*    reduce()
-*    collect()
-*    count()
-*    forEach()
-*    lookup(key)
-*    countByValue()
-*    countByKey()
+```javascript
+uc.parallelize([[10, 'world'], [30, 3]]).
+   keys.collect().on('data', console.log);
+// 'world'
+// 3
+```
 
 ## References
 
-- [ES6 promise] https://promisesaplus.com
-- [readable stream] https://nodejs.org/api/stream.html#stream_class_stream_readable
+[ES6 promise]: https://promisesaplus.com
+
+[readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
