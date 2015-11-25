@@ -5,37 +5,43 @@ var http = require('http');
 var https = require('https');
 var url = require('url');
 
-if (process.argv.length < 4) {
-	console.log('Usage: submit.js ugrid_server_url program_file [args...]');
+if (process.argv.length < 3) {
+	console.log('Usage: submit program_file [args...]');
 	process.exit(1);
 }
 
 var proto = {"http:": http, "https:": https};
-var href = url.parse(process.argv[2]);
-var access = process.env.UGRID_ACCESS;
+var href = url.parse(process.env.UGRID_HOST || 'http://localhost:8000');
+var src = process.argv[2];
+var args = process.argv.slice(3);
 
-fs.readFile(process.argv[3], {encoding: 'utf8'}, function (err, data) {
-	if (err) throw err;
+submit(src, args);
 
-	var postdata = JSON.stringify({access: access, src: data, args: process.argv.slice(4)});
+function submit(src, args) {
+	fs.readFile(src, {encoding: 'utf8'}, function (err, data) {
+		if (err) throw err;
 
-	var options = {
-		hostname: href.hostname,
-		port: href.port,
-		path: '/run',
-		method: 'POST',
-		headers: {
-			'X-Auth': process.env.UGRID_ACCESS || '0',
-			'Content-Type': 'application/json',
-			'Content-Length': Buffer.byteLength(postdata)
-		}
-	};
+		var postdata = JSON.stringify({src: data, args: args});
 
-	var req = proto[href.protocol].request(options, function (res) {
-		res.setEncoding('utf8');
-		res.pipe(process.stdout);
+		var options = {
+			hostname: href.hostname,
+			port: href.port,
+			path: '/run',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Content-Length': Buffer.byteLength(postdata)
+			}
+		};
+		if (process.env.UGRID_ACCESS)
+			options.headers['X-Auth'] = process.env.UGRID_ACCESS;
+
+		var req = proto[href.protocol].request(options, function (res) {
+			res.setEncoding('utf8');
+			res.pipe(process.stdout);
+		});
+
+		req.on('error', function (err) {throw err;});
+		req.end(postdata);
 	});
-
-	req.on('error', function (err) {throw err;});
-	req.end(postdata);
-});
+}
