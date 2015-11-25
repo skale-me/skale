@@ -51,6 +51,7 @@ var port = opt.options.port || 12346;
 var wss;
 var wsport = opt.options.wsport || port + 2;
 var crossbar = {};
+var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
 
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
@@ -250,10 +251,19 @@ if (wsport) {
 
 // Start local workers if required
 if (opt.options.local) {
-	var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
-	child_process.spawn(__dirname + '/worker.js', ['-n', nworker], {stdio: 'inherit'});
+	startWorker();
+	startWebServer();
+}
+
+function startWorker() {
+	var worker =  child_process.spawn(__dirname + '/worker.js', ['-n', nworker], {stdio: 'inherit'});
+	worker.on('close', startWorker);
+}
+
+function startWebServer() {
 	// We use fork() so the the child can catch 'disconnect' event if we die
-	child_process.fork(__dirname + '/rest.js', {stdio: 'inherit'});
+	var webServer = child_process.fork(__dirname + '/rest.js', {stdio: 'inherit'});
+	webServer.on('close', startWebServer);
 }
 
 function handleClose(sock) {
