@@ -156,11 +156,11 @@ stream].
 The Ugrid module is the main entry point for Ugrid functionality.
 To use it, one must `require('ugrid')`.
 
-### ugrid.context([config])
+### ugrid.context([*config*])
 
 Creates and returns a new context which represents the connection
 to the Ugrid cluster, and which can be used to create DAs on that
-cluster. Config is an *Object* which defines the cluster server,
+cluster. Parameter *config* is an *Object* which defines the cluster server,
 with the following defaults:
 
 ```javascript
@@ -181,9 +181,9 @@ var uc = ugrid.context();
 
 Closes the connection to the cluster.
 
-#### uc.parallelize(array)
+#### uc.parallelize(*array*)
 
-Returns a new DA containing elements from the *Array* array.
+Returns a new DA containing elements from the Array *array*.
 
 Example:
 
@@ -191,9 +191,9 @@ Example:
 var a = uc.parallelize(['Hello', 'World']);
 ```
 
-#### uc.textFile(path)
+#### uc.textFile(*path*)
 
-Returns a DA of lines composing the file specified by path *String*.
+Returns a DA of lines composing the file specified by *path* String.
 
 Note: If using a path on the local filesystem, the file must also
 be accessible at the same path on worker nodes. Either copy the
@@ -206,9 +206,9 @@ var lines = uc.textFile('data.txt');
 lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log);
 ```
 
-#### uc.lineStream(input_stream)
+#### uc.lineStream(*input_stream*)
 
-Returns a DA of lines of text read from input_stream *Object*, which
+Returns a DA of lines of text read from *input_stream* Object, which
 is a [readable stream] where DA content is read from.
 
 The following example computes the size of a file using streams:
@@ -221,9 +221,9 @@ uc.lineStream(stream).
    then(console.log);
 ```
 
-#### uc.objectStream(input_stream)
+#### uc.objectStream(*input_stream*)
 
-Returns a DA of Javascript *Objects* read from input_stream *Object*,
+Returns a DA of Javascript *Objects* read from *input_stream* Object,
 which is a [readable stream] where DA content is read from.
 
 The following example counts the number of objects returned in an
@@ -241,7 +241,7 @@ functions, have the following methods, allowing either to instantiate
 a new DA through a transformation, or to return results to the
 master program.
 
-#### da.aggregate(reducer, combiner, init[,obj][,done])
+#### da.aggregate(*reducer*, *combiner*, *init*[,*obj*][,*done*])
 
 Returns the aggregated value of the elements of the DA using two
 functions *reducer()* and *combiner()*, allowing to use an arbitrary
@@ -250,7 +250,7 @@ accumulator type, different from element type (as opposed to
 The result is passed to the *done()* callback if provided, otherwise
 an [ES6 promise] is returned.
 
-- *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
+- *reducer*: a function of the form `function(*acc*,*val*[,*obj*[,*wc*]])`,
   which returns the next value of the accumulator (which must be
   of the same type as *acc*) and with:
      - *acc*: the value of the accumulator, initially set to *init*
@@ -259,7 +259,7 @@ an [ES6 promise] is returned.
      - *obj*: the same parameter *obj* passed to `aggregate()`
      - *wc*: the worker context, a persistent object local to each
        worker, where user can store and access worker local dependencies.
-- *combiner*: a function of the form `function(acc1,acc2[,obj])`,
+- *combiner*: a function of the form `function(*acc1*,*acc2*[,*obj*])`,
   which returns the merged value of accumulators and with:
      - *acc1*: the value of an accumulator, computed locally on a worker
      - *acc2*: the value of an other accumulator, issued by another worker
@@ -271,7 +271,7 @@ an [ES6 promise] is returned.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the DA
-- *done*: a callback of the form `function (error, result)` which
+- *done*: a callback of the form `function (*error*, *result*)` which
   is called at completion. If *undefined*, `aggregate()` returns
   an [ES6 promise].
 
@@ -288,7 +288,7 @@ uc.parallelize([3, 5, 2, 7, 4, 8]).
 // 4.8333
 ```
 
-#### da.cartesian(other)
+#### da.cartesian(*other*)
 
 Returns a DA wich contains all possible pairs `[a, b]` where `a`
 is in the source DA and `b` is in the *other* DA.
@@ -303,7 +303,7 @@ da1.cartesian(da2).collect().toArray().then(console.log);
 //   [ 2, 'a' ], [ 2, 'b' ], [ 2, 'c' ] ]
 ```
 
-#### da.coGroup(other)
+#### da.coGroup(*other*)
 
 When called on DA of type `[k,v]` and `[k,w]`, returns a DA of type
 `[k, [[v], [w]]]`, where data of both DAs share the same key.
@@ -319,7 +319,7 @@ da1.coGroup(da2).collect().on('data', console.log);
 // [ 30, [ [], [ 3 ] ] ]
 ```
 
-#### da.collect([opt])
+#### da.collect([*opt*])
 
 Returns a [readable stream] of all elements of the DA. Optional
 *opt* parameter is an object with the default content `{text:
@@ -338,7 +338,7 @@ uc.parallelize([1, 2, 3, 4]).
 // 4
 ```
 
-#### da.count([callback])
+#### da.count([*callback*])
 
 Returns the number of elements in the DA.
 
@@ -396,9 +396,9 @@ uc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
 // [ 1, 2, 3, 4, 5 ]
 ```
 
-#### da.filter(filter[,obj])
+#### da.filter(*filter*[,*obj*])
 
-- *filter*: a function of the form `callback(element[,obj[,wc]])`,
+- *filter*: a function of the form `callback(*element*[,*obj*[,*wc*]])`,
   returning a *Boolean* and where:
     - *element*: the next element of the DA on which `filter()` operates
     - *obj*: the same parameter *obj* passed to `filter()`
@@ -423,12 +423,12 @@ uc.parallelize([1, 2, 3, 4]).
 // 1 3
 ```
 
-#### da.flatMap(flatMapper[,obj])
+#### da.flatMap(*flatMapper*[,*obj*])
 
 Applies the provided mapper function to each element of the source
 DA and returns a new DA.
 
-- *flatMapper*: a function of the form `callback(element[,obj[,wc]])`,
+- *flatMapper*: a function of the form `callback(*element*[,*obj*[,*wc*]])`,
   returning an *Array* and where:
     - *element*: the next element of the DA on which `flatMap()` operates
     - *obj*: the same parameter *obj* passed to `flatMap()`
@@ -456,14 +456,14 @@ uc.parallelize([1, 2, 3, 4]).
 // [ 'world', 4 ]
 ```
 
-#### da.flatMapValues(flatMapper[,obj])
+#### da.flatMapValues(*flatMapper*[,*obj*])
 
 Applies the provided flatMapper function to the value of each [key,
 value] element of the source DA and return a new DA containing
-elements defined as [key, mapper(value)], keeping the key unchanged
+elements defined as [key, *flatMapper*(value)], keeping the key unchanged
 for each source element.
 
-- *flatMapper*: a function of the form `callback(element[,obj[,wc]])`,
+- *flatMapper*: a function of the form `callback(*element*[,*obj*[,*wc*]])`,
   returning an *Array* and where:
     - *element*: the value v of the next [k,v] element of the DA on
       which `flatMapValues()` operates
@@ -488,13 +488,13 @@ uc.parallelize([['hello', 1], ['world', 2]]).
    collect().on('data', console.log);
 ```
 
-#### da.foreach(callback[, obj][, done])
+#### da.foreach(*callback*[,*obj*][,*done*])
 
 ***not implemented***
 
 This action applies a *callback* function on each element of the DA.
 
-- *callback*: a function of the form `function(val[,obj[,wc]])`,
+- *callback*: a function of the form `function(*val*[,*obj*[,*wc*]])`,
   which returns *null* and with:
      - *val*: the value of the next element of the DA on which
        `foreach()` operates
@@ -530,7 +530,7 @@ uc.parallelize([[10, 1], [20, 2], [10, 4]]).
 // [ 20, [ 2 ] ]
 ```
 
-#### da.intersection(other)
+#### da.intersection(*other*)
 
 Returns a DA containing only elements found in source DA and *other*
 DA.
@@ -544,7 +544,7 @@ da1.intersection(da2).collect().toArray().then(console.log);
 // [ 3, 4, 5 ]
 ```
 
-#### da.join(other)
+#### da.join(*other*)
 
 When called on source DA of type `[k,v]` and *other* DA of type
 `[k,w]`, returns a DA of type `[k, [v, w]]` pairs with all pairs
@@ -573,7 +573,7 @@ uc.parallelize([[10, 'world'], [30, 3]]).
 // 30
 ```
 
-#### da.leftOuterJoin(other)
+#### da.leftOuterJoin(*other*)
 
 When called on source DA of type `[k,v]` and *other* DA of type
 `[k,w]`, returns a DA of type `[k, [v, w]]` pairs where the key
@@ -589,7 +589,7 @@ da1.leftOuterJoin(da2).collect().on('data', console.log);
 // [ 20, [ 2, null ] ]
 ```
 
-#### da.lookup(k)
+#### da.lookup(*k*)
 
 When called on source DA of type `[k,v]`, returns a [readable stream]
 of values `v` for key `k`.
@@ -603,12 +603,12 @@ uc.parallelize([[10, 'world'], [20, 2], [10, 1], [30, 3]]).
 // 1
 ```
 
-#### da.map(mapper[,obj])
+#### da.map(*mapper*[,*obj*])
 
 Applies the provided mapper function to each element of the source
 DA and returns a new DA.
 
-- *mapper*: a function of the form `callback(element[,obj[,wc]])`,
+- *mapper*: a function of the form `callback(*element*[,*obj*[,*wc*]])`,
   returning an element and where:
     - *element*: the next element of the DA on which `map()` operates
     - *obj*: the same parameter *obj* passed to `map()`
@@ -627,9 +627,9 @@ uc.parallelize([1, 2, 3, 4]).
 // [ 1.2, 2.4, 3.6, 4.8 ]
 ```
 
-#### da.mapValues(mapper[,obj])
+#### da.mapValues(*mapper*[,*obj*])
 
-- *mapper*: a function of the form `callback(element[,obj[,wc]])`,
+- *mapper*: a function of the form `callback(*element*[,*obj*[,*wc*]])`,
   returning an element and where:
     - *element*: the value v of the next [k,v] element of the DA on
       which `mapValues()` operates
@@ -655,13 +655,13 @@ uc.parallelize([['hello', 1], ['world', 2]]).
 // ['world', 4]
 ```
 
-#### da.reduce(reducer, init[,obj][,done])
+#### da.reduce(*reducer*,*init*[,*obj*][,*done*])
 
 Returns the aggregated value of the elements of the DA using a
 *reducer()* function.  The result is passed to the *done()* callback
 if provided, otherwise an [ES6 promise] is returned.
 
-- *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
+- *reducer*: a function of the form `function(*acc*,*val*[,*obj*[,*wc*]])`,
   which returns the next value of the accumulator (which must be
   of the same type as *acc* and *val*) and with:
      - *acc*: the value of the accumulator, initially set to *init*
@@ -689,9 +689,9 @@ uc.parallelize([1, 2, 4, 8]).
 // 15
 ```
 
-#### da.reduceByKey(reducer, init[, obj])
+#### da.reduceByKey(*reducer*,*init*[,*obj*])
 
-- *reducer*: a function of the form `callback(acc,val[,obj[,wc]])`,
+- *reducer*: a function of the form `callback(*acc*,*val*[,*obj*[,*wc*]])`,
   returning the next value of the accumulator (which must be of the
   same type as *acc* and *val*) and where:
     - *acc*: the value of the accumulator, initially set to *init*
@@ -719,7 +719,7 @@ uc.parallelize([[10, 1], [10, 2], [10, 4]]).
 // [10, 7]
 ```
 
-#### da.rightOuterJoin(other)
+#### da.rightOuterJoin(*other*)
 
 When called on source DA of type `[k,v]` and *other* DA of type
 `[k,w]`, returns a DA of type `[k, [v, w]]` pairs where the key
@@ -735,7 +735,7 @@ da1.rightOuterJoin(da2).collect().on('data', console.log);
 // [ 30, [ null, 2 ] ]
 ```
 
-#### da.sample(withReplacement, frac, seed)
+#### da.sample(*withReplacement*,*frac*,*seed*)
 
 - *withReplacement*: *Boolean* value, *true* if data must be sampled
   with replacement
@@ -754,7 +754,7 @@ uc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
 // [ 1, 1, 3, 4, 4, 5, 7 ]
 ```
 
-#### da.subtract(other)
+#### da.subtract(*other*)
 
 Returns a DA containing only elements of source DA which are not
 in *other* DA.
@@ -768,7 +768,7 @@ da1.subtract(da2).collect().on('data', console.log);
 // 1 2
 ```
 
-#### da.union(other)
+#### da.union(*other*)
 
 Returns a DA that contains the union of the elements in the source
 DA and the *other* DA.
