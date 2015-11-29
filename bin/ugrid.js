@@ -223,6 +223,11 @@ process.on('uncaughtException', function uncaughtException(err) {
 	console.error(err.stack);
 });
 
+process.on('SIGTERM', function sigterm() {
+	trace("terminated, exit");
+	process.exit();
+});
+
 console.log('## Started ' + Date());
 // Start a TCP server
 if (port) {
