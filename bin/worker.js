@@ -2,12 +2,13 @@
 
 'use strict';
 
+var child_process = require('child_process');
 var fs = require('fs');
 var os = require('os');
 var cluster = require('cluster');
 var Ssh2 = require('ssh2');
 
-//var trace = require('line-trace');
+var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
 var UgridJob = require('../lib/ugrid-transformation.js').UgridJob;
 
@@ -85,7 +86,7 @@ if (cluster.isMaster) {
 }
 
 function startWorkers(msg) {
-	var worker = [];
+	var worker = [], removed = {};
 	var n = msg.n || ncpu;
 	for (var i = 0; i < n; i++)
 		worker[i] = cluster.fork({wsid: msg.wsid});
@@ -94,6 +95,12 @@ function startWorkers(msg) {
 			switch (msg.cmd) {
 			case 'scp':
 				scp(msg, function (err, res) {w.send({ftid: msg.ftid, err: err, res: res});});
+				break;
+			case 'rm':
+				if (!removed[msg.dir]) {
+					removed[msg.dir] = true;
+					child_process.execFile('/bin/rm', ['-rf', '/tmp/ugrid/' + msg.dir]);
+				}
 				break;
 			default:
 				console.log('unexpected msg %j', msg);
@@ -114,7 +121,7 @@ function transfer(host, remote, local, done) {
 }
 
 function runWorker(host, port) {
-	var jobs = {}, ram = {}, da = {}, muuid;
+	var jobs = {}, ram = {}, da = {}, muuid, contextId;
 
 	process.on('uncaughtException', function (err) {
 		grid.send(muuid, {cmd: 'workerError', args: err.stack});
@@ -152,18 +159,19 @@ function runWorker(host, port) {
 			// TODO: app object must be created once per application, and reset on worker release
 			var worker = msg.data.args.worker;
 			muuid = msg.data.master_uuid;
+			contextId = msg.data.contextId;
 			for (var wid = 0; wid < worker.length; wid++)
 				if (worker[wid].uuid == grid.host.uuid) break;
 			var app = {
 				worker: worker,
 				wid: wid,
-				master_uuid: msg.data.master_uuid,
+				master_uuid: muuid,
 				dones: {},
 				completedStreams: {},
 				transfer: transfer,
 				ram: ram,
 				da: da,
-				contextId: msg.data.contextId
+				contextId: contextId
 			};
 			jobs[msg.data.jobId] = new UgridJob(grid, app, {
 				node: msg.data.args.node,
@@ -186,7 +194,11 @@ function runWorker(host, port) {
 		}
 	};
 
-	grid.on('remoteClose', process.exit);
+	grid.on('remoteClose', function () {
+		console.log('remove /tmp/ugrid/' + contextId)
+		process.send({cmd: 'rm', dir: contextId})
+		process.exit();
+	});
 
 	grid.on('shuffle', function (msg) {
 		try {
