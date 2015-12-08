@@ -5,7 +5,6 @@
 var child_process = require('child_process');
 var fs = require('fs');
 var trace = require('line-trace');
-//var tmp = require('tmp');
 
 var bodyParser = require('body-parser');
 var busboy = require('connect-busboy');
@@ -87,17 +86,23 @@ app.post('/exec', authenticate, function (req, res) {
 
 // Exec a master using src embedded in request. A temporary file is used.
 app.post('/run', authenticate, function (req, res) {
-	//var name = tmp.tmpNameSync({template: __dirname + '/tmp/XXXXXX.js'});
 	var name = __dirname + '/tmp/' + Date.now() + '.js';
+	var child;
 	req.setTimeout(0);
 	fs.writeFile(name, req.body.src, {mode: 493}, function (err) {
 		if (err) return res.send({err: 1, stdout: null, stderr: 'write failed on server: ' + err.message});
 		try {
-			var child = child_process.spawn(name, req.body.args);
+			child = child_process.spawn(name, req.body.args);
 			child.stderr.pipe(res);
 			child.stdout.pipe(res);
 		} catch (err) {
 			res.status(500).send('exec failed on server: ' + err.message + '\n');
 		}
+	});
+	req.on('close', function () {
+		trace("web client close");
+		try {
+			child.kill();	// Results are lost, so terminate master
+		} catch (e) {}
 	});
 });
