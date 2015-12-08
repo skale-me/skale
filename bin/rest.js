@@ -6,6 +6,8 @@ var child_process = require('child_process');
 var fs = require('fs');
 var trace = require('line-trace');
 
+var version = '0.2.5';	// same as in package.json
+
 var bodyParser = require('body-parser');
 var busboy = require('connect-busboy');
 var express = require('express');
@@ -105,4 +107,8 @@ app.post('/run', authenticate, function (req, res) {
 			child.kill();	// Results are lost, so terminate master
 		} catch (e) {}
 	});
+});
+
+app.get('/version', function(req, res) {
+	res.send(version + '\n');
 });
