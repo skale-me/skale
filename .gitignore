@@ -5,6 +5,7 @@ node_modules
 npm-debug.log
 bin/tmp/*.js
 test/*.json
+ugrid-*.tgz
 TODO
 ugrid.sublime-project
 ugrid.sublime-workspace

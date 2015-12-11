@@ -9,9 +9,9 @@ ugrid.Context = require('./lib/ugrid-context.js');
 
 ugrid.ml = require('./lib/ugrid-ml.js');
 
-ugrid.context = ugrid.Context;
+ugrid.context = function(opt) {return new ugrid.Context(opt);};
 
 ugrid.onError = function (err) {
 	console.error(err.stack);
-	uc.end();
+	process.exit(1);
 };

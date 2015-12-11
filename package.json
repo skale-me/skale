@@ -5,7 +5,7 @@
   "description": "ugrid client and server",
   "main": "index.js",
   "scripts": {
-    "preinstall": "echo 'module.exports = require(\"..\")' > node_modules/ugrid.js",
+    "preinstall": "mkdir -p node_modules; echo 'module.exports = require(\"..\")' > node_modules/ugrid.js",
     "start": "bin/start-all.sh",
     "stop": "bin/stop-all.sh",
     "test": "node_modules/.bin/mocha"
