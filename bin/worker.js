@@ -28,7 +28,8 @@ var cgrid;
 
 ncpu = Number(ncpu);
 var sshUser = process.env.USER;
-var sshPrivateKey = fs.readFileSync(process.env.HOME + '/.ssh/id_rsa');
+var sshPrivateKey;
+
 var ssh = {};
 var sftp = {};
 var transferQueue = [];		// File transfer queue, on controller, to serialize concurrent worker requests during init
@@ -42,8 +43,17 @@ function scp(msg, done) {
 
 	// sftp session not yet established, enqueue the request, init session once
 	transferQueue.push([msg.remote, msg.local, done]);
+
 	if (!ssh[msg.from]) {		// ssh connection not yet established
 		var cnx = ssh[msg.from] = new Ssh2();
+
+		if (sshPrivateKey === undefined) {
+			try {
+				sshPrivateKey = fs.readFileSync(process.env.HOME + '/.ssh/id_rsa');
+			} catch(error) {
+				sshPrivateKey = null;
+			}
+		}
 		cnx.connect({
 			host: msg.from,
 			username: sshUser,
