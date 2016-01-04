@@ -6,7 +6,7 @@ var child_process = require('child_process');
 var fs = require('fs');
 var trace = require('line-trace');
 
-var version = '0.2.5';	// same as in package.json
+var version = '0.2.6';	// same as in package.json
 
 var bodyParser = require('body-parser');
 var busboy = require('connect-busboy');
