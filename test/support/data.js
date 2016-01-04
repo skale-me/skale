@@ -23,13 +23,13 @@ var v = [
 function compareResults(r1, r2, opt) {
 	opt = opt || {};
 	if (opt.lengthOnly) {
-		assert.equal(r1.length, r2.length);
+		assert.equal(r2.length, r1.length);
 		return;
 	}
 	if (Array.isArray(r1)) sort(r1);
 	if (Array.isArray(r2)) sort(r2);
 	//assert.deepEqual(r1, r2);
-	assert.equal(JSON.stringify(r1), JSON.stringify(r2));
+	assert.equal(JSON.stringify(r2), JSON.stringify(r1));
 }
 
 function filter(e) {return e[1] % 2 === 0;}
