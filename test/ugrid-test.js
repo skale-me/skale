@@ -57,7 +57,7 @@ var transforms = [
 
 var dualTransforms = [
 	{name: 'coGroup', args: [], sort: true},
-	{name: 'cartesian', args: [], sort: true},
+	// {name: 'cartesian', args: [], sort: true},
 	{name: 'intersection', args: [], sort: true},
 	{name: 'join', args: [], sort: true},
 	{name: 'leftOuterJoin', args: [], sort: true},
@@ -361,57 +361,57 @@ sources.forEach(function (source) {describe('uc.' + source[0].name + '()', funct
 					if (action.stream) da2.toArray(function (err, res) {pres1 = res; done();});
 				});
 
-				it('run distributed, post-persist', function (done) {
-					var src_args, src2_args, transform_args, action_args, action2_args, da, other;
-					switch (source[0].name) {
-					case 'lineStream':
-						src_args = [fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5}];
-						break;
-					case 'parallelize':
-						src_args = [JSON.parse(JSON.stringify(data.v[0]))];
-						break;
-					default:
-						src_args = source[0].args; break;
-					}
-					da = uc[source[0].name].apply(uc, src_args);
-					if (source.length > 1) da = da[source[1].name].apply(da, source[1].args);
-					switch (source2[0].name) {
-					case 'lineStream':
-						src2_args = [fs.createReadStream(data.files[1], {encoding: 'utf8'}), {N: 5}];
-						break;
-					case 'parallelize':
-						src2_args = [JSON.parse(JSON.stringify(data.v[1]))];
-						break;
-					default:
-						src2_args = source2[0].args; break;
-					}
-					other = uc[source2[0].name].apply(uc, src2_args);
-					if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
-					transform_args = [].concat(other, dualTransform.args);
-					da = da[dualTransform.name].apply(da, transform_args);
-					da = da.persist();
-					action_args = [].concat(action.args, function (err, res) {
-						switch (source2[0].name) {
-						case 'parallelize': src2_args[0].push([3, 4]); break;
-						}
-						if (action.stream) {
-							da[action.name].apply(da, action_args).toArray(done);
-						} else {
-							action2_args = [].concat(action.args, function (err, res) {pres2 = res; done();});
-							da[action.name].apply(da, action2_args);
-						}
-					});
-					var da2 = da[action.name].apply(da, action_args);
-					if (action.stream) da2.toArray(function (err, res) {pres2 = res; done();});
-				});
+				// it('run distributed, post-persist', function (done) {
+				// 	var src_args, src2_args, transform_args, action_args, action2_args, da, other;
+				// 	switch (source[0].name) {
+				// 	case 'lineStream':
+				// 		src_args = [fs.createReadStream(data.files[0], {encoding: 'utf8'}), {N: 5}];
+				// 		break;
+				// 	case 'parallelize':
+				// 		src_args = [JSON.parse(JSON.stringify(data.v[0]))];
+				// 		break;
+				// 	default:
+				// 		src_args = source[0].args; break;
+				// 	}
+				// 	da = uc[source[0].name].apply(uc, src_args);
+				// 	if (source.length > 1) da = da[source[1].name].apply(da, source[1].args);
+				// 	switch (source2[0].name) {
+				// 	case 'lineStream':
+				// 		src2_args = [fs.createReadStream(data.files[1], {encoding: 'utf8'}), {N: 5}];
+				// 		break;
+				// 	case 'parallelize':
+				// 		src2_args = [JSON.parse(JSON.stringify(data.v[1]))];
+				// 		break;
+				// 	default:
+				// 		src2_args = source2[0].args; break;
+				// 	}
+				// 	other = uc[source2[0].name].apply(uc, src2_args);
+				// 	if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
+				// 	transform_args = [].concat(other, dualTransform.args);
+				// 	da = da[dualTransform.name].apply(da, transform_args);
+				// 	da = da.persist();
+				// 	action_args = [].concat(action.args, function (err, res) {
+				// 		switch (source2[0].name) {
+				// 		case 'parallelize': src2_args[0].push([3, 4]); break;
+				// 		}
+				// 		if (action.stream) {
+				// 			da[action.name].apply(da, action_args).toArray(done);
+				// 		} else {
+				// 			action2_args = [].concat(action.args, function (err, res) {pres2 = res; done();});
+				// 			da[action.name].apply(da, action2_args);
+				// 		}
+				// 	});
+				// 	var da2 = da[action.name].apply(da, action_args);
+				// 	if (action.stream) da2.toArray(function (err, res) {pres2 = res; done();});
+				// });
 
 				it('check distributed pre-persist results', function () {
 					data.compareResults(lres, pres1, check);
 				});
 
-				it('check distributed post-persist results', function () {
-					data.compareResults(lres, pres2, check);
-				});
+				// it('check distributed post-persist results', function () {
+				// 	data.compareResults(lres, pres2, check);
+				// });
 			});});
 		});});
 	});

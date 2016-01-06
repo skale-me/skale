@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var uc = new require('ugrid').Context();
+var uc = require('ugrid').context();
 var da0 = uc.parallelize([0, 1]);
 var da1 = uc.parallelize([0, 1]);
 var da2 = uc.parallelize([0, 1]);

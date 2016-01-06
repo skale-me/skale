@@ -6,17 +6,10 @@ var fs = require('fs');
 var os = require('os');
 var cluster = require('cluster');
 var Ssh2 = require('ssh2');
-var uuid = require('node-uuid');
 
+//var trace = require('line-trace');
 var UgridClient = require('../lib/ugrid-client.js');
-var ml = require('../lib/ugrid-ml.js');
-var trace = require('line-trace');
-var Lines = require('../lib/lines.js');
-var sizeOf = require('../utils/sizeof.js');
-var readSplit = require('../utils/readsplit.js').readSplit;
-
-var global = {require: require};
-var mm = new MemoryManager();
+var UgridJob = require('../lib/ugrid-transformation.js').UgridJob;
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
@@ -121,7 +114,7 @@ function transfer(host, remote, local, done) {
 }
 
 function runWorker(host, port) {
-	var jobs = {}, muuid;
+	var jobs = {}, ram = {}, da = {}, muuid;
 
 	process.on('uncaughtException', function (err) {
 		grid.send(muuid, {cmd: 'workerError', args: err.stack});
@@ -155,23 +148,70 @@ function runWorker(host, port) {
 	});
 
 	var request = {
-		runTask: function runTask(msg) {
+		setJob: function setJob(msg) {
+			// TODO: app object must be created once per application, and reset on worker release
+			var worker = msg.data.args.worker;
 			muuid = msg.data.master_uuid;
-			var task = uc_parse(msg.data.args);
-			task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid});
-			task.run(function(result) {grid.reply(msg, null, result);});
+			for (var wid = 0; wid < worker.length; wid++)
+				if (worker[wid].uuid == grid.host.uuid) break;
+			var app = {
+				worker: worker,
+				wid: wid,
+				master_uuid: msg.data.master_uuid,
+				dones: {},
+				completedStreams: {},
+				transfer: transfer,
+				ram: ram,
+				da: da,
+				contextId: msg.data.contextId
+			};
+			jobs[msg.data.jobId] = new UgridJob(grid, app, {
+				node: msg.data.args.node,
+				action: msg.data.args.action,
+				jobId: msg.data.jobId
+			});
+			grid.reply(msg, null, 'worker ready to process job');
+		},
+		stream: function (msg) {
+			if (msg.data.data === null) {
+				grid.emit(msg.data.stream + ".end", done);
+			} else {
+				grid.emit(msg.data.stream, msg.data.data, done);
+			}
+			function done() {try {grid.reply(msg);} catch(err) {}}
+		},
+		block: function (msg) {
+			grid.emit(msg.data.streamId + ".block", done);
+			function done() {try {grid.reply(msg);} catch(err) {}}
 		}
 	};
 
 	grid.on('remoteClose', process.exit);
+
+	grid.on('shuffle', function (msg) {
+		try {
+			jobs[msg.jobId].da[msg.daId].shuffle(msg.args);
+		} catch (err) {
+			throw new Error("Rx shuffle " + jobs[msg.jobId].da[msg.daId].constructor.name + ": " + err);
+		}
+	});
+
+	grid.on('runJob', function (msg) {
+		jobs[msg.data.jobId].run();
+	});
+
+	grid.on('action', function (msg) {			// OK FOR NEW DESIGN
+		jobs[msg.jobId].sendResult();
+	});
 
 	grid.on('request', function (msg) {
 		if (msg.first) {
 			for (var i = 0; i < msg.first.length; i++)
 				grid.workerHost[i] = msg.first[i].hostname;
 		}
-		try {request[msg.data.cmd](msg);} 
-		catch (error) {
+		try {
+			request[msg.data.cmd](msg);
+		} catch (error) {
 			console.error(error.stack);
 			grid.reply(msg, error, null);
 		}
@@ -185,48 +225,5 @@ function runWorker(host, port) {
 		}
 		ftcb[msg.ftid](msg.err, msg.res);
 		ftcb[msg.ftid] = undefined;
-	});
-}
-
-function MemoryManager() {
-	var Kb = 1024, Mb = 1024 * Kb, Gb = 1024 * Mb;
-	var MAX_MEMORY = 1.0 * Gb;							// To bet set as max_old_space_size value when launching node
-	var maxStorageMemory = MAX_MEMORY * 0.4;
-	var maxShuffleMemory = MAX_MEMORY * 0.2;
-	var maxCollectMemory = MAX_MEMORY * 0.2;
-
-	this.storageMemory = 0;
-	this.shuffleMemory = 0;
-	this.collectMemory = 0;
-
-	this.storageFull = function() {return (this.storageMemory > maxStorageMemory);}
-	this.shuffleFull = function() {return (this.shuffleMemory > maxShuffleMemory);}
-	this.collectFull = function() {return (this.collectMemory > maxCollectMemory);}
-
-	this.partitions = {};
-	this.register = function(partition) {
-		var key = partition.RDDId + '.' + partition.partitionIndex;
-		if (this.partitions[key]) console.log('Partition already exists')
-		else {
-			console.log('registering with key: ' + key)
-			this.partitions[key] = partition;
-		}
-	}
-
-	this.isAvailable = function(partition) {
-		return (this.partitions[partition.RDDId + '.' + partition.partitionIndex] != undefined);
-	}
-}
-
-function uc_parse(str) {
-	function recompile(s) {
-		if (s.indexOf('=>') >= 0) return eval(s);	// Support arrow functions
-		var args = s.match(/\(([^)]*)/)[1];
-		var body = s.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
-		return new Function(args, body);
-	}
-	return JSON.parse(str,function(key, value) {
-		if (typeof value != 'string') return value;
-		return (value.substring(0, 8) == 'function') ? recompile(value) : value;
 	});
 }

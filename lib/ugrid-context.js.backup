@@ -21,11 +21,15 @@ function UgridContext(arg) {
 	arg.data.type = 'master';
 	UgridClient.call(this, arg);
 	var inBrowser = (typeof window != 'undefined');
+	var streamId = 0;
 	var maxWorker = process.env.UGRID_MAX_WORKER;
 
 	this.started = this.ended = false;
 	this.jobId = 0;
+	this.jobs = {};
+	this.streams = {};
 	this.firstData = {};
+	this.contextId = Date.now();
 
 	this.once('connect', function(data) {
 		var i;
@@ -77,6 +81,11 @@ function UgridContext(arg) {
 		}
 	});
 
+	this.on('startStream', function (msg) {
+		var job = self.jobs[msg.jobid];
+		job.streamsToLaunch[msg.streamid].startStream();
+	});
+
 	this.end = function () {
 		if (self.ended) return;
 		self.ended = true;
@@ -111,7 +120,7 @@ function UgridContext(arg) {
 
 		var wid = getLeastBusyWorkerId(task.nodes[task.rddid].getPreferedLocation(task.pid));
 		this.worker[wid].ntask++;
-		rpc('runTask', wid, serialize(task), function(err, res) {
+		rpc('runTask', wid, serialize(task), this.contextId, function(err, res) {
 			self.worker[wid].ntask--;
 			callback(err, res);
 		});
@@ -146,7 +155,7 @@ function UgridContext(arg) {
 							stage.dependencies[i].partitions[j].partitionIndex);
 
 				for (var i = 0; i < stage.shufflePartitions.length; i++)
-					shuffleTasks.push(new Task(jobId, nodes, stage.id, i));
+					shuffleTasks.push(new Task(self.contextId, jobId, nodes, stage.id, i));
 
 				for (var i = 0; i < shuffleTasks.length; i++)
 					self.runTask(shuffleTasks[i], function (err, res) {
@@ -162,8 +171,8 @@ function UgridContext(arg) {
 			findNodes(root, function(nodes) {
 				var tasks = [];
 				for (var i = 0; i < root.partitions.length; i++)
-					tasks.push(new Task(jobId, nodes, root.id, i, action));
-				callback({id: jobId, stream: stream}, tasks);
+					tasks.push(new Task(self.contextId, jobId, nodes, root.id, i, action));
+				callback({id: jobId, contextId: self.contextId, stream: stream}, tasks);
 			});
 		}
 
@@ -203,16 +212,17 @@ function UgridContext(arg) {
 		return stream;
 	}
 
-	function rpc(cmd, workerNum, args, callback) {
-		self.request(self.worker[workerNum], {cmd: cmd, args: args, master_uuid: self.uuid, worker: self.worker}, callback);
+	function rpc(cmd, workerNum, args, contextId, callback) {
+		self.request(self.worker[workerNum], {cmd: cmd, args: args, master_uuid: self.uuid, contextId: contextId, worker: self.worker}, callback);
 	}
 }
 
-function Task(jobId, nodes, rddid, pid, action) {
+function Task(contextId, jobId, nodes, rddid, pid, action) {
 	this.id = jobId;
 	this.rddid = rddid;
 	this.pid = pid;
 	this.nodes = nodes;
+	this.contextId = contextId;
 	this.action = action;
 	this.files = {};			// objet dans lequel nous allons stocker les informations sur les fichiers de shuffle
 

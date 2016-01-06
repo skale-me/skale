@@ -20,7 +20,7 @@ var v = [
 ];
 
 // Helper functions for tests
-function compareResults(r1, r2, opt) {
+function compareResults(r2, r1, opt) {
 	opt = opt || {};
 	if (opt.lengthOnly) {
 		assert.equal(r1.length, r2.length);

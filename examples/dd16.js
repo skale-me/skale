@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var uc = new require('ugrid').Context();
+var uc = require('ugrid').context();
 var da0 = uc.parallelize([0, 1]);
 var da1 = uc.parallelize([0, 1]);
 var da2 = uc.parallelize([0, 1]);
@@ -87,4 +87,4 @@ function mapper16(data) {
 		 data[0][8], data[0][9], data[0][10], data[0][11],
 		 data[0][12], data[0][13], data[0][14], data[0][15], data[1] ]
 }
-da0.cartesian(da1).cartesian(da2).map(mapper2).cartesian(da3).map(mapper3).cartesian(da4).map(mapper4).cartesian(da5).map(mapper5).cartesian(da6).map(mapper6).cartesian(da7).map(mapper7).cartesian(da8).map(mapper8).cartesian(da9).map(mapper9).cartesian(da10).map(mapper10).cartesian(da11).map(mapper11).cartesian(da12).map(mapper12).cartesian(da13).map(mapper13).cartesian(da14).map(mapper14).cartesian(da15).map(mapper15).cartesian(da16).map(mapper16).collect().on('data', console.log).on('end', uc.end);
+da0.cartesian(da1).cartesian(da2).map(mapper2).cartesian(da3).map(mapper3).cartesian(da4).map(mapper4).cartesian(da5).map(mapper5).cartesian(da6).map(mapper6).cartesian(da7).map(mapper7).cartesian(da8).map(mapper8).cartesian(da9).map(mapper9).cartesian(da10).map(mapper10).cartesian(da11).map(mapper11).cartesian(da12).map(mapper12).cartesian(da13).map(mapper13).cartesian(da14).map(mapper14).cartesian(da15).map(mapper15).cartesian(da16).map(mapper16).collect().toArray().then(function(res) {console.log(res); uc.end()});
