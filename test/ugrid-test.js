@@ -57,7 +57,7 @@ var transforms = [
 
 var dualTransforms = [
 	{name: 'coGroup', args: [], sort: true},
-	// {name: 'cartesian', args: [], sort: true},
+	{name: 'cartesian', args: [], sort: true},
 	{name: 'intersection', args: [], sort: true},
 	{name: 'join', args: [], sort: true},
 	{name: 'leftOuterJoin', args: [], sort: true},
