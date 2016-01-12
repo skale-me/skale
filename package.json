@@ -34,7 +34,7 @@
     "mongodb": "^2.0.33",
     "morgan": "^1.6.1",
     "node-getopt": "^0.2.3",
-    "node-uuid": "^1.4.1",
+    "node-uuid": "^1.4.7",
     "pg": "^4.4.1",
     "ssh2": "^0.4.4",
     "stream-to-array": "^2.1.0",
@@ -54,26 +54,26 @@
   },
   "eslintConfig": {
     "rules": {
-        "indent": [
-            2,
-            "tab"
-        ],
-        "quotes": [
-            2,
-            "single"
-        ],
-        "linebreak-style": [
-            2,
-            "unix"
-        ],
-        "semi": [
-            2,
-            "always"
-        ]
+      "indent": [
+        2,
+        "tab"
+      ],
+      "quotes": [
+        2,
+        "single"
+      ],
+      "linebreak-style": [
+        2,
+        "unix"
+      ],
+      "semi": [
+        2,
+        "always"
+      ]
     },
     "env": {
-        "es6": true,
-        "node": true
+      "es6": true,
+      "node": true
     },
     "extends": "eslint:recommended"
   }
