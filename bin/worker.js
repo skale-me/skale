@@ -239,6 +239,10 @@ function runWorker(host, port) {
 		}
 	});
 
+	grid.on('sendFile', function (msg) {
+		fs.createReadStream(msg.path).pipe(grid.createStreamTo(msg));
+	});
+
 	// Handle messages from worker controller (replies to scp requests)
 	process.on('message', function (msg) {
 		if (!ftcb[msg.ftid]) {
