@@ -121,10 +121,10 @@ function transfer(host, remote, local, done) {
 }
 
 function runWorker(host, port) {
-	var jobs = {}, muuid;
+	var jobs = {};
 
 	process.on('uncaughtException', function (err) {
-		grid.send(muuid, {cmd: 'workerError', args: err.stack});
+		grid.send(grid.muuid, {cmd: 'workerError', args: err.stack});
 		process.exit(2);
 	});
 
@@ -156,9 +156,9 @@ function runWorker(host, port) {
 
 	var request = {
 		runTask: function runTask(msg) {
-			muuid = msg.data.master_uuid;
+			grid.muuid = msg.data.master_uuid;
 			var task = uc_parse(msg.data.args);
-			task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid});
+			task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid, grid: grid});
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}
 	};
@@ -175,6 +175,10 @@ function runWorker(host, port) {
 			console.error(error.stack);
 			grid.reply(msg, error, null);
 		}
+	});
+
+	grid.on('sendFile', function (msg) {
+		fs.createReadStream(msg.path).pipe(grid.createStreamTo(msg));
 	});
 
 	// Handle messages from worker controller (replies to scp requests)
