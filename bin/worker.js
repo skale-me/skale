@@ -178,7 +178,7 @@ function runWorker(host, port) {
 	});
 
 	grid.on('sendFile', function (msg) {
-		fs.createReadStream(msg.path).pipe(grid.createStreamTo(msg));
+		fs.createReadStream(msg.path, msg.opt).pipe(grid.createStreamTo(msg));
 	});
 
 	// Handle messages from worker controller (replies to scp requests)
@@ -210,11 +210,12 @@ function MemoryManager() {
 	this.partitions = {};
 	this.register = function(partition) {
 		var key = partition.RDDId + '.' + partition.partitionIndex;
-		if (this.partitions[key]) console.log('Partition already exists')
-		else {
-			console.log('registering with key: ' + key)
-			this.partitions[key] = partition;
-		}
+		//if (this.partitions[key]) console.log('Partition already exists')
+		//else {
+		//	console.log('registering with key: ' + key)
+		//	this.partitions[key] = partition;
+		//}
+		if (!(key in this.partitions)) this.partitions[key] = partition;
 	}
 
 	this.isAvailable = function(partition) {

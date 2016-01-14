@@ -3,8 +3,8 @@
 var fs = require('fs');
 var uc = new require('ugrid').Context();
 
-var s1 = uc.lineStream(fs.createReadStream('examples/new/kv.data')).map(function(line) {return line.split(' ')});
-var s2 = uc.lineStream(fs.createReadStream('examples/new/kv2.data')).map(function(line) {return line.split(' ')});
+var s1 = uc.lineStream(fs.createReadStream(__dirname + '/kv.data')).map(function(line) {return line.split(' ')});
+var s2 = uc.lineStream(fs.createReadStream(__dirname + '/kv2.data')).map(function(line) {return line.split(' ')});
 
 s1.coGroup(s2).collect().toArray(function(err, res) {
 	console.log('Success !')

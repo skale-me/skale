@@ -3,7 +3,7 @@
 var fs = require('fs');
 var uc = new require('ugrid').Context();
 
-var stream = fs.createReadStream('/Users/cedricartigue/work/ugrid/examples/new/kv.data');
+var stream = fs.createReadStream(__dirname + '/kv.data');
 
 // var stream = process.stdin;
 uc.lineStream(stream).collect().toArray(function(err, res) {

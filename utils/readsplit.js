@@ -38,7 +38,7 @@ function splitDistributedFile(file, N, callback) {	// emulates a distributed fil
 	]);
 }
 
-function getFirstLine(split, chunk_buffer, s, done) {
+function getFirstLine(split, chunk_buffer, s, getStream, done) {
 	// console.log('Split n° ' + (s - 1) + ' seeks end of line staring with : ' + chunk_buffer.replace(/\n/g, '*'))
 	var p = 0, firstLineFound = false, firstLine;
 	var isLastSplit = (split[s].index == (split.length - 1));
@@ -46,7 +46,8 @@ function getFirstLine(split, chunk_buffer, s, done) {
 	function readPart(part, partDone) {
 		var isFirstPart = (p == 0);
 		var isLastPart = (p == split[s].chunk.length - 1);
-		var rs = fs.createReadStream(part.path, part.opt);
+		//var rs = fs.createReadStream(part.path, part.opt);
+		var rs = getStream(part.path, part.opt);
 		
 		function processChunk(chunk) {
 			var lines = (chunk_buffer + chunk).split(/\r\n|\r|\n/);
@@ -54,13 +55,13 @@ function getFirstLine(split, chunk_buffer, s, done) {
 			if (lines.length > 0) {
 				firstLine = lines[0];
 				firstLineFound = true;
-				rs.destroy();
+				//rs.destroy();
 			} else rs.once('data', processChunk);
 		}
 
 		rs.once('data', processChunk);
 
-		rs.on('close', function () {
+		rs.on('end', function () {
 			if (firstLineFound) done(firstLine);
 			else if (!isLastPart) partDone();
 			else if (isLastSplit) done(chunk_buffer);
@@ -77,13 +78,15 @@ function getFirstLine(split, chunk_buffer, s, done) {
 	readPart(split[s].chunk[p], end);	
 }
 
-function readSplit(split, s, processLine, splitDone) {
+function readSplit(split, s, processLine, splitDone, getStream) {
 	if (split.length == 0) return splitDone();
 	var isFirstSplit = (split[s].index == 0);
 	var isLastSplit = (split[s].index == (split.length - 1));
 	var chunk_buffer = '', p = 0;
 	var hasToSkipFirstLine = isFirstSplit ? false : undefined;	// si firstSplit on sait déjà que l'on ne doit pas ignorer la première ligne
 	var firstLineFound = isFirstSplit ? true : false;
+
+	if (!getStream) getStream = fs.createReadStream;
 
 	function readPart(part, partDone) {
 		var isFirstPart = (p == 0);
@@ -92,7 +95,7 @@ function readSplit(split, s, processLine, splitDone) {
 		// Si le split en cours de traitement n'est pas le premier, il faut déterminer si on doit sauter la première ligne ou non
 		// Pour ce faire on lit un octet avant le début de la première partie du split et on regarde si le caractère est un EOL
 		var opt = (!isFirstSplit && isFirstPart) ? {start: part.opt.start - 1, end: part.opt.end} : part.opt;
-		var rs = fs.createReadStream(part.path, opt);
+		var rs = getStream(part.path, opt);
 
 		function processChunkOnce(chunk) {											// Executé tant que la première ligne n'est pas complète 
 			// console.log('Split n° %d found chunk = %s', s, String(chunk).replace(/\n/g, '*'))
@@ -126,7 +129,7 @@ function readSplit(split, s, processLine, splitDone) {
 			for (var i = 0; i < lines.length; ++i) processLine(lines[i]);
 		}
 
-		rs.on('close', function () {
+		rs.on('end', function () {
 			// console.log(chunk_buffer)
 			if (!isLastPart) return partDone();										// il reste des parties à lire on termine la part
 			if (isLastSplit) {														// si dernière partie du dernier split
@@ -151,10 +154,10 @@ function readSplit(split, s, processLine, splitDone) {
 						if (chunk_buffer == '') {
 							splitDone();
 						} else {
-							getFirstLine(split, chunk_buffer, s + 1, function(firstline) {					// On termine la lecture de la ligne sur les splits suivant
+							getFirstLine(split, chunk_buffer, s + 1, getStream, function(firstline) {		// On termine la lecture de la ligne sur les splits suivant
 								processLine(firstline);					// on process la ligne
 								splitDone();											// on termine
-							})
+							});
 						}
 					}
 				}
