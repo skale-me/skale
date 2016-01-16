@@ -2,10 +2,10 @@
 
 'use strict';
 
+var child_process = require('child_process');
 var fs = require('fs');
 var os = require('os');
 var cluster = require('cluster');
-var Ssh2 = require('ssh2');
 var uuid = require('node-uuid');
 
 var UgridClient = require('../lib/ugrid-client.js');
@@ -33,43 +33,6 @@ var hostname = opt.options.MyHost || os.hostname();
 var cgrid;
 
 ncpu = Number(ncpu);
-var sshUser = process.env.USER;
-var sshPrivateKey = fs.readFileSync(process.env.HOME + '/.ssh/id_rsa');
-var ssh = {};
-var sftp = {};
-var transferQueue = [];		// File transfer queue, on controller, to serialize concurrent worker requests during init
-var ftid = 0;				// File transfer id, set on worker to handle controller responses.
-var ftcb = {};				// File transfer callback, on worker, indexed by ftid.
-
-// On controller, file transfer function
-function scp(msg, done) {
-	if (sftp[msg.from])			// ssh ok and sftp session ready
-		return sftp[msg.from].fastGet(msg.remote, msg.local, {}, done);
-
-	// sftp session not yet established, enqueue the request, init session once
-	transferQueue.push([msg.remote, msg.local, done]);
-	if (!ssh[msg.from]) {		// ssh connection not yet established
-		var cnx = ssh[msg.from] = new Ssh2();
-		cnx.connect({
-			host: msg.from,
-			username: sshUser,
-			privateKey: sshPrivateKey
-		});
-		cnx.on('ready', function () {
-			cnx.sftp(function (err, res) {
-				if (err) {
-					for (var i = 0; i < transferQueue.length; i++)
-						transferQueue[i][2](err);
-					return;
-				}
-				sftp[msg.from] = res;
-				transferQueue.forEach(function (req) {
-					res.fastGet(req[0], req[1], {}, req[2]);
-				});
-			});
-		});
-	}
-}
 
 if (cluster.isMaster) {
 	cluster.on('exit', handleExit);
@@ -92,15 +55,19 @@ if (cluster.isMaster) {
 }
 
 function startWorkers(msg) {
-	var worker = [];
+	var worker = [], removed = {};
 	var n = msg.n || ncpu;
 	for (var i = 0; i < n; i++)
 		worker[i] = cluster.fork({wsid: msg.wsid});
 	worker.forEach(function (w) {
 		w.on('message', function (msg) {
 			switch (msg.cmd) {
-			case 'scp':
-				scp(msg, function (err, res) {w.send({ftid: msg.ftid, err: err, res: res});});
+			case 'rm':
+				if (msg.dir && !removed[msg.dir]) {
+					removed[msg.dir] = true;
+					trace('remove /tmp/ugrid/' + msg.dir);
+					child_process.execFile('/bin/rm', ['-rf', '/tmp/ugrid/' + msg.dir]);
+				}
 				break;
 			default:
 				console.log('unexpected msg %j', msg);
@@ -113,15 +80,8 @@ function handleExit(worker, code, signal) {
 	console.log("worker pid %d exited: %s", worker.process.pid, signal || code);
 }
 
-// On worker, file transfer function: send a request to controller, handle
-// response in callback
-function transfer(host, remote, local, done) {
-	ftcb[ftid] = done;
-	process.send({cmd: 'scp', from: host, remote: remote, local: local, ftid: ftid++});
-}
-
 function runWorker(host, port) {
-	var jobs = {};
+	var jobs = {}, contextId;
 
 	process.on('uncaughtException', function (err) {
 		grid.send(grid.muuid, {cmd: 'workerError', args: err.stack});
@@ -158,12 +118,16 @@ function runWorker(host, port) {
 		runTask: function runTask(msg) {
 			grid.muuid = msg.data.master_uuid;
 			var task = uc_parse(msg.data.args);
+			contextId = task.contextId;
 			task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid, grid: grid});
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}
 	};
 
-	grid.on('remoteClose', process.exit);
+	grid.on('remoteClose', function () {
+		process.send({cmd: 'rm', dir: contextId});
+		process.exit();
+	});
 
 	grid.on('request', function (msg) {
 		if (msg.first) {
@@ -179,16 +143,6 @@ function runWorker(host, port) {
 
 	grid.on('sendFile', function (msg) {
 		fs.createReadStream(msg.path, msg.opt).pipe(grid.createStreamTo(msg));
-	});
-
-	// Handle messages from worker controller (replies to scp requests)
-	process.on('message', function (msg) {
-		if (!ftcb[msg.ftid]) {
-			console.error('no callback found: %j', msg);
-			return;
-		}
-		ftcb[msg.ftid](msg.err, msg.res);
-		ftcb[msg.ftid] = undefined;
 	});
 }
 
