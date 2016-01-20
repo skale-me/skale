@@ -119,7 +119,11 @@ function runWorker(host, port) {
 			grid.muuid = msg.data.master_uuid;
 			var task = uc_parse(msg.data.args);
 			contextId = task.contextId;
-			task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid, grid: grid});
+			// task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid, grid: grid});
+			// set worker side dependencies
+			task.mm = mm;
+			task.lib = {sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid};
+			task.grid = grid;
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}
 	};
