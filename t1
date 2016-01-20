@@ -1,8 +1,0 @@
-#!/usr/bin/env node
-
-var uc = require('ugrid').context();
-
-uc.parallelize([0, 3]).collect().toArray(function (err, d) {
-	console.log(d);
-	uc.end()
-})
