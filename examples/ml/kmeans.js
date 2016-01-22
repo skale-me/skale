@@ -1,8 +1,7 @@
-#!/usr/local/bin/node --harmony
+#!/usr/bin/env node
 'use strict';
 
-var co = require('co');
-var ugrid = require('../..');
+var ugrid = require('ugrid');
 var sizeOf = require('../../utils/sizeof.js');
 
 var opt = require('node-getopt').create([
@@ -20,6 +19,7 @@ var K = Number(opt.options.K) || 10;
 var D = Number(opt.options.D) || 16;
 var nIterations = Number(opt.options.I) || 4;
 var seed = 1;
+var P = 100;
 
 var sample = [1, []];
 for (var i = 0; i < D; i++) sample[1].push(Math.random());
@@ -32,25 +32,24 @@ console.log('Features per observation: ' + D);
 console.log('Iterations: ' + nIterations);
 console.log('Approximate dataset size: ' + Math.ceil(approx_data_size / (1024 * 1024)) + ' Mb\n');
 
-co(function *() {
-	var uc = yield ugrid.context();
-	// init means, K gaussian vectors of length D
-	var w = [];
-	for (var k = 0; k < K; k++) {
-		w[k] = [];
-		for (var d = 0; d < D; d++)
-			w[k].push(2 * Math.random() - 1);
-	}
+var uc = ugrid.context();
+var points = file ? uc.textFile(file).map(function (e) {
+	var tmp = e.split(' ').map(parseFloat);
+	return [tmp.shift(), tmp];
+}).persist() : uc.randomSVMData(N, D, seed, P).persist();
 
-	var points = file ? uc.textFile(file).map(function (e) {
-		var tmp = e.split(' ').map(parseFloat);
-		tmp.shift();
-		return tmp;
-	}).persist() : uc.randomSVMData(N, D, seed).map(function(e) {
-		return e[1]}
-	).persist();
-	var model = new ugrid.ml.KMeans(points, K, w);
-	yield model.train(nIterations);
-	// console.log(model.means)
+// init means, K gaussian vectors of length D
+var prng = new ugrid.ml.Random();
+var w = [];
+for (var k = 0; k < K; k++) {
+	w[k] = [];
+	for (var d = 0; d < D; d++)
+		//w[k].push(2 * Math.random() - 1);
+		w[k].push(2 * prng.nextDouble() - 1);
+}
+var model = new ugrid.ml.KMeans(points, K, w);
+
+model.train(nIterations, function (err) {
+	console.log(model.means);
 	uc.end();
-}).catch(ugrid.onError);
+});
