@@ -3,7 +3,6 @@
 // Todo:
 // - record/replay input messages
 // - handle foreign messages
-// - authentication (register)
 // - statistics in monitoring
 // - topics permissions (who can publish / subscribe)
 
@@ -51,6 +50,8 @@ var port = opt.options.port || 12346;
 var wss;
 var wsport = opt.options.wsport || port + 2;
 var crossbar = {};
+var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
+var access = process.env.UGRID_ACCESS;
 
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
@@ -103,6 +104,11 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 var clientRequest = {
 	connect: function (sock, msg) {
 		var i, ret = true, master;
+		if (access && msg.access != access) {
+			console.log('## Ugrid connect failed: access denied');
+			msg.error = 'access denied, check UGRID_ACCESS';
+			return true;
+		}
 		register(null, msg, sock);
 		if (msg.data.query) msg.data.devices = devices(msg);
 		if (msg.data.notify in clients && clients[msg.data.notify].sock) {
@@ -255,10 +261,19 @@ if (wsport) {
 
 // Start local workers if required
 if (opt.options.local) {
-	var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
-	child_process.spawn(__dirname + '/worker.js', ['-n', nworker], {stdio: 'inherit'});
+	startWorker();
+	startWebServer();
+}
+
+function startWorker() {
+	var worker =  child_process.spawn(__dirname + '/worker.js', ['-n', nworker], {stdio: 'inherit'});
+	worker.on('close', startWorker);
+}
+
+function startWebServer() {
 	// We use fork() so the the child can catch 'disconnect' event if we die
-	child_process.fork(__dirname + '/rest.js', {stdio: 'inherit'});
+	var webServer = child_process.fork(__dirname + '/rest.js', {stdio: 'inherit'});
+	webServer.on('close', startWebServer);
 }
 
 function handleClose(sock) {
