@@ -9,3 +9,5 @@ uc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
 	console.log(res);
 	uc.end();
 })
+
+// console.log(uc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]))
