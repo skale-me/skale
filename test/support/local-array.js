@@ -250,11 +250,13 @@ function BlockStream(len) {
 util.inherits(BlockStream, stream.Transform);
 
 BlockStream.prototype._transform = function (msg, encoding, done) {
-	this.buf.push(msg);
-	if (++this.cnt == this.len) {
-		this.push(this.buf);
-		this.buf = [];
-		this.cnt = 0;
+	for (var i = 0; i < msg.length; i++) {
+		this.buf.push(msg[i]);
+		if (++this.cnt == this.len) {
+			this.push(this.buf);
+			this.buf = [];
+			this.cnt = 0;
+		}
 	}
 	done();
 };
