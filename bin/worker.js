@@ -10,6 +10,7 @@ var uuid = require('node-uuid');
 
 var UgridClient = require('../lib/ugrid-client.js');
 var ml = require('../lib/ugrid-ml.js');
+var mkdir = require('../lib/mkdir.js');
 var trace = require('line-trace');
 var Lines = require('../lib/lines.js');
 var sizeOf = require('../utils/sizeof.js');
@@ -122,7 +123,7 @@ function runWorker(host, port) {
 			// task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid, grid: grid});
 			// set worker side dependencies
 			task.mm = mm;
-			task.lib = {sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid};
+			task.lib = { sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, mkdir: mkdir, uuid: uuid };
 			task.grid = grid;
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}
