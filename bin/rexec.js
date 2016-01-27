@@ -4,7 +4,7 @@ var http = require('http');
 var url = require('url');
 
 if (process.argv.length < 4) {
-	console.log("Usage: submit.js ugrid_server_url program_file [args...]");
+	console.log("Usage: submit.js skale_server_url program_file [args...]");
 	process.exit(1);
 }
 var href = url.parse(process.argv[2]);

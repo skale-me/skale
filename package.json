@@ -2,10 +2,10 @@
   "name": "ugrid",
   "version": "0.3.0",
   "license": "MIT",
-  "description": "ugrid client and server",
+  "description": "skale client and server",
   "main": "index.js",
   "scripts": {
-    "preinstall": "mkdir node_modules; echo 'module.exports = require(\"..\")' > node_modules/ugrid.js",
+    "preinstall": "mkdir node_modules; echo 'module.exports = require(\"..\")' > node_modules/skale.js",
     "start": "bin/start-all.sh",
     "stop": "bin/stop-all.sh",
     "test": "node_modules/.bin/mocha"

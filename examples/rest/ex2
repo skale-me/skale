@@ -1,3 +1,0 @@
-#!/bin/sh
-
-curl 'http://localhost:8000/test?a=12&b=truc'

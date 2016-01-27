@@ -1,3 +1,0 @@
-#!/bin/sh
-
-curl -H "X-Auth: $UGRID_ACCESS" -d 'pkg=line-trace' 'http://localhost:8000/install'

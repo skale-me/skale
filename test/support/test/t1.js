@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 if (process.argv[2] == 'local') {
-	var ugrid = require('../local.js');
+	var skale = require('../local.js');
 	console.log('loc')
 } else {
-	var ugrid = require('ugrid');
+	var skale = require('skale');
 	console.log('noloc')
 }
 var v = [
@@ -12,15 +12,13 @@ var v = [
 	[[0, 5], [1, 6], [2, 7], [3, 9], [0, 9]],
 ];
 
-var uc = ugrid.context();
+var sc = skale.context();
 var a, b, s;
 
-a = uc.parallelize(v[0]);
-b = uc.parallelize(v[1]);
+a = sc.parallelize(v[0]);
+b = sc.parallelize(v[1]);
 
-// s = a.collect();
-//s = a.coGroup(b).collect();
 s = a.join(b).collect();
 
 s.on('data', console.log)
-s.on('end', uc.end)
+s.on('end', sc.end)

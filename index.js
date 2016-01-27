@@ -1,21 +1,21 @@
-/* ugrid framework */
+/* skale framework */
 
 'use strict';
 
-var ugrid = {};
-module.exports = ugrid;
+var skale = {};
+module.exports = skale;
 
-ugrid.Context = require('./lib/ugrid-context.js');
+skale.Context = require('./lib/context.js');
 
-ugrid.ml = require('./lib/ugrid-ml.js');
+skale.ml = require('./lib/ml.js');
 
-ugrid.context = ugrid.Context;
+skale.context = skale.Context;
 
-ugrid.HashPartitioner = require('./lib/ugrid-array.js').HashPartitioner;
+skale.HashPartitioner = require('./lib/dataset.js').HashPartitioner;
 
-ugrid.RangePartitioner = require('./lib/ugrid-array.js').RangePartitioner;
+skale.RangePartitioner = require('./lib/dataset.js').RangePartitioner;
 
-ugrid.onError = function (err) {
+skale.onError = function (err) {
 	console.error(err.stack);
 	uc.end();
 };

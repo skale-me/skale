@@ -2,7 +2,7 @@ all:
 
 .PHONY: all browserify clean lint test
 
-OBJ = lib/ugrid-client-browser.js lib/ugrid-context-browser.js
+OBJ = lib/client-browser.js lib/context-browser.js
 SRCS = $(filter-out $(OBJ), $(wildcard bin/*.js lib/*.js examples/*.js test/unitTest/*.js utils/*.js mocha-test/*.js))
 
 clean:

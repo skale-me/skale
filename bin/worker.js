@@ -8,13 +8,13 @@ var os = require('os');
 var cluster = require('cluster');
 var uuid = require('node-uuid');
 
-var UgridClient = require('../lib/ugrid-client.js');
-var ml = require('../lib/ugrid-ml.js');
+var SkaleClient = require('../lib/client.js');
+var ml = require('../lib/ml.js');
 var mkdir = require('../lib/mkdir.js');
 var trace = require('line-trace');
 var Lines = require('../lib/lines.js');
-var sizeOf = require('../utils/sizeof.js');
-var readSplit = require('../utils/readsplit.js').readSplit;
+var sizeOf = require('../lib/sizeof.js');
+var readSplit = require('../lib/readsplit.js').readSplit;
 
 var global = {require: require};
 var mm = new MemoryManager();
@@ -29,7 +29,7 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var debug = opt.options.debug || false;
-var ncpu = opt.options.Num || (process.env.UGRID_WORKER_PER_HOST ? process.env.UGRID_WORKER_PER_HOST : os.cpus().length);
+var ncpu = opt.options.Num || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
 var hostname = opt.options.MyHost || os.hostname();
 var cgrid;
 
@@ -37,7 +37,7 @@ ncpu = Number(ncpu);
 
 if (cluster.isMaster) {
 	cluster.on('exit', handleExit);
-	cgrid = new UgridClient({
+	cgrid = new SkaleClient({
 		debug: debug,
 		host: opt.options.Host,
 		port: opt.options.Port,
@@ -66,8 +66,8 @@ function startWorkers(msg) {
 			case 'rm':
 				if (msg.dir && !removed[msg.dir]) {
 					removed[msg.dir] = true;
-					trace('remove /tmp/ugrid/' + msg.dir);
-					child_process.execFile('/bin/rm', ['-rf', '/tmp/ugrid/' + msg.dir]);
+					trace('remove /tmp/skale/' + msg.dir);
+					child_process.execFile('/bin/rm', ['-rf', '/tmp/skale/' + msg.dir]);
 				}
 				break;
 			default:
@@ -89,7 +89,7 @@ function runWorker(host, port) {
 		process.exit(2);
 	});
 
-	var grid = new UgridClient({
+	var grid = new SkaleClient({
 		debug: debug,
 		host: host,
 		port: port,

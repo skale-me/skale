@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.use(busboy());
 app.use(morgan('dev'));
 
-var access = process.env.UGRID_ACCESS;
+var access = process.env.SKALE_ACCESS;
 
 process.on('disconnect', process.exit);	// exit on parent death
 
@@ -36,18 +36,18 @@ function authenticate(req, res, next) {
 }
 
 app.get('/', authenticate, function (req, res) {
-	res.send('Hello from ugrid server\n');
+	res.send('Hello from skale server\n');
 });
 
 app.get('/test', authenticate, function (req, res) {
 	trace(req.query);
-	req.query.from = "ugrid get test";
+	req.query.from = "skale get test";
 	res.json(req.query);
 });
 
 app.post('/test', authenticate, function (req, res) {
 	trace(req.body);
-	req.body.from = "ugrid post test";
+	req.body.from = "skale post test";
 	res.json(req.body);
 });
 

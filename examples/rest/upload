@@ -1,5 +1,0 @@
-#!/bin/sh
-
-echo $0
-
-curl -H "X-Auth: $UGRID_ACCESS" -F "file=@$0" http://localhost:8000/upload

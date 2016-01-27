@@ -9,7 +9,7 @@ TODO
 ugrid.sublime-project
 ugrid.sublime-workspace
 conf/slaves
-conf/ugrid-env.sh
+conf/skale-env.sh
 test-old/automatic/*.js
 demo/*.data
 docker/*.tar.*
