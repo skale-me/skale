@@ -7,8 +7,6 @@ module.exports = skale;
 
 skale.Context = require('./lib/context.js');
 
-skale.ml = require('./lib/ml.js');
-
 skale.context = skale.Context;
 
 skale.HashPartitioner = require('./lib/dataset.js').HashPartitioner;
