@@ -123,7 +123,7 @@ function runWorker(host, port) {
 			// task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid, grid: grid});
 			// set worker side dependencies
 			task.mm = mm;
-			task.lib = { sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, mkdir: mkdir, uuid: uuid };
+			task.lib = { sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, mkdir: mkdir, uuid: uuid, trace: trace };
 			task.grid = grid;
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}
