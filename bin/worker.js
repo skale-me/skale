@@ -118,7 +118,7 @@ function runWorker(host, port) {
 	var request = {
 		runTask: function runTask(msg) {
 			grid.muuid = msg.data.master_uuid;
-			var task = uc_parse(msg.data.args);
+			var task = parseTask(msg.data.args);
 			contextId = task.contextId;
 			// task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid, grid: grid});
 			// set worker side dependencies
@@ -182,15 +182,17 @@ function MemoryManager() {
 	}
 }
 
-function uc_parse(str) {
-	function recompile(s) {
-		if (s.indexOf('=>') >= 0) return eval(s);	// Support arrow functions
-		var args = s.match(/\(([^)]*)/)[1];
-		var body = s.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
-		return new Function(args, body);
-	}
-	return JSON.parse(str,function(key, value) {
-		if (typeof value != 'string') return value;
-		return (value.substring(0, 8) == 'function') ? recompile(value) : value;
+function parseTask(str) {
+	return JSON.parse(str, function(key, value) {
+		if (typeof value == 'string') {
+			// String value can be a regular function or an arrow function
+			if (value.substring(0, 8) == 'function') {
+				var args = value.match(/\(([^)]*)/)[1];
+				var body = value.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
+				value = new Function(args, body);
+			} else if (value.match(/^\s*\w+\s*=>/) || value.match(/^\s*\([^)]*\)\s*=>/))
+				value = eval(value);
+		}
+		return value;
 	});
 }
