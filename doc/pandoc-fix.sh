@@ -3,12 +3,12 @@
 # Print document metadata
 cat << \EOT
 ---
-title: Ugrid Reference
+title: Skale Reference
 geometry: margin=1in
 header-includes:
  - \usepackage{fancyhdr}
  - \pagestyle{fancy}
- - \fancyfoot[LE,LO]{v0.2.0}
+ - \fancyfoot[LE,LO]{v0.3.1}
 ---
 
 \pagebreak
