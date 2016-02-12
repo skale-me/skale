@@ -36,6 +36,7 @@ var cgrid;
 ncpu = Number(ncpu);
 
 if (cluster.isMaster) {
+	process.title = 'skaleWorkerController';
 	cluster.on('exit', handleExit);
 	cgrid = new SkaleClient({
 		debug: debug,
@@ -59,7 +60,7 @@ function startWorkers(msg) {
 	var worker = [], removed = {};
 	var n = msg.n || ncpu;
 	for (var i = 0; i < n; i++)
-		worker[i] = cluster.fork({wsid: msg.wsid});
+		worker[i] = cluster.fork({wsid: msg.wsid, rank: i});
 	worker.forEach(function (w) {
 		w.on('message', function (msg) {
 			switch (msg.cmd) {
@@ -84,6 +85,7 @@ function handleExit(worker, code, signal) {
 function runWorker(host, port) {
 	var jobs = {}, contextId;
 
+	process.title = 'skaleWorker_' + process.env.wsid + '_' + process.env.rank;
 	process.on('uncaughtException', function (err) {
 		grid.send(grid.muuid, {cmd: 'workerError', args: err.stack});
 		process.exit(2);

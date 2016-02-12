@@ -1,0 +1,2 @@
+#!/bin/sh
+exec watch "ps ux | awk '\$11 ~ /^skale/ || \$1 ~/USER/'"

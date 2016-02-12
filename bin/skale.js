@@ -53,6 +53,8 @@ var crossbar = {};
 var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
 var access = process.env.SKALE_ACCESS;
 
+process.title = 'skaleServer';
+
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
 		return new SwitchBoard(sock);

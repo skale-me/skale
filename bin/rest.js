@@ -20,6 +20,7 @@ app.use(busboy());
 app.use(morgan('dev'));
 
 var access = process.env.SKALE_ACCESS;
+process.title = 'skaleRest';
 
 process.on('disconnect', process.exit);	// exit on parent death
 
