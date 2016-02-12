@@ -522,7 +522,7 @@ function rightOuterJoin(v1, v2) {
 }
 
 function sample(v, withReplacement, frac, num, seed) {
-	var P = process.env.SKALE_WORKER_PER_HOST || os.cpus().length;
+	var P = process.env.UGRID_WORKER_PER_HOST || os.cpus().length;
 	if (P > v.length) P = v.length;
 	if (num) P = 1;
 	if (seed === undefined) seed = 1;

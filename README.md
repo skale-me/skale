@@ -1,17 +1,17 @@
-# Skale
+# Ugrid
 
-Skale is a real time distributed data processing system.
+Ugrid is a real time distributed data processing system.
 
-Skale provides the following modules:
+Ugrid provides the following modules:
 
-* a fast messaging system: [skale-client](doc/skaleClient.md)
-* a distributed data processing system: [skale-context](doc/skaleContext.md)
+* a fast messaging system: [ugrid-client](doc/ugridClient.md)
+* a distributed data processing system: [ugrid-context](doc/ugridContext.md)
 
 ### Install
-    npm install skale
+    npm install ugrid
 
 ### Start server
-    bin/skale.js [port]
+    bin/ugrid.js [port]
 
 ### Start workers
     bin/worker.js [-n number] [-H server_host] [-P server_port]
@@ -19,4 +19,4 @@ Skale provides the following modules:
 ## Todo
 
 * Topics for pub/sub
-* Fault tolerant skale server
+* Fault tolerant ugrid server

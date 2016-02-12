@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var skale = require('skale');
+var ugrid = require('ugrid');
 var sizeOf = require('../../lib/sizeof.js');
 var ml = require('../../lib/ml.js');
 
@@ -31,16 +31,16 @@ console.log('Partitions: ' + (P || 'number of workers'));
 console.log('Iterations: ' + nIterations + '\n');
 console.log('Approximate dataset size: ' + Math.ceil(approx_data_size / (1024 * 1024)) + ' Mb');
 
-var sc = skale.context();
-var points = file ? sc.textFile(file).map(function (e) {
+var uc = ugrid.context();
+var points = file ? uc.textFile(file).map(function (e) {
 	var tmp = e.split(' ').map(parseFloat);
 	return [tmp.shift(), tmp];
-}).persist() : ml.randomSVMData(sc, N, D, seed, P).persist();
-var model = new ml.LogisticRegression(sc, points, D, N);
+}).persist() : ml.randomSVMData(uc, N, D, seed, P).persist();
+var model = new ml.LogisticRegression(uc, points, D, N);
 
-sc.on('connect', function() {console.log('Number of workers: %j', sc.worker.length)});
+uc.on('connect', function() {console.log('Number of workers: %j', uc.worker.length)});
 
 model.train(nIterations, function(err) {
 	console.log(model.w);
-	sc.end();
+	uc.end();
 });

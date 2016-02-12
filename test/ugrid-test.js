@@ -1,16 +1,16 @@
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 var trace = require('line-trace');
-var skale = require('../');
+var ugrid = require('../');
 var data = require('./support/data.js');
 var local = require('./support/local.js');
 
-var server, workerController, sc, ul;
+var server, workerController, uc, ul;
 
 beforeEach(function (done) {
 	var output;
-	if (sc === undefined) {
-		server = spawn('./bin/skale.js');
+	if (uc === undefined) {
+		server = spawn('./bin/ugrid.js');
 		server.stdout.on('data', function (d) {
 			var output2;
 			if (output) return;
@@ -20,7 +20,7 @@ beforeEach(function (done) {
 				if (output2) return;
 				output2 = true;
 				ul = local.context();
-				sc = skale.context();
+				uc = ugrid.context();
 				done();
 			});
 		});
@@ -80,7 +80,7 @@ var actions = [
 // foreach,
 ];
 
-sources.forEach(function (source) {describe('sc.' + source[0].name + '()', function() {
+sources.forEach(function (source) {describe('uc.' + source[0].name + '()', function() {
 	transforms.forEach(function (transform) {describe(transform.name ? '.' + transform.name + '()' : '/* empty */', function () {
 		actions.forEach(function (action) {describe('.' + action.name + '()', function () {
 			var lres, dres, sres, pres1, pres2, check = {};
@@ -126,7 +126,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				default:
 					src_args = source[0].args; break;
 				}
-				da = sc[source[0].name].apply(sc, src_args);
+				da = uc[source[0].name].apply(uc, src_args);
 				if (source.length > 1 ) da = da[source[1].name].apply(da, source[1].args);
 				if (transform.name) da = da[transform.name].apply(da, transform.args);
 				if (action.stream) {
@@ -154,7 +154,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				default:
 					src_args = source[0].args; break;
 				}
-				da = sc[source[0].name].apply(sc, src_args);
+				da = uc[source[0].name].apply(uc, src_args);
 				if (source.length > 1) da = da[source[1].name].apply(da, source[1].args);
 				da = da.persist();
 				if (transform.name) da = da[transform.name].apply(da, transform.args);
@@ -185,7 +185,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				default:
 					src_args = source[0].args; break;
 				}
-				da = sc[source[0].name].apply(sc, src_args);
+				da = uc[source[0].name].apply(uc, src_args);
 				if (source.length > 1 ) da = da[source[1].name].apply(da, source[1].args);
 				if (transform.name) da = da[transform.name].apply(da, transform.args);
 				da = da.persist();
@@ -216,7 +216,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 	});});
 
 	sources2.forEach(function (source2) {
-		dualTransforms.forEach(function (dualTransform) {describe('.' + dualTransform.name + '(sc.' + source2[0].name + '())', function () {
+		dualTransforms.forEach(function (dualTransform) {describe('.' + dualTransform.name + '(uc.' + source2[0].name + '())', function () {
 			actions.forEach(function (action) {describe('.' + action.name + '()', function () {
 				var lres, dres, sres, pres1, pres2, check = {};
 
@@ -284,7 +284,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 					default:
 						src_args = source[0].args; break;
 					}
-					da = sc[source[0].name].apply(sc, src_args);
+					da = uc[source[0].name].apply(uc, src_args);
 					if (source.length > 1) da = da[source[1].name].apply(da, source[1].args);
 					switch (source2[0].name) {
 					case 'lineStream':
@@ -296,7 +296,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 					default:
 						src2_args = source2[0].args; break;
 					}
-					other = sc[source2[0].name].apply(sc, src2_args);
+					other = uc[source2[0].name].apply(uc, src2_args);
 					if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
 					transform_args = [].concat(other, dualTransform.args);
 					da = da[dualTransform.name].apply(da, transform_args);
@@ -325,7 +325,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 					default:
 						src_args = source[0].args; break;
 					}
-					da = sc[source[0].name].apply(sc, src_args);
+					da = uc[source[0].name].apply(uc, src_args);
 					if (source.length > 1) da = da[source[1].name].apply(da, source[1].args);
 					switch (source2[0].name) {
 					case 'lineStream':
@@ -337,7 +337,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 					default:
 						src2_args = source2[0].args; break;
 					}
-					other = sc[source2[0].name].apply(sc, src2_args);
+					other = uc[source2[0].name].apply(uc, src2_args);
 					if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
 					da = da.persist();
 					other = other.persist();
@@ -373,7 +373,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				// 	default:
 				// 		src_args = source[0].args; break;
 				// 	}
-				// 	da = sc[source[0].name].apply(sc, src_args);
+				// 	da = uc[source[0].name].apply(uc, src_args);
 				// 	if (source.length > 1) da = da[source[1].name].apply(da, source[1].args);
 				// 	switch (source2[0].name) {
 				// 	case 'lineStream':
@@ -385,7 +385,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				// 	default:
 				// 		src2_args = source2[0].args; break;
 				// 	}
-				// 	other = sc[source2[0].name].apply(sc, src2_args);
+				// 	other = uc[source2[0].name].apply(uc, src2_args);
 				// 	if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
 				// 	transform_args = [].concat(other, dualTransform.args);
 				// 	da = da[dualTransform.name].apply(da, transform_args);

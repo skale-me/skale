@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var assert = require('assert');
-var sc = new require('skale').Context();
+var uc = new require('ugrid').Context();
 
 function sum(a, b) {return a + b;}
 

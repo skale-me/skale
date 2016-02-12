@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+var uc = require('ugrid').context();
 
-sc.range(6).map(a => a*a).reduce((a,b) => a+b, 0).then(function (res) {
+uc.range(6).map(a => a*a).reduce((a,b) => a+b, 0).then(function (res) {
 	console.log(res);
 	console.assert(res == 55);
-	sc.end();
+	uc.end();
 });

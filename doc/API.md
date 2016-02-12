@@ -1,4 +1,4 @@
-# Skale Reference
+# Ugrid Reference
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -6,13 +6,13 @@
 
 - [Overview](#overview)
 - [Working with datasets](#working-with-datasets)
-- [Skale module](#skale-module)
-    - [skale.context([config])](#skalecontextconfig)
-        - [sc.end()](#scend)
-        - [sc.parallelize(array)](#scparallelizearray)
-        - [sc.textFile(path)](#sctextfilepath)
-        - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
-        - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
+- [Ugrid module](#ugrid-module)
+    - [ugrid.context([config])](#ugridcontextconfig)
+        - [uc.end()](#scend)
+        - [uc.parallelize(array)](#scparallelizearray)
+        - [uc.textFile(path)](#sctextfilepath)
+        - [uc.lineStream(input_stream)](#sclinestreaminput_stream)
+        - [uc.objectStream(input_stream)](#scobjectstreaminput_stream)
     - [Dataset methods](#datasets-methods)
         - [ds.aggregate(reducer, combiner, init[,obj][,done])](#dsaggregatereducer-combiner-initobjdone)
         - [ds.cartesian(other)](#dscartesianother)
@@ -47,15 +47,15 @@
 
 ## Overview
 
-Skale is a fast and general purpose distributed data processing
+Ugrid is a fast and general purpose distributed data processing
 system. It provides a high-level API in Javascript and an optimized
 parallel execution engine.
 
-A Skale application consists of a *master* program that runs the
+A Ugrid application consists of a *master* program that runs the
 user code and executes various *parallel operations* on a cluster
 of *workers*.
 
-The main abstraction Skale provides is a *dataset* which is similar
+The main abstraction Ugrid provides is a *dataset* which is similar
 to a Javascript *array*, but partitioned accross the workers that
 can be operated in parallel.
 
@@ -75,15 +75,15 @@ each element of a dataset, returning a new dataset. On the other
 hand, `reduce` is an action that aggregates all elements of a dataset
 using some function, and returns the final result to the master.
 
-*Sources* and *transformations* in Skale are *lazy*. They do not
+*Sources* and *transformations* in Ugrid are *lazy*. They do not
 start right away, but are triggered by *actions*, thus allowing
 efficient pipelined execution and optimized data transfers.
 
 A first example:
 
 ```javascript
-var sc = require('skale').context();		// create a new context
-sc.parallelize([1, 2, 3, 4]).				// source
+var uc = require('ugrid').context();		// create a new context
+uc.parallelize([1, 2, 3, 4]).				// source
    map(function (x) {return x+1}).			// transform
    reduce(function (a, b) {return a+b}, 0).	// action
    then(console.log);						// process result: 14
@@ -93,15 +93,15 @@ sc.parallelize([1, 2, 3, 4]).				// source
 <a name=working-with-datasets></a>
 
 After having initialized a cluster context using
-[skale.context()](#skale-context), one can create a dataset
+[ugrid.context()](#ugrid-context), one can create a dataset
 using the following sources:
 
 | Source Name                                  | Description                          |
 | -------------------                          | ----------------------------------   |
-|[lineStream(stream)](#sc-linestream-stream)    | Create a dataset from a text stream |
-|[objectStream(stream)](#sc-objectstream-stream)| Create a dataset from an object stream |
-|[parallelize(array)](#sc-parallelize-array)    | Create a dataset from an array      |
-|[textFile(path)](#sc-textfile-path)            | Create a dataset from a regular text file|
+|[lineStream(stream)](#uc-linestream-stream)    | Create a dataset from a text stream |
+|[objectStream(stream)](#uc-objectstream-stream)| Create a dataset from an object stream |
+|[parallelize(array)](#uc-parallelize-array)    | Create a dataset from an array      |
+|[textFile(path)](#uc-textfile-path)            | Create a dataset from a regular text file|
 
 Transformations operate on a dataset and return a new dataset. Note that some
 transformation operate only on datasets where each element is in the form
@@ -151,15 +151,15 @@ stream].
 |[lookup(k)](#dslookup)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
 |[reduce(func, init)](#dsreduce) | Aggregates dataset elements using a function, return a single value | value|
 
-## Skale module
+## Ugrid module
 
-The Skale module is the main entry point for Skale functionality.
-To use it, one must `require('skale')`.
+The Ugrid module is the main entry point for Ugrid functionality.
+To use it, one must `require('ugrid')`.
 
-### skale.context([config])
+### ugrid.context([config])
 
 Creates and returns a new context which represents the connection
-to the Skale cluster, and which can be used to create datasets on that
+to the Ugrid cluster, and which can be used to create datasets on that
 cluster. Config is an *Object* which defines the cluster server,
 with the following defaults:
 
@@ -173,25 +173,25 @@ with the following defaults:
 Example:
 
 ```javascript
-var skale = require('skale');
-var sc = skale.context();
+var ugrid = require('ugrid');
+var uc = ugrid.context();
 ```
 
-#### sc.end()
+#### uc.end()
 
 Closes the connection to the cluster.
 
-#### sc.parallelize(array)
+#### uc.parallelize(array)
 
 Returns a new dataset containing elements from the *Array* array.
 
 Example:
 
 ```javascript
-var a = sc.parallelize(['Hello', 'World']);
+var a = uc.parallelize(['Hello', 'World']);
 ```
 
-#### sc.textFile(path)
+#### uc.textFile(path)
 
 Returns a dataset of lines composing the file specified by path *String*.
 
@@ -202,11 +202,11 @@ file to all workers or use a network-mounted shared file system.
 Example, the following program prints the length of a text file:
 
 ```javascript
-var lines = sc.textFile('data.txt');
+var lines = uc.textFile('data.txt');
 lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log);
 ```
 
-#### sc.lineStream(input_stream)
+#### uc.lineStream(input_stream)
 
 Returns a dataset of lines of text read from input_stream *Object*, which
 is a [readable stream] where dataset content is read from.
@@ -215,13 +215,13 @@ The following example computes the size of a file using streams:
 
 ```javascript
 var stream = fs.createReadStream('data.txt', 'utf8');
-sc.lineStream(stream).
+uc.lineStream(stream).
    map(s => s.length).
    reduce((a, b) => a + b, 0).
    then(console.log);
 ```
 
-#### sc.objectStream(input_stream)
+#### uc.objectStream(input_stream)
 
 Returns a dataset of Javascript *Objects* read from input_stream *Object*,
 which is a [readable stream] where dataset content is read from.
@@ -231,12 +231,12 @@ object stream using the mongodb native Javascript driver:
 
 ```javascript
 var cursor = db.collection('clients').find();
-sc.objectStream(cursor).count().then(console.log);
+uc.objectStream(cursor).count().then(console.log);
 ```
 
 ### Dataset methods
 
-Dataset objects, as created initially by above skale context source
+Dataset objects, as created initially by above ugrid context source
 functions, have the following methods, allowing either to instantiate
 a new dataset through a transformation, or to return results to the
 master program.
@@ -278,7 +278,7 @@ an [ES6 promise] is returned.
 The following example computes the average of a dataset, avoiding a `map()`:
 
 ```javascript
-sc.parallelize([3, 5, 2, 7, 4, 8]).
+uc.parallelize([3, 5, 2, 7, 4, 8]).
    aggregate((a, v) => [a[0] + v, a[1] + 1],
 		(a1, a2) => [a1[0] + a2[0], a1[1] + a2[1]],
 		[0, 0],
@@ -296,8 +296,8 @@ is in the source dataset and `b` is in the *other* dataset.
 Example:
 
 ```javascript
-var ds1 = sc.parallelize([1, 2]);
-var ds2 = sc.parallelize(['a', 'b', 'c']);
+var ds1 = uc.parallelize([1, 2]);
+var ds2 = uc.parallelize(['a', 'b', 'c']);
 ds1.cartesian(ds2).collect().toArray().then(console.log);
 // [ [ 1, 'a' ], [ 1, 'b' ], [ 1, 'c' ],
 //   [ 2, 'a' ], [ 2, 'b' ], [ 2, 'c' ] ]
@@ -311,8 +311,8 @@ When called on dataset of type `[k,v]` and `[k,w]`, returns a dataset of type
 Example:
 
 ```javascript
-var ds1 = sc.parallelize([[10, 1], [20, 2]]);
-var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
+var ds1 = uc.parallelize([[10, 1], [20, 2]]);
+var ds2 = uc.parallelize([[10, 'world'], [30, 3]]);
 ds1.coGroup(ds2).collect().on('data', console.log);
 // [ 10, [ [ 1 ], [ 'world' ] ] ]
 // [ 20, [ [ 2 ], [] ] ]
@@ -330,7 +330,7 @@ pipe to standard output or any text stream.
 Example:
 
 ```javascript
-sc.parallelize([1, 2, 3, 4]).
+uc.parallelize([1, 2, 3, 4]).
    collect({text: true}).pipe(process.stdout);
 // 1
 // 2
@@ -349,7 +349,7 @@ promise] is returned.
 Example:
 
 ```javascript
-sc.parallelize([10, 20, 30, 40]).count().then(console.log);
+uc.parallelize([10, 20, 30, 40]).count().then(console.log);
 // 4
 ```
 
@@ -362,7 +362,7 @@ of elements of type `[k,w]` where `w` is the result count.
 Example:
 
 ```javascript
-sc.parallelize([[10, 1], [20, 2], [10, 4]]).
+uc.parallelize([[10, 1], [20, 2], [10, 4]]).
    countByKey().on('data', console.log);
 // [ 10, 2 ]
 // [ 20, 1 ]
@@ -377,7 +377,7 @@ element and `n` its number of occurrences.
 Example:
 
 ```javascript
-sc.parallelize([ 1, 2, 3, 1, 3, 2, 5 ]).
+uc.parallelize([ 1, 2, 3, 1, 3, 2, 5 ]).
    countByValue().
    toArray().then(console.log);
 // [ [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 5, 1 ] ]
@@ -390,7 +390,7 @@ Returns a dataset where duplicates are removed.
 Example:
 
 ```javascript
-sc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
+uc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
    distinct().
    collect().toArray().then(console.log);
 // [ 1, 2, 3, 4, 5 ]
@@ -417,7 +417,7 @@ Example:
 ```javascript
 function filter(data, obj) { return data % obj.modulo; }
 
-sc.parallelize([1, 2, 3, 4]).
+uc.parallelize([1, 2, 3, 4]).
    filter(filter, {modulo: 2}).
    collect().on('data', console.log);
 // 1 3
@@ -447,7 +447,7 @@ function flatMapper(data, obj) {
 	return tmp;
 }
 
-sc.parallelize([1, 2, 3, 4]).
+uc.parallelize([1, 2, 3, 4]).
    flatMap(flatMapper, {N: 2}).
    collect().on('data', console.log);
 // [ 'hello', 2 ]
@@ -483,7 +483,7 @@ function valueFlatMapper(data, obj) {
 	return tmp;
 }
 
-sc.parallelize([['hello', 1], ['world', 2]]).
+uc.parallelize([['hello', 1], ['world', 2]]).
    flatMapValues(valueFlatMapper, {N: 2, fact: 2}).
    collect().on('data', console.log);
 ```
@@ -512,7 +512,7 @@ In the following example, the `console.log()` callback provided
 to `foreach()` is executed on workers and may be not visible:
 
 ```javascript
-sc.parallelize([1, 2, 3, 4]).
+uc.parallelize([1, 2, 3, 4]).
    foreach(console.log).then(console.log('finished'));
 ```
 
@@ -524,7 +524,7 @@ where values with the same key are grouped.
 Example:
 
 ```javascript
-sc.parallelize([[10, 1], [20, 2], [10, 4]]).
+uc.parallelize([[10, 1], [20, 2], [10, 4]]).
    groupByKey().collect().on('data', console.log);
 // [ 10, [ 1, 4 ] ]
 // [ 20, [ 2 ] ]
@@ -538,8 +538,8 @@ dataset.
 Example:
 
 ```javascript
-var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
-var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
+var ds1 = uc.parallelize([1, 2, 3, 4, 5]);
+var ds2 = uc.parallelize([3, 4, 5, 6, 7]);
 ds1.intersection(ds2).collect().toArray().then(console.log);
 // [ 3, 4, 5 ]
 ```
@@ -553,8 +553,8 @@ of elements for each key.
 Example:
 
 ```javascript
-var ds1 = sc.parallelize([[10, 1], [20, 2]]);
-var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
+var ds1 = uc.parallelize([[10, 1], [20, 2]]);
+var ds2 = uc.parallelize([[10, 'world'], [30, 3]]);
 ds1.join(ds2).collect().on('data', console.log);
 // [ 10, [ 1, 'world' ] ]
 ```
@@ -567,7 +567,7 @@ the elements `k`.
 Example:
 
 ```javascript
-sc.parallelize([[10, 'world'], [30, 3]]).
+uc.parallelize([[10, 'world'], [30, 3]]).
    keys.collect().on('data', console.log);
 // 10
 // 30
@@ -582,8 +582,8 @@ must be present in the *other* dataset.
 Example:
 
 ```javascript
-var ds1 = sc.parallelize([[10, 1], [20, 2]]);
-var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
+var ds1 = uc.parallelize([[10, 1], [20, 2]]);
+var ds2 = uc.parallelize([[10, 'world'], [30, 3]]);
 ds1.leftOuterJoin(ds2).collect().on('data', console.log);
 // [ 10, [ 1, 'world' ] ]
 // [ 20, [ 2, null ] ]
@@ -597,7 +597,7 @@ of values `v` for key `k`.
 Example:
 
 ```javascript
-sc.parallelize([[10, 'world'], [20, 2], [10, 1], [30, 3]]).
+uc.parallelize([[10, 'world'], [20, 2], [10, 1], [30, 3]]).
    lookup(10).on('data', console.log);
 // world
 // 1
@@ -621,7 +621,7 @@ dataset and returns a new dataset.
 The following example program
 
 ```javascript
-sc.parallelize([1, 2, 3, 4]).
+uc.parallelize([1, 2, 3, 4]).
    map((data, obj) => data * obj.scaling, {scaling: 1.2}).
    collect().toArray().then(console.log);
 // [ 1.2, 2.4, 3.6, 4.8 ]
@@ -648,7 +648,7 @@ source element.
 Example:
 
 ```javascript
-sc.parallelize([['hello', 1], ['world', 2]]).
+uc.parallelize([['hello', 1], ['world', 2]]).
    mapValues((a, obj) => a*obj.fact, {fact: 2}).
    collect().on('data', console.log);
 // ['hello', 2]
@@ -683,7 +683,7 @@ if provided, otherwise an [ES6 promise] is returned.
 Example:
 
 ```javascript
-sc.parallelize([1, 2, 4, 8]).
+uc.parallelize([1, 2, 4, 8]).
    reduce((a, b) => a + b, 0).
    then(console.log);
 // 15
@@ -713,7 +713,7 @@ function and the *init* initial value.
 Example:
 
 ```javascript
-sc.parallelize([[10, 1], [10, 2], [10, 4]]).
+uc.parallelize([[10, 1], [10, 2], [10, 4]]).
    reduceByKey((a,b) => a+b, 0).
    collect().on('data', console.log);
 // [10, 7]
@@ -728,8 +728,8 @@ must be present in the *source* dataset.
 Example:
 
 ```javascript
-var ds1 = sc.parallelize([[10, 1], [20, 2]]);
-var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
+var ds1 = uc.parallelize([[10, 1], [20, 2]]);
+var ds2 = uc.parallelize([[10, 'world'], [30, 3]]);
 ds1.rightOuterJoin(ds2).collect().on('data', console.log);
 // [ 10, [ 1, 'world' ] ]
 // [ 30, [ null, 2 ] ]
@@ -748,7 +748,7 @@ without replacement, using a given random generator *seed*.
 Example:
 
 ```javascript
-sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
+uc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
    sample(true, 0.5, 0).
    collect().toArray().then(console.log);
 // [ 1, 1, 3, 4, 4, 5, 7 ]
@@ -762,8 +762,8 @@ in *other* dataset.
 Example:
 
 ```javascript
-var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
-var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
+var ds1 = uc.parallelize([1, 2, 3, 4, 5]);
+var ds2 = uc.parallelize([3, 4, 5, 6, 7]);
 ds1.subtract(ds2).collect().on('data', console.log);
 // 1 2
 ```
@@ -776,8 +776,8 @@ dataset and the *other* dataset.
 Example:
 
 ```javascript
-var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
-var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
+var ds1 = uc.parallelize([1, 2, 3, 4, 5]);
+var ds2 = uc.parallelize([3, 4, 5, 6, 7]);
 ds1.union(ds2).collect().toArray().then(console.log);
 // [ 1, 2, 3, 4, 5, 3, 4, 5, 6, 7 ]
 ```
@@ -790,7 +790,7 @@ the elements `v`.
 Example:
 
 ```javascript
-sc.parallelize([[10, 'world'], [30, 3]]).
+uc.parallelize([[10, 'world'], [30, 3]]).
    keys.collect().on('data', console.log);
 // 'world'
 // 3

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+var uc = require('ugrid').context();
 
-sc.range(10).map(a => a * 2).collect().toArray().then(console.log);
+uc.range(10).map(a => a * 2).collect().toArray().then(console.log);
 
-sc.range(10, -5, -3).collect().toArray().then(console.log);
+uc.range(10, -5, -3).collect().toArray().then(console.log);
 
-sc.range(-4, 3).collect().toArray(function(err, res) {
+uc.range(-4, 3).collect().toArray(function(err, res) {
 	console.log(res);
-	sc.end();
+	uc.end();
 })

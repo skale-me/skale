@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var skale = require('skale');
+var ugrid = require('ugrid');
 var sizeOf = require('../../lib/sizeof.js');
 var ml = require('../../lib/ml.js');
 
@@ -35,13 +35,13 @@ console.log('Iterations: ' + nIterations);
 console.log('Partitions: ' + (P || 'number of workers'));
 console.log('Approximate dataset size: ' + Math.ceil(approx_data_size / (1024 * 1024)) + ' Mb\n');
 
-var sc = skale.context();
-var points = file ? sc.textFile(file).map(function (e) {
+var uc = ugrid.context();
+var points = file ? uc.textFile(file).map(function (e) {
 	var tmp = e.split(' ').map(parseFloat);
 	return [tmp.shift(), tmp];
-}).persist() : ml.randomSVMData(sc, N, D, seed, P).persist();
+}).persist() : ml.randomSVMData(uc, N, D, seed, P).persist();
 
-sc.on('connect', function() {console.log('Number of workers: %j', sc.worker.length)});
+uc.on('connect', function() {console.log('Number of workers: %j', uc.worker.length)});
 
 // init means, K gaussian vectors of length D
 var prng = new ml.Random();
@@ -52,9 +52,9 @@ for (var k = 0; k < K; k++) {
 		//w[k].push(2 * Math.random() - 1);
 		w[k].push(2 * prng.nextDouble() - 1);
 }
-var model = new ml.KMeans(sc, points, K, w);
+var model = new ml.KMeans(uc, points, K, w);
 
 model.train(nIterations, function (err) {
 	//console.log(model.means);
-	sc.end();
+	uc.end();
 });

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 var assert = require('assert');
-var sc = require('skale').context();
+var uc = require('ugrid').context();
 
-sc.parallelize([[1,2],[2,4],[4,6]]).
+uc.parallelize([[1,2],[2,4],[4,6]]).
   values().
   collect().
   toArray(function(err, res) {
@@ -11,5 +11,5 @@ sc.parallelize([[1,2],[2,4],[4,6]]).
 	assert(JSON.stringify(res) === JSON.stringify([2,4,6]));	  
 	console.log('Success !') //expected = [2,4,6]
 	console.log(res);
-	sc.end();
+	uc.end();
 })

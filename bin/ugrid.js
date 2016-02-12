@@ -15,7 +15,7 @@ var os = require('os');
 var stream = require('stream');
 var trace = require('line-trace');
 var uuidGen = require('node-uuid');
-var SkaleClient = require('../lib/client.js');
+var UgridClient = require('../lib/client.js');
 var webSocketServer = require('ws').Server;
 var websocket = require('websocket-stream');
 
@@ -38,8 +38,8 @@ var opt = require('node-getopt').create([
 
 var clients = {};
 var clientNum = 1;
-var clientMax = SkaleClient.minMulticast;
-var minMulticast = SkaleClient.minMulticast;
+var clientMax = UgridClient.minMulticast;
+var minMulticast = UgridClient.minMulticast;
 var topics = {};
 var topicNum = -1;
 var UInt32Max = 4294967296;
@@ -51,9 +51,9 @@ var wss;
 var wsport = opt.options.wsport || port + 2;
 var crossbar = {};
 var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
-var access = process.env.SKALE_ACCESS;
+var access = process.env.UGRID_ACCESS;
 
-process.title = 'skaleServer';
+process.title = 'ugridServer';
 
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
@@ -93,10 +93,10 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 		if (!(o.cmd in clientRequest)) {
 			o.error = 'Invalid command: ' + o.cmd;
 			o.cmd = 'reply';
-			this.sock.write(SkaleClient.encode(o), done);
+			this.sock.write(UgridClient.encode(o), done);
 		} else if (clientRequest[o.cmd](this.sock, o)) {
 			o.cmd = 'reply';
-			this.sock.write(SkaleClient.encode(o), done);
+			this.sock.write(UgridClient.encode(o), done);
 		} else done();
 	}
 };
@@ -107,14 +107,14 @@ var clientRequest = {
 	connect: function (sock, msg) {
 		var i, ret = true, master;
 		if (access && msg.access != access) {
-			console.log('## Skale connect failed: access denied');
-			msg.error = 'access denied, check SKALE_ACCESS';
+			console.log('## Ugrid connect failed: access denied');
+			msg.error = 'access denied, check UGRID_ACCESS';
 			return true;
 		}
 		register(null, msg, sock);
 		if (msg.data.query) msg.data.devices = devices(msg);
 		if (msg.data.notify in clients && clients[msg.data.notify].sock) {
-			clients[msg.data.notify].sock.write(SkaleClient.encode({cmd: 'notify', data: msg.data}));
+			clients[msg.data.notify].sock.write(UgridClient.encode({cmd: 'notify', data: msg.data}));
 			clients[msg.data.notify].closeListeners[msg.data.uuid] = true;
 		}
 		switch (msg.data.type) {
@@ -131,7 +131,7 @@ var clientRequest = {
 					master.data.devices = workerStock;
 					master.cmd = 'reply';
 					if (clients[master.data.uuid].sock)
-						clients[master.data.uuid].sock.write(SkaleClient.encode(master));
+						clients[master.data.uuid].sock.write(UgridClient.encode(master));
 					postMaster(master.data.uuid);
 				}
 			}
@@ -161,7 +161,7 @@ var clientRequest = {
 			wsid++;
 			workerStock = [];
 			for (i = 0; i < workerControllers.length; i++) {
-				clients[workerControllers[i].uuid].sock.write(SkaleClient.encode({
+				clients[workerControllers[i].uuid].sock.write(UgridClient.encode({
 					cmd: 'getWorker',
 					wsid: wsid,
 					n: workerControllers[i].ncpu
@@ -222,7 +222,7 @@ var clientRequest = {
 var mstream = new SwitchBoard({});
 var monid =  getTopicId('monitoring') + minMulticast;
 function pubmon(data) {
-	mstream.write(SkaleClient.encode({cmd: 'monitoring', id: monid, data: data}));
+	mstream.write(UgridClient.encode({cmd: 'monitoring', id: monid, data: data}));
 }
 
 process.on('uncaughtException', function uncaughtException(err) {
@@ -313,7 +313,7 @@ function handleClose(sock) {
 		}
 		for (i in cli.closeListeners) {
 			if (i in clients && clients[i].sock)
-				clients[i].sock.write(SkaleClient.encode({cmd: 'remoteClose', data: cli.uuid}));
+				clients[i].sock.write(UgridClient.encode({cmd: 'remoteClose', data: cli.uuid}));
 		}
 		for (i in cli.topics) {		// remove owned topics
 			delete topicIndex[topics[i].name];
@@ -341,7 +341,7 @@ function handleConnect(sock) {
 		console.log('## connection error');
 		console.log(error.stack);
 	});
-	sock.pipe(new SkaleClient.FromGrid()).pipe(new SwitchBoard(sock));
+	sock.pipe(new UgridClient.FromGrid()).pipe(new SwitchBoard(sock));
 }
 
 function getClientNumber() {

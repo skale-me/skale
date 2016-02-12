@@ -8,7 +8,7 @@ var os = require('os');
 var cluster = require('cluster');
 var uuid = require('node-uuid');
 
-var SkaleClient = require('../lib/client.js');
+var UgridClient = require('../lib/client.js');
 var ml = require('../lib/ml.js');
 var mkdir = require('../lib/mkdir.js');
 var trace = require('line-trace');
@@ -29,16 +29,16 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var debug = opt.options.debug || false;
-var ncpu = opt.options.Num || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
+var ncpu = opt.options.Num || (process.env.UGRID_WORKER_PER_HOST ? process.env.UGRID_WORKER_PER_HOST : os.cpus().length);
 var hostname = opt.options.MyHost || os.hostname();
 var cgrid;
 
 ncpu = Number(ncpu);
 
 if (cluster.isMaster) {
-	process.title = 'skaleWorkerController';
+	process.title = 'ugridWorkerController';
 	cluster.on('exit', handleExit);
-	cgrid = new SkaleClient({
+	cgrid = new UgridClient({
 		debug: debug,
 		host: opt.options.Host,
 		port: opt.options.Port,
@@ -67,8 +67,8 @@ function startWorkers(msg) {
 			case 'rm':
 				if (msg.dir && !removed[msg.dir]) {
 					removed[msg.dir] = true;
-					trace('remove /tmp/skale/' + msg.dir);
-					child_process.execFile('/bin/rm', ['-rf', '/tmp/skale/' + msg.dir]);
+					trace('remove /tmp/ugrid/' + msg.dir);
+					child_process.execFile('/bin/rm', ['-rf', '/tmp/ugrid/' + msg.dir]);
 				}
 				break;
 			default:
@@ -85,13 +85,13 @@ function handleExit(worker, code, signal) {
 function runWorker(host, port) {
 	var jobs = {}, contextId;
 
-	process.title = 'skaleWorker_' + process.env.wsid + '_' + process.env.rank;
+	process.title = 'ugridWorker_' + process.env.wsid + '_' + process.env.rank;
 	process.on('uncaughtException', function (err) {
 		grid.send(grid.muuid, {cmd: 'workerError', args: err.stack});
 		process.exit(2);
 	});
 
-	var grid = new SkaleClient({
+	var grid = new UgridClient({
 		debug: debug,
 		host: host,
 		port: port,
