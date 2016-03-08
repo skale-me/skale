@@ -286,7 +286,7 @@ function handleClose(sock) {
 		cli.sock = null;
 		switch (cli.data.type) {
 		case 'worker-controller':
-			// resize stock capacity
+			// Resize stock capacity
 			expectedWorkers -= cli.data.ncpu;
 			for (i = 0; i < workerControllers.length; i++) {
 				if (cli.uuid == workerControllers[i].uuid) {
@@ -295,14 +295,14 @@ function handleClose(sock) {
 			}
 			break;
 		case 'worker':
-			// remove worker from stock
+			// Remove worker from stock
 			for (i = 0; i < workerStock.length; i++) {
 				if (cli.uuid == workerStock[i].uuid)
 					workerStock.splice(i, 1);
 			}
 			break;
 		case 'master':
-			// remove master from pending masters, avoiding future useless workers start
+			// Remove master from pending masters, avoiding future useless workers start
 			for (i in pendingMasters) {
 				if (pendingMasters[i].data.uuid == cli.uuid) {
 					pendingMasters.splice(i, 1);
@@ -315,7 +315,7 @@ function handleClose(sock) {
 			if (i in clients && clients[i].sock)
 				clients[i].sock.write(UgridClient.encode({cmd: 'remoteClose', data: cli.uuid}));
 		}
-		for (i in cli.topics) {		// remove owned topics
+		for (i in cli.topics) {		// Remove owned topics
 			delete topicIndex[topics[i].name];
 			delete topics[i];
 		}
