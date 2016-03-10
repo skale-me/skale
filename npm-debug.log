@@ -1,0 +1,100 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/Cellar/node/5.7.1/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'publish',
+1 verbose cli   '.' ]
+2 info using npm@3.6.0
+3 info using node@v5.7.1
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/marc/github/skale-cli',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/marc/.npm/skale/1.0.0/package.tgz not in flight; packing
+9 verbose correctMkdir /Users/marc/.npm correctMkdir not in flight; initializing
+10 info lifecycle skale@1.0.0~prepublish: skale@1.0.0
+11 silly lifecycle skale@1.0.0~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/Users/marc/.npm/skale/1.0.0/package.tgz',
+12 verbose tar pack   '/Users/marc/github/skale-cli' ]
+13 verbose tarball /Users/marc/.npm/skale/1.0.0/package.tgz
+14 verbose folder /Users/marc/github/skale-cli
+15 verbose addLocalTarball adding from inside cache /Users/marc/.npm/skale/1.0.0/package.tgz
+16 verbose correctMkdir /Users/marc/.npm correctMkdir not in flight; initializing
+17 silly cache afterAdd skale@1.0.0
+18 verbose afterAdd /Users/marc/.npm/skale/1.0.0/package/package.json not in flight; writing
+19 verbose correctMkdir /Users/marc/.npm correctMkdir not in flight; initializing
+20 verbose afterAdd /Users/marc/.npm/skale/1.0.0/package/package.json written
+21 silly publish { name: 'skale',
+21 silly publish   version: '1.0.0',
+21 silly publish   description: 'skale client command',
+21 silly publish   bin: { skale: './skale.js' },
+21 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+21 silly publish   keywords: [ 'skale', 'cluster', 'big-data' ],
+21 silly publish   author: { name: 'skale team' },
+21 silly publish   license: 'Apache-2.0',
+21 silly publish   repository:
+21 silly publish    { type: 'git',
+21 silly publish      url: 'git+https://github.com/skale-me/skale-cli.git' },
+21 silly publish   dependencies: { minimist: '^1.2.0' },
+21 silly publish   readme: '# skale-cli\nCommand line interface tool for skale.\n\n## Install\n```\n$ npm install -g skale\n```\n\n## Usage\n```\nUsage: skale [options] <command> [<args>]\n\nCommands:\n  run <file> [<args>...]\tRun file on skale cluster\n\nOptions:\n  -H, --host=<hostname> Set skale hostname\n  -p, --port=<portnum>  Set skale port number\n  -k, --key=<acess_key> Set skale access key\n  -s, --ssl             Use SSL protocol\n  -h, --help            Show help\n  -V, --version         Show version\n```\n\n## License\n\nCopyright 2016 Luca-SAS\n\nLicensed under the Apache License, Version 2.0 (the "License");\nyou may not use this program except in compliance with the License.\nYou may obtain a copy of the License at\n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an "AS IS" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.\n',
+21 silly publish   readmeFilename: 'README.md',
+21 silly publish   gitHead: '1c195e132d4ba051228e3a0c2ff36c81e4ec2f16',
+21 silly publish   bugs: { url: 'https://github.com/skale-me/skale-cli/issues' },
+21 silly publish   homepage: 'https://github.com/skale-me/skale-cli#readme',
+21 silly publish   _id: 'skale@1.0.0',
+21 silly publish   _shasum: '62eec88ae73e79c5e9b7ab01642d090973aae19f',
+21 silly publish   _from: '.' }
+22 verbose getPublishConfig undefined
+23 silly mapToRegistry name skale
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry uri https://registry.npmjs.org/skale
+27 verbose publish registryBase https://registry.npmjs.org/
+28 silly publish uploading /Users/marc/.npm/skale/1.0.0/package.tgz
+29 verbose request uri https://registry.npmjs.org/skale
+30 verbose request sending authorization for write operation
+31 info attempt registry request try #1 at 11:46:28 AM
+32 verbose request id bb248377eddefb2e
+33 http request PUT https://registry.npmjs.org/skale
+34 http 403 https://registry.npmjs.org/skale
+35 verbose headers { 'content-type': 'application/json',
+35 verbose headers   'cache-control': 'max-age=300',
+35 verbose headers   'content-length': '95',
+35 verbose headers   'accept-ranges': 'bytes',
+35 verbose headers   date: 'Thu, 10 Mar 2016 10:46:29 GMT',
+35 verbose headers   via: '1.1 varnish',
+35 verbose headers   connection: 'keep-alive',
+35 verbose headers   'x-served-by': 'cache-lhr6324-LHR',
+35 verbose headers   'x-cache': 'MISS',
+35 verbose headers   'x-cache-hits': '0',
+35 verbose headers   'x-timer': 'S1457606788.361660,VS0,VE1180' }
+36 verbose request invalidating /Users/marc/.npm/registry.npmjs.org/skale on PUT
+37 error publish Failed PUT 403
+38 verbose stack Error: "You cannot publish over the previously published version 1.0.0." : skale
+38 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+38 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+38 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+38 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:198:22)
+38 verbose stack     at emitTwo (events.js:100:13)
+38 verbose stack     at Request.emit (events.js:185:7)
+38 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1035:10)
+38 verbose stack     at emitOne (events.js:95:20)
+38 verbose stack     at Request.emit (events.js:182:7)
+38 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:962:12)
+39 verbose statusCode 403
+40 verbose pkgid skale
+41 verbose cwd /Users/marc/github/skale-cli
+42 error Darwin 15.3.0
+43 error argv "/usr/local/Cellar/node/5.7.1/bin/node" "/usr/local/bin/npm" "publish" "."
+44 error node v5.7.1
+45 error npm  v3.6.0
+46 error code E403
+47 error "You cannot publish over the previously published version 1.0.0." : skale
+48 error If you need help, you may report this error at:
+48 error     <https://github.com/npm/npm/issues>
+49 verbose exit [ 1, true ]
