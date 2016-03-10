@@ -5,28 +5,23 @@
 const help=`Usage: skale [options] <command> [<args>]
 
 Commands:
+  init				Set configuration
   run <file> [<args>...]	Run file on skale cluster
 
 Options:
-  -H, --host=<hostname>	Set skale hostname
-  -p, --port=<portnum>	Set skale port number
-  -k, --key=<acess_key>	Set skale access key
+  -c, --config=<file>	Set configuration file	[~/.skalerc]
+  -H, --host=<hostname>	Set skale hostname	[SKALE_HOST] 
+  -p, --port=<portnum>	Set skale port number	[SKALE_PORT]
+  -k, --key=<acess_key>	Set skale access key	[SKALE_KEY]
   -s, --ssl		Use SSL protocol
   -h, --help		Show help
   -V, --version		Show version
 `;
 
 const fs = require('fs');
-const http = require('http');
-const https = require('https');
-
-var host = process.env.SKALE_HOST;
-var port = process.env.SKALE_PORT;
-var key = process.env.SKALE_KEY;
-var ssl = process.env.SKALE_SSL;
 
 const argv = require('minimist')(process.argv.slice(2), {
-	string: ['H', 'host', 'k', 'key'],
+	string: ['c', 'config', 'H', 'host', 'p', 'port', 'k', 'key'],
 	boolean: ['h', 'help', 'V', 'version', 's', 'ssl'],
 });
 
@@ -40,13 +35,12 @@ if (argv.V || argv.version) {
 	process.exit();
 }
 
-host = argv.H || argv.host || die('Error: missing host');
-port = argv.p || argv.port || port;
-key = argv.k || argv.key || key;
-ssl = argv.s || argv.ssl || ssl;
-var proto = ssl ? require('https') : require('http');
+const config = load(argv);
+const proto = config.ssl ? require('https') : require('http');
 
 switch (argv._[0]) {
+	case 'init':
+		break;
 	case 'run':
 		run(argv._[1], argv._.splice(2));
 		break;
@@ -67,12 +61,12 @@ function run(src, args) {
 		var postdata = JSON.stringify({src: data, args: args});
 
 		var options = {
-			hostname: host,
-			port: port,
+			hostname: config.host,
+			port: config.port,
 			path: '/run',
 			method: 'POST',
 			headers: {
-				'X-Auth': key,
+				'X-Auth': config.key,
 				'Content-Type': 'application/json',
 				'Content-Length': Buffer.byteLength(postdata)
 			}
@@ -86,4 +80,16 @@ function run(src, args) {
 		req.on('error', function (err) {throw err;});
 		req.end(postdata);
 	});
+}
+
+function load(argv) {
+	var conf = {}, save = false;
+	var path = argv.c || argv.config || process.env.SKALE_CONFIG || process.env.HOME + '/.skalerc';
+	try { conf = JSON_parse(fs.readFileSync(path)); } catch (error) { save = true; }
+	conf.host = argv.H || argv.host || process.env.SKALE_HOST || conf.host || die('Error: missing host');
+	conf.port = argv.p || argv.port || process.env.SKALE_PORT || conf.port || die('Error: missing port');
+	conf.key = argv.k || argv.key || conf.key;
+	conf.ssl = argv.s || argv.ssl || (conf.ssl ? true : false);
+	if (save) fs.writeFileSync(path, JSON.stringify(conf, null, 2));
+	return conf;
 }
