@@ -1,0 +1,20 @@
+{
+  "name": "skale",
+  "version": "1.0.0",
+  "description": "skale client command",
+  "bin": { "skale": "./skale.js" },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "skale",
+    "cluster",
+    "big-data"
+  ],
+  "author": "skale team",
+  "license": "Apache-2.0",
+  "repository": "skale-me/skale-cli",
+  "dependencies": {
+    "minimist": "^1.2.0"
+  }
+}
