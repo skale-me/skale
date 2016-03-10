@@ -3,7 +3,7 @@ Command line interface tool for skale.
 
 ## Install
 ```
-$ npm install line-trace
+$ npm install -g skale
 ```
 
 ## Usage
@@ -14,12 +14,12 @@ Commands:
   run <file> [<args>...]	Run file on skale cluster
 
 Options:
-  -H, --host=<hostname>	Set skale hostname
-  -p, --port=<portnum>	Set skale port number
-  -k, --key=<acess_key>	Set skale access key
-  -s, --ssl				Use SSL protocol
-  -h, --help			Show help
-  -V, --version			Show version
+  -H, --host=<hostname> Set skale hostname
+  -p, --port=<portnum>  Set skale port number
+  -k, --key=<acess_key> Set skale access key
+  -s, --ssl             Use SSL protocol
+  -h, --help            Show help
+  -V, --version         Show version
 ```
 
 ## License
