@@ -7,6 +7,7 @@ const help=`Usage: skale [options] <command> [<args>]
 Commands:
   init				Set configuration
   run <file> [<args>...]	Run file on skale cluster
+  demo <file> [<args>...]	Run demo file on skale cluster
 
 Options:
   -c, --config=<file>	Set configuration file	[~/.skalerc]
@@ -41,6 +42,9 @@ const proto = config.ssl ? require('https') : require('http');
 switch (argv._[0]) {
 	case 'init':
 		break;
+	case 'demo':
+		run(__dirname + '/' + argv._[1], argv._.splice(2));
+		break;
 	case 'run':
 		run(argv._[1], argv._.splice(2));
 		break;
@@ -52,6 +56,18 @@ function die(err) {
 	console.error(help);
 	console.error(err);
 	process.exit(1);
+}
+
+function load(argv) {
+	var conf = {}, save = false;
+	var path = argv.c || argv.config || process.env.SKALE_CONFIG || process.env.HOME + '/.skalerc';
+	try { conf = JSON.parse(fs.readFileSync(path)); } catch (error) { save = true; }
+	conf.host = argv.H || argv.host || process.env.SKALE_HOST || conf.host || die('Error: missing host');
+	conf.port = argv.p || argv.port || process.env.SKALE_PORT || conf.port || die('Error: missing port');
+	conf.key = argv.k || argv.key || conf.key;
+	conf.ssl = argv.s || argv.ssl || (conf.ssl ? true : false);
+	if (save || argv._[0] == 'init') fs.writeFileSync(path, JSON.stringify(conf, null, 2));
+	return conf;
 }
 
 function run(src, args) {
@@ -80,16 +96,4 @@ function run(src, args) {
 		req.on('error', function (err) {throw err;});
 		req.end(postdata);
 	});
-}
-
-function load(argv) {
-	var conf = {}, save = false;
-	var path = argv.c || argv.config || process.env.SKALE_CONFIG || process.env.HOME + '/.skalerc';
-	try { conf = JSON_parse(fs.readFileSync(path)); } catch (error) { save = true; }
-	conf.host = argv.H || argv.host || process.env.SKALE_HOST || conf.host || die('Error: missing host');
-	conf.port = argv.p || argv.port || process.env.SKALE_PORT || conf.port || die('Error: missing port');
-	conf.key = argv.k || argv.key || conf.key;
-	conf.ssl = argv.s || argv.ssl || (conf.ssl ? true : false);
-	if (save) fs.writeFileSync(path, JSON.stringify(conf, null, 2));
-	return conf;
 }
