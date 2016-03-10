@@ -43,7 +43,7 @@ switch (argv._[0]) {
 	case 'init':
 		break;
 	case 'demo':
-		run(__dirname + '/' + argv._[1], argv._.splice(2));
+		run(__dirname + '/demo/' + argv._[1], argv._.splice(2));
 		break;
 	case 'run':
 		run(argv._[1], argv._.splice(2));
