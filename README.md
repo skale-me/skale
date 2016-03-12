@@ -1,4 +1,7 @@
 # skale-cli
+[![Build
+Status](https://travis-ci.org/skale-me/skale-cli.svg?branch=master)](https://travis-ci.org/skale-me/skale-cli)
+
 Command line interface tool for skale.
 
 ## Install
