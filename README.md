@@ -1,4 +1,6 @@
 # skale-cli
+
+[![Join the chat at https://gitter.im/skale-me/skale-cli](https://badges.gitter.im/skale-me/skale-cli.svg)](https://gitter.im/skale-me/skale-cli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build
 Status](https://travis-ci.org/skale-me/skale-cli.svg?branch=master)](https://travis-ci.org/skale-me/skale-cli)
 
