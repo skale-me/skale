@@ -73,7 +73,7 @@ To run the test suite, first install the dependencies, then run `npm test`:
 
 ## People
 
-The original authors of skale-engine are Cedric Artigue and Marc Vertes.
+The original authors of skale-engine are [Cedric Artigue](https://github.com/CedricArtigue) and [Marc Vertes](https://github.com/mvertes).
 
 [List of all
 contributors](https://github.com/skale-me/skale-engine/graphs/contributors)
