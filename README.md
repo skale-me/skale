@@ -41,10 +41,8 @@ sc.textFile('/path/...')
 
 ## Quickstart
 
-*IN PROGRESS*
-
-The best and quickest way to get started with skale is to use
-[skale-cli](https://github.com/skale-me/skale-cli) to create, test
+The best and quickest way to get started with skale-engine is to use
+[skale](https://www.npmjs.com/package/skale) to create, test
 and deploy skale applications.
 
 ## Examples
