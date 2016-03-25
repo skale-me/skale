@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
+
 // Todo:
 // - record/replay input messages
 // - handle foreign messages

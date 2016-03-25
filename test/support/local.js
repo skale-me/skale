@@ -1,3 +1,5 @@
+// Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
+
 'use strict';
 
 var LocalArray = require('./local-array.js');

@@ -1,3 +1,5 @@
+// Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
+
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 var trace = require('line-trace');
