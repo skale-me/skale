@@ -46,14 +46,14 @@ var UInt32Max = 4294967296;
 var topicMax = UInt32Max - minMulticast;
 var topicIndex = {};
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
-var port = opt.options.port || 12346;
+var port = Number(opt.options.port) || 12346;
 var wss;
 var wsport = opt.options.wsport || port + 2;
 var crossbar = {};
 var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
 var access = process.env.SKALE_KEY;
 
-process.title = 'skale-server';
+process.title = 'skale-server ' + port;
 
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
