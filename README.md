@@ -5,7 +5,7 @@
 
 Create, run and deploy distributed NodeJS applications
 
-The skale command is the fatest and easiest way to create distributed
+The skale command is the quickest and easiest way to create distributed
 scalable applications based on
 [skale-engine](https://www.npmjs.com/package/skale-engine) and then
 to submit them either locally or on the cloud.
