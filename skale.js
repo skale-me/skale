@@ -39,7 +39,7 @@ if (argv.V || argv.version) {
 	process.exit();
 }
 
-//const config = load(argv);
+const config = load(argv);
 const proto = config.ssl ? require('https') : require('http');
 
 switch (argv._[0]) {
@@ -108,8 +108,8 @@ function load(argv) {
 	var conf = {}, save = false;
 	var path = argv.c || argv.config || process.env.SKALE_CONFIG || process.env.HOME + '/.skalerc';
 	try { conf = JSON.parse(fs.readFileSync(path)); } catch (error) { save = true; }
-	conf.host = argv.H || argv.host || process.env.SKALE_HOST || conf.host || die('Error: missing host');
-	conf.port = argv.p || argv.port || process.env.SKALE_PORT || conf.port || die('Error: missing port');
+	conf.host = argv.H || argv.host || process.env.SKALE_HOST || conf.host;
+	conf.port = argv.p || argv.port || process.env.SKALE_PORT || conf.port;
 	conf.key = argv.k || argv.key || conf.key;
 	conf.ssl = argv.s || argv.ssl || (conf.ssl ? true : false);
 	if (save || argv._[0] == 'init') fs.writeFileSync(path, JSON.stringify(conf, null, 2));
