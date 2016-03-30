@@ -39,15 +39,15 @@ if (argv.V || argv.version) {
 	process.exit();
 }
 
-const config = load(argv);
+//const config = load(argv);
 const proto = config.ssl ? require('https') : require('http');
 
 switch (argv._[0]) {
 	case 'create':
 		create(argv._[1]);
 		break;
-	case 'demo':
-		run_remote(__dirname + '/demo/' + argv._[1], argv._.splice(2));
+	case 'deploy':
+		console.log('this command is not yet implemented. Coming soon.');
 		break;
 	case 'run':
 		run_local(argv._.splice(1));
