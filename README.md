@@ -34,6 +34,7 @@ sc.textFile('/path/...')
 
 * [skale-engine API](doc/skale-API.md)
 * [Gitter](https://gitter.im/skale-me/skale-engine) for support and
+  discussion
 * [skale-devel](https://groups.google.com/forum/#!forum/skale-devel)
   mailing list for discussion about development
 * [skale-user](https://groups.google.com/forum/#!forum/skale-user)
