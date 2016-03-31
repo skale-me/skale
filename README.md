@@ -1,6 +1,6 @@
 # skale
 
-[![Join the chat at https://gitter.im/skale-me/skale-cli](https://badges.gitter.im/skale-me/skale-cli.svg)](https://gitter.im/skale-me/skale-cli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/skale-me/skale-engine](https://badges.gitter.im/skale-me/skale-engine.svg)](https://gitter.im/skale-me/skale-engine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/skale-me/skale-cli.svg?branch=master)](https://travis-ci.org/skale-me/skale-cli)
 
 Create, run and deploy distributed NodeJS applications
@@ -61,6 +61,15 @@ Options:
   -h, --help            Show help
   -V, --version         Show version
 ```
+
+## Community
+
+* [Gitter](https://gitter.im/skale-me/skale-engine) for support and
+  discussion
+* [skale-devel](https://groups.google.com/forum/#!forum/skale-devel)
+  mailing list for discussion about development
+* [skale-user](https://groups.google.com/forum/#!forum/skale-user)
+  mailing list for general discussion and quick support questions
 
 ## License
 

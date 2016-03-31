@@ -140,7 +140,7 @@ function try_connect(nb_try, timeout, done) {
 }
 
 function stop_local_server() {
-	const child = child_process.execFile('/usr/bin/pgrep', ['skale-server'], function (err, pid) {
+	const child = child_process.execFile('/usr/bin/pgrep', ['skale-server ' + skale_port], function (err, pid) {
 		if (! pid) return;
 		process.kill(pid.trim());
 	});
