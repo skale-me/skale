@@ -12,9 +12,25 @@ to submit them either locally or on the cloud.
 
 ## Install
 
+`skale` and `skale-engine` have been tested so far on Unix-like
+system such as Linux or MacOSX. MS-Windows is not supported.
+
 Assuming you have already installed [NodeJS](https://nodejs.org):
 
 	$ npm install -g skale
+
+This installs the skale command globally on your system. You may have to run
+this command with `sudo` depending on your platform:
+
+	$ sudo npm install -g skale
+
+Note that `skale` itself does not require superuser privileges.
+You can for example install `skale` from your home directory and
+add `$HOME/node_modules/.bin` in your PATH environment:
+
+	$ cd $HOME
+	$ npm install skale
+	$ export PATH=$PATH:~/node_modules/.bin   # or write it in your ~/.profile
 
 ## Getting started
 
@@ -22,8 +38,9 @@ To create an application called `my_app`, simply run
 
 	$ skale create my_app
 
-It will create a directory `my_app`, populate it with a template application
-`my_app.js`, and install skale-engine dependency using [`npm`](https://npmjs.com).
+It will create a directory `my_app`, populate it with a template
+(hello world) application `my_app.js`, and install skale-engine
+dependency using [`npm`](https://npmjs.com).
 
 You can then go to `my_app` and run your app using `skale run`:
 
