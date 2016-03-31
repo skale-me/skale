@@ -22,9 +22,6 @@ sc.textFile('/path/...')
   .count().then(console.log);
 ```
 
-## Installation
-	npm install skale-engine
-
 ## Features
 
 * In-memory computing
@@ -42,12 +39,21 @@ sc.textFile('/path/...')
 ## Quickstart
 
 The best and quickest way to get started with skale-engine is to use
-[skale](https://www.npmjs.com/package/skale) to create, test
+[skale](https://www.npmjs.com/package/skale) to create, run
 and deploy skale applications.
+
+	$ npm install -g skale      # Install skale command once and for all
+	$ skale create my_app       # Create a new app, install skale-engine
+	$ cd my_app
+	$ skale run                 # Starts a local cluster if necessary and run
 
 ## Examples
 
-To run the examples, clone the skale-engine repository and
+In the following, we bypass [skale](https://www.npmjs.com/package/skale)
+toolbelt, and use directly and only skale-engine. It's for you if you are
+rather more interested by the skale-engine architecture, details and internals.
+
+To run the internal examples, clone the skale-engine repository and
 install the dependencies:
 
 	$ git clone git://github.com/skale-me/skale-engine.git --depth 1
