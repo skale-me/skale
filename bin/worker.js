@@ -31,7 +31,7 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 var debug = opt.options.debug || false;
-var ncpu = opt.options.Num || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
+var ncpu = Number(opt.options.Num) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
 var hostname = opt.options.MyHost || os.hostname();
 var cgrid;
 
