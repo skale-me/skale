@@ -1,28 +1,39 @@
+// Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
+
 var fs = require('fs');
+var net = require('net');
 var spawn = require('child_process').spawn;
 var trace = require('line-trace');
 var skale = require('../');
 var data = require('./support/data.js');
 var local = require('./support/local.js');
+// use a non default port dedicated to tests
+var skalePort = 2121;
 
 var server, workerController, sc, sl;
+
+function tryConnect(nTry, timeout, done) {
+	const sock = net.connect(skalePort);
+	sock.on('connect', function() {
+		sock.end();
+		done();
+	});
+	sock.on('error', function (err) {
+		if (--nTry <= 0) return done('skale-server not ok');
+		setTimeout(function () {tryConnect(nTry, timeout, done);}, timeout);
+	});
+}
 
 beforeEach(function (done) {
 	var output;
 	if (sc === undefined) {
-		server = spawn('./bin/server.js');
-		server.stdout.on('data', function (d) {
-			var output2;
-			if (output) return;
-			output = true;
-			workerController = spawn('./bin/worker.js');
-			workerController.stdout.on('data', function (d) {
-				if (output2) return;
-				output2 = true;
-				sl = local.context();
-				sc = skale.context();
-				done();
-			});
+		this.timeout(10000);
+		server = spawn('./bin/server.js', ['-p', skalePort, '-l', '0']);
+		tryConnect(100, 100, function (err) {
+			console.log(err);
+			sl = local.context();
+			sc = skale.context({port: skalePort});
+			done();
 		});
 	} else done();
 });

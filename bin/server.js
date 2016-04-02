@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
+
 // Todo:
 // - record/replay input messages
 // - handle foreign messages
@@ -46,14 +48,14 @@ var UInt32Max = 4294967296;
 var topicMax = UInt32Max - minMulticast;
 var topicIndex = {};
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
-var port = opt.options.port || 12346;
+var port = Number(opt.options.port) || 12346;
 var wss;
 var wsport = opt.options.wsport || port + 2;
 var crossbar = {};
-var nworker = (opt.options.local > 0) ? opt.options.local : os.cpus().length;
+var nworker = (opt.options.local > 0) ? opt.options.local : 0;
 var access = process.env.SKALE_KEY;
 
-process.title = 'skale-server';
+process.title = 'skale-server ' + port;
 
 function SwitchBoard(sock) {
 	if (!(this instanceof SwitchBoard))
@@ -265,7 +267,7 @@ if (wsport) {
 if (opt.options.local) startWorker();
 
 function startWorker() {
-	var worker =  child_process.spawn(__dirname + '/worker.js', ['-n', nworker], {stdio: 'inherit'});
+	var worker =  child_process.spawn(__dirname + '/worker.js', ['-P', port, '-n', nworker], {stdio: 'inherit'});
 	worker.on('close', startWorker);
 }
 
