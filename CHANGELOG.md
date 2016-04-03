@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/skale-me/skale-engine/tree/HEAD)
-
-[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.3.3...HEAD)
+## [0.3.5](https://github.com/skale-me/skale-engine/tree/0.3.5) (2016-04-03)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.3.3...0.3.5)
 
 **Fixed bugs:**
 
