@@ -1,17 +1,23 @@
 # Change Log
 
 ## [0.3.5](https://github.com/skale-me/skale-engine/tree/0.3.5) (2016-04-03)
-[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.3.3...0.3.5)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.3.4...0.3.5)
 
 **Fixed bugs:**
 
 - cartesian incorrect output [\#4](https://github.com/skale-me/skale-engine/issues/4)
-- examples/core/parallelize.js fails with 2 workers [\#2](https://github.com/skale-me/skale-engine/issues/2)
 
 **Merged pull requests:**
 
 - lib/dataset: cartesian.iterate\(\): fix partition index computation. Fix \#4 [\#5](https://github.com/skale-me/skale-engine/pull/5) ([mvertes](https://github.com/mvertes))
 - .travis.yml: set a fixed number of workers \(4\)  [\#3](https://github.com/skale-me/skale-engine/pull/3) ([mvertes](https://github.com/mvertes))
+
+## [0.3.4](https://github.com/skale-me/skale-engine/tree/0.3.4) (2016-04-01)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.3.3...0.3.4)
+
+**Fixed bugs:**
+
+- examples/core/parallelize.js fails with 2 workers [\#2](https://github.com/skale-me/skale-engine/issues/2)
 
 ## [0.3.3](https://github.com/skale-me/skale-engine/tree/0.3.3) (2016-03-25)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.3.2...0.3.3)
