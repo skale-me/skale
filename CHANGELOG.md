@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.4.0](https://github.com/skale-me/skale-engine/tree/0.4.0) (2016-04-04)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.3.5...0.4.0)
+
+**Merged pull requests:**
+
+- All actions now return a readable stream [\#6](https://github.com/skale-me/skale-engine/pull/6) ([mvertes](https://github.com/mvertes))
+
 ## [0.3.5](https://github.com/skale-me/skale-engine/tree/0.3.5) (2016-04-03)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.3.4...0.3.5)
 
