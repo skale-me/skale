@@ -14,18 +14,18 @@
         - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
         - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
     - [Dataset methods](#datasets-methods)
-        - [ds.aggregate(reducer, combiner, init[,obj][,done])](#dsaggregatereducer-combiner-initobjdone)
+        - [ds.aggregate(reducer, combiner, init[,obj])](#dsaggregatereducer-combiner-initobj)
         - [ds.cartesian(other)](#dscartesianother)
         - [ds.coGroup(other)](#dscogroupother)
         - [ds.collect([opt])](#dscollectopt)
-        - [ds.count([callback])](#dscountcallback)
+        - [ds.count()](#dscount)
         - [ds.countByKey()](#dscountbykey)
         - [ds.countByValue()](#dscountbyvalue)
         - [ds.distinct()](#dsdistinct)
         - [ds.filter(filter[,obj])](#dsfilterfilterobj)
         - [ds.flatMap(flatMapper[,obj])](#dsflatmapflatmapperobj)
         - [ds.flatMapValues(flatMapper[,obj])](#dsflatmapvaluesflatmapperobj)
-        - [ds.foreach(callback[, obj][, done])](#dsforeachcallback-obj-done)
+        - [ds.foreach(callback[, obj])](#dsforeachcallback-obj)
         - [ds.groupByKey()](#dsgroupbykey)
         - [ds.intersection(other)](#dsintersectionother)
         - [ds.join(other)](#dsjoinother)
@@ -34,7 +34,7 @@
         - [ds.lookup(k)](#dslookupk)
         - [ds.map(mapper[,obj])](#dsmapmapperobj)
         - [ds.mapValues(mapper[,obj])](#dsmapvaluesmapperobj)
-        - [ds.reduce(reducer, init[,obj][,done])](#dsreducereducer-initobjdone)
+        - [ds.reduce(reducer, init[,obj])](#dsreducereducer-initobj)
         - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
         - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
         - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
@@ -86,7 +86,7 @@ var sc = require('skale-engine').context();		// create a new context
 sc.parallelize([1, 2, 3, 4]).				// source
    map(function (x) {return x+1}).			// transform
    reduce(function (a, b) {return a+b}, 0).	// action
-   then(console.log);						// process result: 14
+   on('data', console.log);					// process result: 14
 ```
 
 ## Working with datasets
@@ -134,22 +134,20 @@ in memory, allowing efficient reuse accross parallel operations.
 |[union(other)](#dsunion)     | Return a dataset containing elements from both datasets | v | v w|
 |[values()](#dsvalues)        | Return a dataset of just the values | [k,v] | v|
 
-Actions operate on a dataset and return a result to the *master*. Results
-are always returned asynchronously. In a case of a single result,
-it is returned through a either a callback, or an [ES6 promise].  In the
-case of multiple value results, the action returns a [readable
-stream].
+Actions operate on a dataset and send back results to the *master*. Results
+are always produced asynchronously. All actions return a [readable stream]
+on which results are emitted.
 
 |Action Name | Description | out|
 |------------------             |----------------------------------------------|--------------|
-|[aggregate(func, func, init)](#dsaggregate)| Similar to reduce() but may return a different type| value |
+|[aggregate(func, func, init)](#dsaggregate)| Similar to reduce() but may return a different type| stream of value |
 |[collect()](#dscollect)         | Return the content of dataset | stream of elements|
-|[count()](#dscount)             | Return the number of elements from dataset | number|
+|[count()](#dscount)             | Return the number of elements from dataset | stream of number|
 |[countByKey()](#dscountbykey)     | Return the number of occurrences for each key in a `[k,v]` dataset | stream of [k,number]|
 |[countByValue()](#dscountbyvalue) | Return the number of occurrences of elements from dataset | stream of [v,number]|
-|[foreach(func)](#dsforeach)     | Apply the provided function to each element of the dataset | **not implemented**|
+|[foreach(func)](#dsforeach)     | Apply the provided function to each element of the dataset | empty |
 |[lookup(k)](#dslookup)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
-|[reduce(func, init)](#dsreduce) | Aggregates dataset elements using a function, return a single value | value|
+|[reduce(func, init)](#dsreduce) | Aggregates dataset elements using a function into one value | stream of value|
 
 ## Skale module
 
@@ -203,7 +201,7 @@ Example, the following program prints the length of a text file:
 
 ```javascript
 var lines = sc.textFile('data.txt');
-lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log);
+lines.map(s => s.length).reduce((a, b) => a + b, 0).on('data', console.log);
 ```
 
 #### sc.lineStream(input_stream)
@@ -218,7 +216,7 @@ var stream = fs.createReadStream('data.txt', 'utf8');
 sc.lineStream(stream).
    map(s => s.length).
    reduce((a, b) => a + b, 0).
-   then(console.log);
+   on('data', console.log);
 ```
 
 #### sc.objectStream(input_stream)
@@ -231,7 +229,7 @@ object stream using the mongodb native Javascript driver:
 
 ```javascript
 var cursor = db.collection('clients').find();
-sc.objectStream(cursor).count().then(console.log);
+sc.objectStream(cursor).count().on('data', console.log);
 ```
 
 ### Dataset methods
@@ -241,14 +239,13 @@ functions, have the following methods, allowing either to instantiate
 a new dataset through a transformation, or to return results to the
 master program.
 
-#### ds.aggregate(reducer, combiner, init[,obj][,done])
+#### ds.aggregate(reducer, combiner, init[,obj])
 
-Returns the aggregated value of the elements of the dataset using two
-functions *reducer()* and *combiner()*, allowing to use an arbitrary
-accumulator type, different from element type (as opposed to
-`reduce()` which imposes the same type for accumulator and element).
-The result is passed to the *done()* callback if provided, otherwise
-an [ES6 promise] is returned.
+Returns a [readable stream] of the aggregated value of the elements
+of the dataset using two functions *reducer()* and *combiner()*,
+allowing to use an arbitrary accumulator type, different from element
+type (as opposed to `reduce()` which imposes the same type for
+accumulator and element).
 
 - *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
   which returns the next value of the accumulator (which must be
@@ -271,9 +268,6 @@ an [ES6 promise] is returned.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the dataset
-- *done*: a callback of the form `function (error, result)` which
-  is called at completion. If *undefined*, `aggregate()` returns
-  an [ES6 promise].
 
 The following example computes the average of a dataset, avoiding a `map()`:
 
@@ -338,18 +332,14 @@ sc.parallelize([1, 2, 3, 4]).
 // 4
 ```
 
-#### ds.count([callback])
+#### ds.count()
 
-Returns the number of elements in the dataset.
-
-The *callback* is the form of `function(error, result)`, and is
-called asynchronously at completion.  In *undefined*, an [ES6
-promise] is returned.
+Returns a [readable stream] of the number of elements in the dataset.
 
 Example:
 
 ```javascript
-sc.parallelize([10, 20, 30, 40]).count().then(console.log);
+sc.parallelize([10, 20, 30, 40]).count().on('data', console.log);
 // 4
 ```
 
@@ -488,11 +478,11 @@ sc.parallelize([['hello', 1], ['world', 2]]).
    collect().on('data', console.log);
 ```
 
-#### ds.foreach(callback[, obj][, done])
-
-***not implemented***
+#### ds.foreach(callback[, obj])
 
 This action applies a *callback* function on each element of the dataset.
+A stream is returned, and closed when all callbacks have returned.
+No data is written on the stream.
 
 - *callback*: a function of the form `function(val[,obj[,wc]])`,
   which returns *null* and with:
@@ -504,16 +494,13 @@ This action applies a *callback* function on each element of the dataset.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the dataset
-- *done*: a callback of the form `function (error, result)` which
-  is called at completion. If *undefined*, `foreach()` returns
-  an [ES6 promise].
 
 In the following example, the `console.log()` callback provided
 to `foreach()` is executed on workers and may be not visible:
 
 ```javascript
 sc.parallelize([1, 2, 3, 4]).
-   foreach(console.log).then(console.log('finished'));
+   foreach(console.log).on('end', console.log('finished'));
 ```
 
 #### ds.groupByKey()
@@ -655,11 +642,10 @@ sc.parallelize([['hello', 1], ['world', 2]]).
 // ['world', 4]
 ```
 
-#### ds.reduce(reducer, init[,obj][,done])
+#### ds.reduce(reducer, init[,obj])
 
-Returns the aggregated value of the elements of the dataset using a
-*reducer()* function.  The result is passed to the *done()* callback
-if provided, otherwise an [ES6 promise] is returned.
+Returns a [readable stream] of the aggregated value of the elements
+of the dataset using a *reducer()* function.
 
 - *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
   which returns the next value of the accumulator (which must be
@@ -676,9 +662,6 @@ if provided, otherwise an [ES6 promise] is returned.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the dataset
-- *done*: a callback of the form `function (error, result)` which
-  is called at completion. If *undefined*, `reduce()` returns
-  an [ES6 promise].
 
 Example:
 
@@ -797,7 +780,5 @@ sc.parallelize([[10, 'world'], [30, 3]]).
 ```
 
 ## References
-
-[ES6 promise]: https://promisesaplus.com
 
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
