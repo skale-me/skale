@@ -76,7 +76,7 @@ function create(name) {
 		private: true,
 		keywords: [ 'skale' ],
 		dependencies: {
-			'skale-engine': '^0.3.2'
+			'skale-engine': '^0.4.0'
 		}
 	};
 	fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
