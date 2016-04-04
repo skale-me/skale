@@ -55,14 +55,11 @@ LocalArray.prototype.collect = function (opt, done) {
 	//this.stream.on('end', function () {done(null, res);});
 };
 
-LocalArray.prototype.count = function (opt, done) {
+LocalArray.prototype.count = function (opt) {
 	opt = opt || {};
-	if (arguments.length < 2) done = opt;
 	this.stream = this.stream.pipe(new TransformStream(function (v) {return v.length;}));
-	if (opt.stream) return this.stream;
-	var res = 0;
-	this.stream.on('data', function (data) {res += data;});
-	this.stream.on('end', function () {done(null, res);});
+	this.stream.toArray = toArray;
+	return this.stream;
 };
 
 LocalArray.prototype.countByValue = function (opt, done) {
@@ -89,17 +86,11 @@ LocalArray.prototype.lookup = function(key, opt, done) {
 	//this.stream.on('end', function () {done(null, res);});
 };
 
-LocalArray.prototype.reduce = function(reducer, init, opt, done) {
+LocalArray.prototype.reduce = function(reducer, init, opt) {
 	opt = opt || {};
-	if (arguments.length < 4) done = opt;
 	this.stream = this.stream.pipe(new TransformStream(reduce, [reducer, init]));
-	if (opt.stream) return this.stream;
-	var res;
-	this.stream.on('data', function (data) {
-		if (res === undefined) res = data;
-		else res = reducer(res, data);
-	});
-	this.stream.on('end', function () {done(null, res);});
+	this.stream.toArray = toArray;
+	return this.stream;
 };
 
 LocalArray.prototype.take = function(num, opt, done) {

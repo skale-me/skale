@@ -79,10 +79,10 @@ var dualTransforms = [
 
 var actions = [
 	{name: 'collect', args: [], stream: true},
-	{name: 'count', args: []},
+	{name: 'count', args: [], stream: true},
 	{name: 'countByValue', args: [], sort: true, stream: true},
 //	{name: 'lookup', args: [data.v[0][0][0]], stream: true},
-	{name: 'reduce', args: [data.reducer, [0, 0]]},
+	{name: 'reduce', args: [data.reducer, [0, 0]], stream: true},
 //	{name: 'take', args: [2], lengthOnly: true, stream: true},
 //	{name: 'takeOrdered', args: [2, function (a, b) {return a < b;}], stream: true},
 //	{name: 'top', args: [2], stream: true},
@@ -116,6 +116,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				if (source.length > 1 ) da = da[source[1].name].apply(da, source[1].args);
 				if (transform.name) da = da[transform.name].apply(da, transform.args);
 				if (action.stream) {
+					action_args = [].concat(action.args);
 					da = da[action.name].apply(da, action_args);
 					da.toArray(function(err, res) {lres = res; done();});
 				} else {
@@ -141,6 +142,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				if (source.length > 1 ) da = da[source[1].name].apply(da, source[1].args);
 				if (transform.name) da = da[transform.name].apply(da, transform.args);
 				if (action.stream) {
+					action_args = [].concat(action.args);
 					da = da[action.name].apply(da, action_args);
 					da.toArray(function(err, res) {dres = res; done();});
 				} else {
@@ -275,6 +277,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 					transform_args = [].concat(other, dualTransform.args);
 					da = da[dualTransform.name].apply(da, transform_args);
 					if (action.stream) {
+						action_args = [].concat(action.args);
 						da = da[action.name].apply(da, action_args);
 						da.toArray(function(err, res) {lres = res; done();});
 					} else {
@@ -312,6 +315,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 					transform_args = [].concat(other, dualTransform.args);
 					da = da[dualTransform.name].apply(da, transform_args);
 					if (action.stream) {
+						action_args = [].concat(action.args);
 						da = da[action.name].apply(da, action_args);
 						da.toArray(function(err, res) {dres = res; done();});
 					} else {
