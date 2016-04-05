@@ -151,12 +151,13 @@ on which results are emitted.
 |Action Name | Description | out|
 |------------------             |----------------------------------------------|--------------|
 |[aggregate(func, func, init)](#dsaggregate)| Similar to reduce() but may return a different type| stream of value |
-|[aggregateByKey(func, func, init)](#aggregatebykey-reducer-combiner-init-obj)| reduce and combine by key using functions| stream of [k,v] |
+|[aggregateByKey(func, func, init)](#dsaggregatebykey-reducer-combiner-init-obj)| reduce and combine by key using functions| stream of [k,v] |
 |[collect()](#dscollect)         | Return the content of dataset | stream of elements|
 |[count()](#dscount)             | Return the number of elements from dataset | stream of number|
 |[countByKey()](#dscountbykey)     | Return the number of occurrences for each key in a `[k,v]` dataset | stream of [k,number]|
 |[countByValue()](#dscountbyvalue) | Return the number of occurrences of elements from dataset | stream of [v,number]|
-|[foreach(func)](#dsforeach)     | Apply the provided function to each element of the dataset | empty |
+|[first()](#first)               | Return the first element in dataset | stream of value |
+|[foreach(func)](#dsforeach)     | Apply the provided function to each element of the dataset | empty stream |
 |[lookup(k)](#dslookup)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
 |[reduce(func, init)](#dsreduce) | Aggregates dataset elements using a function into one value | stream of value|
 
@@ -475,6 +476,12 @@ sc.parallelize([1, 2, 3, 4]).
 
 #### ds.first()
 
+Returns a [readable stream] of the first element in this dataset.
+
+```javascript
+sc.parallelize([1, 2, 3]).first().on('data', console.log)
+// 1
+```
 
 #### ds.flatMap(flatMapper[,obj])
 
