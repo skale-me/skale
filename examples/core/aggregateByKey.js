@@ -11,7 +11,7 @@ function reducer(a, b) {return a + b;}
 function combiner(a, b) {return a + b;}
 
 sc.parallelize(data, nPartitions)
-	.aggregateByKey(combiner, reducer, init)
+	.aggregateByKey(reducer, combiner, init)
 	.collect()
 	.toArray(function(err, res) {
 		console.log(res);
