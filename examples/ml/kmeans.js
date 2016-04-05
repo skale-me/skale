@@ -2,7 +2,7 @@
 'use strict';
 
 var skale = require('skale-engine');
-var sizeOf = require('../../lib/sizeof.js');
+var sizeOf = require('object-sizeof');
 var ml = require('../../lib/ml.js');
 
 var opt = require('node-getopt').create([

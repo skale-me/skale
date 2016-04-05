@@ -9,13 +9,13 @@ var fs = require('fs');
 var os = require('os');
 var cluster = require('cluster');
 var uuid = require('node-uuid');
+var sizeOf = require('object-sizeof');
 var trace = require('line-trace');
 
 var SkaleClient = require('../lib/client.js');
 var ml = require('../lib/ml.js');
 var mkdir = require('../lib/mkdir.js');
 var Lines = require('../lib/lines.js');
-var sizeOf = require('../lib/sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
 
 var global = {require: require};
