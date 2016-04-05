@@ -9,11 +9,11 @@ var fs = require('fs');
 var os = require('os');
 var cluster = require('cluster');
 var uuid = require('node-uuid');
+var trace = require('line-trace');
 
 var SkaleClient = require('../lib/client.js');
 var ml = require('../lib/ml.js');
 var mkdir = require('../lib/mkdir.js');
-var trace = require('line-trace');
 var Lines = require('../lib/lines.js');
 var sizeOf = require('../lib/sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
@@ -124,10 +124,9 @@ function runWorker(host, port) {
 			grid.muuid = msg.data.master_uuid;
 			var task = parseTask(msg.data.args);
 			contextId = task.contextId;
-			// task.load({mm: mm, sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, uuid: uuid, grid: grid});
 			// set worker side dependencies
 			task.mm = mm;
-			task.lib = { sizeOf: sizeOf, fs: fs, ml: ml, readSplit: readSplit, Lines: Lines, task: task, mkdir: mkdir, uuid: uuid, trace: trace };
+			task.lib = {sizeOf, fs, ml, readSplit, Lines, task, mkdir, uuid, trace};
 			task.grid = grid;
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}
@@ -156,8 +155,8 @@ function runWorker(host, port) {
 }
 
 function MemoryManager() {
-	var Kb = 1024, Mb = 1024 * Kb, Gb = 1024 * Mb;
-	var MAX_MEMORY = 1.0 * Gb;							// To bet set as max_old_space_size value when launching node
+	const Kb = 1024, Mb = 1024 * Kb, Gb = 1024 * Mb;
+	var MAX_MEMORY = 1.0 * Gb;
 	var maxStorageMemory = MAX_MEMORY * 0.4;
 	var maxShuffleMemory = MAX_MEMORY * 0.2;
 	var maxCollectMemory = MAX_MEMORY * 0.2;
@@ -172,24 +171,19 @@ function MemoryManager() {
 
 	this.partitions = {};
 	this.register = function(partition) {
-		var key = partition.RDDId + '.' + partition.partitionIndex;
-		//if (this.partitions[key]) console.log('Partition already exists')
-		//else {
-		//	console.log('registering with key: ' + key)
-		//	this.partitions[key] = partition;
-		//}
+		var key = partition.datasetId + '.' + partition.partitionIndex;
 		if (!(key in this.partitions)) this.partitions[key] = partition;
 	}
 
 	this.isAvailable = function(partition) {
-		return (this.partitions[partition.RDDId + '.' + partition.partitionIndex] != undefined);
+		return (this.partitions[partition.datasetId + '.' + partition.partitionIndex] != undefined);
 	}
 }
 
 function parseTask(str) {
 	return JSON.parse(str, function(key, value) {
 		if (typeof value == 'string') {
-			// String value can be a regular function or an arrow function
+			// String value can be a regular function or an ES6 arrow function
 			if (value.substring(0, 8) == 'function') {
 				var args = value.match(/\(([^)]*)/)[1];
 				var body = value.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
