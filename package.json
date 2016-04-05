@@ -31,9 +31,9 @@
   "author": "Skale team",
   "dependencies": {
     "line-trace": "^1.0.4",
-    "lodash": "^4.6.1",
     "node-getopt": "^0.2.3",
     "node-uuid": "^1.4.7",
+    "object-sizeof": "^1.0.10",
     "stream-to-array": "^2.3.0",
     "thenify": "^3.2.0",
     "websocket-stream": "^3.0.1",
