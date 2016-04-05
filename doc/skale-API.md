@@ -6,41 +6,50 @@
 
 - [Overview](#overview)
 - [Working with datasets](#working-with-datasets)
-- [Skale engine module](#skale-engine-module)
-    - [skale.context([config])](#skalecontextconfig)
-        - [sc.end()](#scend)
-        - [sc.parallelize(array)](#scparallelizearray)
-        - [sc.textFile(path)](#sctextfilepath)
-        - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
-        - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
-    - [Dataset methods](#datasets-methods)
-        - [ds.aggregate(reducer, combiner, init[,obj])](#dsaggregatereducer-combiner-initobj)
-        - [ds.cartesian(other)](#dscartesianother)
-        - [ds.coGroup(other)](#dscogroupother)
-        - [ds.collect([opt])](#dscollectopt)
-        - [ds.count()](#dscount)
-        - [ds.countByKey()](#dscountbykey)
-        - [ds.countByValue()](#dscountbyvalue)
-        - [ds.distinct()](#dsdistinct)
-        - [ds.filter(filter[,obj])](#dsfilterfilterobj)
-        - [ds.flatMap(flatMapper[,obj])](#dsflatmapflatmapperobj)
-        - [ds.flatMapValues(flatMapper[,obj])](#dsflatmapvaluesflatmapperobj)
-        - [ds.foreach(callback[, obj])](#dsforeachcallback-obj)
-        - [ds.groupByKey()](#dsgroupbykey)
-        - [ds.intersection(other)](#dsintersectionother)
-        - [ds.join(other)](#dsjoinother)
-        - [ds.keys()](#dskeys)
-        - [ds.leftOuterJoin(other)](#dsleftouterjoinother)
-        - [ds.lookup(k)](#dslookupk)
-        - [ds.map(mapper[,obj])](#dsmapmapperobj)
-        - [ds.mapValues(mapper[,obj])](#dsmapvaluesmapperobj)
-        - [ds.reduce(reducer, init[,obj])](#dsreducereducer-initobj)
-        - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
-        - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
-        - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
-        - [ds.subtract(other)](#dssubtractother)
-        - [ds.union(other)](#dsunionother)
-        - [ds.values()](#dsvalues)
+- [Skale module](#skale-module)
+  - [skale.context([config])](#skalecontextconfig)
+    - [sc.end()](#scend)
+    - [sc.parallelize(array)](#scparallelizearray)
+    - [sc.range(start[, end[, step]])](#scrangestart-end-step)
+    - [sc.textFile(path)](#sctextfilepath)
+    - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
+    - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
+  - [Dataset methods](#dataset-methods)
+    - [ds.aggregate(reducer, combiner, init[,obj])](#dsaggregatereducer-combiner-initobj)
+    - [ds.aggregateByKey()](#dsaggregatebykey)
+    - [ds.cartesian(other)](#dscartesianother)
+    - [ds.coGroup(other)](#dscogroupother)
+    - [ds.collect([opt])](#dscollectopt)
+    - [ds.count()](#dscount)
+    - [ds.countByKey()](#dscountbykey)
+    - [ds.countByValue()](#dscountbyvalue)
+    - [ds.distinct()](#dsdistinct)
+    - [ds.filter(filter[,obj])](#dsfilterfilterobj)
+    - [ds.first()](#dsfirst)
+    - [ds.flatMap(flatMapper[,obj])](#dsflatmapflatmapperobj)
+    - [ds.flatMapValues(flatMapper[,obj])](#dsflatmapvaluesflatmapperobj)
+    - [ds.foreach(callback[, obj])](#dsforeachcallback-obj)
+    - [ds.groupByKey()](#dsgroupbykey)
+    - [ds.intersection(other)](#dsintersectionother)
+    - [ds.join(other)](#dsjoinother)
+    - [ds.keys()](#dskeys)
+    - [ds.leftOuterJoin(other)](#dsleftouterjoinother)
+    - [ds.lookup(k)](#dslookupk)
+    - [ds.map(mapper[,obj])](#dsmapmapperobj)
+    - [ds.mapValues(mapper[,obj])](#dsmapvaluesmapperobj)
+    - [ds.partitionBy()](#dspartitionby)
+    - [ds.persist()](#dspersist)
+    - [ds.reduce(reducer, init[,obj])](#dsreducereducer-initobj)
+    - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
+    - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
+    - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
+    - [ds.sortBy()](#dssortby)
+    - [ds.sortByKey()](#dssortbykey)
+    - [ds.subtract(other)](#dssubtractother)
+    - [ds.take()](#dstake)
+    - [ds.top()](#dstop)
+    - [ds.union(other)](#dsunionother)
+    - [ds.values()](#dsvalues)
 - [References](#references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -101,6 +110,7 @@ using the following sources:
 |[lineStream(stream)](#sc-linestream-stream)    | Create a dataset from a text stream |
 |[objectStream(stream)](#sc-objectstream-stream)| Create a dataset from an object stream |
 |[parallelize(array)](#sc-parallelize-array)    | Create a dataset from an array      |
+|[range(start,end,step)](#sc-range-start-end-step)| Create a dataset containing integers from start to end|
 |[textFile(path)](#sc-textfile-path)            | Create a dataset from a regular text file|
 
 Transformations operate on a dataset and return a new dataset. Note that some
@@ -189,9 +199,26 @@ Example:
 var a = sc.parallelize(['Hello', 'World']);
 ```
 
+#### sc.range(start[, end[, step]])
+
+Returns a new dataset of integers from *start* to *end* (exclusive)
+increased by *step* (default 1) every element. If called with a
+single argument, the argument is interpreted as *end*, and *start*
+is set to 0.
+
+```javascript
+sc.range(5).collect.toArray()
+// [ 0, 1, 2, 3, 4 ]
+sc.range(2, 4).collect.toArray()
+// [ 2, 3 ]
+sc.range(10, -5, -3).collect().toArray()
+// [ 10, 7, 4, 1, -2 ]
+```
+
 #### sc.textFile(path)
 
-Returns a dataset of lines composing the file specified by path *String*.
+Returns a new dataset of lines composing the file specified by path
+*String*.
 
 Note: If using a path on the local filesystem, the file must also
 be accessible at the same path on worker nodes. Either copy the
@@ -206,8 +233,9 @@ lines.map(s => s.length).reduce((a, b) => a + b, 0).on('data', console.log);
 
 #### sc.lineStream(input_stream)
 
-Returns a dataset of lines of text read from input_stream *Object*, which
-is a [readable stream] where dataset content is read from.
+Returns a new dataset of lines of text read from input_stream
+*Object*, which is a [readable stream] where dataset content is
+read from.
 
 The following example computes the size of a file using streams:
 
@@ -221,8 +249,9 @@ sc.lineStream(stream).
 
 #### sc.objectStream(input_stream)
 
-Returns a dataset of Javascript *Objects* read from input_stream *Object*,
-which is a [readable stream] where dataset content is read from.
+Returns a new dataset of Javascript *Objects* read from input_stream
+*Object*, which is a [readable stream] where dataset content is
+read from.
 
 The following example counts the number of objects returned in an
 object stream using the mongodb native Javascript driver:
@@ -281,6 +310,8 @@ sc.parallelize([3, 5, 2, 7, 4, 8]).
 		});
 // 4.8333
 ```
+
+#### ds.aggregateByKey()
 
 #### ds.cartesian(other)
 
@@ -412,6 +443,9 @@ sc.parallelize([1, 2, 3, 4]).
    collect().on('data', console.log);
 // 1 3
 ```
+
+#### ds.first()
+
 
 #### ds.flatMap(flatMapper[,obj])
 
@@ -642,6 +676,10 @@ sc.parallelize([['hello', 1], ['world', 2]]).
 // ['world', 4]
 ```
 
+#### ds.partitionBy()
+
+#### ds.persist()
+
 #### ds.reduce(reducer, init[,obj])
 
 Returns a [readable stream] of the aggregated value of the elements
@@ -737,6 +775,10 @@ sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
 // [ 1, 1, 3, 4, 4, 5, 7 ]
 ```
 
+#### ds.sortBy()
+
+#### ds.sortByKey()
+
 #### ds.subtract(other)
 
 Returns a dataset containing only elements of source dataset which are not
@@ -750,6 +792,10 @@ var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
 ds1.subtract(ds2).collect().on('data', console.log);
 // 1 2
 ```
+
+#### ds.take()
+
+#### ds.top()
 
 #### ds.union(other)
 
