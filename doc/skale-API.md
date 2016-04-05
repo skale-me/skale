@@ -16,7 +16,7 @@
     - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
   - [Dataset methods](#dataset-methods)
     - [ds.aggregate(reducer, combiner, init[,obj])](#dsaggregatereducer-combiner-initobj)
-    - [ds.aggregateByKey()](#dsaggregatebykey)
+    - [ds.aggregateByKey(reducer, combiner, init,[ obj])](#dsaggregatebykeyreducer-combiner-init-obj)
     - [ds.cartesian(other)](#dscartesianother)
     - [ds.coGroup(other)](#dscogroupother)
     - [ds.collect([opt])](#dscollectopt)
@@ -151,6 +151,7 @@ on which results are emitted.
 |Action Name | Description | out|
 |------------------             |----------------------------------------------|--------------|
 |[aggregate(func, func, init)](#dsaggregate)| Similar to reduce() but may return a different type| stream of value |
+|[aggregateByKey(func, func, init)](#aggregatebykey-reducer-combiner-init-obj)| reduce and combine by key using functions| stream of [k,v] |
 |[collect()](#dscollect)         | Return the content of dataset | stream of elements|
 |[count()](#dscount)             | Return the number of elements from dataset | stream of number|
 |[countByKey()](#dscountbykey)     | Return the number of occurrences for each key in a `[k,v]` dataset | stream of [k,number]|
@@ -292,11 +293,11 @@ accumulator and element).
      - *obj*: the same parameter *obj* passed to `aggregate()`
 - *init*: the initial value of the accumulators that are used by
   *reducer()* and *combiner()*. It should be the identity element
-  of the operation (i.e. applying it through the function should
-  not change result).
+  of the operation (a neutral zero value, i.e. applying it through the
+  function should not change result).
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
-  mapper executions over each element of the dataset
+  mapper executions over each element of the dataset.
 
 The following example computes the average of a dataset, avoiding a `map()`:
 
@@ -311,7 +312,35 @@ sc.parallelize([3, 5, 2, 7, 4, 8]).
 // 4.8333
 ```
 
-#### ds.aggregateByKey()
+#### ds.aggregateByKey(reducer, combiner, init,[ obj])
+
+Returns a [readable stream] of `[k,v]` elements where `v` is the
+aggregated value of all elements of same key `k`. The aggregation
+is performed using two functions *reducer()* and *combiner()*
+allowing to use an arbitrary accumulator type, different from element
+type.
+
+- *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
+  which returns the next value of the accumulator (which must be
+  of the same type as *acc*) and with:
+     - *acc*: the value of the accumulator, initially set to *init*
+     - *val*: the value `v` of the next `[k,v]` element of the dataset
+	   on which `aggregateByKey()` operates
+     - *obj*: the same parameter *obj* passed to `aggregateByKey()`
+     - *wc*: the worker context, a persistent object local to each
+       worker, where user can store and access worker local dependencies.
+- *combiner*: a function of the form `function(acc1,acc2[,obj])`,
+  which returns the merged value of accumulators and with:
+     - *acc1*: the value of an accumulator, computed locally on a worker
+     - *acc2*: the value of an other accumulator, issued by another worker
+     - *obj*: the same parameter *obj* passed to `aggregate()`
+- *init*: the initial value of the accumulators that are used by
+  *reducer()* and *combiner()*. It should be the identity element
+  of the operation (a neutral zero value, i.e. applying it through the
+  function should not change result).
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset.
 
 #### ds.cartesian(other)
 
