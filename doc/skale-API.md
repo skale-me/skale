@@ -37,7 +37,7 @@
     - [ds.lookup(k)](#dslookupk)
     - [ds.map(mapper[,obj])](#dsmapmapperobj)
     - [ds.mapValues(mapper[,obj])](#dsmapvaluesmapperobj)
-    - [ds.partitionBy()](#dspartitionby)
+    - [ds.partitionBy(partitioner)](#dspartitionbypartitioner)
     - [ds.persist()](#dspersist)
     - [ds.reduce(reducer, init[,obj])](#dsreducereducer-initobj)
     - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
@@ -138,6 +138,7 @@ in memory, allowing efficient reuse accross parallel operations.
 |[map(func)](#dsmap)          | Return a dataset where elements are passed through a function | v | w|
 |[mapValues(func)](#dsflatmap)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|
 |[reduceByKey(func, init)](#dsreducebykey)	| Combine values with the same key | [k,v] | [k,w]|
+|[partitionBy(partitioner)](#dspartitionbypartitioner)| Partition using the partitioner | v | v|
 |[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|
 |[sample(rep, frac, seed)](#dssample) | Sample a dataset, with or without replacement | v | w|
 |[subtract(other)](#dssubract) | Remove the content of one dataset | v w | v|
@@ -712,7 +713,22 @@ sc.parallelize([['hello', 1], ['world', 2]]).
 // ['world', 4]
 ```
 
-#### ds.partitionBy()
+#### ds.partitionBy(partitioner)
+
+Returns a dataset partitioned using the specified partitioner. The
+purpose of this transformation is not to change the dataset content,
+but to increase processing speed by ensuring that the elements
+accessed by further transfomations reside in the same partition.
+
+```javascript
+var skale = require('skale-engine');
+var sc = skale.context();
+
+sc.parallelize([['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric', 3]])
+  .partitionBy(new skale.HashPartitioner(3))
+  .collect.on('data', console.log)
+// ['world', 1], ['world', 2], ['hello', 1], ['hello', 2], ['cedric', 3]
+```
 
 #### ds.persist()
 
