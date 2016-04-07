@@ -46,7 +46,7 @@
     - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
     - [ds.sortByKey(ascending)](#dssortbykeyascending)
     - [ds.subtract(other)](#dssubtractother)
-    - [ds.take()](#dstake)
+    - [ds.take(num)](#dstakenum)
     - [ds.top()](#dstop)
     - [ds.union(other)](#dsunionother)
     - [ds.values()](#dsvalues)
@@ -163,6 +163,7 @@ on which results are emitted.
 |[foreach(func)](#dsforeach)     | Apply the provided function to each element of the dataset | empty stream |
 |[lookup(k)](#dslookup)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
 |[reduce(func, init)](#dsreduce) | Aggregates dataset elements using a function into one value | stream of value|
+|[take(num)](#dstakenum)         | Return the first `num` elements of dataset | stream of value|
 
 ## Skale module
 
@@ -894,7 +895,19 @@ ds1.subtract(ds2).collect().on('data', console.log);
 // 1 2
 ```
 
-#### ds.take()
+#### ds.take(num)
+
+Returns a [readable stream] of the `num` first elements of the source
+dataset.
+
+Example:
+
+```javascript
+sc.parallelize([1, 2, 3, 4])
+  .take(2)
+  .collect().toArray().then(console.log)
+// [1, 2]
+```
 
 #### ds.top()
 
