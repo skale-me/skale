@@ -130,7 +130,7 @@ in memory, allowing efficient reuse accross parallel operations.
 |[filter(func)](#dsfilterfilterobj)| Return a dataset of elements on which function returns true | v | w|
 |[flatMap(func)](#dsflatmapflatmapperobj)| Pass the dataset elements to a function which returns a sequence | v | w|
 |[groupByKey()](#dsgroupbykey)| Group values with the same key | [k,v] | [k,[v]]|
-|[intersection(other)](#dsintersection) | Return a dataset containing only elements found in both datasets | v w | v|
+|[intersection(other)](#dsintersectionother) | Return a dataset containing only elements found in both datasets | v w | v|
 |[join(other)](#dsjoinother)       | Perform an inner join between 2 datasets | [k,v] | [k,[v,w]]|
 |[leftOuterJoin(other)](#dsleftouterjoinother) | Join 2 datasets where the key must be present in the other | [k,v] | [k,[v,w]]|
 |[rightOuterJoin(other)](#dsrightouterjoinother) | Join 2 datasets where the key must be present in the first | [k,v] | [k,[v,w]]|
@@ -143,7 +143,7 @@ in memory, allowing efficient reuse accross parallel operations.
 |[sample(rep, frac, seed)](#dssamplewithreplacement-frac-seed) | Sample a dataset, with or without replacement | v | w|
 |[sortBy(func)](#dssortbykeyfunc-ascending) | Sort a dataset | v | v|
 |[sortByKey()](#dssortbykeyascending) | Sort a [k,v] dataset | [k,v] | [k,v]|
-|[subtract(other)](#dssubractother) | Remove the content of one dataset | v w | v|
+|[subtract(other)](#dssubtractother) | Remove the content of one dataset | v w | v|
 |[union(other)](#dsunionother)     | Return a dataset containing elements from both datasets | v | v w|
 |[values()](#dsvalues)        | Return a dataset of just the values | [k,v] | v|
 
@@ -159,7 +159,7 @@ on which results are emitted.
 |[count()](#dscount)             | Return the number of elements from dataset | stream of number|
 |[countByKey()](#dscountbykey)     | Return the number of occurrences for each key in a `[k,v]` dataset | stream of [k,number]|
 |[countByValue()](#dscountbyvalue) | Return the number of occurrences of elements from dataset | stream of [v,number]|
-|[first()](#first)               | Return the first element in dataset | stream of value |
+|[first()](#dsfirst)               | Return the first element in dataset | stream of value |
 |[foreach(func)](#dsforeachcallback-obj)| Apply the provided function to each element of the dataset | empty stream |
 |[lookup(k)](#dslookupk)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
 |[reduce(func, init)](#dsreducereducer-initobj)| Aggregates dataset elements using a function into one value | stream of value|
