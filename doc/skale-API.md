@@ -105,13 +105,13 @@ After having initialized a cluster context using
 [skale.context()](#skale-context), one can create a dataset
 using the following sources:
 
-| Source Name                                  | Description                          |
-| -------------------                          | ----------------------------------   |
-|[lineStream(stream)](#sc-linestream-stream)    | Create a dataset from a text stream |
-|[objectStream(stream)](#sc-objectstream-stream)| Create a dataset from an object stream |
-|[parallelize(array)](#sc-parallelize-array)    | Create a dataset from an array      |
-|[range(start,end,step)](#sc-range-start-end-step)| Create a dataset containing integers from start to end|
-|[textFile(path)](#sc-textfile-path)            | Create a dataset from a regular text file|
+| Source Name                                       | Description                                           |
+| ------------------------------------------------- | ----------------------------------------------------- |
+|[lineStream(stream)](#sclinestreaminput_stream)    | Create a dataset from a text stream                   |
+|[objectStream(stream)](#scobjectstreaminput_stream)| Create a dataset from an object stream                |
+|[parallelize(array)](#scparallelizearray)          | Create a dataset from an array                        |
+|[range(start,end,step)](#scrangestart-end-step)    | Create a dataset containing integers from start to end|
+|[textFile(path)](#sctextfilepath)                  | Create a dataset from a regular text file             |
 
 Transformations operate on a dataset and return a new dataset. Note that some
 transformation operate only on datasets where each element is in the form
@@ -124,27 +124,27 @@ in memory, allowing efficient reuse accross parallel operations.
 
 |Transformation Name              | Description                                   | in    | out   |
 | -----------------               |-----------------------------------------------|-------|-------|
-|[cartesian(other)](#dscartesian) | Perform a cartesian product with the other dataset | v w | [v,w]|
-|[coGroup(other)](#dscogroup) | Group data from both datasets sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|
+|[cartesian(other)](#dscartesianother) | Perform a cartesian product with the other dataset | v w | [v,w]|
+|[coGroup(other)](#dscogroupother) | Group data from both datasets sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|
 |[distinct()](#dsdistinct)    | Return a dataset where duplicates are removed | v | w|
-|[filter(func)](#dsfilter)    | Return a dataset of elements on which function returns true | v | w|
-|[flatMap(func)](#dsflatmap)  | Pass the dataset elements to a function which returns a sequence | v | w|
+|[filter(func)](#dsfilterfilterobj)| Return a dataset of elements on which function returns true | v | w|
+|[flatMap(func)](#dsflatmapflatmapperobj)| Pass the dataset elements to a function which returns a sequence | v | w|
 |[groupByKey()](#dsgroupbykey)| Group values with the same key | [k,v] | [k,[v]]|
 |[intersection(other)](#dsintersection) | Return a dataset containing only elements found in both datasets | v w | v|
-|[join(other)](#dsjoin)       | Perform an inner join between 2 datasets | [k,v] | [k,[v,w]]|
-|[leftOuterJoin(other)](#dsleftouterjoin) | Join 2 datasets where the key must be present in the other | [k,v] | [k,[v,w]]|
-|[rightOuterJoin(other)](#dsrightouterjoin) | Join 2 datasets where the key must be present in the first | [k,v] | [k,[v,w]]|
+|[join(other)](#dsjoinother)       | Perform an inner join between 2 datasets | [k,v] | [k,[v,w]]|
+|[leftOuterJoin(other)](#dsleftouterjoinother) | Join 2 datasets where the key must be present in the other | [k,v] | [k,[v,w]]|
+|[rightOuterJoin(other)](#dsrightouterjoinother) | Join 2 datasets where the key must be present in the first | [k,v] | [k,[v,w]]|
 |[keys()](#dskeys)            | Return a dataset of just the keys | [k,v] | k|
-|[map(func)](#dsmap)          | Return a dataset where elements are passed through a function | v | w|
-|[mapValues(func)](#dsflatmap)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|
-|[reduceByKey(func, init)](#dsreducebykey)	| Combine values with the same key | [k,v] | [k,w]|
+|[map(func)](#dsmapmapperobj) | Return a dataset where elements are passed through a function | v | w|
+|[mapValues(func)](#dsmapvaluesmapperobj)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|
+|[reduceByKey(func, init)](#dsreducebykeyreducer-init-obj)| Combine values with the same key | [k,v] | [k,w]|
 |[partitionBy(partitioner)](#dspartitionbypartitioner)| Partition using the partitioner | v | v|
 |[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|
-|[sample(rep, frac, seed)](#dssample) | Sample a dataset, with or without replacement | v | w|
+|[sample(rep, frac, seed)](#dssamplewithreplacement-frac-seed) | Sample a dataset, with or without replacement | v | w|
 |[sortBy(func)](#dssortbykeyfunc-ascending) | Sort a dataset | v | v|
 |[sortByKey()](#dssortbykeyascending) | Sort a [k,v] dataset | [k,v] | [k,v]|
-|[subtract(other)](#dssubract) | Remove the content of one dataset | v w | v|
-|[union(other)](#dsunion)     | Return a dataset containing elements from both datasets | v | v w|
+|[subtract(other)](#dssubractother) | Remove the content of one dataset | v w | v|
+|[union(other)](#dsunionother)     | Return a dataset containing elements from both datasets | v | v w|
 |[values()](#dsvalues)        | Return a dataset of just the values | [k,v] | v|
 
 Actions operate on a dataset and send back results to the *master*. Results
@@ -153,16 +153,16 @@ on which results are emitted.
 
 |Action Name | Description | out|
 |------------------             |----------------------------------------------|--------------|
-|[aggregate(func, func, init)](#dsaggregate)| Similar to reduce() but may return a different type| stream of value |
-|[aggregateByKey(func, func, init)](#dsaggregatebykey-reducer-combiner-init-obj)| reduce and combine by key using functions| stream of [k,v] |
-|[collect()](#dscollect)         | Return the content of dataset | stream of elements|
+|[aggregate(func, func, init)](#dsaggregatereducer-combiner-initobj)| Similar to reduce() but may return a different type| stream of value |
+|[aggregateByKey(func, func, init)](#dsaggregatebykeyreducer-combiner-init-obj)| reduce and combine by key using functions| stream of [k,v] |
+|[collect()](#dscollectopt)         | Return the content of dataset | stream of elements|
 |[count()](#dscount)             | Return the number of elements from dataset | stream of number|
 |[countByKey()](#dscountbykey)     | Return the number of occurrences for each key in a `[k,v]` dataset | stream of [k,number]|
 |[countByValue()](#dscountbyvalue) | Return the number of occurrences of elements from dataset | stream of [v,number]|
 |[first()](#first)               | Return the first element in dataset | stream of value |
-|[foreach(func)](#dsforeach)     | Apply the provided function to each element of the dataset | empty stream |
-|[lookup(k)](#dslookup)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
-|[reduce(func, init)](#dsreduce) | Aggregates dataset elements using a function into one value | stream of value|
+|[foreach(func)](#dsforeachcallback-obj)| Apply the provided function to each element of the dataset | empty stream |
+|[lookup(k)](#dslookupk)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
+|[reduce(func, init)](#dsreducereducer-initobj)| Aggregates dataset elements using a function into one value | stream of value|
 |[take(num)](#dstakenum)         | Return the first `num` elements of dataset | stream of value|
 |[top(num)](#dstopnum)           | Return the top `num` elements of dataset | stream of value|
 
