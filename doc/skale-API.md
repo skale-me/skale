@@ -712,7 +712,22 @@ sc.parallelize([['hello', 1], ['world', 2]]).
 // ['world', 4]
 ```
 
-#### ds.partitionBy()
+#### ds.partitionBy(partitioner)
+
+Returns a dataset partitioned using the specified partitioner. The
+purpose of this transformation is not to change the dataset content,
+but to increase processing speed by ensuring that the elements
+accessed by further transfomations reside in the same partition.
+
+```javascript
+var skale = require('skale-engine');
+var sc = skale.context();
+
+sc.parallelize([['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric', 3]])
+  .partitionBy(new skale.HashPartitioner(3))
+  .collect.on('data', console.log)
+// ['world', 1], ['world', 2], ['hello', 1], ['hello', 2], ['cedric', 3]
+```
 
 #### ds.persist()
 
