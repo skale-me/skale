@@ -50,7 +50,9 @@
     - [ds.top(num)](#dstopnum)
     - [ds.union(other)](#dsunionother)
     - [ds.values()](#dsvalues)
-- [References](#references)
+  - [Partitioners](#partitioners)
+    - [HashPartitioner(numPartitions)](#hashpartitionernumpartitions)
+    - [RangePartitioner(numPartitions, keyfunc, dataset)](#rangepartitionernumpartitions-keyfunc-dataset)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
