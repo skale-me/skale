@@ -37,7 +37,7 @@
     - [ds.lookup(k)](#dslookupk)
     - [ds.map(mapper[,obj])](#dsmapmapperobj)
     - [ds.mapValues(mapper[,obj])](#dsmapvaluesmapperobj)
-    - [ds.partitionBy()](#dspartitionby)
+    - [ds.partitionBy(partitioner)](#dspartitionbypartitioner)
     - [ds.persist()](#dspersist)
     - [ds.reduce(reducer, init[,obj])](#dsreducereducer-initobj)
     - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
