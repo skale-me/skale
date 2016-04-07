@@ -50,7 +50,9 @@
     - [ds.top(num)](#dstopnum)
     - [ds.union(other)](#dsunionother)
     - [ds.values()](#dsvalues)
-- [References](#references)
+  - [Partitioners](#partitioners)
+    - [HashPartitioner(numPartitions)](#hashpartitionernumpartitions)
+    - [RangePartitioner(numPartitions, keyfunc, dataset)](#rangepartitionernumpartitions-keyfunc-dataset)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -952,6 +954,55 @@ sc.parallelize([[10, 'world'], [30, 3]]).
 // 3
 ```
 
-## References
+### Partitioners
+
+A partitioner is an object passed to
+[ds.partitionBy(partitioner)](#dspartitionbypartitioner) which
+places data in partitions according to a strategy, for example hash
+partitioning, where data having the same key are placed in the same
+partition, or range partitioning, where data in the same range are
+in the same partition. This is useful to accelerate processing, as
+it limits data transfers between workers during jobs.
+
+A partition object must provide the following properties:
+
+- *numPartitions*: a *Number* of partitions for the dataset
+- *getPartitionIndex*: a *Function* of type `function(element)`
+  which returns the partition index (comprised between 0 and
+  *numPartitions*) for the `element` of the dataset on which
+  `partitionBy()` operates.
+
+#### HashPartitioner(numPartitions)
+
+Returns a partitioner object which implements hash based partitioning
+using a hash checksum of each element as a string.
+
+- *numPartitions*: *Number* of partitions for this dataset
+
+Example:
+
+```javascript
+var hp = new skale.HashPartitioner(3)
+var dataset = sc.range(10).partitionBy(hp)
+```
+
+#### RangePartitioner(numPartitions, keyfunc, dataset)
+
+Returns a partitioner object which first defines ranges by sampling
+the dataset and then places elements by comparing them with ranges.
+
+- *numPartitions*: *Number* of partitions for this dataset
+- *keyfunc*: a function of the form `function(element)` which returns
+  a value used for comparison in the sort function and where `element`
+  is the next element of the dataset on which `partitionBy()` operates
+- *dataset*: the dataset object on which `partitionBy()` operates
+
+Example:
+
+```javascript
+var dataset = sc.range(100)
+var rp = new skale.RangePartitioner(3, a => a, dataset)
+var dataset = sc.range(10).partitionBy(rp)
+```
 
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
