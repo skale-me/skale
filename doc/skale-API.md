@@ -47,7 +47,7 @@
     - [ds.sortByKey(ascending)](#dssortbykeyascending)
     - [ds.subtract(other)](#dssubtractother)
     - [ds.take(num)](#dstakenum)
-    - [ds.top()](#dstop)
+    - [ds.top(num)](#dstopnum)
     - [ds.union(other)](#dsunionother)
     - [ds.values()](#dsvalues)
 - [References](#references)
@@ -164,6 +164,7 @@ on which results are emitted.
 |[lookup(k)](#dslookup)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
 |[reduce(func, init)](#dsreduce) | Aggregates dataset elements using a function into one value | stream of value|
 |[take(num)](#dstakenum)         | Return the first `num` elements of dataset | stream of value|
+|[top(num)](#dstopnum)           | Return the top `num` elements of dataset | stream of value|
 
 ## Skale module
 
@@ -909,7 +910,19 @@ sc.parallelize([1, 2, 3, 4])
 // [1, 2]
 ```
 
-#### ds.top()
+#### ds.top(num)
+
+Returns a [readable stream] of the `num` top elements of the source
+dataset.
+
+Example:
+
+```javascript
+sc.parallelize([1, 2, 3, 4])
+  .top(2)
+  .collect().toArray().then(console.log)
+// [3, 4]
+```
 
 #### ds.union(other)
 
