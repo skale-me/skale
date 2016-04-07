@@ -720,6 +720,8 @@ purpose of this transformation is not to change the dataset content,
 but to increase processing speed by ensuring that the elements
 accessed by further transfomations reside in the same partition.
 
+Example:
+
 ```javascript
 var skale = require('skale-engine');
 var sc = skale.context();
@@ -731,6 +733,22 @@ sc.parallelize([['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric
 ```
 
 #### ds.persist()
+
+Returns the dataset, and persists the dataset content on disk (and
+in memory if available) in order to directly reuse content in further
+tasks.
+
+Example:
+
+```javascript
+var dataset = sc.range(100).map(a => a * a);
+
+// First action: compute dataset
+dataset.collect().on('data', console.log)
+
+// Second action: reuse dataset, avoid map transform
+dataset.collect().on('data', console.log)
+```
 
 #### ds.reduce(reducer, init[,obj])
 
