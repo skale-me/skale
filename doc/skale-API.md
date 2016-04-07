@@ -138,6 +138,7 @@ in memory, allowing efficient reuse accross parallel operations.
 |[map(func)](#dsmap)          | Return a dataset where elements are passed through a function | v | w|
 |[mapValues(func)](#dsflatmap)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|
 |[reduceByKey(func, init)](#dsreducebykey)	| Combine values with the same key | [k,v] | [k,w]|
+|[partitionBy(partitioner)](#dspartitionbypartitioner)| Partition using the partitioner | v | v|
 |[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|
 |[sample(rep, frac, seed)](#dssample) | Sample a dataset, with or without replacement | v | w|
 |[subtract(other)](#dssubract) | Remove the content of one dataset | v w | v|
