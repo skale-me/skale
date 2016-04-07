@@ -43,7 +43,7 @@
     - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
     - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
     - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
-    - [ds.sortBy()](#dssortby)
+    - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
     - [ds.sortByKey()](#dssortbykey)
     - [ds.subtract(other)](#dssubtractother)
     - [ds.take()](#dstake)
@@ -141,6 +141,7 @@ in memory, allowing efficient reuse accross parallel operations.
 |[partitionBy(partitioner)](#dspartitionbypartitioner)| Partition using the partitioner | v | v|
 |[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|
 |[sample(rep, frac, seed)](#dssample) | Sample a dataset, with or without replacement | v | w|
+|[sortBy(func)](#dssortbykeyfunc-ascending) | Sort a dataset | v | v|
 |[subtract(other)](#dssubract) | Remove the content of one dataset | v w | v|
 |[union(other)](#dsunion)     | Return a dataset containing elements from both datasets | v | v w|
 |[values()](#dsvalues)        | Return a dataset of just the values | [k,v] | v|
@@ -845,7 +846,23 @@ sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
 // [ 1, 1, 3, 4, 4, 5, 7 ]
 ```
 
-#### ds.sortBy()
+#### ds.sortBy(keyfunc[, ascending])
+
+Returns a dataset sorted by the given *keyfunc*.
+
+- *keyfunc*: a function of the form `function(element)` which returns
+  a value used for comparison in the sort function and where `element`
+  is the next element of the dataset on which `sortBy()` operates
+- *ascending*: a boolean to set the sort direction. Default: true
+
+Example:
+
+```javascript
+sc.parallelize([4, 6, 10, 5, 1, 2, 9, 7, 3, 0])
+  .sortBy(a => a)
+  .collect().toArray().then(console.log)
+// [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+```
 
 #### ds.sortByKey()
 
