@@ -44,7 +44,7 @@
     - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
     - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
     - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
-    - [ds.sortByKey()](#dssortbykey)
+    - [ds.sortByKey(ascending)](#dssortbykeyascending)
     - [ds.subtract(other)](#dssubtractother)
     - [ds.take()](#dstake)
     - [ds.top()](#dstop)
@@ -142,6 +142,7 @@ in memory, allowing efficient reuse accross parallel operations.
 |[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|
 |[sample(rep, frac, seed)](#dssample) | Sample a dataset, with or without replacement | v | w|
 |[sortBy(func)](#dssortbykeyfunc-ascending) | Sort a dataset | v | v|
+|[sortByKey()](#dssortbykeyascending) | Sort a [k,v] dataset | [k,v] | [k,v]|
 |[subtract(other)](#dssubract) | Remove the content of one dataset | v w | v|
 |[union(other)](#dsunion)     | Return a dataset containing elements from both datasets | v | v w|
 |[values()](#dsvalues)        | Return a dataset of just the values | [k,v] | v|
@@ -864,7 +865,20 @@ sc.parallelize([4, 6, 10, 5, 1, 2, 9, 7, 3, 0])
 // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 ```
 
-#### ds.sortByKey()
+#### ds.sortByKey(ascending)
+
+When called on a dataset of type `[k,v]`, returns a dataset of type `[k,v]`
+sorted on `k`. The optional parameter *ascending* is a boolean which sets
+the sort direction, true by default.
+
+Example:
+
+```javascript
+sc.parallelize([['world', 2], ['cedric', 3], ['hello', 1]])
+  .sortByKey()
+  .collect().toArray().then(console.log)
+// [['cedric', 3], ['hello', 1], ['world', 2]]
+```
 
 #### ds.subtract(other)
 
