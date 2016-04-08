@@ -84,10 +84,8 @@ Options:
 
 * [Gitter](https://gitter.im/skale-me/skale-engine) for support and
   discussion
-* [skale-devel](https://groups.google.com/forum/#!forum/skale-devel)
-  mailing list for discussion about development
-* [skale-user](https://groups.google.com/forum/#!forum/skale-user)
-  mailing list for general discussion and quick support questions
+* [skale](https://groups.google.com/forum/#!forum/skale)
+  mailing list for general discussion about use and development
 
 ## License
 
