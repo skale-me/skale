@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>skale API - skale</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-75822605-1', 'skale-engine.github.io');
+            ga('send', 'pageview');
+        </script>
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">skale</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Home</a>
+                </li>
+            
+            
+            
+                <li class="active">
+                    <a href="./">skale API</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="..">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li class="disabled">
+                    <a rel="prev" >
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/skale-me/skale-engine/">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#contents">Contents</a></li>
+        
+    
+        <li class="main "><a href="#overview">Overview</a></li>
+        
+    
+        <li class="main "><a href="#working-with-datasets">Working with datasets</a></li>
+        
+    
+        <li class="main "><a href="#skale-module">Skale module</a></li>
+        
+            <li><a href="#skalecontextconfig">skale.context([config])</a></li>
+        
+            <li><a href="#dataset-methods">Dataset methods</a></li>
+        
+            <li><a href="#partitioners">Partitioners</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h1>
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#working-with-datasets">Working with datasets</a></li>
+<li><a href="#skale-module">Skale module</a></li>
+<li><a href="#skalecontextconfig">skale.context([config])</a><ul>
+<li><a href="#scend">sc.end()</a></li>
+<li><a href="#scparallelizearray">sc.parallelize(array)</a></li>
+<li><a href="#scrangestart-end-step">sc.range(start[, end[, step]])</a></li>
+<li><a href="#sctextfilepath">sc.textFile(path)</a></li>
+<li><a href="#sclinestreaminput_stream">sc.lineStream(input_stream)</a></li>
+<li><a href="#scobjectstreaminput_stream">sc.objectStream(input_stream)</a></li>
+</ul>
+</li>
+<li><a href="#dataset-methods">Dataset methods</a><ul>
+<li><a href="#dsaggregatereducer-combiner-initobj">ds.aggregate(reducer, combiner, init[,obj])</a></li>
+<li><a href="#dsaggregatebykeyreducer-combiner-init-obj">ds.aggregateByKey(reducer, combiner, init,[ obj])</a></li>
+<li><a href="#dscartesianother">ds.cartesian(other)</a></li>
+<li><a href="#dscogroupother">ds.coGroup(other)</a></li>
+<li><a href="#dscollectopt">ds.collect([opt])</a></li>
+<li><a href="#dscount">ds.count()</a></li>
+<li><a href="#dscountbykey">ds.countByKey()</a></li>
+<li><a href="#dscountbyvalue">ds.countByValue()</a></li>
+<li><a href="#dsdistinct">ds.distinct()</a></li>
+<li><a href="#dsfilterfilterobj">ds.filter(filter[,obj])</a></li>
+<li><a href="#dsfirst">ds.first()</a></li>
+<li><a href="#dsflatmapflatmapperobj">ds.flatMap(flatMapper[,obj])</a></li>
+<li><a href="#dsflatmapvaluesflatmapperobj">ds.flatMapValues(flatMapper[,obj])</a></li>
+<li><a href="#dsforeachcallback-obj">ds.foreach(callback[, obj])</a></li>
+<li><a href="#dsgroupbykey">ds.groupByKey()</a></li>
+<li><a href="#dsintersectionother">ds.intersection(other)</a></li>
+<li><a href="#dsjoinother">ds.join(other)</a></li>
+<li><a href="#dskeys">ds.keys()</a></li>
+<li><a href="#dsleftouterjoinother">ds.leftOuterJoin(other)</a></li>
+<li><a href="#dslookupk">ds.lookup(k)</a></li>
+<li><a href="#dsmapmapperobj">ds.map(mapper[,obj])</a></li>
+<li><a href="#dsmapvaluesmapperobj">ds.mapValues(mapper[,obj])</a></li>
+<li><a href="#dspartitionbypartitioner">ds.partitionBy(partitioner)</a></li>
+<li><a href="#dspersist">ds.persist()</a></li>
+<li><a href="#dsreducereducer-initobj">ds.reduce(reducer, init[,obj])</a></li>
+<li><a href="#dsreducebykeyreducer-init-obj">ds.reduceByKey(reducer, init[, obj])</a></li>
+<li><a href="#dsrightouterjoinother">ds.rightOuterJoin(other)</a></li>
+<li><a href="#dssamplewithreplacement-frac-seed">ds.sample(withReplacement, frac, seed)</a></li>
+<li><a href="#dssortbykeyfunc-ascending">ds.sortBy(keyfunc[, ascending])</a></li>
+<li><a href="#dssortbykeyascending">ds.sortByKey(ascending)</a></li>
+<li><a href="#dssubtractother">ds.subtract(other)</a></li>
+<li><a href="#dstakenum">ds.take(num)</a></li>
+<li><a href="#dstopnum">ds.top(num)</a></li>
+<li><a href="#dsunionother">ds.union(other)</a></li>
+<li><a href="#dsvalues">ds.values()</a></li>
+</ul>
+</li>
+<li><a href="#partitioners">Partitioners</a><ul>
+<li><a href="#hashpartitionernumpartitions">HashPartitioner(numPartitions)</a></li>
+<li><a href="#rangepartitionernumpartitions-keyfunc-dataset">RangePartitioner(numPartitions, keyfunc, dataset)</a></li>
+</ul>
+</li>
+</ul>
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+<h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h1>
+<p>Skale is a fast and general purpose distributed data processing
+system. It provides a high-level API in Javascript and an optimized
+parallel execution engine.</p>
+<p>A Skale application consists of a <em>master</em> program that runs the
+user code and executes various <em>parallel operations</em> on a cluster
+of <em>workers</em>.</p>
+<p>The main abstraction Skale provides is a <em>dataset</em> which is similar
+to a Javascript <em>array</em>, but partitioned accross the workers that
+can be operated in parallel.</p>
+<p>There are several ways to create a dataset: <em>parallelizing</em> an existing
+array in the master program, or referencing a dataset in a distributed
+storage system (such as HDFS), or <em>streaming</em> the content of any
+source that can be processed through Node.js <em>Streams</em>. We call
+<em>source</em> a function which initializes a dataset.</p>
+<p>Datasets support two kinds of operations: <em>transformations</em>, which create
+a new dataset from an existing one, and <em>actions</em>, which
+return a value to the <em>master</em> program after running a computation
+on the dataset.</p>
+<p>For example, <code>map</code> is a transformation that applies a function to
+each element of a dataset, returning a new dataset. On the other
+hand, <code>reduce</code> is an action that aggregates all elements of a dataset
+using some function, and returns the final result to the master.</p>
+<p><em>Sources</em> and <em>transformations</em> in Skale are <em>lazy</em>. They do not
+start right away, but are triggered by <em>actions</em>, thus allowing
+efficient pipelined execution and optimized data transfers.</p>
+<p>A first example:</p>
+<pre><code class="javascript">var sc = require('skale-engine').context();     // create a new context
+sc.parallelize([1, 2, 3, 4]).               // source
+   map(function (x) {return x+1}).          // transform
+   reduce(function (a, b) {return a+b}, 0). // action
+   on('data', console.log);                 // process result: 14
+</code></pre>
+
+<h1 id="working-with-datasets">Working with datasets<a class="headerlink" href="#working-with-datasets" title="Permanent link">&para;</a></h1>
+<p><a name=working-with-datasets></a></p>
+<p>After having initialized a cluster context using
+<a href="#skale-context">skale.context()</a>, one can create a dataset
+using the following sources:</p>
+<table>
+<thead>
+<tr>
+<th>Source Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#sclinestreaminput_stream">lineStream(stream)</a></td>
+<td>Create a dataset from a text stream</td>
+</tr>
+<tr>
+<td><a href="#scobjectstreaminput_stream">objectStream(stream)</a></td>
+<td>Create a dataset from an object stream</td>
+</tr>
+<tr>
+<td><a href="#scparallelizearray">parallelize(array)</a></td>
+<td>Create a dataset from an array</td>
+</tr>
+<tr>
+<td><a href="#scrangestart-end-step">range(start,end,step)</a></td>
+<td>Create a dataset containing integers from start to end</td>
+</tr>
+<tr>
+<td><a href="#sctextfilepath">textFile(path)</a></td>
+<td>Create a dataset from a regular text file</td>
+</tr>
+</tbody>
+</table>
+<p>Transformations operate on a dataset and return a new dataset. Note that some
+transformation operate only on datasets where each element is in the form
+of 2 elements array of key and value (<code>[k,v]</code> dataset):</p>
+<pre><code>[[Ki,Vi], ..., [Kj, Vj]]
+</code></pre>
+<p>A special transformation <code>persist()</code> enables one to <em>persist</em> a dataset
+in memory, allowing efficient reuse accross parallel operations.</p>
+<table>
+<thead>
+<tr>
+<th>Transformation Name</th>
+<th>Description</th>
+<th>in</th>
+<th>out</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#dscartesianother">cartesian(other)</a></td>
+<td>Perform a cartesian product with the other dataset</td>
+<td>v w</td>
+<td>[v,w]</td>
+</tr>
+<tr>
+<td><a href="#dscogroupother">coGroup(other)</a></td>
+<td>Group data from both datasets sharing the same key</td>
+<td>[k,v] [k,w]</td>
+<td>[k,[[v],[w]]]</td>
+</tr>
+<tr>
+<td><a href="#dsdistinct">distinct()</a></td>
+<td>Return a dataset where duplicates are removed</td>
+<td>v</td>
+<td>w</td>
+</tr>
+<tr>
+<td><a href="#dsfilterfilterobj">filter(func)</a></td>
+<td>Return a dataset of elements on which function returns true</td>
+<td>v</td>
+<td>w</td>
+</tr>
+<tr>
+<td><a href="#dsflatmapflatmapperobj">flatMap(func)</a></td>
+<td>Pass the dataset elements to a function which returns a sequence</td>
+<td>v</td>
+<td>w</td>
+</tr>
+<tr>
+<td><a href="#dsgroupbykey">groupByKey()</a></td>
+<td>Group values with the same key</td>
+<td>[k,v]</td>
+<td>[k,[v]]</td>
+</tr>
+<tr>
+<td><a href="#dsintersectionother">intersection(other)</a></td>
+<td>Return a dataset containing only elements found in both datasets</td>
+<td>v w</td>
+<td>v</td>
+</tr>
+<tr>
+<td><a href="#dsjoinother">join(other)</a></td>
+<td>Perform an inner join between 2 datasets</td>
+<td>[k,v]</td>
+<td>[k,[v,w]]</td>
+</tr>
+<tr>
+<td><a href="#dsleftouterjoinother">leftOuterJoin(other)</a></td>
+<td>Join 2 datasets where the key must be present in the other</td>
+<td>[k,v]</td>
+<td>[k,[v,w]]</td>
+</tr>
+<tr>
+<td><a href="#dsrightouterjoinother">rightOuterJoin(other)</a></td>
+<td>Join 2 datasets where the key must be present in the first</td>
+<td>[k,v]</td>
+<td>[k,[v,w]]</td>
+</tr>
+<tr>
+<td><a href="#dskeys">keys()</a></td>
+<td>Return a dataset of just the keys</td>
+<td>[k,v]</td>
+<td>k</td>
+</tr>
+<tr>
+<td><a href="#dsmapmapperobj">map(func)</a></td>
+<td>Return a dataset where elements are passed through a function</td>
+<td>v</td>
+<td>w</td>
+</tr>
+<tr>
+<td><a href="#dsmapvaluesmapperobj">mapValues(func)</a></td>
+<td>Map a function to the value field of key-value dataset</td>
+<td>[k,v]</td>
+<td>[k,w]</td>
+</tr>
+<tr>
+<td><a href="#dsreducebykeyreducer-init-obj">reduceByKey(func, init)</a></td>
+<td>Combine values with the same key</td>
+<td>[k,v]</td>
+<td>[k,w]</td>
+</tr>
+<tr>
+<td><a href="#dspartitionbypartitioner">partitionBy(partitioner)</a></td>
+<td>Partition using the partitioner</td>
+<td>v</td>
+<td>v</td>
+</tr>
+<tr>
+<td><a href="#dspersist">persist()</a></td>
+<td>Idempotent. Keep content of dataset in cache for further reuse.</td>
+<td>v</td>
+<td>v</td>
+</tr>
+<tr>
+<td><a href="#dssamplewithreplacement-frac-seed">sample(rep, frac, seed)</a></td>
+<td>Sample a dataset, with or without replacement</td>
+<td>v</td>
+<td>w</td>
+</tr>
+<tr>
+<td><a href="#dssortbykeyfunc-ascending">sortBy(func)</a></td>
+<td>Sort a dataset</td>
+<td>v</td>
+<td>v</td>
+</tr>
+<tr>
+<td><a href="#dssortbykeyascending">sortByKey()</a></td>
+<td>Sort a [k,v] dataset</td>
+<td>[k,v]</td>
+<td>[k,v]</td>
+</tr>
+<tr>
+<td><a href="#dssubtractother">subtract(other)</a></td>
+<td>Remove the content of one dataset</td>
+<td>v w</td>
+<td>v</td>
+</tr>
+<tr>
+<td><a href="#dsunionother">union(other)</a></td>
+<td>Return a dataset containing elements from both datasets</td>
+<td>v</td>
+<td>v w</td>
+</tr>
+<tr>
+<td><a href="#dsvalues">values()</a></td>
+<td>Return a dataset of just the values</td>
+<td>[k,v]</td>
+<td>v</td>
+</tr>
+</tbody>
+</table>
+<p>Actions operate on a dataset and send back results to the <em>master</em>. Results
+are always produced asynchronously. All actions return a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a>
+on which results are emitted.</p>
+<table>
+<thead>
+<tr>
+<th>Action Name</th>
+<th>Description</th>
+<th>out</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#dsaggregatereducer-combiner-initobj">aggregate(func, func, init)</a></td>
+<td>Similar to reduce() but may return a different type</td>
+<td>stream of value</td>
+</tr>
+<tr>
+<td><a href="#dsaggregatebykeyreducer-combiner-init-obj">aggregateByKey(func, func, init)</a></td>
+<td>reduce and combine by key using functions</td>
+<td>stream of [k,v]</td>
+</tr>
+<tr>
+<td><a href="#dscollectopt">collect()</a></td>
+<td>Return the content of dataset</td>
+<td>stream of elements</td>
+</tr>
+<tr>
+<td><a href="#dscount">count()</a></td>
+<td>Return the number of elements from dataset</td>
+<td>stream of number</td>
+</tr>
+<tr>
+<td><a href="#dscountbykey">countByKey()</a></td>
+<td>Return the number of occurrences for each key in a <code>[k,v]</code> dataset</td>
+<td>stream of [k,number]</td>
+</tr>
+<tr>
+<td><a href="#dscountbyvalue">countByValue()</a></td>
+<td>Return the number of occurrences of elements from dataset</td>
+<td>stream of [v,number]</td>
+</tr>
+<tr>
+<td><a href="#dsfirst">first()</a></td>
+<td>Return the first element in dataset</td>
+<td>stream of value</td>
+</tr>
+<tr>
+<td><a href="#dsforeachcallback-obj">foreach(func)</a></td>
+<td>Apply the provided function to each element of the dataset</td>
+<td>empty stream</td>
+</tr>
+<tr>
+<td><a href="#dslookupk">lookup(k)</a></td>
+<td>Return the list of values <code>v</code> for key <code>k</code> in a <code>[k,v]</code> dataset</td>
+<td>stream of v</td>
+</tr>
+<tr>
+<td><a href="#dsreducereducer-initobj">reduce(func, init)</a></td>
+<td>Aggregates dataset elements using a function into one value</td>
+<td>stream of value</td>
+</tr>
+<tr>
+<td><a href="#dstakenum">take(num)</a></td>
+<td>Return the first <code>num</code> elements of dataset</td>
+<td>stream of value</td>
+</tr>
+<tr>
+<td><a href="#dstopnum">top(num)</a></td>
+<td>Return the top <code>num</code> elements of dataset</td>
+<td>stream of value</td>
+</tr>
+</tbody>
+</table>
+<h1 id="skale-module">Skale module<a class="headerlink" href="#skale-module" title="Permanent link">&para;</a></h1>
+<p>The Skale module is the main entry point for Skale functionality.
+To use it, one must <code>require('skale-engine')</code>.</p>
+<h2 id="skalecontextconfig">skale.context([config])<a class="headerlink" href="#skalecontextconfig" title="Permanent link">&para;</a></h2>
+<p>Creates and returns a new context which represents the connection
+to the Skale cluster, and which can be used to create datasets on that
+cluster. Config is an <em>Object</em> which defines the cluster server,
+with the following defaults:</p>
+<pre><code class="javascript">{
+  host: 'localhost',    // Cluster server host, settable also by SKALE_HOST env
+  port: '12346'         // Cluster server port, settable also by SKALE_PORT env
+}
+</code></pre>
+
+<p>Example:</p>
+<pre><code class="javascript">var skale = require('skale-engine');
+var sc = skale.context();
+</code></pre>
+
+<h3 id="scend">sc.end()<a class="headerlink" href="#scend" title="Permanent link">&para;</a></h3>
+<p>Closes the connection to the cluster.</p>
+<h3 id="scparallelizearray">sc.parallelize(array)<a class="headerlink" href="#scparallelizearray" title="Permanent link">&para;</a></h3>
+<p>Returns a new dataset containing elements from the <em>Array</em> array.</p>
+<p>Example:</p>
+<pre><code class="javascript">var a = sc.parallelize(['Hello', 'World']);
+</code></pre>
+
+<h3 id="scrangestart-end-step">sc.range(start[, end[, step]])<a class="headerlink" href="#scrangestart-end-step" title="Permanent link">&para;</a></h3>
+<p>Returns a new dataset of integers from <em>start</em> to <em>end</em> (exclusive)
+increased by <em>step</em> (default 1) every element. If called with a
+single argument, the argument is interpreted as <em>end</em>, and <em>start</em>
+is set to 0.</p>
+<pre><code class="javascript">sc.range(5).collect.toArray()
+// [ 0, 1, 2, 3, 4 ]
+sc.range(2, 4).collect.toArray()
+// [ 2, 3 ]
+sc.range(10, -5, -3).collect().toArray()
+// [ 10, 7, 4, 1, -2 ]
+</code></pre>
+
+<h3 id="sctextfilepath">sc.textFile(path)<a class="headerlink" href="#sctextfilepath" title="Permanent link">&para;</a></h3>
+<p>Returns a new dataset of lines composing the file specified by path
+<em>String</em>.</p>
+<p>Note: If using a path on the local filesystem, the file must also
+be accessible at the same path on worker nodes. Either copy the
+file to all workers or use a network-mounted shared file system.</p>
+<p>Example, the following program prints the length of a text file:</p>
+<pre><code class="javascript">var lines = sc.textFile('data.txt');
+lines.map(s =&gt; s.length).reduce((a, b) =&gt; a + b, 0).on('data', console.log);
+</code></pre>
+
+<h3 id="sclinestreaminput_stream">sc.lineStream(input_stream)<a class="headerlink" href="#sclinestreaminput_stream" title="Permanent link">&para;</a></h3>
+<p>Returns a new dataset of lines of text read from input_stream
+<em>Object</em>, which is a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> where dataset content is
+read from.</p>
+<p>The following example computes the size of a file using streams:</p>
+<pre><code class="javascript">var stream = fs.createReadStream('data.txt', 'utf8');
+sc.lineStream(stream).
+   map(s =&gt; s.length).
+   reduce((a, b) =&gt; a + b, 0).
+   on('data', console.log);
+</code></pre>
+
+<h3 id="scobjectstreaminput_stream">sc.objectStream(input_stream)<a class="headerlink" href="#scobjectstreaminput_stream" title="Permanent link">&para;</a></h3>
+<p>Returns a new dataset of Javascript <em>Objects</em> read from input_stream
+<em>Object</em>, which is a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> where dataset content is
+read from.</p>
+<p>The following example counts the number of objects returned in an
+object stream using the mongodb native Javascript driver:</p>
+<pre><code class="javascript">var cursor = db.collection('clients').find();
+sc.objectStream(cursor).count().on('data', console.log);
+</code></pre>
+
+<h2 id="dataset-methods">Dataset methods<a class="headerlink" href="#dataset-methods" title="Permanent link">&para;</a></h2>
+<p>Dataset objects, as created initially by above skale context source
+functions, have the following methods, allowing either to instantiate
+a new dataset through a transformation, or to return results to the
+master program.</p>
+<h3 id="dsaggregatereducer-combiner-initobj">ds.aggregate(reducer, combiner, init[,obj])<a class="headerlink" href="#dsaggregatereducer-combiner-initobj" title="Permanent link">&para;</a></h3>
+<p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of the aggregated value of the elements
+of the dataset using two functions <em>reducer()</em> and <em>combiner()</em>,
+allowing to use an arbitrary accumulator type, different from element
+type (as opposed to <code>reduce()</code> which imposes the same type for
+accumulator and element).</p>
+<ul>
+<li><em>reducer</em>: a function of the form <code>function(acc,val[,obj[,wc]])</code>,
+  which returns the next value of the accumulator (which must be
+  of the same type as <em>acc</em>) and with:<ul>
+<li><em>acc</em>: the value of the accumulator, initially set to <em>init</em></li>
+<li><em>val</em>: the value of the next element of the dataset on which
+   <code>aggregate()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>aggregate()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+   worker, where user can store and access worker local dependencies.</li>
+</ul>
+</li>
+<li><em>combiner</em>: a function of the form <code>function(acc1,acc2[,obj])</code>,
+  which returns the merged value of accumulators and with:<ul>
+<li><em>acc1</em>: the value of an accumulator, computed locally on a worker</li>
+<li><em>acc2</em>: the value of an other accumulator, issued by another worker</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>aggregate()</code></li>
+</ul>
+</li>
+<li><em>init</em>: the initial value of the accumulators that are used by
+  <em>reducer()</em> and <em>combiner()</em>. It should be the identity element
+  of the operation (a neutral zero value, i.e. applying it through the
+  function should not change result).</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset.</li>
+</ul>
+<p>The following example computes the average of a dataset, avoiding a <code>map()</code>:</p>
+<pre><code class="javascript">sc.parallelize([3, 5, 2, 7, 4, 8]).
+   aggregate((a, v) =&gt; [a[0] + v, a[1] + 1],
+        (a1, a2) =&gt; [a1[0] + a2[0], a1[1] + a2[1]],
+        [0, 0],
+        function (err, res) {
+            console.log(res[0] / res[1]);
+        });
+// 4.8333
+</code></pre>
+
+<h3 id="dsaggregatebykeyreducer-combiner-init-obj">ds.aggregateByKey(reducer, combiner, init,[ obj])<a class="headerlink" href="#dsaggregatebykeyreducer-combiner-init-obj" title="Permanent link">&para;</a></h3>
+<p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of <code>[k,v]</code> elements where <code>v</code> is the
+aggregated value of all elements of same key <code>k</code>. The aggregation
+is performed using two functions <em>reducer()</em> and <em>combiner()</em>
+allowing to use an arbitrary accumulator type, different from element
+type.</p>
+<ul>
+<li><em>reducer</em>: a function of the form <code>function(acc,val[,obj[,wc]])</code>,
+  which returns the next value of the accumulator (which must be
+  of the same type as <em>acc</em>) and with:<ul>
+<li><em>acc</em>: the value of the accumulator, initially set to <em>init</em></li>
+<li><em>val</em>: the value <code>v</code> of the next <code>[k,v]</code> element of the dataset
+   on which <code>aggregateByKey()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>aggregateByKey()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+   worker, where user can store and access worker local dependencies.</li>
+</ul>
+</li>
+<li><em>combiner</em>: a function of the form <code>function(acc1,acc2[,obj])</code>,
+  which returns the merged value of accumulators and with:<ul>
+<li><em>acc1</em>: the value of an accumulator, computed locally on a worker</li>
+<li><em>acc2</em>: the value of an other accumulator, issued by another worker</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>aggregate()</code></li>
+</ul>
+</li>
+<li><em>init</em>: the initial value of the accumulators that are used by
+  <em>reducer()</em> and <em>combiner()</em>. It should be the identity element
+  of the operation (a neutral zero value, i.e. applying it through the
+  function should not change result).</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset.</li>
+</ul>
+<h3 id="dscartesianother">ds.cartesian(other)<a class="headerlink" href="#dscartesianother" title="Permanent link">&para;</a></h3>
+<p>Returns a dataset wich contains all possible pairs <code>[a, b]</code> where <code>a</code>
+is in the source dataset and <code>b</code> is in the <em>other</em> dataset.</p>
+<p>Example:</p>
+<pre><code class="javascript">var ds1 = sc.parallelize([1, 2]);
+var ds2 = sc.parallelize(['a', 'b', 'c']);
+ds1.cartesian(ds2).collect().toArray().then(console.log);
+// [ [ 1, 'a' ], [ 1, 'b' ], [ 1, 'c' ],
+//   [ 2, 'a' ], [ 2, 'b' ], [ 2, 'c' ] ]
+</code></pre>
+
+<h3 id="dscogroupother">ds.coGroup(other)<a class="headerlink" href="#dscogroupother" title="Permanent link">&para;</a></h3>
+<p>When called on dataset of type <code>[k,v]</code> and <code>[k,w]</code>, returns a dataset of type
+<code>[k, [[v], [w]]]</code>, where data of both datasets share the same key.</p>
+<p>Example:</p>
+<pre><code class="javascript">var ds1 = sc.parallelize([[10, 1], [20, 2]]);
+var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
+ds1.coGroup(ds2).collect().on('data', console.log);
+// [ 10, [ [ 1 ], [ 'world' ] ] ]
+// [ 20, [ [ 2 ], [] ] ]
+// [ 30, [ [], [ 3 ] ] ]
+</code></pre>
+
+<h3 id="dscollectopt">ds.collect([opt])<a class="headerlink" href="#dscollectopt" title="Permanent link">&para;</a></h3>
+<p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of all elements of the dataset. Optional
+<em>opt</em> parameter is an object with the default content <code>{text:
+false}</code>. if <code>text</code> option is <code>true</code>, each element is passed through
+<code>JSON.stringify()</code> and a 'newline' is appended, making it possible to
+pipe to standard output or any text stream.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([1, 2, 3, 4]).
+   collect({text: true}).pipe(process.stdout);
+// 1
+// 2
+// 3
+// 4
+</code></pre>
+
+<h3 id="dscount">ds.count()<a class="headerlink" href="#dscount" title="Permanent link">&para;</a></h3>
+<p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of the number of elements in the dataset.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([10, 20, 30, 40]).count().on('data', console.log);
+// 4
+</code></pre>
+
+<h3 id="dscountbykey">ds.countByKey()<a class="headerlink" href="#dscountbykey" title="Permanent link">&para;</a></h3>
+<p>When called on a dataset of type <code>[k,v]</code>, computes the number of occurrences
+of elements for each key in a dataset of type <code>[k,v]</code>. Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a>
+of elements of type <code>[k,w]</code> where <code>w</code> is the result count.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([[10, 1], [20, 2], [10, 4]]).
+   countByKey().on('data', console.log);
+// [ 10, 2 ]
+// [ 20, 1 ]
+</code></pre>
+
+<h3 id="dscountbyvalue">ds.countByValue()<a class="headerlink" href="#dscountbyvalue" title="Permanent link">&para;</a></h3>
+<p>Computes the number of occurences of each element in dataset and returns
+a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of elements of type <code>[v,n]</code> where <code>v</code> is the
+element and <code>n</code> its number of occurrences.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([ 1, 2, 3, 1, 3, 2, 5 ]).
+   countByValue().
+   toArray().then(console.log);
+// [ [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 5, 1 ] ]
+</code></pre>
+
+<h3 id="dsdistinct">ds.distinct()<a class="headerlink" href="#dsdistinct" title="Permanent link">&para;</a></h3>
+<p>Returns a dataset where duplicates are removed.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
+   distinct().
+   collect().toArray().then(console.log);
+// [ 1, 2, 3, 4, 5 ]
+</code></pre>
+
+<h3 id="dsfilterfilterobj">ds.filter(filter[,obj])<a class="headerlink" href="#dsfilterfilterobj" title="Permanent link">&para;</a></h3>
+<ul>
+<li><em>filter</em>: a function of the form <code>callback(element[,obj[,wc]])</code>,
+  returning a <em>Boolean</em> and where:<ul>
+<li><em>element</em>: the next element of the dataset on which <code>filter()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>filter()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+  worker, where user can store and access worker local dependencies.</li>
+</ul>
+</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset</li>
+</ul>
+<p>Applies the provided filter function to each element of the source
+dataset and returns a new dataset containing the elements that passed the
+test.</p>
+<p>Example:</p>
+<pre><code class="javascript">function filter(data, obj) { return data % obj.modulo; }
+
+sc.parallelize([1, 2, 3, 4]).
+   filter(filter, {modulo: 2}).
+   collect().on('data', console.log);
+// 1 3
+</code></pre>
+
+<h3 id="dsfirst">ds.first()<a class="headerlink" href="#dsfirst" title="Permanent link">&para;</a></h3>
+<p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of the first element in this dataset.</p>
+<pre><code class="javascript">sc.parallelize([1, 2, 3]).first().on('data', console.log)
+// 1
+</code></pre>
+
+<h3 id="dsflatmapflatmapperobj">ds.flatMap(flatMapper[,obj])<a class="headerlink" href="#dsflatmapflatmapperobj" title="Permanent link">&para;</a></h3>
+<p>Applies the provided mapper function to each element of the source
+dataset and returns a new dataset.</p>
+<ul>
+<li><em>flatMapper</em>: a function of the form <code>callback(element[,obj[,wc]])</code>,
+  returning an <em>Array</em> and where:<ul>
+<li><em>element</em>: the next element of the dataset on which <code>flatMap()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>flatMap()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+  worker, where user can store and access worker local dependencies.</li>
+</ul>
+</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset</li>
+</ul>
+<p>Example:</p>
+<pre><code class="javascript">function flatMapper(data, obj) {
+    var tmp = [];
+    for (var i = 0; i &lt; obj.N; i++) tmp.push(data);
+    return tmp;
+}
+
+sc.parallelize([1, 2, 3, 4]).
+   flatMap(flatMapper, {N: 2}).
+   collect().on('data', console.log);
+// [ 'hello', 2 ]
+// [ 'hello', 2 ]
+// [ 'world', 4 ]
+// [ 'world', 4 ]
+</code></pre>
+
+<h3 id="dsflatmapvaluesflatmapperobj">ds.flatMapValues(flatMapper[,obj])<a class="headerlink" href="#dsflatmapvaluesflatmapperobj" title="Permanent link">&para;</a></h3>
+<p>Applies the provided flatMapper function to the value of each [key,
+value] element of the source dataset and return a new dataset containing
+elements defined as [key, mapper(value)], keeping the key unchanged
+for each source element.</p>
+<ul>
+<li><em>flatMapper</em>: a function of the form <code>callback(element[,obj[,wc]])</code>,
+  returning an <em>Array</em> and where:<ul>
+<li><em>element</em>: the value v of the next [k,v] element of the dataset on
+  which <code>flatMapValues()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>flatMapValues()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+  worker, where user can store and access worker local dependencies.</li>
+</ul>
+</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset</li>
+</ul>
+<p>Example:</p>
+<pre><code class="javascript">function valueFlatMapper(data, obj) {
+    var tmp = [];
+    for (var i = 0; i &lt; obj.N; i++) tmp.push(data * obj.fact);
+    return tmp;
+}
+
+sc.parallelize([['hello', 1], ['world', 2]]).
+   flatMapValues(valueFlatMapper, {N: 2, fact: 2}).
+   collect().on('data', console.log);
+</code></pre>
+
+<h3 id="dsforeachcallback-obj">ds.foreach(callback[, obj])<a class="headerlink" href="#dsforeachcallback-obj" title="Permanent link">&para;</a></h3>
+<p>This action applies a <em>callback</em> function on each element of the dataset.
+A stream is returned, and closed when all callbacks have returned.
+No data is written on the stream.</p>
+<ul>
+<li><em>callback</em>: a function of the form <code>function(val[,obj[,wc]])</code>,
+  which returns <em>null</em> and with:<ul>
+<li><em>val</em>: the value of the next element of the dataset on which
+   <code>foreach()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>foreach()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+   worker, where user can store and access worker local dependencies.</li>
+</ul>
+</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset</li>
+</ul>
+<p>In the following example, the <code>console.log()</code> callback provided
+to <code>foreach()</code> is executed on workers and may be not visible:</p>
+<pre><code class="javascript">sc.parallelize([1, 2, 3, 4]).
+   foreach(console.log).on('end', console.log('finished'));
+</code></pre>
+
+<h3 id="dsgroupbykey">ds.groupByKey()<a class="headerlink" href="#dsgroupbykey" title="Permanent link">&para;</a></h3>
+<p>When called on a dataset of type <code>[k,v]</code>, returns a dataset of type <code>[k, [v]]</code>
+where values with the same key are grouped.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([[10, 1], [20, 2], [10, 4]]).
+   groupByKey().collect().on('data', console.log);
+// [ 10, [ 1, 4 ] ]
+// [ 20, [ 2 ] ]
+</code></pre>
+
+<h3 id="dsintersectionother">ds.intersection(other)<a class="headerlink" href="#dsintersectionother" title="Permanent link">&para;</a></h3>
+<p>Returns a dataset containing only elements found in source dataset and <em>other</em>
+dataset.</p>
+<p>Example:</p>
+<pre><code class="javascript">var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
+var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
+ds1.intersection(ds2).collect().toArray().then(console.log);
+// [ 3, 4, 5 ]
+</code></pre>
+
+<h3 id="dsjoinother">ds.join(other)<a class="headerlink" href="#dsjoinother" title="Permanent link">&para;</a></h3>
+<p>When called on source dataset of type <code>[k,v]</code> and <em>other</em> dataset of type
+<code>[k,w]</code>, returns a dataset of type <code>[k, [v, w]]</code> pairs with all pairs
+of elements for each key.</p>
+<p>Example:</p>
+<pre><code class="javascript">var ds1 = sc.parallelize([[10, 1], [20, 2]]);
+var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
+ds1.join(ds2).collect().on('data', console.log);
+// [ 10, [ 1, 'world' ] ]
+</code></pre>
+
+<h3 id="dskeys">ds.keys()<a class="headerlink" href="#dskeys" title="Permanent link">&para;</a></h3>
+<p>When called on source dataset of type <code>[k,v]</code>, returns a dataset with just
+the elements <code>k</code>.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([[10, 'world'], [30, 3]]).
+   keys.collect().on('data', console.log);
+// 10
+// 30
+</code></pre>
+
+<h3 id="dsleftouterjoinother">ds.leftOuterJoin(other)<a class="headerlink" href="#dsleftouterjoinother" title="Permanent link">&para;</a></h3>
+<p>When called on source dataset of type <code>[k,v]</code> and <em>other</em> dataset of type
+<code>[k,w]</code>, returns a dataset of type <code>[k, [v, w]]</code> pairs where the key
+must be present in the <em>other</em> dataset.</p>
+<p>Example:</p>
+<pre><code class="javascript">var ds1 = sc.parallelize([[10, 1], [20, 2]]);
+var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
+ds1.leftOuterJoin(ds2).collect().on('data', console.log);
+// [ 10, [ 1, 'world' ] ]
+// [ 20, [ 2, null ] ]
+</code></pre>
+
+<h3 id="dslookupk">ds.lookup(k)<a class="headerlink" href="#dslookupk" title="Permanent link">&para;</a></h3>
+<p>When called on source dataset of type <code>[k,v]</code>, returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a>
+of values <code>v</code> for key <code>k</code>.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([[10, 'world'], [20, 2], [10, 1], [30, 3]]).
+   lookup(10).on('data', console.log);
+// world
+// 1
+</code></pre>
+
+<h3 id="dsmapmapperobj">ds.map(mapper[,obj])<a class="headerlink" href="#dsmapmapperobj" title="Permanent link">&para;</a></h3>
+<p>Applies the provided mapper function to each element of the source
+dataset and returns a new dataset.</p>
+<ul>
+<li><em>mapper</em>: a function of the form <code>callback(element[,obj[,wc]])</code>,
+  returning an element and where:<ul>
+<li><em>element</em>: the next element of the dataset on which <code>map()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>map()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+  worker, where user can store and access worker local dependencies.</li>
+</ul>
+</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset</li>
+</ul>
+<p>The following example program</p>
+<pre><code class="javascript">sc.parallelize([1, 2, 3, 4]).
+   map((data, obj) =&gt; data * obj.scaling, {scaling: 1.2}).
+   collect().toArray().then(console.log);
+// [ 1.2, 2.4, 3.6, 4.8 ]
+</code></pre>
+
+<h3 id="dsmapvaluesmapperobj">ds.mapValues(mapper[,obj])<a class="headerlink" href="#dsmapvaluesmapperobj" title="Permanent link">&para;</a></h3>
+<ul>
+<li><em>mapper</em>: a function of the form <code>callback(element[,obj[,wc]])</code>,
+  returning an element and where:<ul>
+<li><em>element</em>: the value v of the next [k,v] element of the dataset on
+  which <code>mapValues()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>mapValues()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+  worker, where user can store and access worker local dependencies</li>
+</ul>
+</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset</li>
+</ul>
+<p>Applies the provided mapper function to the value of each <code>[k,v]</code>
+element of the source dataset and return a new dataset containing elements
+defined as <code>[k, mapper(v)]</code>, keeping the key unchanged for each
+source element.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([['hello', 1], ['world', 2]]).
+   mapValues((a, obj) =&gt; a*obj.fact, {fact: 2}).
+   collect().on('data', console.log);
+// ['hello', 2]
+// ['world', 4]
+</code></pre>
+
+<h3 id="dspartitionbypartitioner">ds.partitionBy(partitioner)<a class="headerlink" href="#dspartitionbypartitioner" title="Permanent link">&para;</a></h3>
+<p>Returns a dataset partitioned using the specified partitioner. The
+purpose of this transformation is not to change the dataset content,
+but to increase processing speed by ensuring that the elements
+accessed by further transfomations reside in the same partition.</p>
+<p>Example:</p>
+<pre><code class="javascript">var skale = require('skale-engine');
+var sc = skale.context();
+
+sc.parallelize([['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric', 3]])
+  .partitionBy(new skale.HashPartitioner(3))
+  .collect.on('data', console.log)
+// ['world', 1], ['world', 2], ['hello', 1], ['hello', 2], ['cedric', 3]
+</code></pre>
+
+<h3 id="dspersist">ds.persist()<a class="headerlink" href="#dspersist" title="Permanent link">&para;</a></h3>
+<p>Returns the dataset, and persists the dataset content on disk (and
+in memory if available) in order to directly reuse content in further
+tasks.</p>
+<p>Example:</p>
+<pre><code class="javascript">var dataset = sc.range(100).map(a =&gt; a * a);
+
+// First action: compute dataset
+dataset.collect().on('data', console.log)
+
+// Second action: reuse dataset, avoid map transform
+dataset.collect().on('data', console.log)
+</code></pre>
+
+<h3 id="dsreducereducer-initobj">ds.reduce(reducer, init[,obj])<a class="headerlink" href="#dsreducereducer-initobj" title="Permanent link">&para;</a></h3>
+<p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of the aggregated value of the elements
+of the dataset using a <em>reducer()</em> function.</p>
+<ul>
+<li><em>reducer</em>: a function of the form <code>function(acc,val[,obj[,wc]])</code>,
+  which returns the next value of the accumulator (which must be
+  of the same type as <em>acc</em> and <em>val</em>) and with:<ul>
+<li><em>acc</em>: the value of the accumulator, initially set to <em>init</em></li>
+<li><em>val</em>: the value of the next element of the dataset on which
+   <code>reduce()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>reduce()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+   worker, where user can store and access worker local dependencies.</li>
+</ul>
+</li>
+<li><em>init</em>: the initial value of the accumulators that are used by
+  <em>reducer()</em>. It should be the identity element of the operation
+  (i.e. applying it through the function should not change result).</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset</li>
+</ul>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([1, 2, 4, 8]).
+   reduce((a, b) =&gt; a + b, 0).
+   then(console.log);
+// 15
+</code></pre>
+
+<h3 id="dsreducebykeyreducer-init-obj">ds.reduceByKey(reducer, init[, obj])<a class="headerlink" href="#dsreducebykeyreducer-init-obj" title="Permanent link">&para;</a></h3>
+<ul>
+<li><em>reducer</em>: a function of the form <code>callback(acc,val[,obj[,wc]])</code>,
+  returning the next value of the accumulator (which must be of the
+  same type as <em>acc</em> and <em>val</em>) and where:<ul>
+<li><em>acc</em>: the value of the accumulator, initially set to <em>init</em></li>
+<li><em>val</em>: the value <code>v</code> of the next <code>[k,v]</code> element of the dataset on
+  which <code>reduceByKey()</code> operates</li>
+<li><em>obj</em>: the same parameter <em>obj</em> passed to <code>reduceByKey()</code></li>
+<li><em>wc</em>: the worker context, a persistent object local to each
+  worker, where user can store and access worker local dependencies.</li>
+</ul>
+</li>
+<li><em>init</em>: the initial value of accumulator for each key. Will be
+  passed to <em>reducer</em>.</li>
+<li><em>obj</em>: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset</li>
+</ul>
+<p>When called on a dataset of type <code>[k,v]</code>, returns a dataset of type <code>[k,v]</code>
+where the values of each key are aggregated using the <em>reducer</em>
+function and the <em>init</em> initial value.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([[10, 1], [10, 2], [10, 4]]).
+   reduceByKey((a,b) =&gt; a+b, 0).
+   collect().on('data', console.log);
+// [10, 7]
+</code></pre>
+
+<h3 id="dsrightouterjoinother">ds.rightOuterJoin(other)<a class="headerlink" href="#dsrightouterjoinother" title="Permanent link">&para;</a></h3>
+<p>When called on source dataset of type <code>[k,v]</code> and <em>other</em> dataset of type
+<code>[k,w]</code>, returns a dataset of type <code>[k, [v, w]]</code> pairs where the key
+must be present in the <em>source</em> dataset.</p>
+<p>Example:</p>
+<pre><code class="javascript">var ds1 = sc.parallelize([[10, 1], [20, 2]]);
+var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
+ds1.rightOuterJoin(ds2).collect().on('data', console.log);
+// [ 10, [ 1, 'world' ] ]
+// [ 30, [ null, 2 ] ]
+</code></pre>
+
+<h3 id="dssamplewithreplacement-frac-seed">ds.sample(withReplacement, frac, seed)<a class="headerlink" href="#dssamplewithreplacement-frac-seed" title="Permanent link">&para;</a></h3>
+<ul>
+<li><em>withReplacement</em>: <em>Boolean</em> value, <em>true</em> if data must be sampled
+  with replacement</li>
+<li><em>frac</em>: <em>Number</em> value of the fraction of source dataset to return</li>
+<li><em>seed</em>: <em>Number</em> value of pseudo-random seed</li>
+</ul>
+<p>Returns a dataset by sampling a fraction <em>frac</em> of source dataset, with or
+without replacement, using a given random generator <em>seed</em>.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
+   sample(true, 0.5, 0).
+   collect().toArray().then(console.log);
+// [ 1, 1, 3, 4, 4, 5, 7 ]
+</code></pre>
+
+<h3 id="dssortbykeyfunc-ascending">ds.sortBy(keyfunc[, ascending])<a class="headerlink" href="#dssortbykeyfunc-ascending" title="Permanent link">&para;</a></h3>
+<p>Returns a dataset sorted by the given <em>keyfunc</em>.</p>
+<ul>
+<li><em>keyfunc</em>: a function of the form <code>function(element)</code> which returns
+  a value used for comparison in the sort function and where <code>element</code>
+  is the next element of the dataset on which <code>sortBy()</code> operates</li>
+<li><em>ascending</em>: a boolean to set the sort direction. Default: true</li>
+</ul>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([4, 6, 10, 5, 1, 2, 9, 7, 3, 0])
+  .sortBy(a =&gt; a)
+  .collect().toArray().then(console.log)
+// [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+</code></pre>
+
+<h3 id="dssortbykeyascending">ds.sortByKey(ascending)<a class="headerlink" href="#dssortbykeyascending" title="Permanent link">&para;</a></h3>
+<p>When called on a dataset of type <code>[k,v]</code>, returns a dataset of type <code>[k,v]</code>
+sorted on <code>k</code>. The optional parameter <em>ascending</em> is a boolean which sets
+the sort direction, true by default.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([['world', 2], ['cedric', 3], ['hello', 1]])
+  .sortByKey()
+  .collect().toArray().then(console.log)
+// [['cedric', 3], ['hello', 1], ['world', 2]]
+</code></pre>
+
+<h3 id="dssubtractother">ds.subtract(other)<a class="headerlink" href="#dssubtractother" title="Permanent link">&para;</a></h3>
+<p>Returns a dataset containing only elements of source dataset which are not
+in <em>other</em> dataset.</p>
+<p>Example:</p>
+<pre><code class="javascript">var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
+var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
+ds1.subtract(ds2).collect().on('data', console.log);
+// 1 2
+</code></pre>
+
+<h3 id="dstakenum">ds.take(num)<a class="headerlink" href="#dstakenum" title="Permanent link">&para;</a></h3>
+<p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of the <code>num</code> first elements of the source
+dataset.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([1, 2, 3, 4])
+  .take(2)
+  .collect().toArray().then(console.log)
+// [1, 2]
+</code></pre>
+
+<h3 id="dstopnum">ds.top(num)<a class="headerlink" href="#dstopnum" title="Permanent link">&para;</a></h3>
+<p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of the <code>num</code> top elements of the source
+dataset.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([1, 2, 3, 4])
+  .top(2)
+  .collect().toArray().then(console.log)
+// [3, 4]
+</code></pre>
+
+<h3 id="dsunionother">ds.union(other)<a class="headerlink" href="#dsunionother" title="Permanent link">&para;</a></h3>
+<p>Returns a dataset that contains the union of the elements in the source
+dataset and the <em>other</em> dataset.</p>
+<p>Example:</p>
+<pre><code class="javascript">var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
+var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
+ds1.union(ds2).collect().toArray().then(console.log);
+// [ 1, 2, 3, 4, 5, 3, 4, 5, 6, 7 ]
+</code></pre>
+
+<h3 id="dsvalues">ds.values()<a class="headerlink" href="#dsvalues" title="Permanent link">&para;</a></h3>
+<p>When called on source dataset of type <code>[k,v]</code>, returns a dataset with just
+the elements <code>v</code>.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([[10, 'world'], [30, 3]]).
+   keys.collect().on('data', console.log);
+// 'world'
+// 3
+</code></pre>
+
+<h2 id="partitioners">Partitioners<a class="headerlink" href="#partitioners" title="Permanent link">&para;</a></h2>
+<p>A partitioner is an object passed to
+<a href="#dspartitionbypartitioner">ds.partitionBy(partitioner)</a> which
+places data in partitions according to a strategy, for example hash
+partitioning, where data having the same key are placed in the same
+partition, or range partitioning, where data in the same range are
+in the same partition. This is useful to accelerate processing, as
+it limits data transfers between workers during jobs.</p>
+<p>A partition object must provide the following properties:</p>
+<ul>
+<li><em>numPartitions</em>: a <em>Number</em> of partitions for the dataset</li>
+<li><em>getPartitionIndex</em>: a <em>Function</em> of type <code>function(element)</code>
+  which returns the partition index (comprised between 0 and
+  <em>numPartitions</em>) for the <code>element</code> of the dataset on which
+  <code>partitionBy()</code> operates.</li>
+</ul>
+<h3 id="hashpartitionernumpartitions">HashPartitioner(numPartitions)<a class="headerlink" href="#hashpartitionernumpartitions" title="Permanent link">&para;</a></h3>
+<p>Returns a partitioner object which implements hash based partitioning
+using a hash checksum of each element as a string.</p>
+<ul>
+<li><em>numPartitions</em>: <em>Number</em> of partitions for this dataset</li>
+</ul>
+<p>Example:</p>
+<pre><code class="javascript">var hp = new skale.HashPartitioner(3)
+var dataset = sc.range(10).partitionBy(hp)
+</code></pre>
+
+<h3 id="rangepartitionernumpartitions-keyfunc-dataset">RangePartitioner(numPartitions, keyfunc, dataset)<a class="headerlink" href="#rangepartitionernumpartitions-keyfunc-dataset" title="Permanent link">&para;</a></h3>
+<p>Returns a partitioner object which first defines ranges by sampling
+the dataset and then places elements by comparing them with ranges.</p>
+<ul>
+<li><em>numPartitions</em>: <em>Number</em> of partitions for this dataset</li>
+<li><em>keyfunc</em>: a function of the form <code>function(element)</code> which returns
+  a value used for comparison in the sort function and where <code>element</code>
+  is the next element of the dataset on which <code>partitionBy()</code> operates</li>
+<li><em>dataset</em>: the dataset object on which <code>partitionBy()</code> operates</li>
+</ul>
+<p>Example:</p>
+<pre><code class="javascript">var dataset = sc.range(100)
+var rp = new skale.RangePartitioner(3, a =&gt; a, dataset)
+var dataset = sc.range(10).partitionBy(rp)
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
