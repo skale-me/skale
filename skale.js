@@ -9,7 +9,7 @@ Create, run, deploy clustered node applications
 Commands:
   create <app>		Create a new application
   run [<args>...]	Run application
-  deploy [<args>...]	Deploy application (coming soon)
+  deploy [<args>...]	Deploy application
   status		print status of local skale cluster
   stop			Stop local skale cluster
 
@@ -47,7 +47,7 @@ switch (argv._[0]) {
 		create(argv._[1]);
 		break;
 	case 'deploy':
-		console.log('this command is not yet implemented. Coming soon.');
+		deploy(argv._.splice(1));
 		break;
 	case 'run':
 		run_local(argv._.splice(1));
@@ -148,7 +148,7 @@ function stop_local_server() {
 
 function status_local() {
 	const child = child_process.execFile('/bin/ps', ['ux'], function (err, out) {
-		var lines = out.split(/\r\n|\r|\n/);
+		const lines = out.split(/\r\n|\r|\n/);
 		for (var i = 0; i < lines.length; i++)
 			if (i == 0 || lines[i].match(/ skale-/)) console.log(lines[i]);
 	});
@@ -156,7 +156,7 @@ function status_local() {
 
 function run_local(args) {
 	const pkg = JSON.parse(fs.readFileSync('package.json'));
-	var cmd = pkg.name + '.js';
+	const cmd = pkg.name + '.js';
 	args.splice(0, 0, cmd);
 	try_connect(0, 0, function (err) {
 		if (!err) return run_app();
@@ -165,13 +165,18 @@ function run_local(args) {
 	function run_app() { child = child_process.spawn('node', args, {stdio: 'inherit'}); }
 }
 
-function run_remote(src, args) {
-	fs.readFile(src, {encoding: 'utf8'}, function (err, data) {
+function deploy(args) {
+	const pkg = JSON.parse(fs.readFileSync('package.json'));
+	run_remote(pkg.name, args);
+}
+
+function run_remote(name, args) {
+	fs.readFile(name + '.js', {encoding: 'utf8'}, function (err, data) {
 		if (err) throw err;
 
-		var postdata = JSON.stringify({src: data, args: args});
+		const postdata = JSON.stringify({name: name, src: data, args: args});
 
-		var options = {
+		const options = {
 			hostname: config.host,
 			port: config.port,
 			path: '/run',
@@ -183,7 +188,7 @@ function run_remote(src, args) {
 			}
 		};
 
-		var req = proto.request(options, function (res) {
+		const req = proto.request(options, function (res) {
 			res.setEncoding('utf8');
 			res.pipe(process.stdout);
 		});
