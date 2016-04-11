@@ -167,14 +167,14 @@ function run_local(args) {
 
 function deploy(args) {
 	const pkg = JSON.parse(fs.readFileSync('package.json'));
-	run_remote(pkg.name, args);
+	run_remote(pkg, args);
 }
 
-function run_remote(name, args) {
-	fs.readFile(name + '.js', {encoding: 'utf8'}, function (err, data) {
+function run_remote(pkg, args) {
+	fs.readFile(pkg.name + '.js', {encoding: 'utf8'}, function (err, data) {
 		if (err) throw err;
 
-		const postdata = JSON.stringify({name: name, src: data, args: args});
+		const postdata = JSON.stringify({pkg: pkg, src: data, args: args});
 
 		const options = {
 			hostname: config.host,
