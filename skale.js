@@ -23,8 +23,8 @@ const fs = require('fs');
 const net = require('net');
 
 const argv = require('minimist')(process.argv.slice(2), {
-	string: ['c', 'config', 'H', 'host', 'p', 'port', 'k', 'key'],
-	boolean: ['h', 'help', 'V', 'version', 's', 'ssl'],
+	string: ['c', 'config', 'H', 'host', 'k', 'key', 'p', 'port'],
+	boolean: ['h', 'help', 'r', 'remote', 'V', 'version', 's', 'ssl'],
 });
 
 var skale_port = 12346;
@@ -50,7 +50,8 @@ switch (argv._[0]) {
 		deploy(argv._.splice(1));
 		break;
 	case 'run':
-		run_local(argv._.splice(1));
+		if (argv.r || argv.remote) run_remote(argv._.splice(1));
+		else run_local(argv._.splice(1));
 		break;
 	case 'status':
 		status_local();
@@ -167,10 +168,6 @@ function run_local(args) {
 
 function deploy(args) {
 	const pkg = JSON.parse(fs.readFileSync('package.json'));
-	run_remote(pkg, args);
-}
-
-function run_remote(pkg, args) {
 	fs.readFile(pkg.name + '.js', {encoding: 'utf8'}, function (err, data) {
 		if (err) throw err;
 
@@ -179,7 +176,7 @@ function run_remote(pkg, args) {
 		const options = {
 			hostname: config.host,
 			port: config.port,
-			path: '/run',
+			path: '/deploy',
 			method: 'POST',
 			headers: {
 				'X-Auth': config.key,
@@ -196,4 +193,30 @@ function run_remote(pkg, args) {
 		req.on('error', function (err) {throw err;});
 		req.end(postdata);
 	});
+}
+
+function run_remote(args) {
+	const name = process.cwd().split('/').pop();
+	console.log('name: ' + name);
+	const postdata = JSON.stringify({name: name, args: args});
+
+	const options = {
+		hostname: config.host,
+		port: config.port,
+		path: '/run',
+		method: 'POST',
+		headers: {
+			'X-Auth': config.key,
+			'Content-Type': 'application/json',
+			'Content-Length': Buffer.byteLength(postdata)
+		}
+	};
+
+	const req = proto.request(options, function (res) {
+		res.setEncoding('utf8');
+		res.pipe(process.stdout);
+	});
+
+	req.on('error', function (err) {throw err;});
+	req.end(postdata);
 }
