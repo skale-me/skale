@@ -197,7 +197,6 @@ function deploy(args) {
 
 function run_remote(args) {
 	const name = process.cwd().split('/').pop();
-	console.log('name: ' + name);
 	const postdata = JSON.stringify({name: name, args: args});
 
 	const options = {

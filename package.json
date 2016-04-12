@@ -1,6 +1,6 @@
 {
   "name": "skale",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "skale client command",
   "bin": { "skale": "./skale.js" },
   "scripts": {
