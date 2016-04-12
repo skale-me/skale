@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.0.11](https://github.com/skale-me/skale-cli/tree/1.0.11) (2016-04-12)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.10...1.0.11)
+
+**Merged pull requests:**
+
+- adjust metadata for skale-cloud [\#3](https://github.com/skale-me/skale-cli/pull/3) ([mvertes](https://github.com/mvertes))
+- initial deploy \(experimental\) [\#2](https://github.com/skale-me/skale-cli/pull/2) ([mvertes](https://github.com/mvertes))
+
+## [1.0.10](https://github.com/skale-me/skale-cli/tree/1.0.10) (2016-04-04)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.9...1.0.10)
+
 ## [1.0.9](https://github.com/skale-me/skale-cli/tree/1.0.9) (2016-03-31)
 [Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.5...1.0.9)
 
