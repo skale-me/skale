@@ -15,6 +15,7 @@ Commands:
 
 Options:
   -h, --help		Show help
+  -r, --remote		run in the cloud instead of locally
   -V, --version		Show version
 `;
 
@@ -23,8 +24,12 @@ const fs = require('fs');
 const net = require('net');
 
 const argv = require('minimist')(process.argv.slice(2), {
-	string: ['c', 'config', 'H', 'host', 'k', 'key', 'p', 'port'],
-	boolean: ['h', 'help', 'r', 'remote', 'V', 'version', 's', 'ssl'],
+	string: [ 'c', 'config', 'H', 'host', 'k', 'key', 'p', 'port' ],
+	boolean: [ 'h', 'help', 'r', 'remote', 'V', 'version' ],
+	default: {
+		H: 'skale.me', 'host': 'skale.me',
+		p: '8888', 'port': 8888
+	}
 });
 
 var skale_port = 12346;

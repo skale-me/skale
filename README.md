@@ -55,7 +55,7 @@ the localhost at the first invocation, then simply executes `my_app.js`. You
 can check the status of the cluster using the `skale status` command, and stop
 it using `skale stop`.
 
-To go on further details, please refer to skale-engine [documentation](https://github.com/skale-me/skale-engine/blob/master/doc/skale-API.md)
+To go on further details, please refer to [documentation](https://skale-me.github.io/skale-engine/)
 and [skale examples](https://github.com/skale-me/skale-examples)
  
 ## Deploying an application
