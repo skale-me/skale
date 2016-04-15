@@ -18,7 +18,7 @@ var mkdir = require('../lib/mkdir.js');
 var Lines = require('../lib/lines.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
 
-var global = {require: require};
+//var global = {require: require};
 var mm = new MemoryManager();
 
 var opt = require('node-getopt').create([
@@ -30,9 +30,9 @@ var opt = require('node-getopt').create([
 	['P', 'Port=ARG', 'server port (default 12346)']
 ]).bindHelp().parseSystem();
 
-var debug = opt.options.debug || false;
-var ncpu = Number(opt.options.Num) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
-var hostname = opt.options.MyHost || os.hostname();
+var debug = opt.options.debug || false;
+var ncpu = Number(opt.options.Num) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
+var hostname = opt.options.MyHost || os.hostname();
 var cgrid;
 
 ncpu = Number(ncpu);
@@ -81,11 +81,11 @@ function startWorkers(msg) {
 }
 
 function handleExit(worker, code, signal) {
-	console.log("worker pid %d exited: %s", worker.process.pid, signal || code);
+	console.log('worker pid %d exited: %s', worker.process.pid, signal || code);
 }
 
 function runWorker(host, port) {
-	var jobs = {}, contextId;
+	var contextId;
 
 	process.title = 'skale-worker_' + process.env.wsid + '_' + process.env.rank;
 	process.on('uncaughtException', function (err) {
@@ -115,7 +115,7 @@ function runWorker(host, port) {
 	});
 
 	grid.on('error', function (err) {
-		console.log("grid error %j", err);
+		console.log('grid error %j', err);
 		process.exit(2);
 	});
 
@@ -165,19 +165,19 @@ function MemoryManager() {
 	this.shuffleMemory = 0;
 	this.collectMemory = 0;
 
-	this.storageFull = function() {return (this.storageMemory > maxStorageMemory);}
-	this.shuffleFull = function() {return (this.shuffleMemory > maxShuffleMemory);}
-	this.collectFull = function() {return (this.collectMemory > maxCollectMemory);}
+	this.storageFull = function() {return (this.storageMemory > maxStorageMemory);};
+	this.shuffleFull = function() {return (this.shuffleMemory > maxShuffleMemory);};
+	this.collectFull = function() {return (this.collectMemory > maxCollectMemory);};
 
 	this.partitions = {};
 	this.register = function(partition) {
 		var key = partition.datasetId + '.' + partition.partitionIndex;
 		if (!(key in this.partitions)) this.partitions[key] = partition;
-	}
+	};
 
 	this.isAvailable = function(partition) {
 		return (this.partitions[partition.datasetId + '.' + partition.partitionIndex] != undefined);
-	}
+	};
 }
 
 function parseTask(str) {
