@@ -1,6 +1,5 @@
 var assert = require('assert');
 var fs = require('fs');
-var trace = require('line-trace');
 
 var files = [
 	__dirname + '/kv.data',
@@ -21,7 +20,7 @@ var v = [
 
 // Helper functions for tests
 function compareResults(r2, r1, opt) {
-	opt = opt || {};
+	opt = opt || {};
 	if (opt.lengthOnly) {
 		assert.equal(r1.length, r2.length);
 		return;
