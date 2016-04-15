@@ -10,6 +10,6 @@ sc.textFile(file)
   .reduceByKey((a, b) => a + b, 0)
   .count()
   .on('data', function (res) {
-  	console.log(res);
+	console.log(res);
 	sc.end();
   });
