@@ -230,7 +230,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 	sources2.forEach(function (source2) {
 		dualTransforms.forEach(function (dualTransform) {describe('.' + dualTransform.name + '(sc.' + source2[0].name + '())', function () {
 			actions.forEach(function (action) {describe('.' + action.name + '()', function () {
-				var lres, dres, pres1, pres2, check = {};
+				var lres, dres, pres1, check = {};
 
 				if (dualTransform.sort || action.sort) check.sort = true;
 				if (dualTransform.lengthOnly || action.lengthOnly) check.lengthOnly = true;

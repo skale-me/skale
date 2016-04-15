@@ -22,6 +22,7 @@ contribution at a time by users just like you.
 * Write your code in your local copy. It's good practice to create
   a branch for each new issue you work on, although not compulsory
 * Your code must follow existing coding style, and tests must pass.
+  To check coding style, run `npm run lint`.
   To run the tests, first run `npm install`, then `npm test`
 * If the tests pass, you can commit changes to your fork and then
   create a pull request from there. Reference any relevant issue by
