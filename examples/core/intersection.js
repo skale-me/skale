@@ -10,4 +10,4 @@ sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8, 9]).
 	res.sort();
 	console.assert(JSON.stringify(res) === JSON.stringify([5, 6, 7, 8, 9])); 	  
 	sc.end();
-})
+});

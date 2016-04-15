@@ -14,4 +14,4 @@ sc.parallelize([['hello', 1], ['world', 2], ['cedric', 3], ['test', 4]])
 	res.sort();
 	console.assert(JSON.stringify(res) === JSON.stringify([['cedric', 6], ['hello', 2], ['test', 8], ['world', 4]]));	
 	sc.end();
-})
+});
