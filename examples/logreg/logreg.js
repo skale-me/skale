@@ -2,9 +2,8 @@
 'use strict';
 
 var skale = require('skale-engine');
-var sizeOf = require('object-sizeof');
 var ml = require('skale-ml');
-// var ml = require('../../');
+var sizeOf = require('object-sizeof');
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
