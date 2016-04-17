@@ -1,0 +1,109 @@
+## Started Sun Apr 17 2016 15:30:40 GMT+0200 (CEST)
+## Listening TCP on 12346
+## Listening WebSocket on 12348
+worker controller ready
+## Connect tcp ::ffff:127.0.0.1 51610
+## Connect worker-controller 3 9457f690-04a0-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51611
+## Connect worker 4 947828c0-04a0-11e6-9feb-ebc442edc101
+id: 4, uuid: 947828c0-04a0-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51612
+## Connect worker 5 94796140-04a0-11e6-9feb-ebc442edc101
+id: 5, uuid: 94796140-04a0-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51613
+## Close: {"address":"::ffff:127.0.0.1","family":"IPv6","port":51613}
+## Connect tcp ::ffff:127.0.0.1 51636
+## Close: {"address":"::ffff:127.0.0.1","family":"IPv6","port":51636}
+## Connect tcp ::ffff:127.0.0.1 51680
+## Close: {"address":"::ffff:127.0.0.1","family":"IPv6","port":51680}
+## Connect tcp ::ffff:127.0.0.1 51734
+## Connect worker-controller 9 42d28f00-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51735
+## Connect worker 10 4314ef30-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51736
+## Connect worker 11 4316eb00-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51737
+## Connect worker 12 431a1f50-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51738
+## Connect worker 13 431da1c0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51747
+## Close: {"address":"::ffff:127.0.0.1","family":"IPv6","port":51747}
+## Connect tcp ::ffff:127.0.0.1 51758
+## Close: {"address":"::ffff:127.0.0.1","family":"IPv6","port":51758}
+## Connect tcp ::ffff:127.0.0.1 51759
+## Connect master 16 6836b3c0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51760
+## Connect worker 17 68fb3c40-04a1-11e6-9feb-ebc442edc101
+id: 17, uuid: 68fb3c40-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51761
+## Connect worker 18 690e00f0-04a1-11e6-9feb-ebc442edc101
+id: 18, uuid: 690e00f0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51762
+## Connect worker 19 69442c20-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51763
+## Connect worker 20 6945b2c0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51764
+## Connect worker 21 694c1b60-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51765
+## Connect worker 22 6954cdf0-04a1-11e6-9feb-ebc442edc101
+## Close: master 16 6836b3c0-04a1-11e6-9feb-ebc442edc101
+[1077 worker.js:72 ?] "remove /tmp/skale/8d2664d8-1061-4283-808d-49cb13868726"
+## Close: worker 5 94796140-04a0-11e6-9feb-ebc442edc101
+## Close: worker 4 947828c0-04a0-11e6-9feb-ebc442edc101
+## Close: worker 11 4316eb00-04a1-11e6-9feb-ebc442edc101
+## Close: worker 12 431a1f50-04a1-11e6-9feb-ebc442edc101
+## Close: worker 10 4314ef30-04a1-11e6-9feb-ebc442edc101
+worker pid 1078 exited: 0
+worker pid 1079 exited: 0
+## Close: worker 13 431da1c0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51772
+## Connect worker-controller 23 71b26020-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51773
+## Connect worker 24 71f164f0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51774
+## Connect worker 25 71f61fe0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51775
+## Connect worker 26 71f70a40-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51776
+## Connect worker 27 71f8b7f0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51779
+## Close: {"address":"::ffff:127.0.0.1","family":"IPv6","port":51779}
+## Connect tcp ::ffff:127.0.0.1 51780
+## Connect master 29 74124920-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51781
+## Connect worker 30 7538eed0-04a1-11e6-9feb-ebc442edc101
+id: 30, uuid: 7538eed0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51782
+## Connect worker 31 755a0b60-04a1-11e6-9feb-ebc442edc101
+id: 31, uuid: 755a0b60-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51783
+## Connect worker 32 759f51c0-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51784
+## Connect worker 33 75ad3470-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51785
+## Connect tcp ::ffff:127.0.0.1 51786
+## Connect worker 34 75b8f440-04a1-11e6-9feb-ebc442edc101
+## Connect worker 35 75b8f441-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51787
+## Connect worker 36 75c30660-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51788
+## Connect worker 37 75cace90-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51789
+## Connect worker 38 75db4950-04a1-11e6-9feb-ebc442edc101
+## Connect tcp ::ffff:127.0.0.1 51790
+## Connect worker 39 75dc0ca0-04a1-11e6-9feb-ebc442edc101
+## Close: master 29 74124920-04a1-11e6-9feb-ebc442edc101
+[1077 worker.js:72 ?] "remove /tmp/skale/b01f8d72-7f11-46b1-b4e4-074cfa200252"
+## Close: worker 17 68fb3c40-04a1-11e6-9feb-ebc442edc101
+## Close: worker 18 690e00f0-04a1-11e6-9feb-ebc442edc101
+worker pid 1139 exited: 0
+worker pid 1141 exited: 0
+## Close: worker 19 69442c20-04a1-11e6-9feb-ebc442edc101
+## Close: worker 21 694c1b60-04a1-11e6-9feb-ebc442edc101
+## Close: worker 24 71f164f0-04a1-11e6-9feb-ebc442edc101
+## Close: worker 26 71f70a40-04a1-11e6-9feb-ebc442edc101
+## Close: worker 20 6945b2c0-04a1-11e6-9feb-ebc442edc101
+## Close: worker 22 6954cdf0-04a1-11e6-9feb-ebc442edc101
+## Close: worker 25 71f61fe0-04a1-11e6-9feb-ebc442edc101
+## Close: worker 27 71f8b7f0-04a1-11e6-9feb-ebc442edc101
+[1076 server.js:236 sigterm] "terminated, exit"
