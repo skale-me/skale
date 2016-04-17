@@ -1,5 +1,25 @@
 # Change Log
 
+## [0.4.1](https://github.com/skale-me/skale-engine/tree/0.4.1) (2016-04-07)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.0...0.4.1)
+
+**Merged pull requests:**
+
+- document partitioners [\#20](https://github.com/skale-me/skale-engine/pull/20) ([mvertes](https://github.com/mvertes))
+- doc: fix cross references [\#19](https://github.com/skale-me/skale-engine/pull/19) ([mvertes](https://github.com/mvertes))
+- document ds.top\(\) [\#18](https://github.com/skale-me/skale-engine/pull/18) ([mvertes](https://github.com/mvertes))
+- document ds.take\(\) [\#17](https://github.com/skale-me/skale-engine/pull/17) ([mvertes](https://github.com/mvertes))
+- document ds.sortByKey\(\) [\#16](https://github.com/skale-me/skale-engine/pull/16) ([mvertes](https://github.com/mvertes))
+- document ds.sortBy\(\) [\#15](https://github.com/skale-me/skale-engine/pull/15) ([mvertes](https://github.com/mvertes))
+- document ds.persist\(\) [\#14](https://github.com/skale-me/skale-engine/pull/14) ([mvertes](https://github.com/mvertes))
+- Document ds.partitionBy\(\) and fix example [\#13](https://github.com/skale-me/skale-engine/pull/13) ([mvertes](https://github.com/mvertes))
+- document ds.first\(\) [\#12](https://github.com/skale-me/skale-engine/pull/12) ([mvertes](https://github.com/mvertes))
+- document ds.aggregateByKey\(\) [\#11](https://github.com/skale-me/skale-engine/pull/11) ([mvertes](https://github.com/mvertes))
+- aggregateByKey: change args order to match aggregate [\#10](https://github.com/skale-me/skale-engine/pull/10) ([mvertes](https://github.com/mvertes))
+- document sc.range\(\) [\#9](https://github.com/skale-me/skale-engine/pull/9) ([mvertes](https://github.com/mvertes))
+- use sizeof from external npm dependency [\#8](https://github.com/skale-me/skale-engine/pull/8) ([mvertes](https://github.com/mvertes))
+- rename RDD in dataset. No functional change. [\#7](https://github.com/skale-me/skale-engine/pull/7) ([mvertes](https://github.com/mvertes))
+
 ## [0.4.0](https://github.com/skale-me/skale-engine/tree/0.4.0) (2016-04-04)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.3.5...0.4.0)
 

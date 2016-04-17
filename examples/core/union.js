@@ -13,4 +13,4 @@ a.union(b).aggregate(reducer, combiner, [], function(err, res) {
 	res.sort();
 	console.assert(JSON.stringify(res) === JSON.stringify([1, 2, 3, 4, 5, 6, 7, 8]));	
 	sc.end();
-})
+});

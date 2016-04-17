@@ -13,7 +13,6 @@
 var child_process = require('child_process');
 var net = require('net');
 var util = require('util');
-var os = require('os');
 var stream = require('stream');
 var trace = require('line-trace');
 var uuidGen = require('node-uuid');

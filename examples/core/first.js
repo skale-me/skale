@@ -9,4 +9,4 @@ sc.parallelize([[1,2],[3,4],[3,6]]).
 	res.sort();
 	console.assert(JSON.stringify(res) === JSON.stringify([[1, 2]]));		  
 	sc.end();
-})
+});

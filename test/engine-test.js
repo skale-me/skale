@@ -3,14 +3,14 @@
 var fs = require('fs');
 var net = require('net');
 var spawn = require('child_process').spawn;
-var trace = require('line-trace');
+//var trace = require('line-trace');
 var skale = require('../');
 var data = require('./support/data.js');
 var local = require('./support/local.js');
 // use a non default port dedicated to tests
 var skalePort = 2121;
 
-var server, workerController, sc, sl;
+var sc, sl;
 
 function tryConnect(nTry, timeout, done) {
 	const sock = net.connect(skalePort);
@@ -19,16 +19,15 @@ function tryConnect(nTry, timeout, done) {
 		done();
 	});
 	sock.on('error', function (err) {
-		if (--nTry <= 0) return done('skale-server not ok');
+		if (--nTry <= 0) return done('skale-server not ok: ' + err);
 		setTimeout(function () {tryConnect(nTry, timeout, done);}, timeout);
 	});
 }
 
 beforeEach(function (done) {
-	var output;
 	if (sc === undefined) {
 		this.timeout(10000);
-		server = spawn('./bin/server.js', ['-p', skalePort, '-l', '0']);
+		spawn('./bin/server.js', ['-p', skalePort, '-l', '0']);
 		tryConnect(100, 100, function (err) {
 			console.log(err);
 			sl = local.context();
@@ -40,14 +39,14 @@ beforeEach(function (done) {
 
 var sources = [
 	[{name: 'parallelize', args: [data.v[0]]}],
-	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
-	[{name: 'textFile', args: [data.files[0]]}, {name: 'map', args: [data.textParser]}],
+	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
+	[{name: 'textFile', args: [data.files[0]]}, {name: 'map', args: [data.textParser]}]
 ];
 
 var sources2 = [
 	[{name: 'parallelize', args: [data.v[1]]}],
-	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
-	[{name: 'textFile', args: [data.files[1]]}, {name: 'map', args: [data.textParser]}],
+	[{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
+	[{name: 'textFile', args: [data.files[1]]}, {name: 'map', args: [data.textParser]}]
 ];
 
 var transforms = [
@@ -61,7 +60,7 @@ var transforms = [
 	{name: 'map', args: [data.mapper]},
 	{name: 'mapValues', args: [data.valueMapper]},
 //	{name: 'persist', args: []},
-	{name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0], sort: true},
+	{name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0], sort: true}
 //	{name: 'sample', args: [true, 0.1], sort: true, lengthOnly: true},
 //	{name: 'values', args: []},
 ];
@@ -74,7 +73,7 @@ var dualTransforms = [
 	{name: 'leftOuterJoin', args: [], sort: true},
 	{name: 'rightOuterJoin', args: [], sort: true},
 	{name: 'subtract', args: [], sort: true},
-	{name: 'union', args: [], sort: true},
+	{name: 'union', args: [], sort: true}
 ];
 
 var actions = [
@@ -82,10 +81,10 @@ var actions = [
 	{name: 'count', args: [], stream: true},
 	{name: 'countByValue', args: [], sort: true, stream: true},
 //	{name: 'lookup', args: [data.v[0][0][0]], stream: true},
-	{name: 'reduce', args: [data.reducer, [0, 0]], stream: true},
-//	{name: 'take', args: [2], lengthOnly: true, stream: true},
+	{name: 'reduce', args: [data.reducer, [0, 0]], stream: true}
+//	{name: 'take', args: [2], lengthOnly: true, stream: true},
 //	{name: 'takeOrdered', args: [2, function (a, b) {return a < b;}], stream: true},
-//	{name: 'top', args: [2], stream: true},
+//	{name: 'top', args: [2], stream: true},
 //	{name: 'takeSample', args: [true, 2, 1], stream: true},
 // XXXXX TODO:
 // foreach,
@@ -94,10 +93,10 @@ var actions = [
 sources.forEach(function (source) {describe('sc.' + source[0].name + '()', function() {
 	transforms.forEach(function (transform) {describe(transform.name ? '.' + transform.name + '()' : '/* empty */', function () {
 		actions.forEach(function (action) {describe('.' + action.name + '()', function () {
-			var lres, dres, sres, pres1, pres2, check = {};
+			var lres, dres, pres1, pres2, check = {};
 
-			if (transform.sort || action.sort) check.sort = true;
-			if (transform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
+			if (transform.sort || action.sort) check.sort = true;
+			if (transform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
 			if (transform.name == 'groupByKey' && action.name == 'reduce') check.lengthOnly = true;
 
 			it('run local', function (done) {
@@ -151,7 +150,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				}
 			});
 
-			it('check distributed results', function () {
+			it('check distributed results', function () {
 				data.compareResults(lres, dres, check);
 			});
 
@@ -171,7 +170,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				if (source.length > 1) da = da[source[1].name].apply(da, source[1].args);
 				da = da.persist();
 				if (transform.name) da = da[transform.name].apply(da, transform.args);
-				action_args = [].concat(action.args, function (err, res) {
+				action_args = [].concat(action.args, function () {
 					switch (source[0].name) {
 					case 'parallelize': src_args[0].push([3, 4]); break;
 					}
@@ -202,7 +201,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				if (source.length > 1 ) da = da[source[1].name].apply(da, source[1].args);
 				if (transform.name) da = da[transform.name].apply(da, transform.args);
 				da = da.persist();
-				action_args = [].concat(action.args, function (err, res) {
+				action_args = [].concat(action.args, function () {
 					switch (source[0].name) {
 					case 'parallelize': src_args[0].push([3, 4]); break;
 					}
@@ -217,11 +216,11 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				if (action.stream) da2.toArray(function (err, res) {pres2 = res; done();});
 			});
 
-			it('check distributed pre-persist results', function () {
+			it('check distributed pre-persist results', function () {
 				data.compareResults(lres, pres1, check);
 			});
 
-			it('check distributed post-persist results', function () {
+			it('check distributed post-persist results', function () {
 				data.compareResults(lres, pres2, check);
 			});
 
@@ -231,10 +230,10 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 	sources2.forEach(function (source2) {
 		dualTransforms.forEach(function (dualTransform) {describe('.' + dualTransform.name + '(sc.' + source2[0].name + '())', function () {
 			actions.forEach(function (action) {describe('.' + action.name + '()', function () {
-				var lres, dres, sres, pres1, pres2, check = {};
+				var lres, dres, pres1, check = {};
 
-				if (dualTransform.sort || action.sort) check.sort = true;
-				if (dualTransform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
+				if (dualTransform.sort || action.sort) check.sort = true;
+				if (dualTransform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
 				if (action.name == 'reduce') {
 					switch (dualTransform.name) {
 					case 'coGroup':
@@ -324,7 +323,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 					}
 				});
 
-				it('check distributed results', function () {
+				it('check distributed results', function () {
 					data.compareResults(lres, dres, check);
 				});
 
@@ -358,7 +357,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 					other = other.persist();
 					transform_args = [].concat(other, dualTransform.args);
 					da = da[dualTransform.name].apply(da, transform_args);
-					action_args = [].concat(action.args, function (err, res) {
+					action_args = [].concat(action.args, function () {
 						switch (source[0].name) {
 						case 'parallelize': src_args[0].push([3, 4]); break;
 						}
@@ -405,7 +404,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				// 	transform_args = [].concat(other, dualTransform.args);
 				// 	da = da[dualTransform.name].apply(da, transform_args);
 				// 	da = da.persist();
-				// 	action_args = [].concat(action.args, function (err, res) {
+				// 	action_args = [].concat(action.args, function (err, res) {
 				// 		switch (source2[0].name) {
 				// 		case 'parallelize': src2_args[0].push([3, 4]); break;
 				// 		}
@@ -420,11 +419,11 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 				// 	if (action.stream) da2.toArray(function (err, res) {pres2 = res; done();});
 				// });
 
-				it('check distributed pre-persist results', function () {
+				it('check distributed pre-persist results', function () {
 					data.compareResults(lres, pres1, check);
 				});
 
-				// it('check distributed post-persist results', function () {
+				// it('check distributed post-persist results', function () {
 				// 	data.compareResults(lres, pres2, check);
 				// });
 			});});

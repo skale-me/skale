@@ -7,7 +7,7 @@ var stream = require('stream');
 var os = require('os');
 var util = require('util');
 var toArray = require('stream-to-array');
-var trace = require('line-trace');
+//var trace = require('line-trace');
 var Lines = require('../../lib/lines.js');
 var ml = require('../../lib/ml.js');
 
@@ -26,7 +26,6 @@ LocalArray.prototype.lineStream = function (inputStream, opt) {
 };
 
 LocalArray.prototype.parallelize = function (v) {
-	var self = this;
 	this.stream = new ObjectStream();
 	this.stream.end(v);
 	return this;
@@ -41,53 +40,33 @@ LocalArray.prototype.textFile = function (path) {
 };
 
 // Actions
-LocalArray.prototype.collect = function (opt, done) {
-	opt = opt || {};
+LocalArray.prototype.collect = function () {
 	this.stream = this.stream.pipe(new TransformStream(function (v) {
 		for (var i = 0; i < v.length; i++) this.push(v[i]);
 	}));
 	this.stream.toArray = toArray;
 	return this.stream;
-	//if (arguments.length < 2) done = opt;
-	//if (opt.stream) return this.stream;
-	//var res = [];
-	//this.stream.on('data', function (data) {res = res.concat(data);});
-	//this.stream.on('end', function () {done(null, res);});
 };
 
-LocalArray.prototype.count = function (opt) {
-	opt = opt || {};
+LocalArray.prototype.count = function () {
 	this.stream = this.stream.pipe(new TransformStream(function (v) {return v.length;}));
 	this.stream.toArray = toArray;
 	return this.stream;
 };
 
-LocalArray.prototype.countByValue = function (opt, done) {
-	opt = opt || {};
-	if (arguments.length < 2) done = opt;
+LocalArray.prototype.countByValue = function () {
 	this.stream = this.stream.pipe(new TransformStream(countByValue));
 	this.stream.toArray = toArray;
 	return this.stream;
-	//if (opt.stream) return this.stream;
-	//var res = [];
-	//this.stream.on('data', function (data) {res = res.concat(data);});
-	//this.stream.on('end', function () {done(null, res);});
 };
 
-LocalArray.prototype.lookup = function(key, opt, done) {
-	opt = opt || {};
-	if (arguments.length < 3) done = opt;
+LocalArray.prototype.lookup = function(key) {
 	this.stream = this.stream.pipe(new TransformStream(lookup, [key]));
 	this.stream.toArray = toArray;
 	return this.stream;
-	//if (opt.stream) return this.stream;
-	//var res = [];
-	//this.stream.on('data', function (data) {res = res.concat(data);});
-	//this.stream.on('end', function () {done(null, res);});
 };
 
-LocalArray.prototype.reduce = function(reducer, init, opt) {
-	opt = opt || {};
+LocalArray.prototype.reduce = function(reducer, init) {
 	this.stream = this.stream.pipe(new TransformStream(reduce, [reducer, init]));
 	this.stream.toArray = toArray;
 	return this.stream;
@@ -137,7 +116,7 @@ LocalArray.prototype.top = function(num, opt, done) {
 LocalArray.prototype.coGroup = function (other) {
 	this.stream = this.stream.pipe(new DualTransformStream(other, coGroup));
 	return this;
-}
+};
 
 LocalArray.prototype.cartesian = function (other) {
 	this.stream = this.stream.pipe(new DualTransformStream(other, cartesian));
@@ -226,7 +205,7 @@ LocalArray.prototype.subtract = function (other) {
 LocalArray.prototype.union = function (other) {
 	this.stream = this.stream.pipe(new DualTransformStream(other, union));
 	return this;
-}
+};
 
 LocalArray.prototype.values = function () {
 	this.stream = this.stream.pipe(new TransformStream(values));
@@ -294,7 +273,7 @@ DualTransformStream.prototype._flush = function (done) {
 		this.other.stream.on('data', function (d) {self.push(self.action(d, null));});
 		this.other.stream.on('end', done);
 	} else done();
-}
+};
 
 // Text
 function TextStream() {
@@ -363,22 +342,20 @@ function coGroup(v1, v2) {
 }
 
 function countByValue(v) {
-	var tmp = {}, str, i, out = [];
+	var tmp = {}, str, i;
 	for (i = 0; i < v.length; i++) {
 		str = JSON.stringify(v[i]);
 		if (tmp[str] === undefined) tmp[str] = [v[i], 0];
 		tmp[str][1]++;
 	}
-	//for (i in tmp) out.push(tmp[i]);
 	for (i in tmp) this.push(tmp[i]);
-	//return out;
 }
 
 function cartesian(v1, v2) {
 	var v = [], i, j;
 	for (i = 0; i < v1.length; i++)
 		for (j = 0; j < v2.length; j++)
-			v.push([v1[i], v2[j]])
+			v.push([v1[i], v2[j]]);
 	return v;
 }
 
@@ -393,12 +370,12 @@ function distinct(v) {
 	return out;
 }
 
-function filter(v, filterer) {
+function filter(v, filterer) {
 	return v.filter(filterer);
 }
 
 function flatMap(v, mapper) {
-	return v.map(mapper).reduce(function (a, b) {return a.concat(b);}, []);
+	return v.map(mapper).reduce(function (a, b) {return a.concat(b);}, []);
 }
 
 function flatMapValues(v, mapper) {
@@ -456,11 +433,11 @@ function leftOuterJoin(v1, v2) {
 }
 
 function join(v1, v2) {
-	var i, j, found, v = [];
+	var i, j, v = [];
 	for (i = 0; i < v1.length; i++)
 		for (j = 0; j < v2.length; j++)
 			if (v1[i][0] == v2[j][0])
-				v.push([v1[i][0], [v1[i][1], v2[j][1]]])
+				v.push([v1[i][0], [v1[i][1], v2[j][1]]]);
 	return v;
 }
 
@@ -515,7 +492,7 @@ function rightOuterJoin(v1, v2) {
 }
 
 function sample(v, withReplacement, frac, num, seed) {
-	var P = process.env.UGRID_WORKER_PER_HOST || os.cpus().length;
+	var P = process.env.UGRID_WORKER_PER_HOST || os.cpus().length;
 	if (P > v.length) P = v.length;
 	if (num) P = 1;
 	if (seed === undefined) seed = 1;
@@ -524,7 +501,7 @@ function sample(v, withReplacement, frac, num, seed) {
 		var len = a.length, out = [], i = 0;
 		while (i < len) {
 			var size = Math.ceil((len - i) / n--);
-			out.push(a.slice(i, i += size))
+			out.push(a.slice(i, i += size));
 		}
 		return out;
 	}
@@ -541,7 +518,7 @@ function sample(v, withReplacement, frac, num, seed) {
 		var p = 0;
 		var tmp = [];
 		var rng = new ml.Random(seed);
-		for (var i in workerMap[w]) {
+		for (i in workerMap[w]) {
 			var L = workerMap[w][i].length;
 			L = num ? num : Math.ceil(L * frac);
 			tmp[p] = {data: []};
@@ -553,7 +530,7 @@ function sample(v, withReplacement, frac, num, seed) {
 				idxVect.push[idx];
 				tmp[p].data.push(workerMap[w][i][idx]);
 			}
-			out = out.concat(tmp[p].data)
+			out = out.concat(tmp[p].data);
 			p++;
 		}
 	}
@@ -561,7 +538,7 @@ function sample(v, withReplacement, frac, num, seed) {
 }
 
 function subtract(v1, v2) {
-	var v = [], e, i, j, found, s1 = v1.map(JSON.stringify), s2 = v2.map(JSON.stringify);
+	var v = [], i, j, found, s1 = v1.map(JSON.stringify), s2 = v2.map(JSON.stringify);
 	for (i = 0; i < s1.length; i++) {
 		found = false;
 		for (j = 0; j < s2.length; j++)

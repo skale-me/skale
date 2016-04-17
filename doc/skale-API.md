@@ -6,42 +6,53 @@
 
 - [Overview](#overview)
 - [Working with datasets](#working-with-datasets)
-- [Skale engine module](#skale-engine-module)
-    - [skale.context([config])](#skalecontextconfig)
-        - [sc.end()](#scend)
-        - [sc.parallelize(array)](#scparallelizearray)
-        - [sc.textFile(path)](#sctextfilepath)
-        - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
-        - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
-    - [Dataset methods](#datasets-methods)
-        - [ds.aggregate(reducer, combiner, init[,obj])](#dsaggregatereducer-combiner-initobj)
-        - [ds.cartesian(other)](#dscartesianother)
-        - [ds.coGroup(other)](#dscogroupother)
-        - [ds.collect([opt])](#dscollectopt)
-        - [ds.count()](#dscount)
-        - [ds.countByKey()](#dscountbykey)
-        - [ds.countByValue()](#dscountbyvalue)
-        - [ds.distinct()](#dsdistinct)
-        - [ds.filter(filter[,obj])](#dsfilterfilterobj)
-        - [ds.flatMap(flatMapper[,obj])](#dsflatmapflatmapperobj)
-        - [ds.flatMapValues(flatMapper[,obj])](#dsflatmapvaluesflatmapperobj)
-        - [ds.foreach(callback[, obj])](#dsforeachcallback-obj)
-        - [ds.groupByKey()](#dsgroupbykey)
-        - [ds.intersection(other)](#dsintersectionother)
-        - [ds.join(other)](#dsjoinother)
-        - [ds.keys()](#dskeys)
-        - [ds.leftOuterJoin(other)](#dsleftouterjoinother)
-        - [ds.lookup(k)](#dslookupk)
-        - [ds.map(mapper[,obj])](#dsmapmapperobj)
-        - [ds.mapValues(mapper[,obj])](#dsmapvaluesmapperobj)
-        - [ds.reduce(reducer, init[,obj])](#dsreducereducer-initobj)
-        - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
-        - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
-        - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
-        - [ds.subtract(other)](#dssubtractother)
-        - [ds.union(other)](#dsunionother)
-        - [ds.values()](#dsvalues)
-- [References](#references)
+- [Skale module](#skale-module)
+  - [skale.context([config])](#skalecontextconfig)
+    - [sc.end()](#scend)
+    - [sc.parallelize(array)](#scparallelizearray)
+    - [sc.range(start[, end[, step]])](#scrangestart-end-step)
+    - [sc.textFile(path)](#sctextfilepath)
+    - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
+    - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
+  - [Dataset methods](#dataset-methods)
+    - [ds.aggregate(reducer, combiner, init[,obj])](#dsaggregatereducer-combiner-initobj)
+    - [ds.aggregateByKey(reducer, combiner, init,[ obj])](#dsaggregatebykeyreducer-combiner-init-obj)
+    - [ds.cartesian(other)](#dscartesianother)
+    - [ds.coGroup(other)](#dscogroupother)
+    - [ds.collect([opt])](#dscollectopt)
+    - [ds.count()](#dscount)
+    - [ds.countByKey()](#dscountbykey)
+    - [ds.countByValue()](#dscountbyvalue)
+    - [ds.distinct()](#dsdistinct)
+    - [ds.filter(filter[,obj])](#dsfilterfilterobj)
+    - [ds.first()](#dsfirst)
+    - [ds.flatMap(flatMapper[,obj])](#dsflatmapflatmapperobj)
+    - [ds.flatMapValues(flatMapper[,obj])](#dsflatmapvaluesflatmapperobj)
+    - [ds.foreach(callback[, obj])](#dsforeachcallback-obj)
+    - [ds.groupByKey()](#dsgroupbykey)
+    - [ds.intersection(other)](#dsintersectionother)
+    - [ds.join(other)](#dsjoinother)
+    - [ds.keys()](#dskeys)
+    - [ds.leftOuterJoin(other)](#dsleftouterjoinother)
+    - [ds.lookup(k)](#dslookupk)
+    - [ds.map(mapper[,obj])](#dsmapmapperobj)
+    - [ds.mapValues(mapper[,obj])](#dsmapvaluesmapperobj)
+    - [ds.partitionBy(partitioner)](#dspartitionbypartitioner)
+    - [ds.persist()](#dspersist)
+    - [ds.reduce(reducer, init[,obj])](#dsreducereducer-initobj)
+    - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
+    - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
+    - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
+    - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
+    - [ds.sortByKey(ascending)](#dssortbykeyascending)
+    - [ds.subtract(other)](#dssubtractother)
+    - [ds.take(num)](#dstakenum)
+    - [ds.top(num)](#dstopnum)
+    - [ds.union(other)](#dsunionother)
+    - [ds.values()](#dsvalues)
+  - [Partitioners](#partitioners)
+    - [HashPartitioner(numPartitions)](#hashpartitionernumpartitions)
+    - [RangePartitioner(numPartitions, keyfunc, dataset)](#rangepartitionernumpartitions-keyfunc-dataset)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -96,12 +107,13 @@ After having initialized a cluster context using
 [skale.context()](#skale-context), one can create a dataset
 using the following sources:
 
-| Source Name                                  | Description                          |
-| -------------------                          | ----------------------------------   |
-|[lineStream(stream)](#sc-linestream-stream)    | Create a dataset from a text stream |
-|[objectStream(stream)](#sc-objectstream-stream)| Create a dataset from an object stream |
-|[parallelize(array)](#sc-parallelize-array)    | Create a dataset from an array      |
-|[textFile(path)](#sc-textfile-path)            | Create a dataset from a regular text file|
+| Source Name                                       | Description                                           |
+| ------------------------------------------------- | ----------------------------------------------------- |
+|[lineStream(stream)](#sclinestreaminput_stream)    | Create a dataset from a text stream                   |
+|[objectStream(stream)](#scobjectstreaminput_stream)| Create a dataset from an object stream                |
+|[parallelize(array)](#scparallelizearray)          | Create a dataset from an array                        |
+|[range(start,end,step)](#scrangestart-end-step)    | Create a dataset containing integers from start to end|
+|[textFile(path)](#sctextfilepath)                  | Create a dataset from a regular text file             |
 
 Transformations operate on a dataset and return a new dataset. Note that some
 transformation operate only on datasets where each element is in the form
@@ -114,24 +126,27 @@ in memory, allowing efficient reuse accross parallel operations.
 
 |Transformation Name              | Description                                   | in    | out   |
 | -----------------               |-----------------------------------------------|-------|-------|
-|[cartesian(other)](#dscartesian) | Perform a cartesian product with the other dataset | v w | [v,w]|
-|[coGroup(other)](#dscogroup) | Group data from both datasets sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|
+|[cartesian(other)](#dscartesianother) | Perform a cartesian product with the other dataset | v w | [v,w]|
+|[coGroup(other)](#dscogroupother) | Group data from both datasets sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|
 |[distinct()](#dsdistinct)    | Return a dataset where duplicates are removed | v | w|
-|[filter(func)](#dsfilter)    | Return a dataset of elements on which function returns true | v | w|
-|[flatMap(func)](#dsflatmap)  | Pass the dataset elements to a function which returns a sequence | v | w|
+|[filter(func)](#dsfilterfilterobj)| Return a dataset of elements on which function returns true | v | w|
+|[flatMap(func)](#dsflatmapflatmapperobj)| Pass the dataset elements to a function which returns a sequence | v | w|
 |[groupByKey()](#dsgroupbykey)| Group values with the same key | [k,v] | [k,[v]]|
-|[intersection(other)](#dsintersection) | Return a dataset containing only elements found in both datasets | v w | v|
-|[join(other)](#dsjoin)       | Perform an inner join between 2 datasets | [k,v] | [k,[v,w]]|
-|[leftOuterJoin(other)](#dsleftouterjoin) | Join 2 datasets where the key must be present in the other | [k,v] | [k,[v,w]]|
-|[rightOuterJoin(other)](#dsrightouterjoin) | Join 2 datasets where the key must be present in the first | [k,v] | [k,[v,w]]|
+|[intersection(other)](#dsintersectionother) | Return a dataset containing only elements found in both datasets | v w | v|
+|[join(other)](#dsjoinother)       | Perform an inner join between 2 datasets | [k,v] | [k,[v,w]]|
+|[leftOuterJoin(other)](#dsleftouterjoinother) | Join 2 datasets where the key must be present in the other | [k,v] | [k,[v,w]]|
+|[rightOuterJoin(other)](#dsrightouterjoinother) | Join 2 datasets where the key must be present in the first | [k,v] | [k,[v,w]]|
 |[keys()](#dskeys)            | Return a dataset of just the keys | [k,v] | k|
-|[map(func)](#dsmap)          | Return a dataset where elements are passed through a function | v | w|
-|[mapValues(func)](#dsflatmap)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|
-|[reduceByKey(func, init)](#dsreducebykey)	| Combine values with the same key | [k,v] | [k,w]|
+|[map(func)](#dsmapmapperobj) | Return a dataset where elements are passed through a function | v | w|
+|[mapValues(func)](#dsmapvaluesmapperobj)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|
+|[reduceByKey(func, init)](#dsreducebykeyreducer-init-obj)| Combine values with the same key | [k,v] | [k,w]|
+|[partitionBy(partitioner)](#dspartitionbypartitioner)| Partition using the partitioner | v | v|
 |[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|
-|[sample(rep, frac, seed)](#dssample) | Sample a dataset, with or without replacement | v | w|
-|[subtract(other)](#dssubract) | Remove the content of one dataset | v w | v|
-|[union(other)](#dsunion)     | Return a dataset containing elements from both datasets | v | v w|
+|[sample(rep, frac, seed)](#dssamplewithreplacement-frac-seed) | Sample a dataset, with or without replacement | v | w|
+|[sortBy(func)](#dssortbykeyfunc-ascending) | Sort a dataset | v | v|
+|[sortByKey()](#dssortbykeyascending) | Sort a [k,v] dataset | [k,v] | [k,v]|
+|[subtract(other)](#dssubtractother) | Remove the content of one dataset | v w | v|
+|[union(other)](#dsunionother)     | Return a dataset containing elements from both datasets | v | v w|
 |[values()](#dsvalues)        | Return a dataset of just the values | [k,v] | v|
 
 Actions operate on a dataset and send back results to the *master*. Results
@@ -140,14 +155,18 @@ on which results are emitted.
 
 |Action Name | Description | out|
 |------------------             |----------------------------------------------|--------------|
-|[aggregate(func, func, init)](#dsaggregate)| Similar to reduce() but may return a different type| stream of value |
-|[collect()](#dscollect)         | Return the content of dataset | stream of elements|
+|[aggregate(func, func, init)](#dsaggregatereducer-combiner-initobj)| Similar to reduce() but may return a different type| stream of value |
+|[aggregateByKey(func, func, init)](#dsaggregatebykeyreducer-combiner-init-obj)| reduce and combine by key using functions| stream of [k,v] |
+|[collect()](#dscollectopt)         | Return the content of dataset | stream of elements|
 |[count()](#dscount)             | Return the number of elements from dataset | stream of number|
 |[countByKey()](#dscountbykey)     | Return the number of occurrences for each key in a `[k,v]` dataset | stream of [k,number]|
 |[countByValue()](#dscountbyvalue) | Return the number of occurrences of elements from dataset | stream of [v,number]|
-|[foreach(func)](#dsforeach)     | Apply the provided function to each element of the dataset | empty |
-|[lookup(k)](#dslookup)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
-|[reduce(func, init)](#dsreduce) | Aggregates dataset elements using a function into one value | stream of value|
+|[first()](#dsfirst)               | Return the first element in dataset | stream of value |
+|[foreach(func)](#dsforeachcallback-obj)| Apply the provided function to each element of the dataset | empty stream |
+|[lookup(k)](#dslookupk)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
+|[reduce(func, init)](#dsreducereducer-initobj)| Aggregates dataset elements using a function into one value | stream of value|
+|[take(num)](#dstakenum)         | Return the first `num` elements of dataset | stream of value|
+|[top(num)](#dstopnum)           | Return the top `num` elements of dataset | stream of value|
 
 ## Skale module
 
@@ -189,9 +208,26 @@ Example:
 var a = sc.parallelize(['Hello', 'World']);
 ```
 
+#### sc.range(start[, end[, step]])
+
+Returns a new dataset of integers from *start* to *end* (exclusive)
+increased by *step* (default 1) every element. If called with a
+single argument, the argument is interpreted as *end*, and *start*
+is set to 0.
+
+```javascript
+sc.range(5).collect.toArray()
+// [ 0, 1, 2, 3, 4 ]
+sc.range(2, 4).collect.toArray()
+// [ 2, 3 ]
+sc.range(10, -5, -3).collect().toArray()
+// [ 10, 7, 4, 1, -2 ]
+```
+
 #### sc.textFile(path)
 
-Returns a dataset of lines composing the file specified by path *String*.
+Returns a new dataset of lines composing the file specified by path
+*String*.
 
 Note: If using a path on the local filesystem, the file must also
 be accessible at the same path on worker nodes. Either copy the
@@ -206,8 +242,9 @@ lines.map(s => s.length).reduce((a, b) => a + b, 0).on('data', console.log);
 
 #### sc.lineStream(input_stream)
 
-Returns a dataset of lines of text read from input_stream *Object*, which
-is a [readable stream] where dataset content is read from.
+Returns a new dataset of lines of text read from input_stream
+*Object*, which is a [readable stream] where dataset content is
+read from.
 
 The following example computes the size of a file using streams:
 
@@ -221,8 +258,9 @@ sc.lineStream(stream).
 
 #### sc.objectStream(input_stream)
 
-Returns a dataset of Javascript *Objects* read from input_stream *Object*,
-which is a [readable stream] where dataset content is read from.
+Returns a new dataset of Javascript *Objects* read from input_stream
+*Object*, which is a [readable stream] where dataset content is
+read from.
 
 The following example counts the number of objects returned in an
 object stream using the mongodb native Javascript driver:
@@ -263,11 +301,11 @@ accumulator and element).
      - *obj*: the same parameter *obj* passed to `aggregate()`
 - *init*: the initial value of the accumulators that are used by
   *reducer()* and *combiner()*. It should be the identity element
-  of the operation (i.e. applying it through the function should
-  not change result).
+  of the operation (a neutral zero value, i.e. applying it through the
+  function should not change result).
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
-  mapper executions over each element of the dataset
+  mapper executions over each element of the dataset.
 
 The following example computes the average of a dataset, avoiding a `map()`:
 
@@ -281,6 +319,36 @@ sc.parallelize([3, 5, 2, 7, 4, 8]).
 		});
 // 4.8333
 ```
+
+#### ds.aggregateByKey(reducer, combiner, init,[ obj])
+
+Returns a [readable stream] of `[k,v]` elements where `v` is the
+aggregated value of all elements of same key `k`. The aggregation
+is performed using two functions *reducer()* and *combiner()*
+allowing to use an arbitrary accumulator type, different from element
+type.
+
+- *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
+  which returns the next value of the accumulator (which must be
+  of the same type as *acc*) and with:
+     - *acc*: the value of the accumulator, initially set to *init*
+     - *val*: the value `v` of the next `[k,v]` element of the dataset
+	   on which `aggregateByKey()` operates
+     - *obj*: the same parameter *obj* passed to `aggregateByKey()`
+     - *wc*: the worker context, a persistent object local to each
+       worker, where user can store and access worker local dependencies.
+- *combiner*: a function of the form `function(acc1,acc2[,obj])`,
+  which returns the merged value of accumulators and with:
+     - *acc1*: the value of an accumulator, computed locally on a worker
+     - *acc2*: the value of an other accumulator, issued by another worker
+     - *obj*: the same parameter *obj* passed to `aggregate()`
+- *init*: the initial value of the accumulators that are used by
+  *reducer()* and *combiner()*. It should be the identity element
+  of the operation (a neutral zero value, i.e. applying it through the
+  function should not change result).
+- *obj*: user provided data. Data will be passed to carrying
+  serializable data from master to workers, obj is shared amongst
+  mapper executions over each element of the dataset.
 
 #### ds.cartesian(other)
 
@@ -411,6 +479,15 @@ sc.parallelize([1, 2, 3, 4]).
    filter(filter, {modulo: 2}).
    collect().on('data', console.log);
 // 1 3
+```
+
+#### ds.first()
+
+Returns a [readable stream] of the first element in this dataset.
+
+```javascript
+sc.parallelize([1, 2, 3]).first().on('data', console.log)
+// 1
 ```
 
 #### ds.flatMap(flatMapper[,obj])
@@ -642,6 +719,43 @@ sc.parallelize([['hello', 1], ['world', 2]]).
 // ['world', 4]
 ```
 
+#### ds.partitionBy(partitioner)
+
+Returns a dataset partitioned using the specified partitioner. The
+purpose of this transformation is not to change the dataset content,
+but to increase processing speed by ensuring that the elements
+accessed by further transfomations reside in the same partition.
+
+Example:
+
+```javascript
+var skale = require('skale-engine');
+var sc = skale.context();
+
+sc.parallelize([['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric', 3]])
+  .partitionBy(new skale.HashPartitioner(3))
+  .collect.on('data', console.log)
+// ['world', 1], ['world', 2], ['hello', 1], ['hello', 2], ['cedric', 3]
+```
+
+#### ds.persist()
+
+Returns the dataset, and persists the dataset content on disk (and
+in memory if available) in order to directly reuse content in further
+tasks.
+
+Example:
+
+```javascript
+var dataset = sc.range(100).map(a => a * a);
+
+// First action: compute dataset
+dataset.collect().on('data', console.log)
+
+// Second action: reuse dataset, avoid map transform
+dataset.collect().on('data', console.log)
+```
+
 #### ds.reduce(reducer, init[,obj])
 
 Returns a [readable stream] of the aggregated value of the elements
@@ -737,6 +851,39 @@ sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
 // [ 1, 1, 3, 4, 4, 5, 7 ]
 ```
 
+#### ds.sortBy(keyfunc[, ascending])
+
+Returns a dataset sorted by the given *keyfunc*.
+
+- *keyfunc*: a function of the form `function(element)` which returns
+  a value used for comparison in the sort function and where `element`
+  is the next element of the dataset on which `sortBy()` operates
+- *ascending*: a boolean to set the sort direction. Default: true
+
+Example:
+
+```javascript
+sc.parallelize([4, 6, 10, 5, 1, 2, 9, 7, 3, 0])
+  .sortBy(a => a)
+  .collect().toArray().then(console.log)
+// [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+```
+
+#### ds.sortByKey(ascending)
+
+When called on a dataset of type `[k,v]`, returns a dataset of type `[k,v]`
+sorted on `k`. The optional parameter *ascending* is a boolean which sets
+the sort direction, true by default.
+
+Example:
+
+```javascript
+sc.parallelize([['world', 2], ['cedric', 3], ['hello', 1]])
+  .sortByKey()
+  .collect().toArray().then(console.log)
+// [['cedric', 3], ['hello', 1], ['world', 2]]
+```
+
 #### ds.subtract(other)
 
 Returns a dataset containing only elements of source dataset which are not
@@ -749,6 +896,34 @@ var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
 var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
 ds1.subtract(ds2).collect().on('data', console.log);
 // 1 2
+```
+
+#### ds.take(num)
+
+Returns a [readable stream] of the `num` first elements of the source
+dataset.
+
+Example:
+
+```javascript
+sc.parallelize([1, 2, 3, 4])
+  .take(2)
+  .collect().toArray().then(console.log)
+// [1, 2]
+```
+
+#### ds.top(num)
+
+Returns a [readable stream] of the `num` top elements of the source
+dataset.
+
+Example:
+
+```javascript
+sc.parallelize([1, 2, 3, 4])
+  .top(2)
+  .collect().toArray().then(console.log)
+// [3, 4]
 ```
 
 #### ds.union(other)
@@ -779,6 +954,55 @@ sc.parallelize([[10, 'world'], [30, 3]]).
 // 3
 ```
 
-## References
+### Partitioners
+
+A partitioner is an object passed to
+[ds.partitionBy(partitioner)](#dspartitionbypartitioner) which
+places data in partitions according to a strategy, for example hash
+partitioning, where data having the same key are placed in the same
+partition, or range partitioning, where data in the same range are
+in the same partition. This is useful to accelerate processing, as
+it limits data transfers between workers during jobs.
+
+A partition object must provide the following properties:
+
+- *numPartitions*: a *Number* of partitions for the dataset
+- *getPartitionIndex*: a *Function* of type `function(element)`
+  which returns the partition index (comprised between 0 and
+  *numPartitions*) for the `element` of the dataset on which
+  `partitionBy()` operates.
+
+#### HashPartitioner(numPartitions)
+
+Returns a partitioner object which implements hash based partitioning
+using a hash checksum of each element as a string.
+
+- *numPartitions*: *Number* of partitions for this dataset
+
+Example:
+
+```javascript
+var hp = new skale.HashPartitioner(3)
+var dataset = sc.range(10).partitionBy(hp)
+```
+
+#### RangePartitioner(numPartitions, keyfunc, dataset)
+
+Returns a partitioner object which first defines ranges by sampling
+the dataset and then places elements by comparing them with ranges.
+
+- *numPartitions*: *Number* of partitions for this dataset
+- *keyfunc*: a function of the form `function(element)` which returns
+  a value used for comparison in the sort function and where `element`
+  is the next element of the dataset on which `partitionBy()` operates
+- *dataset*: the dataset object on which `partitionBy()` operates
+
+Example:
+
+```javascript
+var dataset = sc.range(100)
+var rp = new skale.RangePartitioner(3, a => a, dataset)
+var dataset = sc.range(10).partitionBy(rp)
+```
 
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable

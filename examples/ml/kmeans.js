@@ -2,7 +2,7 @@
 'use strict';
 
 var skale = require('skale-engine');
-var sizeOf = require('../../lib/sizeof.js');
+var sizeOf = require('object-sizeof');
 var ml = require('../../lib/ml.js');
 
 var opt = require('node-getopt').create([
@@ -41,7 +41,7 @@ var points = file ? sc.textFile(file).map(function (e) {
 	return [tmp.shift(), tmp];
 }).persist() : ml.randomSVMData(sc, N, D, seed, P).persist();
 
-sc.on('connect', function() {console.log('Number of workers: %j', sc.worker.length)});
+sc.on('connect', function() {console.log('Number of workers: %j', sc.worker.length);});
 
 // init means, K gaussian vectors of length D
 var prng = new ml.Random();
@@ -54,7 +54,7 @@ for (var k = 0; k < K; k++) {
 }
 var model = new ml.KMeans(sc, points, K, w);
 
-model.train(nIterations, function (err) {
+model.train(nIterations, function () {
 	//console.log(model.means);
 	sc.end();
 });

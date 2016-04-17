@@ -3,7 +3,6 @@
 'use strict';
 
 var LocalArray = require('./local-array.js');
-var trace = require('line-trace');
 
 module.exports.TextStream = LocalArray.TextStream;
 module.exports.context = LocalContext;
