@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.4.2](https://github.com/skale-me/skale-engine/tree/0.4.2) (2016-04-17)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.1...0.4.2)
+
+**Merged pull requests:**
+
+- Preliminary work to isolate machine learning capabilities from core engine [\#27](https://github.com/skale-me/skale-engine/pull/27) ([CedricArtigue](https://github.com/CedricArtigue))
+- fix lint [\#26](https://github.com/skale-me/skale-engine/pull/26) ([mvertes](https://github.com/mvertes))
+- run eslint in pre-test [\#25](https://github.com/skale-me/skale-engine/pull/25) ([mvertes](https://github.com/mvertes))
+- fix lint problems. Remove dead code [\#24](https://github.com/skale-me/skale-engine/pull/24) ([mvertes](https://github.com/mvertes))
+- new lint fixes [\#23](https://github.com/skale-me/skale-engine/pull/23) ([mvertes](https://github.com/mvertes))
+- Simplify code, fix lint errors. More to come. [\#22](https://github.com/skale-me/skale-engine/pull/22) ([mvertes](https://github.com/mvertes))
+- add eslint. Start code cleaning [\#21](https://github.com/skale-me/skale-engine/pull/21) ([mvertes](https://github.com/mvertes))
+
 ## [0.4.1](https://github.com/skale-me/skale-engine/tree/0.4.1) (2016-04-07)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.0...0.4.1)
 
