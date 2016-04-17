@@ -5,6 +5,8 @@
 var skale = {};
 module.exports = skale;
 
+skale.Source = require('./lib/dataset.js').Source;
+
 skale.Context = require('./lib/context.js');
 
 skale.context = skale.Context;
