@@ -15,6 +15,7 @@ Commands:
 
 Options:
   -h, --help		Show help
+  --reset		Restart cluster and cluster log
   -V, --version		Show version
 `;
 
@@ -24,7 +25,7 @@ const net = require('net');
 
 const argv = require('minimist')(process.argv.slice(2), {
 	string: ['c', 'config', 'H', 'host', 'p', 'port', 'k', 'key'],
-	boolean: ['h', 'help', 'V', 'version', 's', 'ssl'],
+	boolean: ['h', 'help', 'V', 'version', 's', 'ssl', 'reset'],
 });
 
 var skale_port = 12346;
@@ -50,7 +51,14 @@ switch (argv._[0]) {
 		console.log('this command is not yet implemented. Coming soon.');
 		break;
 	case 'run':
-		run_local(argv._.splice(1));
+		if (argv.reset) {
+			stop_local_server(function () {
+				fs.rename('skale-server.log', 'skale-server.log.old', function () {
+					run_local(argv._.splice(1));
+				});
+			});
+		} else
+			run_local(argv._.splice(1));
 		break;
 	case 'status':
 		status_local();
@@ -139,10 +147,10 @@ function try_connect(nb_try, timeout, done) {
 	});
 }
 
-function stop_local_server() {
+function stop_local_server(done) {
 	const child = child_process.execFile('/usr/bin/pgrep', ['skale-server ' + skale_port], function (err, pid) {
-		if (! pid) return;
-		process.kill(pid.trim());
+		if (pid) process.kill(pid.trim());
+		if (done) done();
 	});
 }
 
