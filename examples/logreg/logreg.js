@@ -3,44 +3,27 @@
 
 var skale = require('skale-engine');
 var ml = require('skale-ml');
-var sizeOf = require('object-sizeof');
 
-var opt = require('node-getopt').create([
-	['h', 'help', 'print this help text'],
-	['f', 'F=ARG', 'SVM input file (default: random data)'],
-	['n', 'N=ARG', 'number of observations (default: 842000)'],
-	['d', 'D=ARG', 'number of features per observation (default: 16)'],
-	['i', 'I=ARG', 'number of iterations (default: 4)'],
-	['p', 'P=ARG', 'number of partitons (default: number of workers)']
-]).bindHelp().parseSystem();
-
-var file = opt.options.F;
-var N = Number(opt.options.N) || 1000000;
-var D = Number(opt.options.D) || 16;
-var nIterations = Number(opt.options.I) ||  10;
+var nObservations = Math.pow(2, 20);
+var nFeatures = 16;
+var nIterations = 10;
 var seed = 1;
-var P = opt.options.P;
-var sample = [1, []];
-for (var i = 0; i < D; i++) sample[1].push(Math.random());
-var approx_data_size = N * sizeOf(sample);
 
-console.log('Input data: ' + (file || 'random'));
-console.log('Observations: ' + N);
-console.log('Features per observation: ' + D);
-console.log('Partitions: ' + (P || 'number of workers'));
-console.log('Iterations: ' + nIterations + '\n');
-console.log('Approximate dataset size: ' + Math.ceil(approx_data_size / (1024 * 1024)) + ' Mb');
+var sample = [1, []];
+for (var i = 0; i < nFeatures; i++) 
+	sample[1].push(Math.random());
+var approx_set_size = nObservations * JSON.stringify(sample).length;
+
+console.log('\# Generating an in-memory random SVM dataset with')
+console.log('\t - Number of observations: ' + nObservations);
+console.log('\t - Number of features per observation: ' + nFeatures);
+console.log('\t - Number of iterations: ' + nIterations);
+console.log('\t - Approximate SVM file size on disk: ' + Math.ceil(approx_set_size / (1024 * 1024)) + ' Mb\n');
+console.log('# Duration of each SGD iteration to compute binary logistic regrssion model:')
 
 var sc = skale.context();
-
-var points = file ? sc.textFile(file).map(function (e) {
-	var tmp = e.split(' ').map(parseFloat);
-	return [tmp.shift(), tmp];
-}).persist() : ml.randomSVMData(sc, N, D, seed, P).persist();
-
-var model = new ml.LogisticRegression(sc, points, D, N);
-
-sc.on('connect', function() {console.log('Number of workers: %j', sc.worker.length);});
+var set = ml.randomSVMData(sc, nObservations, nFeatures, seed).persist();
+var model = new ml.LogisticRegression(sc, set, nFeatures, nObservations);
 
 model.train(nIterations, function() {
 	console.log(model.w);
