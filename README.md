@@ -11,13 +11,13 @@ Logistic regression is a linear method generally used to predict binary as well 
 
 For now, skale-ml only support the binary logistic regression. The generelization into multinomial logistic regression needs to be implemented.
 
-#### example
-In the example folder you can find a sample skale application manipulating the logistic regression model.
+#### Sample app
+In the example folder you will find a sample skale application manipulating the logistic regression model.
 
 First, if not already done, install globally [skale toolbelt](https://www.npmjs.com/package/skale):
 
 ```
-npm install -g skale
+(sudo) npm install -g skale
 ```
 
 Then clone [skale-ml](https://github.com/skale-me/skale-ml) locally on your laptop using the following command
@@ -26,15 +26,46 @@ Then clone [skale-ml](https://github.com/skale-me/skale-ml) locally on your lapt
 git clone https://github.com/skale-me/skale-ml.git
 ```
 
-Navigate to the logistic regression example application folder, intall dependencies and run your the test application.
+Navigate to the logistic regression example application folder, intall dependencies and run the app.
 
 ```
 cd /path/to/skale-ml/examples/logreg
 npm install
 skale run
 ```
+#### What's happening ?
+This example requires skale-engine and skale-ml.
 
-The logreg example generates a random Support Vector Machine dataset using skale-ml.RandomSVMData source. It then trains a binary logistic regression model using a Stochastic Gradient Descent on a given number of iterations. The duration of each iteration computation is being displayed. As skale is processing in-memory later iterations are much faster than the first one.
+```
+var skale = require('skale-engine');
+var ml = require('skale-ml');
+```
+We create a skale context with:
+
+```
+var sc = skale.context();
+```
+And generate a random Support Vector Machine dataset, making it persistent in memory to accelerate model training:
+
+```
+var set = ml.randomSVMData(sc, nObservations, nFeatures, seed).persist();
+
+``` 
+We then instantiate a logistic regression model associated to the previously created dataset:
+
+```
+var model = new ml.LogisticRegression(sc, set, nFeatures, nObservations);
+
+```
+Finally we train the model on a given number of iterations, display the model weights and end the skale session:
+
+```
+model.train(nIterations, function() {
+	console.log(model.w);
+	sc.end();
+});
+```
+The computation duration of each iteration is being displayed. As skale is processing in-memory data, later iterations are much faster than the first one.
 
 ### Linear Support Vector Machines (SVMs)
 
