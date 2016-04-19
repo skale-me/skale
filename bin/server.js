@@ -333,6 +333,7 @@ function handleConnect(sock) {
 	sock.on('error', function sockError(error) {
 		console.log('## connection error');
 		console.log(error.stack);
+		handleClose(sock);
 	});
 	sock.pipe(new SkaleClient.FromGrid()).pipe(new SwitchBoard(sock));
 }
