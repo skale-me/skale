@@ -65,7 +65,6 @@ model.train(nIterations, function() {
 	sc.end();
 });
 ```
-The computation duration of each iteration is being displayed. As skale is processing in-memory data, later iterations are much faster than the first one.
 
 ### Linear Support Vector Machines (SVMs)
 
