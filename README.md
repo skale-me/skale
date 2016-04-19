@@ -48,24 +48,23 @@ var sc = skale.context();
 And generate a random Support Vector Machine dataset, making it persistent in memory to accelerate model training:
 
 ```
-var set = ml.randomSVMData(sc, nObservations, nFeatures, seed).persist();
+var points = ml.randomSVMData(sc, nObservations, nFeatures, seed).persist();
 
 ``` 
 We then instantiate a logistic regression model associated to the previously created dataset:
 
 ```
-var model = new ml.LogisticRegression(sc, set, nFeatures, nObservations);
+var model = new ml.LogisticRegression(points);
 
 ```
 Finally we train the model on a given number of iterations, display the model weights and end the skale session:
 
 ```
 model.train(nIterations, function() {
-	console.log(model.w);
+	console.log(model.weights);
 	sc.end();
 });
 ```
-The computation duration of each iteration is being displayed. As skale is processing in-memory data, later iterations are much faster than the first one.
 
 ### Linear Support Vector Machines (SVMs)
 
