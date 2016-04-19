@@ -9,8 +9,8 @@
     "start": "pf=/tmp/skale-server.pid; test -f $pf && exit 1; bin/server.js -l 0 & echo $! > $pf",
     "stop": "pf=/tmp/skale-server.pid; test -f $pf || exit 1; kill $(cat $pf); rm -f $pf",
     "test": "node_modules/.bin/mocha",
-	"pretest": "node_modules/.bin/eslint */*.js test/*/*.js examples/*/*.js",
-	"lint": "node_modules/.bin/eslint */*.js test/*/*.js examples/*/*.js"
+    "pretest": "node_modules/.bin/eslint */*.js test/*/*.js examples/*/*.js",
+    "lint": "node_modules/.bin/eslint */*.js test/*/*.js examples/*/*.js"
   },
   "engines": {
     "node": ">=4.0.0"
@@ -71,7 +71,7 @@
     "env": {
       "es6": true,
       "node": true,
-	  "mocha": true
+      "mocha": true
     },
     "extends": "eslint:recommended"
   }
