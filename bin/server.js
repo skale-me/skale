@@ -258,6 +258,7 @@ if (wsport) {
 		ws.on('error', function (error) {
 			console.log('## websocket connection error');
 			console.log(error.stack);
+			handleClose(sock);
 		});
 	});
 }
