@@ -2,8 +2,7 @@
 'use strict';
 
 var skale = require('skale-engine');
-// var ml = require('skale-ml');
-var ml = require('../../lib/ml.js');
+var ml = require('skale-ml');
 
 var nObservations = Math.pow(2, 20);
 var nFeatures = 16;
