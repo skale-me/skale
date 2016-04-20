@@ -78,11 +78,11 @@ function create(name) {
 	process.chdir(name);
 	const pkg = {
 		name: name,
-		version: '0.0.0',
+		version: '0.1.0',
 		private: true,
 		keywords: [ 'skale' ],
 		dependencies: {
-			'skale-engine': '^0.4.0'
+			'skale-engine': '^0.4.3'
 		}
 	};
 	fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
