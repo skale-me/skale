@@ -164,18 +164,24 @@ function MemoryManager() {
 	this.storageMemory = 0;
 	this.shuffleMemory = 0;
 	this.collectMemory = 0;
+	this.sizeOf = sizeOf;
+	this.memoryUsage = process.memoryUsage;
 
-	this.storageFull = function() {return (this.storageMemory > maxStorageMemory);};
-	this.shuffleFull = function() {return (this.shuffleMemory > maxShuffleMemory);};
-	this.collectFull = function() {return (this.collectMemory > maxCollectMemory);};
+	this.storageFull = function () {return (this.storageMemory > maxStorageMemory);};
+	this.shuffleFull = function () {return (this.shuffleMemory > maxShuffleMemory);};
+	this.collectFull = function () {return (this.collectMemory > maxCollectMemory);};
 
 	this.partitions = {};
-	this.register = function(partition) {
+	this.register = function (partition) {
 		var key = partition.datasetId + '.' + partition.partitionIndex;
 		if (!(key in this.partitions)) this.partitions[key] = partition;
 	};
 
-	this.isAvailable = function(partition) {
+	this.unregister = function (partition) {
+		this.partitions[partition.datasetId + '.' + partition.partitionIndex] = undefined;
+	};
+
+	this.isAvailable = function (partition) {
 		return (this.partitions[partition.datasetId + '.' + partition.partitionIndex] != undefined);
 	};
 }
