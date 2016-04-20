@@ -126,6 +126,7 @@ in memory, allowing efficient reuse accross parallel operations.
 
 |Transformation Name              | Description                                   | in    | out   |
 | -----------------               |-----------------------------------------------|-------|-------|
+|[aggregateByKey(func, func, init)](#dsaggregatebykeyreducer-combiner-init-obj)| reduce and combine by key using functions| [k,v]| [k,v]|
 |[cartesian(other)](#dscartesianother) | Perform a cartesian product with the other dataset | v w | [v,w]|
 |[coGroup(other)](#dscogroupother) | Group data from both datasets sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|
 |[distinct()](#dsdistinct)    | Return a dataset where duplicates are removed | v | w|
@@ -156,7 +157,6 @@ on which results are emitted.
 |Action Name | Description | out|
 |------------------             |----------------------------------------------|--------------|
 |[aggregate(func, func, init)](#dsaggregatereducer-combiner-initobj)| Similar to reduce() but may return a different type| stream of value |
-|[aggregateByKey(func, func, init)](#dsaggregatebykeyreducer-combiner-init-obj)| reduce and combine by key using functions| stream of [k,v] |
 |[collect()](#dscollectopt)         | Return the content of dataset | stream of elements|
 |[count()](#dscount)             | Return the number of elements from dataset | stream of number|
 |[countByKey()](#dscountbykey)     | Return the number of occurrences for each key in a `[k,v]` dataset | stream of [k,number]|
@@ -312,21 +312,20 @@ The following example computes the average of a dataset, avoiding a `map()`:
 ```javascript
 sc.parallelize([3, 5, 2, 7, 4, 8]).
    aggregate((a, v) => [a[0] + v, a[1] + 1],
-		(a1, a2) => [a1[0] + a2[0], a1[1] + a2[1]],
-		[0, 0],
-		function (err, res) {
-			console.log(res[0] / res[1]);
-		});
+	(a1, a2) => [a1[0] + a2[0], a1[1] + a2[1]], [0, 0]).
+   on('data', function(data) {
+	console.log(data[0] / data[1]);
+  })
 // 4.8333
 ```
 
 #### ds.aggregateByKey(reducer, combiner, init,[ obj])
 
-Returns a [readable stream] of `[k,v]` elements where `v` is the
-aggregated value of all elements of same key `k`. The aggregation
-is performed using two functions *reducer()* and *combiner()*
-allowing to use an arbitrary accumulator type, different from element
-type.
+When called on a dataset of type `[k,v]`, returns a dataset of type
+`[k,v]` where `v` is the aggregated value of all elements of same
+key `k`. The aggregation is performed using two functions *reducer()*
+and *combiner()* allowing to use an arbitrary accumulator type,
+different from element type.
 
 - *reducer*: a function of the form `function(acc,val[,obj[,wc]])`,
   which returns the next value of the accumulator (which must be
@@ -349,6 +348,15 @@ type.
 - *obj*: user provided data. Data will be passed to carrying
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the dataset.
+
+Example:
+
+```javascript
+sc.parallelize([['hello', 1], ['hello', 1], ['world', 1]]).
+   aggregateByKey((a, b) => a + b, (a, b) => a + b, 0).
+   collect().toArray().then(console.log);
+// [ [ 'hello', 2 ], [ 'world', 1 ] ]
+```
 
 #### ds.cartesian(other)
 
@@ -782,7 +790,7 @@ Example:
 ```javascript
 sc.parallelize([1, 2, 4, 8]).
    reduce((a, b) => a + b, 0).
-   then(console.log);
+   on('data', console.log);
 // 15
 ```
 
@@ -906,9 +914,9 @@ dataset.
 Example:
 
 ```javascript
-sc.parallelize([1, 2, 3, 4])
-  .take(2)
-  .collect().toArray().then(console.log)
+sc.parallelize([1, 2, 3, 4]).
+   take(2).
+   toArray().then(console.log)
 // [1, 2]
 ```
 
@@ -920,9 +928,9 @@ dataset.
 Example:
 
 ```javascript
-sc.parallelize([1, 2, 3, 4])
-  .top(2)
-  .collect().toArray().then(console.log)
+sc.parallelize([1, 2, 3, 4]).
+   top(2).
+   toArray().then(console.log)
 // [3, 4]
 ```
 

@@ -282,6 +282,12 @@ in memory, allowing efficient reuse accross parallel operations.</p>
 </thead>
 <tbody>
 <tr>
+<td><a href="#dsaggregatebykeyreducer-combiner-init-obj">aggregateByKey(func, func, init)</a></td>
+<td>reduce and combine by key using functions</td>
+<td>[k,v]</td>
+<td>[k,v]</td>
+</tr>
+<tr>
 <td><a href="#dscartesianother">cartesian(other)</a></td>
 <td>Perform a cartesian product with the other dataset</td>
 <td>v w</td>
@@ -431,11 +437,6 @@ on which results are emitted.</p>
 <td><a href="#dsaggregatereducer-combiner-initobj">aggregate(func, func, init)</a></td>
 <td>Similar to reduce() but may return a different type</td>
 <td>stream of value</td>
-</tr>
-<tr>
-<td><a href="#dsaggregatebykeyreducer-combiner-init-obj">aggregateByKey(func, func, init)</a></td>
-<td>reduce and combine by key using functions</td>
-<td>stream of [k,v]</td>
 </tr>
 <tr>
 <td><a href="#dscollectopt">collect()</a></td>
@@ -603,20 +604,19 @@ accumulator and element).</p>
 <p>The following example computes the average of a dataset, avoiding a <code>map()</code>:</p>
 <pre><code class="javascript">sc.parallelize([3, 5, 2, 7, 4, 8]).
    aggregate((a, v) =&gt; [a[0] + v, a[1] + 1],
-        (a1, a2) =&gt; [a1[0] + a2[0], a1[1] + a2[1]],
-        [0, 0],
-        function (err, res) {
-            console.log(res[0] / res[1]);
-        });
+    (a1, a2) =&gt; [a1[0] + a2[0], a1[1] + a2[1]], [0, 0]).
+   on('data', function(data) {
+    console.log(data[0] / data[1]);
+  })
 // 4.8333
 </code></pre>
 
 <h3 id="dsaggregatebykeyreducer-combiner-init-obj">ds.aggregateByKey(reducer, combiner, init,[ obj])<a class="headerlink" href="#dsaggregatebykeyreducer-combiner-init-obj" title="Permanent link">&para;</a></h3>
-<p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of <code>[k,v]</code> elements where <code>v</code> is the
-aggregated value of all elements of same key <code>k</code>. The aggregation
-is performed using two functions <em>reducer()</em> and <em>combiner()</em>
-allowing to use an arbitrary accumulator type, different from element
-type.</p>
+<p>When called on a dataset of type <code>[k,v]</code>, returns a dataset of type
+<code>[k,v]</code> where <code>v</code> is the aggregated value of all elements of same
+key <code>k</code>. The aggregation is performed using two functions <em>reducer()</em>
+and <em>combiner()</em> allowing to use an arbitrary accumulator type,
+different from element type.</p>
 <ul>
 <li><em>reducer</em>: a function of the form <code>function(acc,val[,obj[,wc]])</code>,
   which returns the next value of the accumulator (which must be
@@ -644,6 +644,13 @@ type.</p>
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the dataset.</li>
 </ul>
+<p>Example:</p>
+<pre><code class="javascript">sc.parallelize([['hello', 1], ['hello', 1], ['world', 1]]).
+   aggregateByKey((a, b) =&gt; a + b, (a, b) =&gt; a + b, 0).
+   collect().toArray().then(console.log);
+// [ [ 'hello', 2 ], [ 'world', 1 ] ]
+</code></pre>
+
 <h3 id="dscartesianother">ds.cartesian(other)<a class="headerlink" href="#dscartesianother" title="Permanent link">&para;</a></h3>
 <p>Returns a dataset wich contains all possible pairs <code>[a, b]</code> where <code>a</code>
 is in the source dataset and <code>b</code> is in the <em>other</em> dataset.</p>
@@ -1006,7 +1013,7 @@ of the dataset using a <em>reducer()</em> function.</p>
 <p>Example:</p>
 <pre><code class="javascript">sc.parallelize([1, 2, 4, 8]).
    reduce((a, b) =&gt; a + b, 0).
-   then(console.log);
+   on('data', console.log);
 // 15
 </code></pre>
 
@@ -1107,9 +1114,9 @@ ds1.subtract(ds2).collect().on('data', console.log);
 <p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of the <code>num</code> first elements of the source
 dataset.</p>
 <p>Example:</p>
-<pre><code class="javascript">sc.parallelize([1, 2, 3, 4])
-  .take(2)
-  .collect().toArray().then(console.log)
+<pre><code class="javascript">sc.parallelize([1, 2, 3, 4]).
+   take(2).
+   toArray().then(console.log)
 // [1, 2]
 </code></pre>
 
@@ -1117,9 +1124,9 @@ dataset.</p>
 <p>Returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of the <code>num</code> top elements of the source
 dataset.</p>
 <p>Example:</p>
-<pre><code class="javascript">sc.parallelize([1, 2, 3, 4])
-  .top(2)
-  .collect().toArray().then(console.log)
+<pre><code class="javascript">sc.parallelize([1, 2, 3, 4]).
+   top(2).
+   toArray().then(console.log)
 // [3, 4]
 </code></pre>
 
