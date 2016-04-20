@@ -16,6 +16,7 @@ Commands:
 Options:
   -h, --help		Show help
   -r, --remote		run in the cloud instead of locally
+  --reset		Restart cluster and cluster log
   -V, --version		Show version
 `;
 
@@ -25,7 +26,7 @@ const net = require('net');
 
 const argv = require('minimist')(process.argv.slice(2), {
 	string: [ 'c', 'config', 'H', 'host', 'k', 'key', 'p', 'port' ],
-	boolean: [ 'h', 'help', 'r', 'remote', 'V', 'version' ],
+	boolean: [ 'h', 'help', 'r', 'remote', 'V', 'version', 'reset' ],
 	default: {
 		H: 'skale.me', 'host': 'skale.me',
 		p: '8888', 'port': 8888
@@ -56,7 +57,14 @@ switch (argv._[0]) {
 		break;
 	case 'run':
 		if (argv.r || argv.remote) run_remote(argv._.splice(1));
-		else run_local(argv._.splice(1));
+		else if (argv.reset) {
+			stop_local_server(function () {
+				fs.rename('skale-server.log', 'skale-server.log.old', function () {
+					run_local(argv._.splice(1));
+				});
+			});
+		} else
+			run_local(argv._.splice(1));
 		break;
 	case 'status':
 		status_local();
@@ -145,10 +153,10 @@ function try_connect(nb_try, timeout, done) {
 	});
 }
 
-function stop_local_server() {
-	const child = child_process.execFile('/usr/bin/pgrep', ['skale-server ' + skale_port], function (err, pid) {
-		if (! pid) return;
-		process.kill(pid.trim());
+function stop_local_server(done) {
+	const child = child_process.execFile('/usr/bin/pgrep', ['-f', 'skale-server ' + skale_port], function (err, pid) {
+		if (pid) process.kill(pid.trim());
+		if (done) done();
 	});
 }
 
