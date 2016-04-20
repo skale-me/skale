@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.4.4](https://github.com/skale-me/skale-engine/tree/0.4.4) (2016-04-20)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.3...0.4.4)
+
+**Merged pull requests:**
+
+- worker: fix init of Partition.mm [\#32](https://github.com/skale-me/skale-engine/pull/32) ([mvertes](https://github.com/mvertes))
+
 ## [0.4.3](https://github.com/skale-me/skale-engine/tree/0.4.3) (2016-04-20)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.2...0.4.3)
 
