@@ -32,7 +32,7 @@ console.log('Iterations: ' + nIterations + '\n');
 console.log('Approximate dataset size: ' + Math.ceil(approx_data_size / (1024 * 1024)) + ' Mb');
 
 var sc = skale.context();
-var points = file ? sc.textFile(file).map(function (e) {
+var points = file ? sc.textFile(file, P).map(function (e) {
 	var tmp = e.split(' ').map(parseFloat);
 	return [tmp.shift(), tmp];
 }).persist() : ml.randomSVMData(sc, N, D, seed, P).persist();
