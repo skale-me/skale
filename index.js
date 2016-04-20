@@ -2,15 +2,14 @@
 
 'use strict';
 
-var skale = {};
-module.exports = skale;
+const Context = require('./lib/context.js');
+const Dataset = require('./lib/dataset.js');
 
-skale.Source = require('./lib/dataset.js').Source;
-
-skale.Context = require('./lib/context.js');
-
-skale.context = skale.Context;
-
-skale.HashPartitioner = require('./lib/dataset.js').HashPartitioner;
-
-skale.RangePartitioner = require('./lib/dataset.js').RangePartitioner;
+module.exports = {
+	Context: Context,
+	context: Context,
+	HashPartitioner: Dataset.HashPartitioner,
+	RangePartitioner: Dataset.RangePartitioner,
+	Random: Dataset.Random,
+	Source: Dataset.Source
+};
