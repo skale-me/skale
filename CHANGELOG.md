@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.4.3](https://github.com/skale-me/skale-engine/tree/0.4.3) (2016-04-20)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.2...0.4.3)
+
+**Merged pull requests:**
+
+- doc: various fixes [\#31](https://github.com/skale-me/skale-engine/pull/31) ([mvertes](https://github.com/mvertes))
+- Dataset: provide a better RNG. Expose Random and Poisson classes. [\#30](https://github.com/skale-me/skale-engine/pull/30) ([mvertes](https://github.com/mvertes))
+- On workers: evict a partition if going out of memory [\#29](https://github.com/skale-me/skale-engine/pull/29) ([mvertes](https://github.com/mvertes))
+- Handle connection error to terminate a master if a worker fails [\#28](https://github.com/skale-me/skale-engine/pull/28) ([mvertes](https://github.com/mvertes))
+
 ## [0.4.2](https://github.com/skale-me/skale-engine/tree/0.4.2) (2016-04-17)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.1...0.4.2)
 
