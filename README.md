@@ -44,10 +44,10 @@ The best and quickest way to get started with skale-engine is to use
 [skale](https://www.npmjs.com/package/skale) to create, run
 and deploy skale applications.
 
-	$ npm install -g skale      # Install skale command once and for all
-	$ skale create my_app       # Create a new app, install skale-engine
+	$ sudo npm install -g skale  # Install skale command once and for all
+	$ skale create my_app        # Create a new app, install skale-engine
 	$ cd my_app
-	$ skale run                 # Starts a local cluster if necessary and run
+	$ skale run                  # Starts a local cluster if necessary and run
 
 ## Examples
 

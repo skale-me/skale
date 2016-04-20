@@ -5,7 +5,7 @@
   "description": "parallel and distributed data processing engine",
   "main": "index.js",
   "scripts": {
-    "preinstall": "mkdir -p node_modules && echo 'module.exports = require(\"..\")' > node_modules/skale-engine.js",
+    "preinstall": "mkdir -p node_modules && echo \"module.exports = require('..');\" > node_modules/skale-engine.js",
     "start": "pf=/tmp/skale-server.pid; test -f $pf && exit 1; bin/server.js -l 0 & echo $! > $pf",
     "stop": "pf=/tmp/skale-server.pid; test -f $pf || exit 1; kill $(cat $pf); rm -f $pf",
     "test": "node_modules/.bin/mocha",
