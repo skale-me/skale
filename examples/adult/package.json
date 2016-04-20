@@ -1,0 +1,12 @@
+{
+  "name": "adult",
+  "version": "0.0.0",
+  "private": true,
+  "keywords": [
+    "skale"
+  ],
+  "dependencies": {
+    "skale-engine": "^0.4.0",
+    "skale-ml": "^0.0.1"
+  }
+}
