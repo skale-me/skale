@@ -17,20 +17,9 @@ system such as Linux or MacOSX. MS-Windows is not supported.
 
 Assuming you have already installed [NodeJS](https://nodejs.org):
 
-	$ npm install -g skale
-
-This installs the skale command globally on your system. You may have to run
-this command with `sudo` depending on your platform:
-
 	$ sudo npm install -g skale
 
-Note that `skale` itself does not require superuser privileges.
-You can for example install `skale` from your home directory and
-add `$HOME/node_modules/.bin` in your PATH environment:
-
-	$ cd $HOME
-	$ npm install skale
-	$ export PATH=$PATH:~/node_modules/.bin   # or write it in your ~/.profile
+This installs the skale command globally on your system.
 
 ## Getting started
 
@@ -55,7 +44,7 @@ the localhost at the first invocation, then simply executes `my_app.js`. You
 can check the status of the cluster using the `skale status` command, and stop
 it using `skale stop`.
 
-To go on further details, please refer to skale-engine [documentation](https://github.com/skale-me/skale-engine/blob/master/doc/skale-API.md)
+To go on further details, please refer to [documentation](https://skale-me.github.io/skale-engine/)
 and [skale examples](https://github.com/skale-me/skale-examples)
  
 ## Deploying an application

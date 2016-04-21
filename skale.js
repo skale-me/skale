@@ -9,12 +9,13 @@ Create, run, deploy clustered node applications
 Commands:
   create <app>		Create a new application
   run [<args>...]	Run application
-  deploy [<args>...]	Deploy application (coming soon)
+  deploy [<args>...]	Deploy application
   status		print status of local skale cluster
   stop			Stop local skale cluster
 
 Options:
   -h, --help		Show help
+  -r, --remote		run in the cloud instead of locally
   --reset		Restart cluster and cluster log
   -V, --version		Show version
 `;
@@ -24,8 +25,12 @@ const fs = require('fs');
 const net = require('net');
 
 const argv = require('minimist')(process.argv.slice(2), {
-	string: ['c', 'config', 'H', 'host', 'p', 'port', 'k', 'key'],
-	boolean: ['h', 'help', 'V', 'version', 's', 'ssl', 'reset'],
+	string: [ 'c', 'config', 'H', 'host', 'k', 'key', 'p', 'port' ],
+	boolean: [ 'h', 'help', 'r', 'remote', 'V', 'version', 'reset' ],
+	default: {
+		H: 'skale.me', 'host': 'skale.me',
+		p: '8888', 'port': 8888
+	}
 });
 
 var skale_port = 12346;
@@ -48,10 +53,11 @@ switch (argv._[0]) {
 		create(argv._[1]);
 		break;
 	case 'deploy':
-		console.log('this command is not yet implemented. Coming soon.');
+		deploy(argv._.splice(1));
 		break;
 	case 'run':
-		if (argv.reset) {
+		if (argv.r || argv.remote) run_remote(argv._.splice(1));
+		else if (argv.reset) {
 			stop_local_server(function () {
 				fs.rename('skale-server.log', 'skale-server.log.old', function () {
 					run_local(argv._.splice(1));
@@ -80,11 +86,11 @@ function create(name) {
 	process.chdir(name);
 	const pkg = {
 		name: name,
-		version: '0.0.0',
+		version: '0.1.0',
 		private: true,
 		keywords: [ 'skale' ],
 		dependencies: {
-			'skale-engine': '^0.4.0'
+			'skale-engine': '^0.4.3'
 		}
 	};
 	fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
@@ -148,7 +154,7 @@ function try_connect(nb_try, timeout, done) {
 }
 
 function stop_local_server(done) {
-	const child = child_process.execFile('/usr/bin/pgrep', ['skale-server ' + skale_port], function (err, pid) {
+	const child = child_process.execFile('/usr/bin/pgrep', ['-f', 'skale-server ' + skale_port], function (err, pid) {
 		if (pid) process.kill(pid.trim());
 		if (done) done();
 	});
@@ -156,7 +162,7 @@ function stop_local_server(done) {
 
 function status_local() {
 	const child = child_process.execFile('/bin/ps', ['ux'], function (err, out) {
-		var lines = out.split(/\r\n|\r|\n/);
+		const lines = out.split(/\r\n|\r|\n/);
 		for (var i = 0; i < lines.length; i++)
 			if (i == 0 || lines[i].match(/ skale-/)) console.log(lines[i]);
 	});
@@ -164,7 +170,7 @@ function status_local() {
 
 function run_local(args) {
 	const pkg = JSON.parse(fs.readFileSync('package.json'));
-	var cmd = pkg.name + '.js';
+	const cmd = pkg.name + '.js';
 	args.splice(0, 0, cmd);
 	try_connect(0, 0, function (err) {
 		if (!err) return run_app();
@@ -173,16 +179,17 @@ function run_local(args) {
 	function run_app() { child = child_process.spawn('node', args, {stdio: 'inherit'}); }
 }
 
-function run_remote(src, args) {
-	fs.readFile(src, {encoding: 'utf8'}, function (err, data) {
+function deploy(args) {
+	const pkg = JSON.parse(fs.readFileSync('package.json'));
+	fs.readFile(pkg.name + '.js', {encoding: 'utf8'}, function (err, data) {
 		if (err) throw err;
 
-		var postdata = JSON.stringify({src: data, args: args});
+		const postdata = JSON.stringify({pkg: pkg, src: data, args: args});
 
-		var options = {
+		const options = {
 			hostname: config.host,
 			port: config.port,
-			path: '/run',
+			path: '/deploy',
 			method: 'POST',
 			headers: {
 				'X-Auth': config.key,
@@ -191,7 +198,7 @@ function run_remote(src, args) {
 			}
 		};
 
-		var req = proto.request(options, function (res) {
+		const req = proto.request(options, function (res) {
 			res.setEncoding('utf8');
 			res.pipe(process.stdout);
 		});
@@ -199,4 +206,29 @@ function run_remote(src, args) {
 		req.on('error', function (err) {throw err;});
 		req.end(postdata);
 	});
+}
+
+function run_remote(args) {
+	const name = process.cwd().split('/').pop();
+	const postdata = JSON.stringify({name: name, args: args});
+
+	const options = {
+		hostname: config.host,
+		port: config.port,
+		path: '/run',
+		method: 'POST',
+		headers: {
+			'X-Auth': config.key,
+			'Content-Type': 'application/json',
+			'Content-Length': Buffer.byteLength(postdata)
+		}
+	};
+
+	const req = proto.request(options, function (res) {
+		res.setEncoding('utf8');
+		res.pipe(process.stdout);
+	});
+
+	req.on('error', function (err) {throw err;});
+	req.end(postdata);
 }
