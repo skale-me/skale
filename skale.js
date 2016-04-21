@@ -164,7 +164,7 @@ function status_local() {
 	const child = child_process.execFile('/bin/ps', ['ux'], function (err, out) {
 		const lines = out.split(/\r\n|\r|\n/);
 		for (var i = 0; i < lines.length; i++)
-			if (i == 0 || lines[i].match(/ skale-/)) console.log(lines[i]);
+			if (i == 0 || lines[i].match(/ skale-/)) console.log(lines[i].trim());
 	});
 }
 
