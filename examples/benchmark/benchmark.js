@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var skale = require('skale-engine');
+var sc = require('skale-engine').context();
 // var ml = require('skale-ml');
 var ml = require('../../lib/ml.js');
 
@@ -16,12 +16,9 @@ function featurize(line) {
 }
 
 var file = process.argv[2] || '1MB.dat';
-var nIterations = process.argv[3] || 100;
-var sc = skale.context();
-var points = sc.textFile('1MB.dat').map(featurize).persist();
+var nIterations = process.argv[3] || 10;
+var points = sc.textFile(file).map(featurize).persist();
 var model = new ml.LogisticRegression(points);
-
-// points.count().on('data', console.log)
 
 model.train(nIterations, function() {
 	var line = model.weights[0];

@@ -16,7 +16,7 @@ var metadata = {
 }
 
 function featurize(data, metadata) {
-	var label = ((data[14] == '>50K') || (data[14] == '>50K.')) ? 1 : 0, features = [];
+	var label = ((data[14] == '>50K') || (data[14] == '>50K.')) ? 1 : -1, features = [];
 
 	features[0] = Number(data[0]);								// age
 	features[1] = metadata.workclass.indexOf(data[1]);			// workclass
@@ -43,12 +43,24 @@ function featurize(data, metadata) {
 	return [label, features];
 }
 
+function normalize(point) {
+	var label = point[0], features = point[1], norm = 0, normalized_features = [];
+	for (var i = 0; i < features.length; i++)
+		norm += Math.pow(features[i], 2);
+	for (var i = 0; i < features.length; i++)
+		normalized_features[i] = features[i] / Math.sqrt(norm);
+	return [label, normalized_features];
+}
+
 // Train model
 var training_set = sc.textFile('adult.data')
 	.map(line => line.split(',').map(str => str.trim()))
 	.map(featurize, metadata)
 	.filter(point => (point.length > 0))
+	.map(normalize)	
 	.persist();
+
+// training_set.collect().on('data', console.log)
 
 var model = new ml.LogisticRegression(training_set);
 var nIterations = 100;
@@ -61,7 +73,7 @@ model.train(nIterations, function() {
 		for (var i = 0; i < acc.weights.length; i++)
 			tmp += acc.weights[i] * svm[1][i];
 		var tmp2 = 1 / (1 + Math.exp(-tmp));
-		var dec = tmp2 > 0.5 ? 1 : 0;
+		var dec = tmp2 > 0.5 ? 1 : -1;
 		if (dec == 0) acc.neg++; else acc.pos++;
 		if (dec != svm[0]) acc.error++;
 		acc.n++;
@@ -81,7 +93,8 @@ model.train(nIterations, function() {
 	// sc.textFile('adult.test')
 		.map(line => line.split(',').map(str => str.trim()))
 		.map(featurize, metadata)
-		.filter(point => (point.length > 0))		
+		.filter(point => (point.length > 0))
+		.map(normalize)
 		.aggregate(reducer, combiner, accumulator)
 		.on('data', function(result) {
 			console.log(result)
