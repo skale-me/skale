@@ -29,13 +29,20 @@ var pendingMasters = [];
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
 	['H', 'Host=ARG', 'primary server host (default none)'],
-	['l', 'local=ARG', 'start local worker and master controllers (default ncpu workers)'],
-	['n', 'name=ARG', 'advertised server name (default localhost)'],
+	['l', 'local=ARG', 'start local worker controller (default ncpu workers)'],
+	['m', 'memory=ARG', 'set max memory in MB for workers in local mode (default 1024)'],
+	['n', 'nworker=ARG', 'start local worker controller (default ncpu workers)'],
+	['N', 'Name=ARG', 'advertised server name (default localhost)'],
 	['P', 'Port=ARG', 'primary server port (default none)'],
 	['p', 'port=ARG', 'server port (default 12346)'],
 	['w', 'wsport=ARG', 'listen on websocket port (default none)'],
-	['v', 'version', 'print version']
+	['V', 'version', 'print version']
 ]).bindHelp().parseSystem();
+
+if (opt.options.version) {
+	const pkg = require('../package');
+	return console.log(pkg.name + '-' +  pkg.version);
+}
 
 var clients = {};
 var clientNum = 1;
@@ -46,6 +53,7 @@ var topicNum = -1;
 var UInt32Max = 4294967296;
 var topicMax = UInt32Max - minMulticast;
 var topicIndex = {};
+var memory = opt.options.memory || 1024;
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
 var port = Number(opt.options.port) || 12346;
 var wss;
@@ -267,7 +275,11 @@ if (wsport) {
 if (opt.options.local) startWorker();
 
 function startWorker() {
-	var worker =  child_process.spawn(__dirname + '/worker.js', ['-P', port, '-n', nworker], {stdio: 'inherit'});
+	var worker =  child_process.spawn(
+		__dirname + '/worker.js',
+		['-P', port, '-n', nworker, '-m', memory],
+		{stdio: 'inherit'}
+	);
 	worker.on('close', startWorker);
 }
 

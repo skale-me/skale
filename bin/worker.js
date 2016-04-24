@@ -19,26 +19,34 @@ var Lines = require('../lib/lines.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
 
 //var global = {require: require};
-var mm = new MemoryManager();
 
 var opt = require('node-getopt').create([
 	['h', 'help', 'print this help text'],
 	['d', 'debug', 'print debug traces'],
-	['m', 'MyHost=ARG', 'advertised hostname'],
-	['n', 'Num=ARG', 'number of workers (default: number of cpus)'],
+	['m', 'memory=ARG', 'set max memory in MB for workers (default 1024)'],
+	['M', 'MyHost=ARG', 'advertised hostname'],
+	['n', 'nworker=ARG', 'number of workers (default: number of cpus)'],
 	['H', 'Host=ARG', 'server hostname (default localhost)'],
-	['P', 'Port=ARG', 'server port (default 12346)']
+	['P', 'Port=ARG', 'server port (default 12346)'],
+	['V', 'version', 'print version']
 ]).bindHelp().parseSystem();
 
-var debug = opt.options.debug || false;
-var ncpu = Number(opt.options.Num) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
-var hostname = opt.options.MyHost || os.hostname();
-var cgrid;
+if (opt.options.version) {
+	const pkg = require('../package');
+	return console.log(pkg.name + '-' +  pkg.version);
+}
 
+var debug = opt.options.debug || false;
+var ncpu = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
+var hostname = opt.options.MyHost || os.hostname();
+var memory = Number(opt.options.memory || 1024);
+var cgrid;
+var mm = new MemoryManager(memory);
 ncpu = Number(ncpu);
 
 if (cluster.isMaster) {
 	process.title = 'skale-worker-controller';
+	cluster.setupMaster({execArgv: ['--max_old_space_size=' + memory]});
 	cluster.on('exit', handleExit);
 	cgrid = new SkaleClient({
 		debug: debug,
@@ -154,9 +162,9 @@ function runWorker(host, port) {
 	});
 }
 
-function MemoryManager() {
-	const Kb = 1024, Mb = 1024 * Kb, Gb = 1024 * Mb;
-	var MAX_MEMORY = 1.0 * Gb;
+function MemoryManager(memory) {
+	const Kb = 1024, Mb = 1024 * Kb;
+	var MAX_MEMORY = (memory - 100) * Mb;
 	var maxStorageMemory = MAX_MEMORY * 0.4;
 	var maxShuffleMemory = MAX_MEMORY * 0.2;
 	var maxCollectMemory = MAX_MEMORY * 0.2;
@@ -165,7 +173,6 @@ function MemoryManager() {
 	this.shuffleMemory = 0;
 	this.collectMemory = 0;
 	this.sizeOf = sizeOf;
-	this.memoryUsage = process.memoryUsage;
 
 	this.storageFull = function () {return (this.storageMemory > maxStorageMemory);};
 	this.shuffleFull = function () {return (this.shuffleMemory > maxShuffleMemory);};
