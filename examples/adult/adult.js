@@ -1,104 +1,123 @@
 #!/usr/bin/env node
 
+/*
+	Adult dataset processing as per http://scg.sdsu.edu/dataset-adult_r/
+*/
+
 // var ml = require('skale-ml');
-var ml = require('../../lib/ml.js');
 var sc = require('skale-engine').context();
+var LogisticRegression = require('../../lib/ml.js').LogisticRegression;
+var StandardScaler = require('../../lib/ml.js').StandardScaler;
 
 var metadata = {
-	workclass: ['?', 'Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov', 'State-gov', 'Without-pay', 'Never-worked'],
-	education: ['?', 'Bachelors', 'Some-college', '11th', 'HS-grad', 'Prof-school', 'Assoc-acdm', 'Assoc-voc', '9th', '7th-8th', '12th', 'Masters', '1st-4th', '10th', 'Doctorate', '5th-6th', 'Preschool'],
-	maritalstatus: ['?', 'Married-civ-spouse', 'Divorced', 'Never-married', 'Separated', 'Widowed', 'Married-spouse-absent', 'Married-AF-spouse'],
-	occupation: ['?', 'Tech-support', 'Craft-repair', 'Other-service', 'Sales', 'Exec-managerial', 'Prof-specialty', 'Handlers-cleaners', 'Machine-op-inspct', 'Adm-clerical', 'Farming-fishing', 'Transport-moving', 'Priv-house-serv', 'Protective-serv', 'Armed-Forces'],
-	relationship: ['?', 'Wife', 'Own-child', 'Husband', 'Not-in-family', 'Other-relative', 'Unmarried'],
-	race: ['?', 'White', 'Asian-Pac-Islander', 'Amer-Indian-Eskimo', 'Other', 'Black'],
-	sex: ['?', 'Female', 'Male'],
-	nativecountry: ['?', 'United-States', 'Cambodia', 'England', 'Puerto-Rico', 'Canada', 'Germany', 'Outlying-US(Guam-USVI-etc)', 'India', 'Japan', 'Greece', 'South', 'China', 'Cuba', 'Iran', 'Honduras', 'Philippines', 'Italy', 'Poland', 'Jamaica', 'Vietnam', 'Mexico', 'Portugal', 'Ireland', 'France', 'Dominican-Republic', 'Laos', 'Ecuador', 'Taiwan', 'Haiti', 'Columbia', 'Hungary', 'Guatemala', 'Nicaragua', 'Scotland', 'Thailand', 'Yugoslavia', 'El-Salvador', 'Trinadad&Tobago', 'Peru', 'Hong', 'Holand-Netherlands']
+	workclass: ['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov', 'State-gov', 'Without-pay', 'Never-worked'],
+	education: ['Bachelors', 'Some-college', '11th', 'HS-grad', 'Prof-school', 'Assoc-acdm', 'Assoc-voc', '9th', '7th-8th', '12th', 'Masters', '1st-4th', '10th', 'Doctorate', '5th-6th', 'Preschool'],
+	maritalstatus: ['Married-civ-spouse', 'Divorced', 'Never-married', 'Separated', 'Widowed', 'Married-spouse-absent', 'Married-AF-spouse'],
+	occupation: ['Tech-support', 'Craft-repair', 'Other-service', 'Sales', 'Exec-managerial', 'Prof-specialty', 'Handlers-cleaners', 'Machine-op-inspct', 'Adm-clerical', 'Farming-fishing', 'Transport-moving', 'Priv-house-serv', 'Protective-serv', 'Armed-Forces'],
+	relationship: ['Wife', 'Own-child', 'Husband', 'Not-in-family', 'Other-relative', 'Unmarried'],
+	race: ['White', 'Asian-Pac-Islander', 'Amer-Indian-Eskimo', 'Other', 'Black'],
+	sex: ['Female', 'Male'],
+	nativecountry: ['United-States', 'Cambodia', 'England', 'Puerto-Rico', 'Canada', 'Germany', 'Outlying-US(Guam-USVI-etc)', 'India', 'Japan', 'Greece', 'South', 'China', 'Cuba', 'Iran', 'Honduras', 'Philippines', 'Italy', 'Poland', 'Jamaica', 'Vietnam', 'Mexico', 'Portugal', 'Ireland', 'France', 'Dominican-Republic', 'Laos', 'Ecuador', 'Taiwan', 'Haiti', 'Columbia', 'Hungary', 'Guatemala', 'Nicaragua', 'Scotland', 'Thailand', 'Yugoslavia', 'El-Salvador', 'Trinadad&Tobago', 'Peru', 'Hong', 'Holand-Netherlands']
 }
 
 function featurize(data, metadata) {
-	var label = ((data[14] == '>50K') || (data[14] == '>50K.')) ? 1 : -1, features = [];
-
-	features[0] = Number(data[0]);								// age
-	features[1] = metadata.workclass.indexOf(data[1]);			// workclass
-	if (features[1] == 0) return [];
-	features[2] = Number(data[2]);								// fnlwgt
-	features[3] = metadata.education.indexOf(data[3]);			// education
-	if (features[3] == 0) return [];	
-	features[4] = Number(data[4]);								// education-num
-	features[5] = metadata.maritalstatus.indexOf(data[5]);		// marital-status
-	if (features[5] == 0) return [];
-	features[6] = metadata.occupation.indexOf(data[6]);			// occupation	
-	if (features[6] == 0) return [];
-	features[7] = metadata.relationship.indexOf(data[7]);		// relationship	
-	if (features[7] == 0) return [];
-	features[8] = metadata.race.indexOf(data[8]);				// race
-	if (features[8] == 0) return [];
-	features[9] = metadata.sex.indexOf(data[9]);				// sex	
-	if (features[9] == 0) return [];
-	features[10] = Number(data[10]);							// capital-gain
-	features[11] = Number(data[11]);							// capital-loss
-	features[12] = Number(data[12]);							// hours-per-week
-	features[13] = metadata.nativecountry.indexOf(data[13]);	// native-country
-	if (features[13] == 0) return [];
+	var label = ((data[14] == '>50K') || (data[14] == '>50K.')) ? 1 : -1;
+	var features = [
+		Number(data[0]),								// age
+		metadata.workclass.indexOf(data[1]),			// workclass
+		Number(data[2]),								// fnlwgt
+		// metadata.education.indexOf(data[3]),			// education (redundant with next feature)
+		Number(data[4]),								// education-num
+		metadata.maritalstatus.indexOf(data[5]),		// marital-status
+		metadata.occupation.indexOf(data[6]),			// occupation	
+		metadata.relationship.indexOf(data[7]),		// relationship	
+		metadata.race.indexOf(data[8]),				// race
+		metadata.sex.indexOf(data[9]),				// sex	
+		Number(data[10]),							// capital-gain
+		Number(data[11]),							// capital-loss
+		Number(data[12]),							// hours-per-week
+		metadata.nativecountry.indexOf(data[13])	// native-country	
+	];
 	return [label, features];
 }
 
-function normalize(point) {
-	var label = point[0], features = point[1], norm = 0, normalized_features = [];
-	for (var i = 0; i < features.length; i++)
-		norm += Math.pow(features[i], 2);
-	for (var i = 0; i < features.length; i++)
-		normalized_features[i] = features[i] / Math.sqrt(norm);
-	return [label, normalized_features];
-}
-
-// Train model
 var training_set = sc.textFile('adult.data')
-	.map(line => line.split(',').map(str => str.trim()))
-	.map(featurize, metadata)
-	.filter(point => (point.length > 0))
-	.map(normalize)	
+	.map(line => line.split(',').map(str => str.trim()))		// split csv lines
+	.filter(data => data.indexOf('?') == -1)					// remove incomplete data
+	.map(featurize, metadata)									// transform string data to number
 	.persist();
 
-// training_set.collect().on('data', console.log)
+var features = training_set.map(point => point[1]);
+var scaler = new StandardScaler();
 
-var model = new ml.LogisticRegression(training_set);
-var nIterations = 100;
+scaler.fit(features, function done() {
+	// console.log('MEAN ready ');
+	// console.log(scaler.mean)
+	// console.log('STD ready ');
+	// console.log(scaler.std)
 
-model.train(nIterations, function() {
-	var accumulator = {pos: 0, neg: 0, error: 0, n: 0, weights: model.weights};
-
-	function reducer(acc, svm) {
-		var tmp = 0;
-		for (var i = 0; i < acc.weights.length; i++)
-			tmp += acc.weights[i] * svm[1][i];
-		var tmp2 = 1 / (1 + Math.exp(-tmp));
-		var dec = tmp2 > 0.5 ? 1 : -1;
-		if (dec == 0) acc.neg++; else acc.pos++;
-		if (dec != svm[0]) acc.error++;
-		acc.n++;
-		return acc;
+	function standardize(point, args) {
+		var label = point[0];
+		var features = point[1];		
+		var features_std = [];
+		for (var i in features)
+			features_std[i] = (features[i] - args.mean[i]) / args.std[i];
+		return [label, features_std];
 	}
 
-	function combiner(acc1, acc2) {
-		acc1.neg += acc2.neg;
-		acc1.pos += acc2.pos;
-		acc1.error += acc2.error;
-		acc1.n += acc2.n;
-		return acc1;
-	}
+	// Standardize training set features and make them persistent for gradient computation
+	var training_set_std = training_set.map(standardize, {mean: scaler.mean, std: scaler.std}).persist();
+	var model = new LogisticRegression(training_set_std);
+	var nIterations = 50;
 
-	// Validate model manually
-	sc.textFile('adult.data')
-	// sc.textFile('adult.test')
-		.map(line => line.split(',').map(str => str.trim()))
-		.map(featurize, metadata)
-		.filter(point => (point.length > 0))
-		.map(normalize)
-		.aggregate(reducer, combiner, accumulator)
-		.on('data', function(result) {
-			console.log(result)
-			console.log('Test accuracy = ' + (100 - result.error / result.n * 100))
-		})
-		.on('end', sc.end)
-});
+	model.train(nIterations, function() {
+		var accumulator = {tp: 0, tn: 0, fp: 0, fn: 0, n: 0, weights: model.weights};
+
+		function reducer(acc, svm) {
+			var margin = 0, label = svm[0], features = svm[1];
+			for (var i = 0; i < acc.weights.length; i++)
+				margin += acc.weights[i] * features[i];
+			var pred_label = 1 / (1 + Math.exp(-margin)) > 0.5 ? 1 : -1;
+
+			if (pred_label == -1) {
+				if (label == -1) acc.tn++;
+				else acc.fn++;
+			} else {
+				if (label == -1) acc.fp++;
+				else acc.tp++;
+			}
+
+			if (pred_label == -1) acc.neg++; else acc.pos++;
+			if (pred_label != label) acc.error++;
+			acc.n++;
+			return acc;
+		}
+
+		function combiner(acc1, acc2) {
+			acc1.tp += acc2.tp;
+			acc1.tn += acc2.tn;
+			acc1.fp += acc2.fp;						
+			acc1.fn += acc2.fn;
+			acc1.n += acc2.n;
+			return acc1;
+		}
+
+		// Autovalidation
+		training_set_std
+			.aggregate(reducer, combiner, accumulator)
+			.on('data', function(result) {
+				console.log(result)
+				// var precision = result.tp / (result.tp + result.fp);
+				// var recall = result.tp / (result.tp + result.fn);
+				// var f1_score1 = 2 * precision * recall / (precision + recall)
+				var f1_score = 2 * result.tp / (2 * result.tp + result.fn + result.fp);
+				var accuracy = (result.tp + result.tn) / result.n;
+				console.log('F1 score = ' + f1_score);
+				console.log('Accuracy = ' + accuracy);
+			})
+			.on('end', sc.end)
+	});
+
+	// training_set_std.collect().on('data', console.log)
+	// sc.end();
+})
