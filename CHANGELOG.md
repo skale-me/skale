@@ -1,5 +1,24 @@
 # Change Log
 
+## [1.0.14](https://github.com/skale-me/skale-cli/tree/1.0.14) (2016-04-25)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.13...1.0.14)
+
+**Merged pull requests:**
+
+- set memory per worker and number of workers [\#7](https://github.com/skale-me/skale-cli/pull/7) ([mvertes](https://github.com/mvertes))
+- status: trim blanks at end of line [\#6](https://github.com/skale-me/skale-cli/pull/6) ([mvertes](https://github.com/mvertes))
+
+## [1.0.13](https://github.com/skale-me/skale-cli/tree/1.0.13) (2016-04-20)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.12...1.0.13)
+
+**Merged pull requests:**
+
+- merge with master [\#5](https://github.com/skale-me/skale-cli/pull/5) ([mvertes](https://github.com/mvertes))
+- skale stop: match process against full arguments [\#4](https://github.com/skale-me/skale-cli/pull/4) ([mvertes](https://github.com/mvertes))
+
+## [1.0.12](https://github.com/skale-me/skale-cli/tree/1.0.12) (2016-04-12)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.11...1.0.12)
+
 ## [1.0.11](https://github.com/skale-me/skale-cli/tree/1.0.11) (2016-04-12)
 [Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.10...1.0.11)
 
