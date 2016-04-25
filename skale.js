@@ -16,6 +16,8 @@ Commands:
 Options:
   -h, --help		Show help
   -r, --remote		run in the cloud instead of locally
+  -m, --memory MB	set the memory space limit per worker (default 4000 MB)
+  -w, --worker num	set the number of workers (default 2)
   --reset		Restart cluster and cluster log
   -V, --version		Show version
 `;
@@ -25,7 +27,7 @@ const fs = require('fs');
 const net = require('net');
 
 const argv = require('minimist')(process.argv.slice(2), {
-	string: [ 'c', 'config', 'H', 'host', 'k', 'key', 'p', 'port' ],
+	string: [ 'c', 'config', 'H', 'host', 'k', 'key', 'p', 'port', 'm', 'memory', 'w', 'worker' ],
 	boolean: [ 'h', 'help', 'r', 'remote', 'V', 'version', 'reset' ],
 	default: {
 		H: 'skale.me', 'host': 'skale.me',
@@ -47,6 +49,8 @@ if (argv.V || argv.version) {
 
 const config = load(argv);
 const proto = config.ssl ? require('https') : require('http');
+const memory = argv.m || argv.memory || 4000;
+const worker = argv.w || argv.worker || 2;
 
 switch (argv._[0]) {
 	case 'create':
@@ -90,7 +94,7 @@ function create(name) {
 		private: true,
 		keywords: [ 'skale' ],
 		dependencies: {
-			'skale-engine': '^0.4.3'
+			'skale-engine': '^0.4.5'
 		}
 	};
 	fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
@@ -133,7 +137,7 @@ function load(argv) {
 function start_skale(done) {
 	const out = fs.openSync('skale-server.log', 'a');
 	const err = fs.openSync('skale-server.log', 'a');
-	const child = child_process.spawn('node_modules/skale-engine/bin/server.js', ['-l', '2'], {
+	const child = child_process.spawn('node_modules/skale-engine/bin/server.js', ['-l', worker, '-m', memory], {
 		detached: true,
 		stdio: ['ignore', out, err]
 	});
