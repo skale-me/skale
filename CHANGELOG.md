@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.4.5](https://github.com/skale-me/skale-engine/tree/0.4.5) (2016-04-25)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.4...0.4.5)
+
+**Merged pull requests:**
+
+- Provide a faster sizeof, without external dependency [\#37](https://github.com/skale-me/skale-engine/pull/37) ([mvertes](https://github.com/mvertes))
+- code cleaning [\#36](https://github.com/skale-me/skale-engine/pull/36) ([mvertes](https://github.com/mvertes))
+- fix broken arrow function example [\#35](https://github.com/skale-me/skale-engine/pull/35) ([mvertes](https://github.com/mvertes))
+- Command line option to set max  memory per worker [\#34](https://github.com/skale-me/skale-engine/pull/34) ([mvertes](https://github.com/mvertes))
+- master: set process title to ease monitoring [\#33](https://github.com/skale-me/skale-engine/pull/33) ([mvertes](https://github.com/mvertes))
+
 ## [0.4.4](https://github.com/skale-me/skale-engine/tree/0.4.4) (2016-04-20)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.3...0.4.4)
 

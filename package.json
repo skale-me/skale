@@ -1,6 +1,6 @@
 {
   "name": "skale-engine",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "license": "Apache-2.0",
   "description": "parallel and distributed data processing engine",
   "main": "index.js",
