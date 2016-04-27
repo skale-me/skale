@@ -4,10 +4,11 @@
 	Adult dataset processing as per http://scg.sdsu.edu/dataset-adult_r/
 */
 
-// var ml = require('skale-ml');
 var sc = require('skale-engine').context();
+// var ml = require('skale-ml');
 var LogisticRegression = require('../../lib/ml.js').LogisticRegression;
 var StandardScaler = require('../../lib/ml.js').StandardScaler;
+var BinaryClassificationMetrics = require('../../lib/ml.js').BinaryClassificationMetrics;
 
 var metadata = {
 	workclass: ['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov', 'State-gov', 'Without-pay', 'Never-worked'],
@@ -23,20 +24,20 @@ var metadata = {
 function featurize(data, metadata) {
 	var label = ((data[14] == '>50K') || (data[14] == '>50K.')) ? 1 : -1;
 	var features = [
-		Number(data[0]),								// age
-		metadata.workclass.indexOf(data[1]),			// workclass
-		Number(data[2]),								// fnlwgt
-		// metadata.education.indexOf(data[3]),			// education (redundant with next feature)
-		Number(data[4]),								// education-num
-		metadata.maritalstatus.indexOf(data[5]),		// marital-status
-		metadata.occupation.indexOf(data[6]),			// occupation	
-		metadata.relationship.indexOf(data[7]),		// relationship	
-		metadata.race.indexOf(data[8]),				// race
-		metadata.sex.indexOf(data[9]),				// sex	
-		Number(data[10]),							// capital-gain
-		Number(data[11]),							// capital-loss
-		Number(data[12]),							// hours-per-week
-		metadata.nativecountry.indexOf(data[13])	// native-country	
+		Number(data[0]),								// 1 age
+		metadata.workclass.indexOf(data[1]),			// 2 workclass
+		Number(data[2]),								// 3 fnlwgt
+		// metadata.education.indexOf(data[3]),			// education (redundant with education-num)
+		Number(data[4]),								// 4 education-num
+		metadata.maritalstatus.indexOf(data[5]),		// 5 marital-status
+		metadata.occupation.indexOf(data[6]),			// 6 occupation	
+		metadata.relationship.indexOf(data[7]),		// 7 relationship	
+		metadata.race.indexOf(data[8]),				// 8 race
+		metadata.sex.indexOf(data[9]),				// 9 sex	
+		Number(data[10]),							// 10 capital-gain
+		Number(data[11]),							// 11 capital-loss
+		Number(data[12]),							// 12 hours-per-week
+		metadata.nativecountry.indexOf(data[13])	// 13 native-country
 	];
 	return [label, features];
 }
@@ -47,15 +48,15 @@ var training_set = sc.textFile('adult.data')
 	.map(featurize, metadata)									// transform string data to number
 	.persist();
 
-var features = training_set.map(point => point[1]);
+var test_set = sc.textFile('adult.test')
+	.map(line => line.split(',').map(str => str.trim()))		// split csv lines
+	.filter(data => data.indexOf('?') == -1)					// remove incomplete data
+	.map(featurize, metadata);									// transform string data to number
+
 var scaler = new StandardScaler();
+var features = training_set.map(point => point[1]);
 
 scaler.fit(features, function done() {
-	// console.log('MEAN ready ');
-	// console.log(scaler.mean)
-	// console.log('STD ready ');
-	// console.log(scaler.std)
-
 	function standardize(point, args) {
 		var label = point[0];
 		var features = point[1];		
@@ -65,59 +66,75 @@ scaler.fit(features, function done() {
 		return [label, features_std];
 	}
 
-	// Standardize training set features and make them persistent for gradient computation
+	// Standardize training and test set features
 	var training_set_std = training_set.map(standardize, {mean: scaler.mean, std: scaler.std}).persist();
-	var model = new LogisticRegression(training_set_std);
-	var nIterations = 50;
+	var test_set_std = test_set.map(standardize, {mean: scaler.mean, std: scaler.std});
+	var model = new LogisticRegression(training_set_std, {regParam: 0.01, stepSize: 1});
+	var nIterations = 100;
 
 	model.train(nIterations, function() {
-		var accumulator = {tp: 0, tn: 0, fp: 0, fn: 0, n: 0, weights: model.weights};
+		// Once the model has been trained we can evaluate classifier performance on the standardized test set
+		var predictionAndLabels = test_set_std.map(function(point, args) {
+			var margin = 0, label = point[0], features = point[1];
+			for (var i = 0; i < features.length; i++)
+				margin += args.model.weights[i] * features[i];
+			var prediction = 1 / (1 + Math.exp(-margin));
+			return [prediction, label];
+		}, {model: model});
 
-		function reducer(acc, svm) {
-			var margin = 0, label = svm[0], features = svm[1];
-			for (var i = 0; i < acc.weights.length; i++)
-				margin += acc.weights[i] * features[i];
-			var pred_label = 1 / (1 + Math.exp(-margin)) > 0.5 ? 1 : -1;
+		var metrics = new BinaryClassificationMetrics(predictionAndLabels);
 
-			if (pred_label == -1) {
-				if (label == -1) acc.tn++;
-				else acc.fn++;
-			} else {
-				if (label == -1) acc.fp++;
-				else acc.tp++;
-			}
+		// // Precision by threshold
+		// metrics.precisionByThreshold(function(precision) {
+		// 	precision.forEach(point => console.log("Threshold: %d, Precision: %d", point[0], point[1]));
+		// 	// sc.end();
+		// })
 
-			if (pred_label == -1) acc.neg++; else acc.pos++;
-			if (pred_label != label) acc.error++;
-			acc.n++;
-			return acc;
-		}
+		// // Recall by threshold
+		// metrics.recallByThreshold(function(recall) {
+		// 	recall.forEach(point => console.log("Threshold: %d, Recall: %d", point[0], point[1]));
+		// 	// sc.end();
+		// })
 
-		function combiner(acc1, acc2) {
-			acc1.tp += acc2.tp;
-			acc1.tn += acc2.tn;
-			acc1.fp += acc2.fp;						
-			acc1.fn += acc2.fn;
-			acc1.n += acc2.n;
-			return acc1;
-		}
+		// // Precision-Recall Curve	// TODO
+		// // val PRC = metrics.pr
 
-		// Autovalidation
-		training_set_std
-			.aggregate(reducer, combiner, accumulator)
-			.on('data', function(result) {
-				console.log(result)
-				// var precision = result.tp / (result.tp + result.fp);
-				// var recall = result.tp / (result.tp + result.fn);
-				// var f1_score1 = 2 * precision * recall / (precision + recall)
-				var f1_score = 2 * result.tp / (2 * result.tp + result.fn + result.fp);
-				var accuracy = (result.tp + result.tn) / result.n;
-				console.log('F1 score = ' + f1_score);
-				console.log('Accuracy = ' + accuracy);
-			})
-			.on('end', sc.end)
+		// // F-measure by threshold
+		// metrics.fMeasureByThreshold(function(fmeasure) {
+		// 	fmeasure.forEach(point => console.log("Threshold: %d, F-score: %d, Beta: 1", point[0], point[1]));
+		// 	// sc.end();
+		// })
+
+		metrics.roc(function(roc) {
+			console.log('\n# Receiver Operating characteristic (ROC)')
+			console.log('\nThreshold\tSpecificity(FPR)\tSensitivity(TPR)')
+			for (var i in roc)
+				console.log(roc[i][0].toFixed(2).replace('.', ',') + '\t' + roc[i][1][0].toFixed(2).replace('.', ',') + '\t' + roc[i][1][1].toFixed(2).replace('.', ','));
+			// sc.end();
+		})
+
+		metrics.accuracyByThreshold(function(accuracy) {
+			console.log('\n# Accuracy by threshold')
+			console.log('\nThreshold\tAccuracy')
+			for (var i in accuracy)
+				console.log(accuracy[i][0].toFixed(2).replace('.', ',') + '\t' + accuracy[i][1].toFixed(2).replace('.', ','));
+			// sc.end();
+		})
+
+		// console.log({
+		// 	'age': Math.round(result.weights[0] * 100) / 100,	
+		// 	'workclass': Math.round(result.weights[1] * 100) / 100,
+		// 	'fnlwgt': Math.round(result.weights[2] * 100) / 100,
+		// 	'education-num': Math.round(result.weights[3] * 100) / 100,
+		// 	'marital-status': Math.round(result.weights[4] * 100) / 100,
+		// 	'occupation': Math.round(result.weights[5] * 100) / 100,
+		// 	'relationship': Math.round(result.weights[6] * 100) / 100,
+		// 	'race': Math.round(result.weights[7] * 100) / 100,
+		// 	'sex': Math.round(result.weights[8] * 100) / 100,
+		// 	'capital-gain': Math.round(result.weights[9] * 100) / 100,
+		// 	'capital-loss': Math.round(result.weights[10] * 100) / 100,
+		// 	'hours-per-week': Math.round(result.weights[11] * 100) / 100,
+		// 	'native-country': Math.round(result.weights[12] * 100) / 100
+		// });
 	});
-
-	// training_set_std.collect().on('data', console.log)
-	// sc.end();
 })
