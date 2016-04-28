@@ -12,6 +12,10 @@
     "pretest": "node_modules/.bin/eslint */*.js test/*/*.js examples/*/*.js",
     "lint": "node_modules/.bin/eslint */*.js test/*/*.js examples/*/*.js"
   },
+  "bin": {
+    "skale-server": "./bin/server.js",
+    "skale-worker": "./bin/worker.js"
+  },
   "engines": {
     "node": ">=4.0.0"
   },
