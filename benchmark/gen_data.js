@@ -32,8 +32,8 @@ function Random(initSeed) {
 	this.seed = initSeed || 1;
 
 	this.next = function () {
-	    var x = Math.sin(this.seed++) * 10000;
-	    return (x - Math.floor(x)) * 2 - 1;
+		var x = Math.sin(this.seed++) * 10000;
+		return (x - Math.floor(x)) * 2 - 1;
 	};
 
 	this.reset = function () {

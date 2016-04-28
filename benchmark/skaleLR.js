@@ -17,7 +17,7 @@ LogisticRegression.prototype.train = function (nIterations, callback) {
 
 	if ((self.D == undefined) || (self.N == undefined)) {
 		self.points.aggregate(reducer, combiner, {count: 0})
-		    .on('data', function(result) {
+			.on('data', function(result) {
 				self.N = result.count;
 				self.D = result.first[1].length;
 				if (self.weights == undefined) self.weights = zeros(self.D);
@@ -61,7 +61,7 @@ function logisticLossGradient(p, args) {
 
 	var tmp = 1 / (1 + Math.exp(-dot_prod)) - label;
 
-	for (var i = 0; i < features.length; i++)
+	for (i = 0; i < features.length; i++)
 		grad[i] = features[i] * tmp;
 	return grad;
 }
@@ -96,7 +96,7 @@ if (!file) throw 'Usage: lr.js file [nIterations]';
 model.train(nIterations, function() {
 	var line = model.weights[0];
 	for (var i = 1; i < model.weights.length; i++) 
-		line += ' ' + model.weights[i]
+		line += ' ' + model.weights[i];
 	process.stdout.write(line + '\n');
 	sc.end();
 });
