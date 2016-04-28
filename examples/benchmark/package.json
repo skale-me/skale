@@ -1,14 +1,12 @@
 {
-  "name": "logreg",
+  "name": "benchmark",
   "version": "0.0.0",
   "private": true,
   "keywords": [
     "skale"
   ],
   "dependencies": {
-    "node-getopt": "^0.2.3",
-    "object-sizeof": "^1.0.10",
     "skale-engine": "^0.4.0",
-    "skale-ml": "^0.0.1"
+    "skale-ml": "^0.1.0"
   }
 }
