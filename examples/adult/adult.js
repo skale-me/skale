@@ -10,7 +10,8 @@
 // Adult dataset processing as per http://scg.sdsu.edu/dataset-adult_r/
 var co = require('co');
 var sc = require('skale-engine').context();
-var ml = require('../../index.js');								// should be require('skale-ml');
+var ml = require('skale-ml');
+// var ml = require('../../index.js');
 var plot = require('plotter').plot;
 
 var LogisticRegressionWithSGD = ml.LogisticRegressionWithSGD;

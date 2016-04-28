@@ -7,6 +7,6 @@
   ],
   "dependencies": {
     "skale-engine": "^0.4.0",
-    "skale-ml": "0.0.1"
+    "skale-ml": "^0.1.0"
   }
 }
