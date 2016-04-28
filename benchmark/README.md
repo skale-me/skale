@@ -24,6 +24,14 @@ Tests are performed an AWS EC2 instance, called m4.4xlarge, with 16 cores and 64
 The spark environment is spark-1.6.1, java-1.8.0_31, Python-3.4.2 (from https://hub.docker.com/r/gettyimages/spark/)
 The skale environment is skale-0.4.5, nodejs-4.4.3.
 
+The spark test is run using the following command:
+
+	$ spark-submit --executor-memory 60G sparkLR.py <file> <iteration>
+
+The skale test is run using:
+
+	$ skale-run --worker 16 --memory 4000 -- <file> <iteration>
+
 The first set of results is for a 1 GB input file, with 3.829 millions entries of 16 features.
 
 |iterations | skale (sec) | spark (sec) | speedup |
