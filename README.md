@@ -54,7 +54,7 @@ var points = ml.randomSVMData(sc, nObservations, nFeatures, seed).persist();
 We then instantiate a logistic regression model associated to the previously created dataset:
 
 ```
-var model = new ml.LogisticRegression(points);
+var model = new ml.LogisticRegressionWithSGD(points);
 
 ```
 Finally we train the model on a given number of iterations, display the model weights and end the skale session:
