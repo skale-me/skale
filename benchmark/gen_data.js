@@ -2,14 +2,14 @@
 
 var fs = require('fs');
 
-if (process.argv.length != 5) {
-	console.log('Usage: gen_data.js file D size_in_Mo');
+if (process.argv.length != 4) {
+	console.log('Usage: gen_data.js file size_in_Mo');
 	process.exit(1);
 }
 
 var file = process.argv[2];
-var D = process.argv[3];
-var maxSize = process.argv[4] * 1024 * 1024;
+var D = 16;
+var maxSize = process.argv[3] * 1024 * 1024;
 
 var rng = new Random();
 var fd = fs.createWriteStream(file);
