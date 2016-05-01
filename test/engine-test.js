@@ -77,11 +77,11 @@ var dualTransforms = [
 ];
 
 var actions = [
-	{name: 'collect', args: [], stream: true},
-	{name: 'count', args: [], stream: true},
-	{name: 'countByValue', args: [], sort: true, stream: true},
-//	{name: 'lookup', args: [data.v[0][0][0]], stream: true},
-	{name: 'reduce', args: [data.reducer, [0, 0]], stream: true}
+	{name: 'collect', args: []},
+	{name: 'count', args: []},
+	{name: 'countByValue', args: [], sort: true},
+//	{name: 'lookup', args: [data.v[0][0][0]]},
+	{name: 'reduce', args: [data.reducer, [0, 0]]}
 //	{name: 'take', args: [2], lengthOnly: true, stream: true},
 //	{name: 'takeOrdered', args: [2, function (a, b) {return a < b;}], stream: true},
 //	{name: 'top', args: [2], stream: true},

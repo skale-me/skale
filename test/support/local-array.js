@@ -6,6 +6,7 @@ var fs = require('fs');
 var stream = require('stream');
 var os = require('os');
 var util = require('util');
+var thenify = require('thenify').withCallback;
 var toArray = require('stream-to-array');
 //var trace = require('line-trace');
 var Lines = require('../../lib/lines.js');
@@ -40,25 +41,28 @@ LocalArray.prototype.textFile = function (path) {
 };
 
 // Actions
-LocalArray.prototype.collect = function () {
+LocalArray.prototype.collect = thenify(function (done) {
+	var res = [];
 	this.stream = this.stream.pipe(new TransformStream(function (v) {
-		for (var i = 0; i < v.length; i++) this.push(v[i]);
+		for (var i = 0; i < v.length; i++) this.push([v[i]]);
 	}));
-	this.stream.toArray = toArray;
-	return this.stream;
-};
+	this.stream.on('data', function (data) {res = res.concat(data);});
+	this.stream.on('end', function () {done(null, res);});
+});
 
-LocalArray.prototype.count = function () {
+LocalArray.prototype.count = thenify(function (done) {
+	var res = 0;
 	this.stream = this.stream.pipe(new TransformStream(function (v) {return v.length;}));
-	this.stream.toArray = toArray;
-	return this.stream;
-};
+	this.stream.on('data', function (data) {res += data;});
+	this.stream.on('end', function () {done(null, res);});
+});
 
-LocalArray.prototype.countByValue = function () {
+LocalArray.prototype.countByValue = thenify(function (done) {
+	var res = [];
 	this.stream = this.stream.pipe(new TransformStream(countByValue));
-	this.stream.toArray = toArray;
-	return this.stream;
-};
+	this.stream.on('data', function (data) {res = res.concat([data]);});
+	this.stream.on('end', function () {done(null, res);});
+});
 
 LocalArray.prototype.lookup = function(key) {
 	this.stream = this.stream.pipe(new TransformStream(lookup, [key]));
@@ -66,11 +70,15 @@ LocalArray.prototype.lookup = function(key) {
 	return this.stream;
 };
 
-LocalArray.prototype.reduce = function(reducer, init) {
+LocalArray.prototype.reduce = thenify(function (reducer, init, done) {
+	var res;
 	this.stream = this.stream.pipe(new TransformStream(reduce, [reducer, init]));
-	this.stream.toArray = toArray;
-	return this.stream;
-};
+	this.stream.on('data', function (data) {
+		if (res === undefined) res = data;
+		else res = reducer(res, data);
+	});
+	this.stream.on('end', function () {done(null, res);});
+});
 
 LocalArray.prototype.take = function(num, opt, done) {
 	opt = opt || {};
