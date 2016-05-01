@@ -12,8 +12,7 @@ function combiner(a, b) {return a + b;}
 
 sc.parallelize(data, nPartitions)
 	.aggregateByKey(reducer, combiner, init)
-	.collect()
-	.toArray(function(err, res) {
+	.collect(function(err, res) {
 		console.log(res);
 		console.assert(JSON.stringify(res) === JSON.stringify([['hello', 2], ['world', 1]]));
 		sc.end();

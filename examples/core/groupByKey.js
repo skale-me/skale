@@ -7,10 +7,10 @@ var nPartitions = 1;
 
 var a = sc.parallelize(data, nPartitions).groupByKey().persist();
 
-a.collect().toArray(function(err, res) {
+a.collect(function(err, res) {
 	console.log(res);
 	console.log('First ok!');
-	a.collect().toArray(function(err, res) {
+	a.collect(function(err, res) {
 		console.log(res);
 		console.log('Second ok !');
 		sc.end();

@@ -7,7 +7,6 @@ var stream = require('stream');
 var os = require('os');
 var util = require('util');
 var thenify = require('thenify').withCallback;
-var toArray = require('stream-to-array');
 //var trace = require('line-trace');
 var Lines = require('../../lib/lines.js');
 var ml = require('../../lib/ml.js');
@@ -66,7 +65,6 @@ LocalArray.prototype.countByValue = thenify(function (done) {
 
 LocalArray.prototype.lookup = function(key) {
 	this.stream = this.stream.pipe(new TransformStream(lookup, [key]));
-	this.stream.toArray = toArray;
 	return this.stream;
 };
 

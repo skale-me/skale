@@ -6,9 +6,9 @@ var da1 = sc.parallelize([[10, 1], [20, 2]]);
 var da2 = sc.parallelize([[10, 'world'], [30, 3]]);
 
 da1.leftOuterJoin(da2)
-   .collect()
-   .toArray(function(err, res) {
+   .collect(function(err, res) {
 	console.log(res);
-	console.assert(JSON.stringify(res) === JSON.stringify([[20, [2, null]], [10, [1, 'world']]])); 
+	res.sort();
+	console.assert(JSON.stringify(res) === JSON.stringify([[10, [1, 'world']], [20, [2, null]]]));
 	sc.end();
 });

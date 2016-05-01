@@ -9,7 +9,7 @@ var nPartitions = 1;
 var a = sc.parallelize(data, nPartitions);
 var b = sc.parallelize(data2, nPartitions);
 
-a.coGroup(b).collect().toArray(function(err, res) {
+a.coGroup(b).collect(function(err, res) {
 	console.log(res);
 	console.log(res[0]);
 	console.log(res[1]);
