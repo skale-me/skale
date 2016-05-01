@@ -29,8 +29,8 @@
     - [ds.distinct()](#dsdistinct)
     - [ds.filter(filter[, obj])](#dsfilterfilter-obj)
     - [ds.first([done])](#dsfirstdone)
-    - [ds.flatMap(flatMapper[,obj])](#dsflatmapflatmapperobj)
-    - [ds.flatMapValues(flatMapper[,obj])](#dsflatmapvaluesflatmapperobj)
+    - [ds.flatMap(flatMapper[, obj])](#dsflatmapflatmapper-obj)
+    - [ds.flatMapValues(flatMapper[, obj])](#dsflatmapvaluesflatmapper-obj)
     - [ds.forEach(callback[, obj][, done])](#dsforeachcallback-obj-done)
     - [ds.groupByKey()](#dsgroupbykey)
     - [ds.intersection(other)](#dsintersectionother)
@@ -50,7 +50,7 @@
     - [ds.sortByKey(ascending)](#dssortbykeyascending)
     - [ds.subtract(other)](#dssubtractother)
     - [ds.take(num[, done])](#dstakenum-done)
-    - [ds.top(num)](#dstopnum)
+    - [ds.top(num[, done])](#dstopnum-done)
     - [ds.union(other)](#dsunionother)
     - [ds.values()](#dsvalues)
   - [Partitioners](#partitioners)
@@ -100,7 +100,7 @@ var sc = require('skale-engine').context();		// create a new context
 sc.parallelize([1, 2, 3, 4]).				// source
    map(function (x) {return x+1}).			// transform
    reduce(function (a, b) {return a+b}, 0).	// action
-   on('data', console.log);					// process result: 14
+   then(console.log);						// process result: 14
 ```
 
 ## Working with datasets
@@ -136,16 +136,17 @@ in memory, allowing efficient reuse accross parallel operations.
 |[cartesian(other)](#dscartesianother) | Perform a cartesian product with the other dataset | v w | [v,w]|
 |[coGroup(other)](#dscogroupother) | Group data from both datasets sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|
 |[distinct()](#dsdistinct)    | Return a dataset where duplicates are removed | v | w|
-|[filter(func)](#dsfilterfilterobj)| Return a dataset of elements on which function returns true | v | w|
-|[flatMap(func)](#dsflatmapflatmapperobj)| Pass the dataset elements to a function which returns a sequence | v | w|
+|[filter(func)](#dsfilterfilter-obj)| Return a dataset of elements on which function returns true | v | w|
+|[flatMap(func)](#dsflatmapflatmapper-obj)| Pass the dataset elements to a function which returns a sequence | v | w|
+|[flatMapValues(func)](#dsflatmapflatvaluesmapper-obj)| Pass the dataset [k,v] elements to a function without changing the keys | [k,v] | [k,w]|
 |[groupByKey()](#dsgroupbykey)| Group values with the same key | [k,v] | [k,[v]]|
 |[intersection(other)](#dsintersectionother) | Return a dataset containing only elements found in both datasets | v w | v|
 |[join(other)](#dsjoinother)       | Perform an inner join between 2 datasets | [k,v] | [k,[v,w]]|
 |[leftOuterJoin(other)](#dsleftouterjoinother) | Join 2 datasets where the key must be present in the other | [k,v] | [k,[v,w]]|
 |[rightOuterJoin(other)](#dsrightouterjoinother) | Join 2 datasets where the key must be present in the first | [k,v] | [k,[v,w]]|
 |[keys()](#dskeys)            | Return a dataset of just the keys | [k,v] | k|
-|[map(func)](#dsmapmapperobj) | Return a dataset where elements are passed through a function | v | w|
-|[mapValues(func)](#dsmapvaluesmapperobj)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|
+|[map(func)](#dsmapmapper-obj) | Return a dataset where elements are passed through a function | v | w|
+|[mapValues(func)](#dsmapvaluesmapper-obj)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|
 |[reduceByKey(func, init)](#dsreducebykeyreducer-init-obj)| Combine values with the same key | [k,v] | [k,w]|
 |[partitionBy(partitioner)](#dspartitionbypartitioner)| Partition using the partitioner | v | v|
 |[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|
@@ -224,11 +225,11 @@ single argument, the argument is interpreted as *end*, and *start*
 is set to 0.
 
 ```javascript
-sc.range(5).collect.toArray()
+sc.range(5).collect().then(console.log)
 // [ 0, 1, 2, 3, 4 ]
-sc.range(2, 4).collect.toArray()
+sc.range(2, 4).collect().then(console.log)
 // [ 2, 3 ]
-sc.range(10, -5, -3).collect().toArray()
+sc.range(10, -5, -3).collect().then(console.log)
 // [ 10, 7, 4, 1, -2 ]
 ```
 
@@ -245,7 +246,7 @@ Example, the following program prints the length of a text file:
 
 ```javascript
 var lines = sc.textFile('data.txt');
-lines.map(s => s.length).reduce((a, b) => a + b, 0).on('data', console.log);
+lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log);
 ```
 
 #### sc.lineStream(input_stream)
@@ -261,7 +262,7 @@ var stream = fs.createReadStream('data.txt', 'utf8');
 sc.lineStream(stream).
    map(s => s.length).
    reduce((a, b) => a + b, 0).
-   on('data', console.log);
+   then(console.log);
 ```
 
 #### sc.objectStream(input_stream)
@@ -275,7 +276,7 @@ object stream using the mongodb native Javascript driver:
 
 ```javascript
 var cursor = db.collection('clients').find();
-sc.objectStream(cursor).count().on('data', console.log);
+sc.objectStream(cursor).count().then(console.log);
 ```
 
 ### Dataset methods
@@ -529,7 +530,7 @@ sc.parallelize([1, 2, 3]).first().then(console.log);
 // 1
 ```
 
-#### ds.flatMap(flatMapper[,obj])
+#### ds.flatMap(flatMapper[, obj])
 
 Applies the provided mapper function to each element of the source
 dataset and returns a new dataset.
@@ -551,7 +552,7 @@ sc.range(5).flatMap(a => [a, a]).collect().then(console.log);
 // [ 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 ]
 ```
 
-#### ds.flatMapValues(flatMapper[,obj])
+#### ds.flatMapValues(flatMapper[, obj])
 
 Applies the provided flatMapper function to the value of each [key,
 value] element of the source dataset and return a new dataset containing
@@ -823,7 +824,7 @@ sc.parallelize([1, 2, 4, 8]).
 
 #### ds.reduceByKey(reducer, init[, obj])
 
-- *reducer*: a function of the form `callback(acc,val[,obj[,wc]])`,
+- *reducer*: a function of the form `callback(acc,val[, obj[, wc]])`,
   returning the next value of the accumulator (which must be of the
   same type as *acc* and *val*) and where:
     - *acc*: the value of the accumulator, initially set to *init*
@@ -948,7 +949,7 @@ sc.range(5).take(2).then(console.log);
 // [1, 2]
 ```
 
-#### ds.top(num)
+#### ds.top(num[, done])
 
 This [action] returns an array of the `num` top elements of the
 source dataset.  The result is passed to the *done()* callback if
