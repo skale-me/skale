@@ -9,7 +9,7 @@ sc.textFile(file)
   .map(word => [word, 1])
   .reduceByKey((a, b) => a + b, 0)
   .count()
-  .on('data', function (res) {
+  .then(function (res) {
 	console.log(res);
 	sc.end();
   });

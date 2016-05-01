@@ -10,8 +10,7 @@ var a = sc.parallelize(data, nPartitions);
 var b = sc.parallelize(data2, nPartitions);
 
 a.cartesian(b)
- .collect()
- .toArray(function(err, res) {
+ .collect(function(err, res) {
 	console.log(res);
 	console.assert(JSON.stringify(res) === JSON.stringify([
 		[1, 7], [1, 8], [1, 9], [2, 7], [2, 8], [2, 9],
