@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.5.0](https://github.com/skale-me/skale-engine/tree/0.5.0) (2016-05-02)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.5...0.5.0)
+
+**Merged pull requests:**
+
+- benchmark: update to new action syntax [\#43](https://github.com/skale-me/skale-engine/pull/43) ([mvertes](https://github.com/mvertes))
+- Remove toArray\(\). Fix examples [\#42](https://github.com/skale-me/skale-engine/pull/42) ([mvertes](https://github.com/mvertes))
+- All actions take an optional callback and return promises instead of … [\#41](https://github.com/skale-me/skale-engine/pull/41) ([mvertes](https://github.com/mvertes))
+- simplify JS benchmark code to make it almost identical to python version [\#40](https://github.com/skale-me/skale-engine/pull/40) ([mvertes](https://github.com/mvertes))
+- add benchmark [\#38](https://github.com/skale-me/skale-engine/pull/38) ([mvertes](https://github.com/mvertes))
+
 ## [0.4.5](https://github.com/skale-me/skale-engine/tree/0.4.5) (2016-04-25)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.4...0.4.5)
 
