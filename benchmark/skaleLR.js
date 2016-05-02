@@ -49,7 +49,7 @@ points.count().on('data', function (data) {
 	function iterate() {
 		points.map(logisticLossGradient, weights)
 			.reduce(sum, zero)
-			.on('data', function(gradient) {
+			.then(function(gradient) {
 				var iss = stepSize / Math.sqrt(i + 1);
 				for (var j = 0; j < weights.length; j++) {
 					weights[j] -= iss * (gradient[j] / N + regParam * weights[j]);
