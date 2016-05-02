@@ -4,17 +4,25 @@
     
     <url>
      <loc>None/</loc>
-     <lastmod>2016-04-20</lastmod>
+     <lastmod>2016-05-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
 
     
+        
     <url>
-     <loc>None/skale-API/</loc>
-     <lastmod>2016-04-20</lastmod>
+     <loc>None/skale-API-0.4/</loc>
+     <lastmod>2016-05-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
+        
+    <url>
+     <loc>None/skale-API-0.5/</loc>
+     <lastmod>2016-05-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
 </urlset>
