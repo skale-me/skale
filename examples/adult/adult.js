@@ -11,7 +11,6 @@
 var co = require('co');
 var sc = require('skale-engine').context();
 var ml = require('skale-ml');
-// var ml = require('../../index.js');
 var plot = require('plotter').plot;
 
 var LogisticRegressionWithSGD = ml.LogisticRegressionWithSGD;

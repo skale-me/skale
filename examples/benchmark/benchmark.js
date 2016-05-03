@@ -3,7 +3,6 @@
 
 var sc = require('skale-engine').context();
 var ml = require('skale-ml');
-// var ml = require('../../index.js');
 
 // NB: our implementation is using [-1, 1] labels, spark uses [0, 1]
 function featurize(line) {
