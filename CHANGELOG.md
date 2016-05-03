@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.0.15](https://github.com/skale-me/skale-cli/tree/1.0.15) (2016-05-03)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.14...1.0.15)
+
+**Merged pull requests:**
+
+- add --file option, sort options. [\#10](https://github.com/skale-me/skale-cli/pull/10) ([mvertes](https://github.com/mvertes))
+- Update cli for skale-engine 0.5.0. [\#9](https://github.com/skale-me/skale-cli/pull/9) ([philippe56](https://github.com/philippe56))
+
 ## [1.0.14](https://github.com/skale-me/skale-cli/tree/1.0.14) (2016-04-25)
 [Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.13...1.0.14)
 
