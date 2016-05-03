@@ -14,12 +14,13 @@ Commands:
   stop			Stop local skale cluster
 
 Options:
+  -f, --file		program to run (default: package name)
   -h, --help		Show help
-  -r, --remote		run in the cloud instead of locally
   -m, --memory MB	set the memory space limit per worker (default 4000 MB)
-  -w, --worker num	set the number of workers (default 2)
+  -r, --remote		run in the cloud instead of locally
   --reset		Restart cluster and cluster log
   -V, --version		Show version
+  -w, --worker num	set the number of workers (default 2)
 `;
 
 const child_process = require('child_process');
@@ -27,11 +28,24 @@ const fs = require('fs');
 const net = require('net');
 
 const argv = require('minimist')(process.argv.slice(2), {
-	string: [ 'c', 'config', 'H', 'host', 'k', 'key', 'p', 'port', 'm', 'memory', 'w', 'worker' ],
-	boolean: [ 'h', 'help', 'r', 'remote', 'V', 'version', 'reset' ],
+	string: [
+		'c', 'config',
+		'f', 'file',
+		'H', 'host',
+		'k', 'key',
+		'p', 'port',
+		'm', 'memory',
+		'w', 'worker',
+	],
+	boolean: [
+		'h', 'help',
+		'r', 'remote',
+		'V', 'version',
+		'reset',
+	],
 	default: {
 		H: 'skale.me', 'host': 'skale.me',
-		p: '8888', 'port': 8888
+		p: '8888', 'port': 8888,
 	}
 });
 
@@ -174,7 +188,7 @@ function status_local() {
 
 function run_local(args) {
 	const pkg = JSON.parse(fs.readFileSync('package.json'));
-	const cmd = pkg.name + '.js';
+	const cmd = argv.f || argv.file || pkg.name + '.js';
 	args.splice(0, 0, cmd);
 	try_connect(0, 0, function (err) {
 		if (!err) return run_app();
