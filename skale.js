@@ -94,7 +94,7 @@ function create(name) {
 		private: true,
 		keywords: [ 'skale' ],
 		dependencies: {
-			'skale-engine': '^0.4.5'
+			'skale-engine': '^0.5.0'
 		}
 	};
 	fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
@@ -102,10 +102,10 @@ function create(name) {
 
 var sc = require('skale-engine').context();
 
-sc.parallelize(['Hello world'])
-  .collect()
-  .on('data', console.log)
-  .on('end', sc.end);
+sc.parallelize(['Hello world']).collect().then(function (res) {
+	console.log(res);
+	sc.end();
+});
 `;
 	fs.writeFileSync(name + '.js', src);
 	const npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
