@@ -19,7 +19,7 @@ sc.textFile('/path/...')
   .flatMap(line => line.split(' '))
   .map(word => [word, 1])
   .reduceByKey((a, b) => a + b, 0)
-  .count().on('data', console.log);
+  .count().then(console.log);
 ```
 
 ## Features
