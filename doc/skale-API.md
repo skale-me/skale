@@ -165,17 +165,17 @@ alternatively through a returned [ES6 promise].
 
 |Action Name | Description | out|
 |------------------             |----------------------------------------------|--------------|
-|[aggregate(func, func, init)](#dsaggregatereducer-combiner-init-obj-done)| Similar to reduce() but may return a different type| stream of value |
-|[collect()](#dscollectdone)         | Return the content of dataset | stream of elements|
-|[count()](#dscountdone)             | Return the number of elements from dataset | stream of number|
-|[countByKey()](#dscountbykeydone)     | Return the number of occurrences for each key in a `[k,v]` dataset | stream of [k,number]|
-|[countByValue()](#dscountbyvaluedone) | Return the number of occurrences of elements from dataset | stream of [v,number]|
-|[first()](#dsfirstdone)               | Return the first element in dataset | stream of value |
-|[forEach(func)](#dsforeachcallback-obj-done)| Apply the provided function to each element of the dataset | empty stream |
-|[lookup(k)](#dslookupk-done)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | stream of v|
-|[reduce(func, init)](#dsreducereducer-init-obj-done)| Aggregates dataset elements using a function into one value | stream of value|
-|[take(num)](#dstakenum-done)         | Return the first `num` elements of dataset | stream of value|
-|[top(num)](#dstopnum-done)           | Return the top `num` elements of dataset | stream of value|
+|[aggregate(func, func, init)](#dsaggregatereducer-combiner-init-obj-done)| Similar to reduce() but may return a different type| value |
+|[collect()](#dscollectdone)         | Return the content of dataset | array of elements|
+|[count()](#dscountdone)             | Return the number of elements from dataset | number|
+|[countByKey()](#dscountbykeydone)     | Return the number of occurrences for each key in a `[k,v]` dataset | array of [k,number]|
+|[countByValue()](#dscountbyvaluedone) | Return the number of occurrences of elements from dataset | array of [v,number]|
+|[first()](#dsfirstdone)               | Return the first element in dataset | value |
+|[forEach(func)](#dsforeachcallback-obj-done)| Apply the provided function to each element of the dataset | empty |
+|[lookup(k)](#dslookupk-done)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | array of v|
+|[reduce(func, init)](#dsreducereducer-init-obj-done)| Aggregates dataset elements using a function into one value | value|
+|[take(num)](#dstakenum-done)         | Return the first `num` elements of dataset | array of value|
+|[top(num)](#dstopnum-done)           | Return the top `num` elements of dataset | array of value|
 
 ## Skale module
 
