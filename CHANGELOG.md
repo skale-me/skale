@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.5.1](https://github.com/skale-me/skale-engine/tree/0.5.1) (2016-05-04)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.5.0...0.5.1)
+
+**Merged pull requests:**
+
+- doc: fix doc on actions [\#47](https://github.com/skale-me/skale-engine/pull/47) ([mvertes](https://github.com/mvertes))
+- fix ds.first\(\) to return an element instead of an array [\#46](https://github.com/skale-me/skale-engine/pull/46) ([mvertes](https://github.com/mvertes))
+- remove lib/ml.js, restructure examples [\#45](https://github.com/skale-me/skale-engine/pull/45) ([mvertes](https://github.com/mvertes))
+- various fixes [\#44](https://github.com/skale-me/skale-engine/pull/44) ([mvertes](https://github.com/mvertes))
+
 ## [0.5.0](https://github.com/skale-me/skale-engine/tree/0.5.0) (2016-05-02)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.4.5...0.5.0)
 
