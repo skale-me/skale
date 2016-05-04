@@ -21,9 +21,20 @@ ml.LogisticRegressionWithSGD = require('./lib/LogisticRegressionWithSGD.js');
 ml.randomSVMData = function (sc, N, D, seed, nPartitions) {
 	function randomSVMLine(i, a, task) {
 		var seed = i * (a.D + 1);
-		var data = task.lib.ml.randn2(a.D + 1, seed);
+		var data = randn2(a.D + 1, seed);
 		data[0] = Math.round(Math.abs(data[0])) * 2 - 1;
 		return [data.shift(), data];
+
+		function rand2(seed) {
+			var x = Math.sin(seed) * 10000;
+			return (x - Math.floor(x)) * 2 - 1;
+		}
+
+		function randn2(n, seed) {
+			var a = new Array(n), i;
+			for (i = 0; i < n; i++) a[i] = rand2(seed++);
+			return a;
+		}
 	}
 	return new Source(sc, N, randomSVMLine, {D, seed}, nPartitions);
 };
@@ -246,17 +257,6 @@ function Random(initSeed) {
 	};
 }
 
-function rand2(seed) {
-	var x = Math.sin(seed) * 10000;
-	return (x - Math.floor(x)) * 2 - 1;
-}
-
-function randn2(n, seed) {
-	var a = new Array(n), i;
-	for (i = 0; i < n; i++) a[i] = rand2(seed++);
-	return a;
-}
-
 function Poisson(lambda, initSeed) {
 	this.seed = initSeed || 1;
 
@@ -286,5 +286,3 @@ ml.Random = Random;
 ml.Poisson = Poisson;
 ml.cksum = cksum;
 ml.zeros = zeros;
-ml.rand2 = rand2;
-ml.randn2 = randn2;
