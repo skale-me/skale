@@ -12,7 +12,6 @@ var uuid = require('node-uuid');
 var trace = require('line-trace');
 
 var SkaleClient = require('../lib/client.js');
-var ml = require('../lib/ml.js');
 var mkdir = require('../lib/mkdir.js');
 var Lines = require('../lib/lines.js');
 var sizeOf = require('../lib/sizeof.js');
@@ -134,7 +133,7 @@ function runWorker(host, port) {
 			contextId = task.contextId;
 			// set worker side dependencies
 			task.mm = mm;
-			task.lib = {sizeOf, fs, ml, readSplit, Lines, task, mkdir, uuid, trace};
+			task.lib = {sizeOf, fs, readSplit, Lines, task, mkdir, uuid, trace};
 			task.grid = grid;
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}

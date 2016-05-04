@@ -29,6 +29,7 @@ sc.textFile('/path/...')
 * Fast multiple distributed streams
 * realtime lazy compiling and running of execution graphs
 * workers can connect through TCP or websockets
+* very fast, see [benchmark](benchmark/)
 
 ## Docs & community
 
@@ -68,7 +69,7 @@ Then start a skale-engine server and workers on local host:
 
 Then run whichever example you want
 
-	$ ./examples/core/wordcount.js /etc/hosts
+	$ ./examples/wordcount.js /etc/hosts
 
 ## Tests
 

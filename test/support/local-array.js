@@ -9,7 +9,6 @@ var util = require('util');
 var thenify = require('thenify').withCallback;
 //var trace = require('line-trace');
 var Lines = require('../../lib/lines.js');
-var ml = require('../../lib/ml.js');
 
 module.exports = LocalArray;
 module.exports.TextStream = TextStream;
@@ -523,7 +522,9 @@ function sample(v, withReplacement, frac, num, seed) {
 	for (var w = 0; w < P; w++) {
 		var p = 0;
 		var tmp = [];
-		var rng = new ml.Random(seed);
+		// FIXME: include a random class
+		//var rng = new ml.Random(seed);
+		var rng;
 		for (i in workerMap[w]) {
 			var L = workerMap[w][i].length;
 			L = num ? num : Math.ceil(L * frac);
