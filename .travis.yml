@@ -1,5 +1,6 @@
 language: node_js
 node_js:
   - "node"
+  - "4"
 env:
   - SKALE_WORKER_PER_HOST=4
