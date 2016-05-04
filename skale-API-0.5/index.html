@@ -159,12 +159,10 @@
 
 <ul>
 <li><a href="#overview">Overview</a></li>
-<li><a href="#working-with-datasets">Working with datasets</a><ul>
+<li><a href="#working-with-datasets">Working with datasets</a></li>
 <li><a href="#sources">Sources</a></li>
 <li><a href="#transformations">Transformations</a></li>
 <li><a href="#actions">Actions</a></li>
-</ul>
-</li>
 <li><a href="#skale-module">Skale module</a></li>
 <li><a href="#skalecontextconfig">skale.context([config])</a><ul>
 <li><a href="#scend">sc.end()</a></li>
@@ -470,57 +468,57 @@ alternatively through a returned <a href="https://promisesaplus.com">ES6 promise
 <tr>
 <td><a href="#dsaggregatereducer-combiner-init-obj-done">aggregate(func, func, init)</a></td>
 <td>Similar to reduce() but may return a different type</td>
-<td>stream of value</td>
+<td>value</td>
 </tr>
 <tr>
 <td><a href="#dscollectdone">collect()</a></td>
 <td>Return the content of dataset</td>
-<td>stream of elements</td>
+<td>array of elements</td>
 </tr>
 <tr>
 <td><a href="#dscountdone">count()</a></td>
 <td>Return the number of elements from dataset</td>
-<td>stream of number</td>
+<td>number</td>
 </tr>
 <tr>
 <td><a href="#dscountbykeydone">countByKey()</a></td>
 <td>Return the number of occurrences for each key in a <code>[k,v]</code> dataset</td>
-<td>stream of [k,number]</td>
+<td>array of [k,number]</td>
 </tr>
 <tr>
 <td><a href="#dscountbyvaluedone">countByValue()</a></td>
 <td>Return the number of occurrences of elements from dataset</td>
-<td>stream of [v,number]</td>
+<td>array of [v,number]</td>
 </tr>
 <tr>
 <td><a href="#dsfirstdone">first()</a></td>
 <td>Return the first element in dataset</td>
-<td>stream of value</td>
+<td>value</td>
 </tr>
 <tr>
 <td><a href="#dsforeachcallback-obj-done">forEach(func)</a></td>
 <td>Apply the provided function to each element of the dataset</td>
-<td>empty stream</td>
+<td>empty</td>
 </tr>
 <tr>
 <td><a href="#dslookupk-done">lookup(k)</a></td>
 <td>Return the list of values <code>v</code> for key <code>k</code> in a <code>[k,v]</code> dataset</td>
-<td>stream of v</td>
+<td>array of v</td>
 </tr>
 <tr>
 <td><a href="#dsreducereducer-init-obj-done">reduce(func, init)</a></td>
 <td>Aggregates dataset elements using a function into one value</td>
-<td>stream of value</td>
+<td>value</td>
 </tr>
 <tr>
 <td><a href="#dstakenum-done">take(num)</a></td>
 <td>Return the first <code>num</code> elements of dataset</td>
-<td>stream of value</td>
+<td>array of value</td>
 </tr>
 <tr>
 <td><a href="#dstopnum-done">top(num)</a></td>
 <td>Return the top <code>num</code> elements of dataset</td>
-<td>stream of value</td>
+<td>array of value</td>
 </tr>
 </tbody>
 </table>
