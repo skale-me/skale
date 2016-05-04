@@ -1,6 +1,6 @@
 {
   "name": "skale-ml",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Machine Learning library for skale-engine",
   "main": "index.js",
   "directories": {
