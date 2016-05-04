@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.5.2](https://github.com/skale-me/skale-engine/tree/0.5.2) (2016-05-04)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.5.1...0.5.2)
+
+**Merged pull requests:**
+
+- Fix previous changes incompatible with node4-LTS [\#48](https://github.com/skale-me/skale-engine/pull/48) ([mvertes](https://github.com/mvertes))
+
 ## [0.5.1](https://github.com/skale-me/skale-engine/tree/0.5.1) (2016-05-04)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.5.0...0.5.1)
 
