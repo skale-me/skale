@@ -81,14 +81,14 @@ function startWorkers(msg) {
 				}
 				break;
 			default:
-				console.log('unexpected msg %j', msg);
+				console.log('unexpected msg', msg);
 			}
 		});
 	});
 }
 
 function handleExit(worker, code, signal) {
-	console.log('worker pid %d exited: %s', worker.process.pid, signal || code);
+	console.log('worker pid', worker.process.pid, ', exited:', signal || code);
 }
 
 function runWorker(host, port) {
@@ -116,13 +116,13 @@ function runWorker(host, port) {
 			jobId: ''
 		}
 	}, function (err, res) {
-		console.log('id: ' + res.id + ', uuid: ' + res.uuid);
+		console.log('id: ', res.id, 'uuid: ', res.uuid);
 		grid.host = {uuid: res.uuid, id: res.id};
 		grid.workerHost = {};
 	});
 
 	grid.on('error', function (err) {
-		console.log('grid error %j', err);
+		console.log('grid error', err);
 		process.exit(2);
 	});
 

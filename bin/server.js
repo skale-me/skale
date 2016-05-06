@@ -155,7 +155,7 @@ var clientRequest = {
 			}
 			break;
 		}
-		console.log('## Connect %s %s %s', msg.data.type, msg.data.id, msg.data.uuid);
+		console.log('## Connect', msg.data.type, msg.data.id, msg.data.uuid);
 		return ret;
 
 		function postMaster(muuid) {
@@ -244,16 +244,16 @@ process.on('SIGTERM', function sigterm() {
 	process.exit();
 });
 
-console.log('## Started ' + Date());
+console.log('## Started', Date());
 // Start a TCP server
 if (port) {
 	net.createServer(handleConnect).listen(port);
-	console.log('## Listening TCP on ' + port);
+	console.log('## Listening TCP on', port);
 }
 
 // Start a websocket server if a listening port is specified on command line
 if (wsport) {
-	console.log('## Listening WebSocket on ' + wsport);
+	console.log('## Listening WebSocket on', wsport);
 	wss = new webSocketServer({port: wsport});
 	wss.on('connection', function (ws) {
 		var sock = websocket(ws);
@@ -264,8 +264,7 @@ if (wsport) {
 			handleClose(sock);
 		});
 		ws.on('error', function (error) {
-			console.log('## websocket connection error');
-			console.log(error.stack);
+			console.log('## websocket connection error', error.stack);
 			handleClose(sock);
 		});
 	});
@@ -286,7 +285,7 @@ function startWorker() {
 function handleClose(sock) {
 	var i, cli = sock.client;
 	if (cli) {
-		console.log('## Close: %s %s %s', cli.data.type, cli.index, cli.uuid);
+		console.log('## Close:', cli.data.type, cli.index, cli.uuid);
 		pubmon({event: 'disconnect', uuid: cli.uuid});
 		cli.sock = null;
 		switch (cli.data.type) {
@@ -326,7 +325,7 @@ function handleClose(sock) {
 		}
 		if (cli.end) delete clients[cli.uuid];
 	} else {
-		console.log('## Close: %j', sock._peername);
+		console.log('## Close:', sock._peername);
 	}
 	if (sock.index) delete crossbar[sock.index];
 	sock.removeAllListeners();
@@ -334,17 +333,16 @@ function handleClose(sock) {
 
 function handleConnect(sock) {
 	if (sock.ws) {
-		console.log('## Connect websocket from ' + sock.socket.upgradeReq.headers.origin);
+		console.log('## Connect websocket from', sock.socket.upgradeReq.headers.origin);
 	} else {
-		console.log('## Connect tcp ' + sock.remoteAddress + ' ' + sock.remotePort);
+		console.log('## Connect tcp', sock.remoteAddress, sock.remotePort);
 		sock.setNoDelay();
 	}
 	sock.on('end', function () {
 		handleClose(sock);
 	});
 	sock.on('error', function sockError(error) {
-		console.log('## connection error');
-		console.log(error.stack);
+		console.log('## connection error', error.stack);
 		handleClose(sock);
 	});
 	sock.pipe(new SkaleClient.FromGrid()).pipe(new SwitchBoard(sock));
