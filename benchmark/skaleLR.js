@@ -42,7 +42,7 @@ var weights = Array(D).fill(0);
 
 if (!file) throw 'Usage: lr.js file [nIterations]';
 
-points.count().on('data', function (data) {
+points.count(function (err, data) {
 	var N = data;
 	var i = 0;
 
