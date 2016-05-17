@@ -200,8 +200,8 @@ function parseTask(str) {
 				var args = value.match(/\(([^)]*)/)[1];
 				var body = value.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
 				value = new Function(args, body);
-			} else if (value.match(/^\s*\w+\s*=>/) || value.match(/^\s*\([^)]*\)\s*=>/))
-				value = eval(value);
+			} else if (value.match(/^\s*\(\s*[^(][^)]*\)\s*=>/) || value.match(/^\s*\w+\s*=>/))
+				value = ('indirect', eval)(value);
 		}
 		return value;
 	});
