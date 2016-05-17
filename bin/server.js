@@ -40,7 +40,7 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 if (opt.options.version) {
-	const pkg = require('../package');
+	var pkg = require('../package');
 	return console.log(pkg.name + '-' +  pkg.version);
 }
 
