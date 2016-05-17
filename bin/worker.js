@@ -14,7 +14,7 @@ var trace = require('line-trace');
 
 var SkaleClient = require('../lib/client.js');
 var Lines = require('../lib/lines.js');
-var sizeOf = require('../lib/sizeof.js');
+var sizeOf = require('../lib/rough-sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
 
 //var global = {require: require};
