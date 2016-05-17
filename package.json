@@ -16,9 +16,6 @@
     "skale-server": "./bin/server.js",
     "skale-worker": "./bin/worker.js"
   },
-  "engines": {
-    "node": ">=4.0.0"
-  },
   "os": [
     "!win32"
   ],
@@ -42,6 +39,7 @@
     "any-promise": "^1.3.0",
     "bluebird": "^3.3.5",
     "line-trace": "^1.0.4",
+    "mkdirp": "^0.5.1",
     "node-getopt": "^0.2.3",
     "node-uuid": "^1.4.7",
     "thenify": "^3.2.0",
