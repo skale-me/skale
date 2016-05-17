@@ -2,5 +2,7 @@ language: node_js
 node_js:
   - "node"
   - "4"
+  - "0.12"
+  - "0.10"
 env:
   - SKALE_WORKER_PER_HOST=4

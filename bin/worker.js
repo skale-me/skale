@@ -31,7 +31,7 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 if (opt.options.version) {
-	const pkg = require('../package');
+	var pkg = require('../package');
 	return console.log(pkg.name + '-' +  pkg.version);
 }
 
@@ -133,7 +133,7 @@ function runWorker(host, port) {
 			contextId = task.contextId;
 			// set worker side dependencies
 			task.mm = mm;
-			task.lib = {sizeOf, fs, readSplit, Lines, task, mkdir, uuid, trace};
+			task.lib = {sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdir: mkdir, uuid: uuid, trace: trace};
 			task.grid = grid;
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}
@@ -162,7 +162,7 @@ function runWorker(host, port) {
 }
 
 function MemoryManager(memory) {
-	const Kb = 1024, Mb = 1024 * Kb;
+	var Kb = 1024, Mb = 1024 * Kb;
 	var MAX_MEMORY = (memory - 100) * Mb;
 	var maxStorageMemory = MAX_MEMORY * 0.4;
 	var maxShuffleMemory = MAX_MEMORY * 0.2;
