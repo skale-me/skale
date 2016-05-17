@@ -8,11 +8,11 @@ var child_process = require('child_process');
 var fs = require('fs');
 var os = require('os');
 var cluster = require('cluster');
+var mkdirp = require('mkdirp');
 var uuid = require('node-uuid');
 var trace = require('line-trace');
 
 var SkaleClient = require('../lib/client.js');
-var mkdir = require('../lib/mkdir.js');
 var Lines = require('../lib/lines.js');
 var sizeOf = require('../lib/sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
@@ -133,7 +133,7 @@ function runWorker(host, port) {
 			contextId = task.contextId;
 			// set worker side dependencies
 			task.mm = mm;
-			task.lib = {sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdir: mkdir, uuid: uuid, trace: trace};
+			task.lib = {sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, uuid: uuid, trace: trace};
 			task.grid = grid;
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}
