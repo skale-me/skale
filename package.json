@@ -16,9 +16,6 @@
     "skale-server": "./bin/server.js",
     "skale-worker": "./bin/worker.js"
   },
-  "engines": {
-    "node": ">=4.0.0"
-  },
   "os": [
     "!win32"
   ],
