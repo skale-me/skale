@@ -1,5 +1,23 @@
 # Change Log
 
+## [0.5.3](https://github.com/skale-me/skale-engine/tree/0.5.3) (2016-05-17)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.5.2...0.5.3)
+
+**Closed issues:**
+
+- skale-engine can not be used as a dependency in a Meteor project [\#56](https://github.com/skale-me/skale-engine/issues/56)
+- Get rid of direct eval [\#53](https://github.com/skale-me/skale-engine/issues/53)
+- Use mkdirp.sync instead of lib/mkdir.js [\#51](https://github.com/skale-me/skale-engine/issues/51)
+
+**Merged pull requests:**
+
+- rename lib/sizeof.js in lib/rough-sizeof.js as discussed in \#52 [\#60](https://github.com/skale-me/skale-engine/pull/60) ([mvertes](https://github.com/mvertes))
+- Use indirect eval, strenghten regexp which match arrow function definition; fix \#53 [\#59](https://github.com/skale-me/skale-engine/pull/59) ([mvertes](https://github.com/mvertes))
+- remove lib/mkdir.js and use external mkdirp module. Fix \#51 [\#58](https://github.com/skale-me/skale-engine/pull/58) ([mvertes](https://github.com/mvertes))
+- Ensure compatibility with node back to 0.10, fix \#56 [\#57](https://github.com/skale-me/skale-engine/pull/57) ([mvertes](https://github.com/mvertes))
+- better use of console.log\(\) [\#50](https://github.com/skale-me/skale-engine/pull/50) ([mvertes](https://github.com/mvertes))
+- ds.filter\(\): rename internal filter member into \_filter to avoid coll… [\#49](https://github.com/skale-me/skale-engine/pull/49) ([mvertes](https://github.com/mvertes))
+
 ## [0.5.2](https://github.com/skale-me/skale-engine/tree/0.5.2) (2016-05-04)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.5.1...0.5.2)
 
