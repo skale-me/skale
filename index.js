@@ -36,7 +36,7 @@ ml.randomSVMData = function (sc, N, D, seed, nPartitions) {
 			return a;
 		}
 	}
-	return new Source(sc, N, randomSVMLine, {D, seed}, nPartitions);
+	return new Source(sc, N, randomSVMLine, {D: D, seed: seed}, nPartitions);
 };
 
 ml.randomSVMLine = function(rng, D) {
