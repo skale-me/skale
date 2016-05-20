@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.2.2](https://github.com/skale-me/skale-ml/tree/0.2.2) (2016-05-20)
+[Full Changelog](https://github.com/skale-me/skale-ml/compare/0.2.1...0.2.2)
+
+**Merged pull requests:**
+
+- index.js: fix compatibility with node-0.10 [\#11](https://github.com/skale-me/skale-ml/pull/11) ([mvertes](https://github.com/mvertes))
+
 ## [0.2.1](https://github.com/skale-me/skale-ml/tree/0.2.1) (2016-05-04)
 **Merged pull requests:**
 
