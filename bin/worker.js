@@ -25,6 +25,7 @@ var opt = require('node-getopt').create([
 	['m', 'memory=ARG', 'set max memory in MB for workers (default 1024)'],
 	['M', 'MyHost=ARG', 'advertised hostname'],
 	['n', 'nworker=ARG', 'number of workers (default: number of cpus)'],
+	['t', 'tmp=ARG', 'set tmp dirname (default: /tmp)'],
 	['H', 'Host=ARG', 'server hostname (default localhost)'],
 	['P', 'Port=ARG', 'server port (default 12346)'],
 	['V', 'version', 'print version']
@@ -39,6 +40,7 @@ var debug = opt.options.debug || false;
 var ncpu = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
 var hostname = opt.options.MyHost || os.hostname();
 var memory = Number(opt.options.memory || 1024);
+var tmp = opt.options.tmp || process.env.SKALE_TMP || '/tmp';
 var cgrid;
 var mm = new MemoryManager(memory);
 ncpu = Number(ncpu);
@@ -76,8 +78,8 @@ function startWorkers(msg) {
 			case 'rm':
 				if (msg.dir && !removed[msg.dir]) {
 					removed[msg.dir] = true;
-					trace('remove /tmp/skale/' + msg.dir);
-					child_process.execFile('/bin/rm', ['-rf', '/tmp/skale/' + msg.dir]);
+					trace('remove ' + tmp + '/skale/' + msg.dir);
+					child_process.execFile('/bin/rm', ['-rf', tmp + '/skale/' + msg.dir]);
 				}
 				break;
 			default:
