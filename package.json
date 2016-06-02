@@ -4,7 +4,7 @@
   "description": "skale client command",
   "bin": { "skale": "./skale.js" },
   "scripts": {
-    "test": "case $(./skale.js -V 2>&1) in (skale-1.*) true;; (*) false;; esac"
+    "test": "./test.sh"
   },
   "keywords": [
     "skale",
