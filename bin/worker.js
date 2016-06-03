@@ -120,7 +120,6 @@ function runWorker(host, port) {
 	}, function (err, res) {
 		console.log('id: ', res.id, 'uuid: ', res.uuid);
 		grid.host = {uuid: res.uuid, id: res.id};
-		grid.workerHost = {};
 	});
 
 	grid.on('error', function (err) {
@@ -147,10 +146,6 @@ function runWorker(host, port) {
 	});
 
 	grid.on('request', function (msg) {
-		if (msg.first) {
-			for (var i = 0; i < msg.first.length; i++)
-				grid.workerHost[i] = msg.first[i].hostname;
-		}
 		try {request[msg.data.cmd](msg);} 
 		catch (error) {
 			console.error(error.stack);
