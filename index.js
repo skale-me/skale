@@ -2,7 +2,8 @@
 
 'use strict';
 
-var Context = require('./lib/context.js');
+//var Context = require('./lib/context.js');
+var Context = require('./lib/context-local.js');
 var Dataset = require('./lib/dataset.js');
 
 module.exports = {
