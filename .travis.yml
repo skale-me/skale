@@ -6,3 +6,4 @@ node_js:
   - "0.10"
 env:
   - SKALE_WORKER_PER_HOST=2
+  - SKALE_WORKERS=2
