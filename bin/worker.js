@@ -133,6 +133,7 @@ function runWorker(host, port) {
 			var task = parseTask(msg.data.args);
 			contextId = task.contextId;
 			// set worker side dependencies
+			task.workerId = grid.host.uuid;
 			task.mm = mm;
 			task.lib = {sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, uuid: uuid, trace: trace};
 			task.grid = grid;
