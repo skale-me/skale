@@ -53,7 +53,7 @@ var topicNum = -1;
 var UInt32Max = 4294967296;
 var topicMax = UInt32Max - minMulticast;
 var topicIndex = {};
-var memory = opt.options.memory || 1024;
+var memory = opt.options.memory || process.env.SKALE_MEMORY || 1024;
 //var name = opt.options.name || 'localhost';		// Unused until FT comes back
 var port = Number(opt.options.port) || 12346;
 var wss;

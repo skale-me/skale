@@ -40,7 +40,7 @@ if (opt.options.version) {
 var debug = opt.options.debug || false;
 var ncpu = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
 var hostname = opt.options.MyHost || os.hostname();
-var memory = Number(opt.options.memory || 1024);
+var memory = Number(opt.options.memory || process.env.SKALE_MEMORY || 1024);
 var tmp = opt.options.tmp || process.env.SKALE_TMP || '/tmp';
 var cgrid;
 var mm = new MemoryManager(memory);
