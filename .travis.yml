@@ -3,6 +3,5 @@ node_js:
   - "node"
   - "4"
   - "0.12"
-  - "0.10"
 env:
   - SKALE_WORKERS=2
