@@ -8,6 +8,7 @@ var child_process = require('child_process');
 var fs = require('fs');
 var os = require('os');
 var cluster = require('cluster');
+var zlib = require('zlib');
 var mkdirp = require('mkdirp');
 var uuid = require('node-uuid');
 var trace = require('line-trace');
@@ -135,7 +136,7 @@ function runWorker(host, port) {
 			// set worker side dependencies
 			task.workerId = grid.host.uuid;
 			task.mm = mm;
-			task.lib = {sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, uuid: uuid, trace: trace};
+			task.lib = {sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, uuid: uuid, trace: trace, zlib: zlib};
 			task.grid = grid;
 			task.run(function(result) {grid.reply(msg, null, result);});
 		}
