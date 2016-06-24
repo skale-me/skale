@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.6.0](https://github.com/skale-me/skale-engine/tree/0.6.0) (2016-06-24)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.5.3...0.6.0)
+
+**Merged pull requests:**
+
+- stop testing node-0.10 [\#69](https://github.com/skale-me/skale-engine/pull/69) ([mvertes](https://github.com/mvertes))
+- add new source gzipFile\(\) to process gzipped text files [\#68](https://github.com/skale-me/skale-engine/pull/68) ([mvertes](https://github.com/mvertes))
+- New action Dataset\#save\(\) to save dataset content in text file. [\#67](https://github.com/skale-me/skale-engine/pull/67) ([mvertes](https://github.com/mvertes))
+- Pass user options and worker context to reduce\(\), aggregate\(\) and forEach\(\) callbacks. [\#66](https://github.com/skale-me/skale-engine/pull/66) ([mvertes](https://github.com/mvertes))
+- Serverless version, direct IPCs between workers and master [\#65](https://github.com/skale-me/skale-engine/pull/65) ([mvertes](https://github.com/mvertes))
+- code cleaning [\#64](https://github.com/skale-me/skale-engine/pull/64) ([mvertes](https://github.com/mvertes))
+- improve tmp dir handling. Add env SKALE\_TMP [\#63](https://github.com/skale-me/skale-engine/pull/63) ([mvertes](https://github.com/mvertes))
+- remove spurious test file [\#62](https://github.com/skale-me/skale-engine/pull/62) ([mvertes](https://github.com/mvertes))
+
 ## [0.5.3](https://github.com/skale-me/skale-engine/tree/0.5.3) (2016-05-17)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.5.2...0.5.3)
 
