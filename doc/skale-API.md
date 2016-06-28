@@ -113,6 +113,7 @@ using the following sources:
 
 | Source Name                                       | Description                                           |
 | ------------------------------------------------- | ----------------------------------------------------- |
+|[gzipFile(path)](#scgzipfilepath)                  | Create a dataset from a gzipped text file             |
 |[lineStream(stream)](#sclinestreaminput_stream)    | Create a dataset from a text stream                   |
 |[objectStream(stream)](#scobjectstreaminput_stream)| Create a dataset from an object stream                |
 |[parallelize(array)](#scparallelizearray)          | Create a dataset from an array                        |
@@ -176,6 +177,7 @@ alternatively through a returned [ES6 promise].
 |[reduce(func, init)](#dsreducereducer-init-obj-done)| Aggregates dataset elements using a function into one value | value|
 |[take(num)](#dstakenum-done)         | Return the first `num` elements of dataset | array of value|
 |[top(num)](#dstopnum-done)           | Return the top `num` elements of dataset | array of value|
+|[save(file)](#dssavefile-done)       | Save the content of a dataset into a file | empty |
 
 ## Skale module
 
