@@ -14,6 +14,8 @@ var uuid = require('node-uuid');
 var trace = require('line-trace');
 
 var SkaleClient = require('../lib/client.js');
+var Dataset = require('../lib/Dataset.js');
+var Task = require('../lib/Task.js');
 var Lines = require('../lib/lines.js');
 var sizeOf = require('../lib/rough-sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
@@ -128,19 +130,32 @@ function runWorker(host, port) {
 		process.exit(2);
 	});
 
-	var request = {
-		runTask: function runTask(msg) {
-			grid.muuid = msg.data.master_uuid;
-			var task = parseTask(msg.data.args);
-			contextId = task.contextId;
-			// set worker side dependencies
-			task.workerId = grid.host.uuid;
-			task.mm = mm;
-			task.lib = {sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, uuid: uuid, trace: trace, zlib: zlib};
-			task.grid = grid;
-			task.run(function(result) {grid.reply(msg, null, result);});
-		}
-	};
+	function runTask(msg) {
+		grid.muuid = msg.data.master_uuid;
+		var task = parseTask(msg.data.args);
+		contextId = task.contextId;
+		// set worker side dependencies
+		task.workerId = grid.host.uuid;
+		task.mm = mm;
+		task.lib = {sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, uuid: uuid, trace: trace, zlib: zlib};
+		task.grid = grid;
+		task.run(function(result) {grid.reply(msg, null, result);});
+	}
+
+	function runztask(msg) {
+		var file = msg.req.args;
+		fs.readFile(file, function (err, data) {
+			fs.unlink(file, function () {});
+			if (err) throw new Error(err);
+			zlib.gunzip(data, function (err, data) {
+				if (err) throw new Error(err);
+				msg.req.args = data;
+				runTask(msg);
+			});
+		});
+	}
+
+	var request = { runTask: runTask, runztask: runztask };
 
 	grid.on('remoteClose', function () {
 		process.send({cmd: 'rm', dir: contextId});
@@ -192,7 +207,8 @@ function MemoryManager(memory) {
 }
 
 function parseTask(str) {
-	return JSON.parse(str, function(key, value) {
+	var i, j, n, ref;
+	var task = JSON.parse(str, function (key, value) {
 		if (typeof value == 'string') {
 			// String value can be a regular function or an ES6 arrow function
 			if (value.substring(0, 8) == 'function') {
@@ -204,4 +220,24 @@ function parseTask(str) {
 		}
 		return value;
 	});
+
+	for (i in task.nodes) {
+		n = task.nodes[i];
+		for (j in n.dependencies) {
+			ref = n.dependencies[j];
+			n.dependencies[j] = task.nodes[ref];
+		}
+		for (j in n.partitions) {
+			Object.setPrototypeOf(task.nodes[i].partitions[j], Dataset.Partition.prototype);
+		}
+		if (n.type) {
+			Object.setPrototypeOf(task.nodes[i], Dataset[n.type].prototype);
+		}
+		if (n.partitioner && n.partitioner.type) {
+			Object.setPrototypeOf(n.partitioner, Dataset[n.partitioner.type].prototype);
+		}
+	}
+	Object.setPrototypeOf(task, Task.prototype);
+	//log('task:', JSON.stringify(task, null, 2));
+	return task;
 }
