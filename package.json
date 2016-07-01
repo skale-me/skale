@@ -2,7 +2,9 @@
   "name": "skale",
   "version": "1.0.15",
   "description": "skale client command",
-  "bin": { "skale": "./skale.js" },
+  "bin": {
+    "skale": "./skale.js"
+  },
   "scripts": {
     "test": "./test.sh"
   },
@@ -14,8 +16,12 @@
   "author": "skale team",
   "license": "Apache-2.0",
   "repository": "skale-me/skale-cli",
-  "bugs": { "url" : "https://github.com/skale-me/skale-cli/issues" },
+  "bugs": {
+    "url": "https://github.com/skale-me/skale-cli/issues"
+  },
   "dependencies": {
+    "ddp": "^0.12.0",
+    "ddp-login": "^1.0.10",
     "minimist": "^1.2.0"
   }
 }

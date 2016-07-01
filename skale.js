@@ -102,6 +102,9 @@ function create(name) {
 		die('skale create error: ' + error.message);
 	}
 	process.chdir(name);
+	console.log('create local repository');
+	child_process.execSync('git init');
+
 	const pkg = {
 		name: name,
 		version: '0.1.0',
@@ -125,7 +128,7 @@ sc.parallelize(['Hello world']).collect().then(function (res) {
 	const npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
 	if (npm.status) die('skale create error: npm install failed');
 	console.log(`Project ${name} is now ready.
-Pleas change directory to ${name}: "cd ${name}"
+Please change directory to ${name}: "cd ${name}"
 To run your app: "skale run"
 To modify your app: edit ${name}.js`)
 }
@@ -198,31 +201,75 @@ function run_local(args) {
 }
 
 function deploy(args) {
-	const pkg = JSON.parse(fs.readFileSync('package.json'));
-	fs.readFile(pkg.name + '.js', {encoding: 'utf8'}, function (err, data) {
+	var child_process = require('child_process');
+	var fs = require('fs');
+	var DDPClient = require('ddp');
+	var login = require('ddp-login');	
+
+	process.on('SIGTERM', process.exit);
+
+	var key = args[0] || process.env.SKALE_KEY || '';
+	var host = args[1] || process.env.SKALE_SERVER || 'localhost';
+	var port = args[2] || process.env.SKALE_PORT || 3000;
+
+	console.log('# key:', key);
+	console.log('# server:', host, port);
+
+	var ddpclient = new DDPClient({
+		// All properties optional, defaults shown
+		host : host,
+		port : port,
+		ssl  : false,
+		autoReconnect : true,
+		autoReconnectTimer : 500,
+		maintainCollections : true,
+		ddpVersion : '1',  // ['1', 'pre2', 'pre1'] available
+		useSockJs: true,
+		url: 'wss://example.com/websocket'
+	});
+
+	ddpclient.connect(function (err, isreconnect) {
 		if (err) throw err;
-
-		const postdata = JSON.stringify({pkg: pkg, src: data, args: args});
-
-		const options = {
-			hostname: config.host,
-			port: config.port,
-			path: '/deploy',
-			method: 'POST',
-			headers: {
-				'X-Auth': config.key,
-				'Content-Type': 'application/json',
-				'Content-Length': Buffer.byteLength(postdata)
+		console.log('connected to meteor');
+		login(ddpclient, {
+			env: 'METEOR_TOKEN',
+			method: 'account',
+			account: 'dummy@skale.me',
+			pass: '123456',
+			retry: 5,
+			plaintext: false
+		}, function (err, userInfo) {
+			if (err) throw err;
+			var token = userInfo.token;
+			console.log(userInfo);
+			console.log('reading package.json');
+			const pkg = JSON.parse(fs.readFileSync('package.json'));
+			var name = pkg.name;
+			var etlId = pkg.etlId;
+			console.log(pkg);			
+			if (etlId == undefined) {
+				console.log('creating ETL');
+				ddpclient.call('etls.add', [{name: name}], function (err, res) {
+					if (err) console.error(err);
+					pkg.etlId = res.etlId;
+					fs.writeFileSync('package.json', JSON.stringify(pkg, null, 4));
+					child_process.execSync('git remote add skale ' + res.url);
+					console.log('deploying ETL');
+					child_process.execSync('git add -A .; git commit -m "automatic commit"; git push skale master');
+					ddpclient.call('etls.deploy', [{etlId: res.etlId}], function (err, res) {
+						console.log('ETL is being deployed ...')
+						process.exit(0);
+					});
+				});
+			} else {
+				console.log('deploying ETL');
+				child_process.execSync('git add -A .; git commit -m "automatic commit"; git push skale master');
+				ddpclient.call('etls.deploy', [{etlId: etlId}], function (err, res) {
+					console.log('ETL is being deployed ...')
+					process.exit(0);
+				});
 			}
-		};
-
-		const req = proto.request(options, function (res) {
-			res.setEncoding('utf8');
-			res.pipe(process.stdout);
-		});
-
-		req.on('error', function (err) {throw err;});
-		req.end(postdata);
+		})
 	});
 }
 
