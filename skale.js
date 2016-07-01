@@ -234,8 +234,8 @@ function deploy(args) {
 		login(ddpclient, {
 			env: 'METEOR_TOKEN',
 			method: 'account',
-			account: 'dummy@skale.me',
-			pass: '123456',
+			account: null,
+			pass: null,
 			retry: 5,
 			plaintext: false
 		}, function (err, userInfo) {
