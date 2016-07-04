@@ -2,32 +2,31 @@
 
 // Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
 
-const help=`Usage: skale [options] <command> [<args>]
+var help='Usage: skale [options] <command> [<args>]\n' +
+'\n' +
+'Create, run, deploy clustered node applications\n' +
+'\n' +
+'Commands:\n' +
+'  create <app>		Create a new application\n' +
+'  run [<args>...]	Run application\n' +
+'  deploy [<args>...]	Deploy application\n' +
+'  status		print status of local skale cluster\n' +
+'  stop			Stop local skale cluster\n' +
+'\n' +
+'Options:\n' +
+'  -f, --file		program to run (default: package name)\n' +
+'  -h, --help		Show help\n' +
+'  -m, --memory MB	set the memory space limit per worker (default 4000 MB)\n' +
+'  -r, --remote		run in the cloud instead of locally\n' +
+'  --reset		Restart cluster and cluster log\n' +
+'  -V, --version		Show version\n' +
+'  -w, --worker num	set the number of workers (default 2)\n'; 
 
-Create, run, deploy clustered node applications
+var child_process = require('child_process');
+var fs = require('fs');
+var net = require('net');
 
-Commands:
-  create <app>		Create a new application
-  run [<args>...]	Run application
-  deploy [<args>...]	Deploy application
-  status		print status of local skale cluster
-  stop			Stop local skale cluster
-
-Options:
-  -f, --file		program to run (default: package name)
-  -h, --help		Show help
-  -m, --memory MB	set the memory space limit per worker (default 4000 MB)
-  -r, --remote		run in the cloud instead of locally
-  --reset		Restart cluster and cluster log
-  -V, --version		Show version
-  -w, --worker num	set the number of workers (default 2)
-`;
-
-const child_process = require('child_process');
-const fs = require('fs');
-const net = require('net');
-
-const argv = require('minimist')(process.argv.slice(2), {
+var argv = require('minimist')(process.argv.slice(2), {
 	string: [
 		'c', 'config',
 		'f', 'file',
@@ -61,10 +60,10 @@ if (argv.V || argv.version) {
 	process.exit();
 }
 
-const config = load(argv);
-const proto = config.ssl ? require('https') : require('http');
-const memory = argv.m || argv.memory || 4000;
-const worker = argv.w || argv.worker || 2;
+var config = load(argv);
+var proto = config.ssl ? require('https') : require('http');
+var memory = argv.m || argv.memory || 4000;
+var worker = argv.w || argv.worker || 2;
 
 switch (argv._[0]) {
 	case 'create':
@@ -105,7 +104,7 @@ function create(name) {
 	console.log('create local repository');
 	child_process.execSync('git init');
 
-	const pkg = {
+	var pkg = {
 		name: name,
 		version: '0.1.0',
 		private: true,
@@ -115,22 +114,21 @@ function create(name) {
 		}
 	};
 	fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
-	var src = `#!/usr/bin/env node
-
-var sc = require('skale-engine').context();
-
-sc.parallelize(['Hello world']).collect().then(function (res) {
-	console.log(res);
-	sc.end();
-});
-`;
+	var src = '#!/usr/bin/env node\n' +
+		'\n' +
+		'var sc = require(\'skale-engine\').context();\n' +
+		'\n' +
+		'sc.parallelize([\'Hello world\']).collect().then(function (res) {\n' +
+		'	console.log(res);\n' +
+		'	sc.end();\n' +
+		'});\n';
 	fs.writeFileSync(name + '.js', src);
-	const npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
+	var npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
 	if (npm.status) die('skale create error: npm install failed');
-	console.log(`Project ${name} is now ready.
-Please change directory to ${name}: "cd ${name}"
-To run your app: "skale run"
-To modify your app: edit ${name}.js`)
+	console.log('Project ${name} is now ready.\n' +
+		'Please change directory to ' + name + ': "cd ' + name + '"\n' +
+		'To run your app: "skale run"\n' +
+		'To modify your app: edit ' + name + '.js');
 }
 
 function die(err) {
@@ -152,9 +150,9 @@ function load(argv) {
 }
 
 function start_skale(done) {
-	const out = fs.openSync('skale-server.log', 'a');
-	const err = fs.openSync('skale-server.log', 'a');
-	const child = child_process.spawn('node_modules/skale-engine/bin/server.js', ['-l', worker, '-m', memory], {
+	var out = fs.openSync('skale-server.log', 'a');
+	var err = fs.openSync('skale-server.log', 'a');
+	var child = child_process.spawn('node_modules/skale-engine/bin/server.js', ['-l', worker, '-m', memory], {
 		detached: true,
 		stdio: ['ignore', out, err]
 	});
@@ -163,7 +161,7 @@ function start_skale(done) {
 }
 
 function try_connect(nb_try, timeout, done) {
-	const sock = net.connect(skale_port);
+	var sock = net.connect(skale_port);
 	sock.on('connect', function () {
 		sock.end();
 		done(null);
@@ -175,23 +173,23 @@ function try_connect(nb_try, timeout, done) {
 }
 
 function stop_local_server(done) {
-	const child = child_process.execFile('/usr/bin/pgrep', ['-f', 'skale-server ' + skale_port], function (err, pid) {
+	var child = child_process.execFile('/usr/bin/pgrep', ['-f', 'skale-server ' + skale_port], function (err, pid) {
 		if (pid) process.kill(pid.trim());
 		if (done) done();
 	});
 }
 
 function status_local() {
-	const child = child_process.execFile('/bin/ps', ['ux'], function (err, out) {
-		const lines = out.split(/\r\n|\r|\n/);
+	var child = child_process.execFile('/bin/ps', ['ux'], function (err, out) {
+		var lines = out.split(/\r\n|\r|\n/);
 		for (var i = 0; i < lines.length; i++)
 			if (i == 0 || lines[i].match(/ skale-/)) console.log(lines[i].trim());
 	});
 }
 
 function run_local(args) {
-	const pkg = JSON.parse(fs.readFileSync('package.json'));
-	const cmd = argv.f || argv.file || pkg.name + '.js';
+	var pkg = JSON.parse(fs.readFileSync('package.json'));
+	var cmd = argv.f || argv.file || pkg.name + '.js';
 	args.splice(0, 0, cmd);
 	try_connect(0, 0, function (err) {
 		if (!err) return run_app();
@@ -243,7 +241,7 @@ function deploy(args) {
 			var token = userInfo.token;
 			console.log(userInfo);
 			console.log('reading package.json');
-			const pkg = JSON.parse(fs.readFileSync('package.json'));
+			var pkg = JSON.parse(fs.readFileSync('package.json'));
 			var name = pkg.name;
 			var etlId = pkg.etlId;
 			console.log(pkg);			
@@ -274,10 +272,10 @@ function deploy(args) {
 }
 
 function run_remote(args) {
-	const name = process.cwd().split('/').pop();
-	const postdata = JSON.stringify({name: name, args: args});
+	var name = process.cwd().split('/').pop();
+	var postdata = JSON.stringify({name: name, args: args});
 
-	const options = {
+	var options = {
 		hostname: config.host,
 		port: config.port,
 		path: '/run',
@@ -289,7 +287,7 @@ function run_remote(args) {
 		}
 	};
 
-	const req = proto.request(options, function (res) {
+	var req = proto.request(options, function (res) {
 		res.setEncoding('utf8');
 		res.pipe(process.stdout);
 	});
