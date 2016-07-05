@@ -199,7 +199,7 @@ function deploy(args) {
 		console.log('reading package.json');
 		var pkg = JSON.parse(fs.readFileSync('package.json'));
 		var name = pkg.name;
-		child_process.exec('git remote get-url skale', function (err, stdout, stderr) {
+		child_process.exec('git remote | grep skale', function (err, stdout, stderr) {
 			if (!err) return deploy();
 			ddpclient.call('etls.add', [{name: name}], function (err, res) {
 				if (err) throw new Error(err);
