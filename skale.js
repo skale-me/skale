@@ -65,6 +65,7 @@ var config = loadConfig(argv);
 var proto = config.ssl ? require('https') : require('http');
 var memory = argv.m || argv.memory || 4000;
 var worker = argv.w || argv.worker || 2;
+var rc = netrc();
 
 switch (argv._[0]) {
 	case 'create':
@@ -207,7 +208,6 @@ function deploy(args) {
 				var login = a[a.length - 2];
 				var host = a[2].replace(/:.*/, '');
 				var passwd = res.token;
-				var rc = {};
 				rc[host] = {login: login, password: passwd};
 				netrc.save(rc);
 				child_process.execSync('git remote add skale ' + res.url);
