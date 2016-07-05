@@ -22,6 +22,7 @@
   "dependencies": {
     "ddp": "^0.12.0",
     "ddp-login": "^1.0.10",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "netrc": "^0.1.4"
   }
 }
