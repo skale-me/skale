@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.6.1](https://github.com/skale-me/skale-engine/tree/0.6.1) (2016-07-05)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.0...0.6.1)
+
+**Merged pull requests:**
+
+- Important improvements in task serialization, scheduling and debugging [\#73](https://github.com/skale-me/skale-engine/pull/73) ([mvertes](https://github.com/mvertes))
+- save: reset file at init [\#72](https://github.com/skale-me/skale-engine/pull/72) ([mvertes](https://github.com/mvertes))
+- Add SKALE\_MEMORY env variable to set worker max memory [\#71](https://github.com/skale-me/skale-engine/pull/71) ([mvertes](https://github.com/mvertes))
+- spillToDisk: do not duplicate memory when writing to disk [\#70](https://github.com/skale-me/skale-engine/pull/70) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.0](https://github.com/skale-me/skale-engine/tree/0.6.0) (2016-06-24)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.5.3...0.6.0)
 
