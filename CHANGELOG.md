@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.1.0](https://github.com/skale-me/skale-cli/tree/1.1.0) (2016-07-05)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.15...1.1.0)
+
+**Merged pull requests:**
+
+- compatibility with old git [\#15](https://github.com/skale-me/skale-cli/pull/15) ([mvertes](https://github.com/mvertes))
+- new deployment, work in progress [\#14](https://github.com/skale-me/skale-cli/pull/14) ([mvertes](https://github.com/mvertes))
+- Fix compatibility up to node-0.12.x [\#13](https://github.com/skale-me/skale-cli/pull/13) ([mvertes](https://github.com/mvertes))
+- This includes ddp client connection to deploy to skale [\#12](https://github.com/skale-me/skale-cli/pull/12) ([CedricArtigue](https://github.com/CedricArtigue))
+- improve tests [\#11](https://github.com/skale-me/skale-cli/pull/11) ([mvertes](https://github.com/mvertes))
+
 ## [1.0.15](https://github.com/skale-me/skale-cli/tree/1.0.15) (2016-05-03)
 [Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.14...1.0.15)
 
