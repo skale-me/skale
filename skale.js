@@ -65,6 +65,7 @@ var config = loadConfig(argv);
 var proto = config.ssl ? require('https') : require('http');
 var memory = argv.m || argv.memory || 4000;
 var worker = argv.w || argv.worker || 2;
+var rc = netrc();
 
 switch (argv._[0]) {
 	case 'create':
@@ -199,7 +200,7 @@ function deploy(args) {
 		console.log('reading package.json');
 		var pkg = JSON.parse(fs.readFileSync('package.json'));
 		var name = pkg.name;
-		child_process.exec('git remote get-url skale', function (err, stdout, stderr) {
+		child_process.exec('git remote | grep skale', function (err, stdout, stderr) {
 			if (!err) return deploy();
 			ddpclient.call('etls.add', [{name: name}], function (err, res) {
 				if (err) throw new Error(err);
@@ -207,7 +208,6 @@ function deploy(args) {
 				var login = a[a.length - 2];
 				var host = a[2].replace(/:.*/, '');
 				var passwd = res.token;
-				var rc = {};
 				rc[host] = {login: login, password: passwd};
 				netrc.save(rc);
 				child_process.execSync('git remote add skale ' + res.url);
