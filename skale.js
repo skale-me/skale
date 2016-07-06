@@ -200,8 +200,14 @@ function deploy(args) {
 		console.log('reading package.json');
 		var pkg = JSON.parse(fs.readFileSync('package.json'));
 		var name = pkg.name;
+		var alreadyAdded = false;
 		child_process.exec('git remote | grep skale', function (err, stdout, stderr) {
-			if (!err) return deploy();
+			if (err) addThenDeploy();
+			else deploy();
+		});
+
+		function addThenDeploy() {
+			alreadyAdded = true;
 			ddpclient.call('etls.add', [{name: name}], function (err, res) {
 				if (err) throw new Error(err);
 				var a = res.url.split('/');
@@ -210,19 +216,24 @@ function deploy(args) {
 				var passwd = res.token;
 				rc[host] = {login: login, password: passwd};
 				netrc.save(rc);
-				child_process.execSync('git remote add skale ' + res.url);
+				child_process.execSync('git remote rm skale; git remote add skale ' + res.url);
 				deploy();
 			});
+		}
 
-			function deploy() {
-				console.log('deploying ETL');
-				child_process.execSync('git add -A .; git commit -m "automatic commit"; git push skale master');
+		function deploy() {
+			console.log('deploying ETL');
+			child_process.exec('git add -A .; git commit -m "automatic commit"; git push skale master', function (err, stdout, stderr) {
+				if (err) {
+					if (alreadyAdded) throw new Error(err);
+					return addThenDeploy();
+				}
 				ddpclient.call('etls.deploy', [{name: name}], function (err, res) {
 					console.log('ETL is being deployed ...')
-					process.exit(0);
+					ddpclient.close();
 				});
-			}
-		});
+			});
+		}
 	}
 }
 
