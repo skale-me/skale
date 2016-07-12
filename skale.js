@@ -122,7 +122,7 @@ function create(name) {
   if (npm.status) die('skale create error: npm install failed');
   console.log('Project ${name} is now ready.\n' +
     'Please change directory to ' + name + ': "cd ' + name + '"\n' +
-    'To run your app: "skale run"\n' +
+    'To run your app locally: "skale test"\n' +
     'To modify your app: edit ' + name + '.js');
 }
 
