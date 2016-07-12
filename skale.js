@@ -22,7 +22,8 @@ var help='Usage: skale [options] <command> [<args>]\n' +
 '  stop                Stop local skale cluster\n' +
 '\n' +
 'Options:\n' +
-'  -f, --file   program to run (default: package name)\n' +
+'  -f, --file          set program to run (default: package name)\n' +
+'  --force             force action to occur, despite warning\n' +
 '  -h, --help   Show help\n' +
 '  -m, --memory MB  set the memory space limit per worker (default 4000 MB)\n' +
 '  -r, --remote   run in the cloud instead of locally\n' +
@@ -37,6 +38,7 @@ var argv = require('minimist')(process.argv.slice(2), {
     'w', 'worker',
   ],
   boolean: [
+    'force',
     'h', 'help',
     'V', 'version',
   ],
@@ -125,7 +127,6 @@ function create(name) {
 }
 
 function die(err) {
-  console.error(help);
   console.error(err);
   process.exit(1);
 }
@@ -133,10 +134,6 @@ function die(err) {
 function load_config(argv) {
   var conf = {}, save = false;
   try { conf = JSON.parse(fs.readFileSync(configPath)); } catch (error) { save = true; }
-  //conf.host = argv.H || argv.host || process.env.SKALE_HOST || conf.host;
-  //conf.port = argv.p || argv.port || process.env.SKALE_PORT || conf.port;
-  //conf.key = argv.k || argv.key || conf.key;
-  //conf.ssl = argv.s || argv.ssl || (conf.ssl ? true : false);
   process.env.SKALE_TOKEN = process.env.SKALE_TOKEN || conf.token;
   if (save || argv._[0] == 'init') saveConfig(conf);
   return conf;
@@ -223,6 +220,11 @@ function deploy(args) {
 }
 
 function run_remote(args) {
+  var diff = child_process.execSync('git diff skale/master');
+  if (diff.length) {
+    if (argv.force) console.error('Warning, running an obsolete version, you should deploy');
+    else die('Error: content has changed, deploy first or run --force');
+  }
   skale_session(function (err, ddp, isreconnect) {
     if (err) throw new Error(err);
     var pkg = JSON.parse(fs.readFileSync('package.json'));
