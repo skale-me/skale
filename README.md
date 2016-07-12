@@ -3,12 +3,12 @@
 [![Join the chat at https://gitter.im/skale-me/skale-engine](https://badges.gitter.im/skale-me/skale-engine.svg)](https://gitter.im/skale-me/skale-engine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/skale-me/skale-cli.svg?branch=master)](https://travis-ci.org/skale-me/skale-cli)
 
-Create, run and deploy distributed NodeJS applications
+Create, test, deploy and run distributed NodeJS applications
 
 The skale command is the quickest and easiest way to create distributed
 scalable applications based on
 [skale-engine](https://www.npmjs.com/package/skale-engine) and then
-to submit them either locally or on the cloud.
+to execute them either locally or on the cloud.
 
 ## Install
 
@@ -17,7 +17,7 @@ system such as Linux or MacOSX. MS-Windows is not supported.
 
 Assuming you have already installed [NodeJS](https://nodejs.org):
 
-	$ sudo npm install -g skale
+	sudo npm install -g skale
 
 This installs the skale command globally on your system.
 
@@ -25,16 +25,16 @@ This installs the skale command globally on your system.
 
 To create an application called `my_app`, simply run
 
-	$ skale create my_app
+	skale create my_app
 
 It will create a directory `my_app`, populate it with a template
 (hello world) application `my_app.js`, and install skale-engine
 dependency using [`npm`](https://npmjs.com).
 
-You can then go to `my_app` and run your app using `skale run`:
+You can then go to `my_app` and run your app using `skale test`:
 
-	$ cd my_app
-	$ skale run
+	cd my_app
+	skale test
 
 To do something useful, modify your application by editing `my_app.js`,
 then run again using `skale run`.
@@ -59,8 +59,9 @@ Create, run, deploy clustered node applications
 
 Commands:
   create <app>          Create a new application
-  run [<args>...]       Run application
-  deploy [<args>...]    Deploy application (coming soon)
+  test [<args>...]      Run application on local host
+  deploy [<args>...]    Deploy application on skale cloud
+  run [<args>...]       Run application on skale cloud
   status                print status of local skale cluster
   stop                  Stop local skale cluster
 
