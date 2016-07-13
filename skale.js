@@ -9,7 +9,7 @@ var DDPClient = require('ddp');
 var login = require('ddp-login');
 var netrc = require('netrc');
 
-var help='Usage: skale [options] <command> [<args>]\n' +
+var help = 'Usage: skale [options] <command> [<args>]\n' +
 '\n' +
 'Create, test, deploy, run clustered NodeJS applications\n' +
 '\n' +
@@ -18,6 +18,9 @@ var help='Usage: skale [options] <command> [<args>]\n' +
 '  test [<args>...]    Run application on local host\n' +
 '  deploy [<args>...]  Deploy application on skale cloud\n' +
 '  run [<args>...]     Run application on skale cloud\n' +
+'  attach              Attach to a running application\n' +
+'  log                 Print log of an application\n' +
+'  signup              Create an account on skale cloud\n' +
 '  status              Print status of application on skale cloud\n' +
 '  stop                Stop application on skale cloud\n' +
 '\n' +
@@ -64,17 +67,23 @@ var worker = argv.w || argv.worker || 2;
 var rc = netrc();
 
 switch (argv._[0]) {
+  case 'attach':
+    attach();
+    break;
   case 'create':
     create(argv._[1]);
     break;
   case 'deploy':
     deploy(argv._.splice(1));
     break;
-  case 'test':
-    run_local(argv._.splice(1));
-	break;
+  case 'log':
+    console.log('log: not implemented yet');
+    break;
   case 'run':
     run_remote(argv._.splice(1));
+    break;
+  case 'signup':
+    console.log('signup: not implemented yet');
     break;
   case 'status':
     status();
@@ -82,6 +91,9 @@ switch (argv._[0]) {
   case 'stop':
     stop();
     break;
+  case 'test':
+    run_local(argv._.splice(1));
+	break;
   default:
     die('Error: invalid command: ' + argv._[0]);
 }
@@ -237,9 +249,10 @@ function run_remote(args) {
 
     ddp.call('etls.run', [{name: name}], function (err, res) {
       console.log('etls.run', err, res);
+      if (res.alreadyStarted) die('Error: application is already running, use "skale attach" or "skale stop"');
       var taskId = res.taskId;
-      ddp.subscribe('task.withTaskId', [taskId], function () {
-      });
+      ddp.subscribe('task.withTaskId', [taskId], function () {});
+
       var observer = ddp.observe('tasks');
       observer.changed = function (id, oldFields, clearedFields, newFields) {
         if (newFields.status && newFields.status != 'pending') ddp.close();
@@ -253,17 +266,43 @@ function run_remote(args) {
   });
 }
 
+function attach() {
+  skale_session(function (err, ddp, isreconnect) {
+    if (err) throw new Error(err);
+    var pkg = JSON.parse(fs.readFileSync('package.json'));
+    var name = pkg.name;
+    ddp.subscribe('etls.withName', [name], function (err) {
+      var etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
+      if (!etl.running) die('Application is not running, use "skale log" or "skale run"');
+
+      ddp.subscribe('task.withTaskId', [etl.taskId], function () {
+        var task = ddp.collections.tasks[Object.keys(ddp.collections.tasks)[0]];
+        for (var i = 0; i < task.out.length; i++)
+          console.log(task.out[i]);
+      });
+
+      var observer = ddp.observe('tasks');
+      observer.changed = function (id, oldFields, clearedFields, newFields) {
+        if (newFields.status && newFields.status != 'pending') ddp.close();
+        if (newFields.out) {
+          var olen = oldFields.out ? oldFields.out.length : 0;
+          var nlen = newFields.out.length;
+          for (var i = olen; i < nlen; i++) process.stdout.write(newFields.out[i] + '\n');
+        }
+      };
+
+    });
+  });
+}
+
 function status() {
   skale_session(function (err, ddp, isreconnect) {
     if (err) throw new Error(err);
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
     ddp.subscribe('etls.withName', [name], function (err, data) {
-      var etl, i;
-      for (i in ddp.collections.etls) {
-        etl = ddp.collections.etls[i];
-        console.log(etl.name, 'status:', etl.running ? 'running' : 'exited');
-      }
+      var etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
+      console.log(etl.name, 'status:', etl.running ? 'running' : 'exited');
       ddp.close();
     });
   });
@@ -275,7 +314,6 @@ function stop() {
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
     ddp.call('etls.reset', [{name: name}], function (err, res) {
-      console.log(err, res);
       ddp.close();
     });
   });
