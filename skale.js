@@ -11,24 +11,24 @@ var netrc = require('netrc');
 
 var help='Usage: skale [options] <command> [<args>]\n' +
 '\n' +
-'Create, test, deploy, run clustered node applications\n' +
+'Create, test, deploy, run clustered NodeJS applications\n' +
 '\n' +
 'Commands:\n' +
 '  create <app>        Create a new application\n' +
 '  test [<args>...]    Run application on local host\n' +
-'  deploy [<args>...]  Deploy application in skale cloud\n' +
-'  run [<args>...]     Run application in skale cloud\n' +
-'  status              Print status of local skale cluster\n' +
-'  stop                Stop local skale cluster\n' +
+'  deploy [<args>...]  Deploy application on skale cloud\n' +
+'  run [<args>...]     Run application on skale cloud\n' +
+'  status              Print status of application on skale cloud\n' +
+'  stop                Stop application on skale cloud\n' +
 '\n' +
 'Options:\n' +
-'  -f, --file          set program to run (default: package name)\n' +
-'  --force             force action to occur, despite warning\n' +
-'  -h, --help   Show help\n' +
-'  -m, --memory MB  set the memory space limit per worker (default 4000 MB)\n' +
-'  -r, --remote   run in the cloud instead of locally\n' +
-'  -V, --version    Show version\n' +
-'  -w, --worker num set the number of workers (default 2)\n';
+'  -f, --file          Set program to run (default: package name)\n' +
+'  --force             Force action to occur, despite warning\n' +
+'  -h, --help          Print help and quit\n' +
+'  -m, --memory MB     Set the memory space limit per worker (default 4000 MB)\n' +
+'  -r, --remote        Run in the cloud instead of locally\n' +
+'  -V, --version       Print version and quit\n' +
+'  -w, --worker num    Set the number of workers (default 2)\n';
 
 var argv = require('minimist')(process.argv.slice(2), {
   string: [
@@ -77,10 +77,10 @@ switch (argv._[0]) {
     run_remote(argv._.splice(1));
     break;
   case 'status':
-    status_local();
+    status();
     break;
   case 'stop':
-    //stop_local_server();
+    stop();
     break;
   default:
     die('Error: invalid command: ' + argv._[0]);
@@ -135,11 +135,11 @@ function load_config(argv) {
   var conf = {}, save = false;
   try { conf = JSON.parse(fs.readFileSync(configPath)); } catch (error) { save = true; }
   process.env.SKALE_TOKEN = process.env.SKALE_TOKEN || conf.token;
-  if (save || argv._[0] == 'init') saveConfig(conf);
+  if (save || argv._[0] == 'init') save_config(conf);
   return conf;
 }
 
-function saveConfig(config) {
+function save_config(config) {
   fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
     if (err) throw new Error(err);
   });
@@ -164,8 +164,6 @@ function skale_session(callback) {
   var host = process.env.SKALE_SERVER || 'skale.me';
   var port = process.env.SKALE_PORT || 3000;
 
-  console.log('# server:', host, port);
-
   var ddp = new DDPClient({
     // All properties optional, defaults shown
     host : host,
@@ -181,21 +179,28 @@ function skale_session(callback) {
 
   ddp.connect(function (err, isreconnect) {
     if (err) return callback(err, ddp, isreconnect);
-    login(ddp, {env: 'SKALE_TOKEN'}, function (err, userInfo) {
+    login(ddp, {env: 'SKALE_TOKEN', retry: 2}, function (err, userInfo) {
       if (err) return callback(err, ddp, isreconnect);
       var token = userInfo.token;
       if (userInfo.token != config.token) {
         config.token = userInfo.token;
-        saveConfig(config);
+        save_config(config);
       }
-      callback(err, ddp, isreconnect);
+      return callback(err, ddp, isreconnect);
     });
   });
 }
 
 function deploy(args) {
   skale_session(function (err, ddp, isreconnect) {
-    if (err) throw new Error(err);
+    if (err) {
+      switch (err.reason) {
+      case 'User not found':
+        die('User not found');
+      default:
+        die(err.toString());
+      }
+    }
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
 
@@ -207,11 +212,11 @@ function deploy(args) {
       var passwd = res.token;
       rc[host] = {login: login, password: passwd};
       netrc.save(rc);
-      console.log('deploying ETL');
+      console.log('deploying Application');
       child_process.exec('git remote remove skale; git remote add skale "' + res.url + '"; git add -A .; git commit -m "automatic commit"; git push skale master', function (err, stdout, stderr) {
         if (err) throw new Error(err);
         ddp.call('etls.deploy', [{name: name}], function (err, res) {
-          console.log('ETL is being deployed ...')
+          console.log('Application is being deployed ...')
           ddp.close();
         });
       });
@@ -244,6 +249,34 @@ function run_remote(args) {
           for (var i = olen; i < nlen; i++) process.stdout.write(newFields.out[i] + '\n');
         }
       };
+    });
+  });
+}
+
+function status() {
+  skale_session(function (err, ddp, isreconnect) {
+    if (err) throw new Error(err);
+    var pkg = JSON.parse(fs.readFileSync('package.json'));
+    var name = pkg.name;
+    ddp.subscribe('etls.withName', [name], function (err, data) {
+      var etl, i;
+      for (i in ddp.collections.etls) {
+        etl = ddp.collections.etls[i];
+        console.log(etl.name, 'status:', etl.running ? 'running' : 'exited');
+      }
+      ddp.close();
+    });
+  });
+}
+
+function stop() {
+  skale_session(function (err, ddp, isreconnect) {
+    if (err) throw new Error(err);
+    var pkg = JSON.parse(fs.readFileSync('package.json'));
+    var name = pkg.name;
+    ddp.call('etls.reset', [{name: name}], function (err, res) {
+      console.log(err, res);
+      ddp.close();
     });
   });
 }
