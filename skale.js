@@ -283,9 +283,6 @@ function attach() {
 
       var observer = ddp.observe('tasks');
       observer.changed = function (id, oldFields, clearedFields, newFields) {
-        console.log('newFields', newFields);
-        console.log('oldFields', oldFields);
-        console.log('clearedFields', clearedFields);
         if (newFields.status && newFields.status != 'pending') ddp.close();
         if (newFields.out) {
           var olen = oldFields.out ? oldFields.out.length : 0;
@@ -317,7 +314,6 @@ function stop() {
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
     ddp.call('etls.reset', [{name: name}], function (err, res) {
-      console.log(err, res);
       ddp.close();
     });
   });
