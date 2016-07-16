@@ -2,13 +2,10 @@
 
 var sc = require('skale-engine').context();
 
-var file = process.argv[2] || '/etc/hosts';
+var file = __dirname + '/kv.data';
 
 sc.textFile(file)
-  .flatMap(line => line.split(' '))
-  .map(word => [word, 1])
-  .reduceByKey((a, b) => a + b, 0)
-  .count()
+  .take(1)
   .then(function (res) {
     console.log(res);
     sc.end();

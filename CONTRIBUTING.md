@@ -22,12 +22,14 @@ contribution at a time by users just like you.
 * Write your code in your local copy. It's good practice to create
   a branch for each new issue you work on, although not compulsory
 * Your code must follow existing coding style, and tests must pass.
-  To check coding style, run `npm run lint`.
+  To check coding style, run `npm run lint`. The [coding style] of skale
+  is the same as in core NodeJS.
   To run the tests, first run `npm install`, then `npm test`
 * If the tests pass, you can commit changes to your fork and then
   create a pull request from there. Reference any relevant issue by
   including its number in the message, e.g. #123
 
+[coding style]: https://github.com/felixge/node-style-guide
 [gitter]: https://gitter.im/skale-me/skale-engine
 [google group]: https://groups.google.com/forum/#!forum/skale
 [issue database]: https://github.com/skale-me/skale-engine/issues

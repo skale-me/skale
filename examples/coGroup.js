@@ -10,10 +10,10 @@ var a = sc.parallelize(data, nPartitions);
 var b = sc.parallelize(data2, nPartitions);
 
 a.coGroup(b).collect(function(err, res) {
-	console.log(res);
-	console.log(res[0]);
-	console.log(res[1]);
-	console.log(res[2]);
-	console.log(res[3]);	
-	sc.end();
+  console.log(res);
+  console.log(res[0]);
+  console.log(res[1]);
+  console.log(res[2]);
+  console.log(res[3]);  
+  sc.end();
 });
