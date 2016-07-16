@@ -10,7 +10,7 @@ function keyFunc(data) {return data;}
 sc.parallelize(data, nPartitions)
   .sortBy(keyFunc)
   .collect(function(err, res) {
-	console.log(res);
-	console.assert(JSON.stringify(res) === JSON.stringify([0, 1, 2, 3, 4, 5, 6, 7, 9, 10]));	
-	sc.end();
-});
+    console.log(res);
+    console.assert(JSON.stringify(res) === JSON.stringify([0, 1, 2, 3, 4, 5, 6, 7, 9, 10]));  
+    sc.end();
+  });

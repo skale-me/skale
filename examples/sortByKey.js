@@ -8,7 +8,7 @@ var nPartitions = 2;
 sc.parallelize(data, nPartitions)
   .sortByKey()
   .collect(function(err, res) {
-	console.log(res);
-	console.assert(JSON.stringify(res) === JSON.stringify([['cedric', 3], ['hello', 1], ['world', 2]]));	
-	sc.end();
-});
+    console.log(res);
+    console.assert(JSON.stringify(res) === JSON.stringify([['cedric', 3], ['hello', 1], ['world', 2]]));  
+    sc.end();
+  });

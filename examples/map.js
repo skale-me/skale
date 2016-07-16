@@ -8,7 +8,7 @@ function sum(a, b) {return a + b;}
 sc.parallelize([1, 2, 3, 4])
   .map(by2, {bias: 2})
   .reduce(sum, 0, function(err, res) {
-	console.log(res);
-	console.assert(res == 40);
-	sc.end();
-});
+    console.log(res);
+    console.assert(res == 40);
+    sc.end();
+  });
