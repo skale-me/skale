@@ -111,14 +111,14 @@ After having initialized a cluster context using
 [skale.context()](#skale-context), one can create a dataset
 using the following sources:
 
-| Source Name                                       | Description                                           |
-| ------------------------------------------------- | ----------------------------------------------------- |
-|[gzipFile(path)](#scgzipfilepath)                  | Create a dataset from a gzipped text file             |
-|[lineStream(stream)](#sclinestreaminput_stream)    | Create a dataset from a text stream                   |
-|[objectStream(stream)](#scobjectstreaminput_stream)| Create a dataset from an object stream                |
-|[parallelize(array)](#scparallelizearray)          | Create a dataset from an array                        |
-|[range(start,end,step)](#scrangestart-end-step)    | Create a dataset containing integers from start to end|
-|[textFile(path)](#sctextfilepath)                  | Create a dataset from a regular text file             |
+| Source Name                                       | Description                                            |
+| ------------------------------------------------- | ------------------------------------------------------ |
+|[gzipFile(path)](#scgzipfilepath)                  | Create a dataset from a gzipped text file              |
+|[lineStream(stream)](#sclinestreaminput_stream)    | Create a dataset from a text stream                    |
+|[objectStream(stream)](#scobjectstreaminput_stream)| Create a dataset from an object stream                 |
+|[parallelize(array)](#scparallelizearray)          | Create a dataset from an array                         |
+|[range(start,end,step)](#scrangestart-end-step)    | Create a dataset containing integers from start to end |
+|[textFile(path)](#sctextfilepath)                  | Create a dataset from text file                        |
 
 ### Transformations
 
@@ -237,8 +237,14 @@ sc.range(10, -5, -3).collect().then(console.log)
 
 #### sc.textFile(path)
 
-Returns a new dataset of lines composing the file specified by path
-*String*.
+Returns a new dataset of lines in file specified by path *String*.
+
+if *path* ends by a '/' (directory separator), then the dataset
+will be composed of all the files in the directory. Sub-directories
+are not supported.
+
+If a file name ends by '.gz', then its content will be automatically
+uncompressed using GZIP.
 
 Note: If using a path on the local filesystem, the file must also
 be accessible at the same path on worker nodes. Either copy the
