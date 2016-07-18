@@ -111,14 +111,15 @@ After having initialized a cluster context using
 [skale.context()](#skale-context), one can create a dataset
 using the following sources:
 
-| Source Name                                       | Description                                           |
-| ------------------------------------------------- | ----------------------------------------------------- |
-|[gzipFile(path)](#scgzipfilepath)                  | Create a dataset from a gzipped text file             |
-|[lineStream(stream)](#sclinestreaminput_stream)    | Create a dataset from a text stream                   |
-|[objectStream(stream)](#scobjectstreaminput_stream)| Create a dataset from an object stream                |
-|[parallelize(array)](#scparallelizearray)          | Create a dataset from an array                        |
-|[range(start,end,step)](#scrangestart-end-step)    | Create a dataset containing integers from start to end|
-|[textFile(path)](#sctextfilepath)                  | Create a dataset from a regular text file             |
+| Source Name                                       | Description                                            |
+| ------------------------------------------------- | ------------------------------------------------------ |
+|[gzipFile(path)](#scgzipfilepath)                  | Create a dataset from a gzipped text file              |
+|[lineStream(stream)](#sclinestreaminput_stream)    | Create a dataset from a text stream                    |
+|[objectStream(stream)](#scobjectstreaminput_stream)| Create a dataset from an object stream                 |
+|[parallelize(array)](#scparallelizearray)          | Create a dataset from an array                         |
+|[range(start,end,step)](#scrangestart-end-step)    | Create a dataset containing integers from start to end |
+|[textDir(path)](#sctextdirpath)                    | Create a dataset from a directory containing text files|
+|[textFile(path)](#sctextfilepath)                  | Create a dataset from a regular text file              |
 
 ### Transformations
 
@@ -234,6 +235,14 @@ sc.range(2, 4).collect().then(console.log)
 sc.range(10, -5, -3).collect().then(console.log)
 // [ 10, 7, 4, 1, -2 ]
 ```
+
+#### sc.textDir(path)
+
+Returns a new dataset of lines of files in the directory specified
+by path *String*. One partition per file is created.
+
+The directory must contain only files, no sub-directories.
+Files compressed by gzip are supported. Their name must end by '.gz'.
 
 #### sc.textFile(path)
 
