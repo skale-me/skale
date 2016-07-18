@@ -118,8 +118,7 @@ using the following sources:
 |[objectStream(stream)](#scobjectstreaminput_stream)| Create a dataset from an object stream                 |
 |[parallelize(array)](#scparallelizearray)          | Create a dataset from an array                         |
 |[range(start,end,step)](#scrangestart-end-step)    | Create a dataset containing integers from start to end |
-|[textDir(path)](#sctextdirpath)                    | Create a dataset from a directory containing text files|
-|[textFile(path)](#sctextfilepath)                  | Create a dataset from a regular text file              |
+|[textFile(path)](#sctextfilepath)                  | Create a dataset from text file                        |
 
 ### Transformations
 
@@ -236,18 +235,16 @@ sc.range(10, -5, -3).collect().then(console.log)
 // [ 10, 7, 4, 1, -2 ]
 ```
 
-#### sc.textDir(path)
-
-Returns a new dataset of lines of files in the directory specified
-by path *String*. One partition per file is created.
-
-The directory must contain only files, no sub-directories.
-Files compressed by gzip are supported. Their name must end by '.gz'.
-
 #### sc.textFile(path)
 
-Returns a new dataset of lines composing the file specified by path
-*String*.
+Returns a new dataset of lines in file specified by path *String*.
+
+if *path* ends by a '/' (directory separator), then the dataset
+will be composed of all the files in the directory. Sub-directories
+are not supported.
+
+If a file name ends by '.gz', then its content will be automatically
+uncompressed using GZIP.
 
 Note: If using a path on the local filesystem, the file must also
 be accessible at the same path on worker nodes. Either copy the
