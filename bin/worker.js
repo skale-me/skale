@@ -147,7 +147,7 @@ function runWorker(host, port) {
     fs.readFile(file, function (err, data) {
       fs.unlink(file, function () {});
       if (err) throw new Error(err);
-      zlib.gunzip(data, function (err, data) {
+      zlib.gunzip(data, {chunkSize: 65536}, function (err, data) {
         if (err) throw new Error(err);
         msg.req.args = data;
         runTask(msg);
