@@ -1,5 +1,22 @@
 # Change Log
 
+## [1.1.2](https://github.com/skale-me/skale-cli/tree/1.1.2) (2016-07-29)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.1.1...1.1.2)
+
+**Merged pull requests:**
+
+- Add debug flag, improve cloud run [\#20](https://github.com/skale-me/skale-cli/pull/20) ([mvertes](https://github.com/mvertes))
+- Implement attach command [\#19](https://github.com/skale-me/skale-cli/pull/19) ([mvertes](https://github.com/mvertes))
+- Re-implement status and stop commands [\#18](https://github.com/skale-me/skale-cli/pull/18) ([mvertes](https://github.com/mvertes))
+- test command to run locally. run command to run on skale cloud. [\#17](https://github.com/skale-me/skale-cli/pull/17) ([mvertes](https://github.com/mvertes))
+
+## [1.1.1](https://github.com/skale-me/skale-cli/tree/1.1.1) (2016-07-08)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.1.0...1.1.1)
+
+**Merged pull requests:**
+
+- deploy: allow to retry from scratch in case of error [\#16](https://github.com/skale-me/skale-cli/pull/16) ([mvertes](https://github.com/mvertes))
+
 ## [1.1.0](https://github.com/skale-me/skale-cli/tree/1.1.0) (2016-07-05)
 [Full Changelog](https://github.com/skale-me/skale-cli/compare/1.0.15...1.1.0)
 
