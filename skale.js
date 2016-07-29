@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+'use strict';
 
 // Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
 
@@ -25,6 +26,7 @@ var help = 'Usage: skale [options] <command> [<args>]\n' +
 '  stop                Stop application on skale cloud\n' +
 '\n' +
 'Options:\n' +
+'  -d, --debug         Enable debug traces\n' +
 '  -f, --file          Set program to run (default: package name)\n' +
 '  --force             Force action to occur, despite warning\n' +
 '  -h, --help          Print help and quit\n' +
@@ -41,6 +43,7 @@ var argv = require('minimist')(process.argv.slice(2), {
     'w', 'worker',
   ],
   boolean: [
+    'd', 'debug',
     'force',
     'h', 'help',
     'V', 'version',
@@ -57,6 +60,9 @@ if (argv.V || argv.version) {
   var pkg = require('./package');
   console.log(pkg.name + '-' + pkg.version);
   process.exit();
+}
+if (argv.d || argv.debug) {
+  process.env.SKALE_DEBUG = 3;
 }
 
 var configPath = argv.c || argv.config || process.env.SKALE_CONFIG || process.env.HOME + '/.skalerc';
@@ -128,7 +134,7 @@ function create(name) {
     ' sc.end();\n' +
     '});\n';
   fs.writeFileSync(name + '.js', src);
-  var gitIgnore = 'node_modules\nnpm-debug.log*\n';
+  var gitIgnore = 'node_modules\nnpm-debug.log*\n.npm-install-changed.json\n';
   fs.writeFileSync('.gitignore', gitIgnore);
   var npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
   if (npm.status) die('skale create error: npm install failed');
@@ -246,9 +252,11 @@ function run_remote(args) {
     if (err) throw new Error(err);
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
+    var opt = {debug: process.env.SKALE_DEBUG};
 
-    ddp.call('etls.run', [{name: name}], function (err, res) {
+    ddp.call('etls.run', [{name: name, opt: opt}], function (err, res) {
       console.log('etls.run', err, res);
+	  if (err) die('run failed:', err);
       if (res.alreadyStarted) die('Error: application is already running, use "skale attach" or "skale stop"');
       var taskId = res.taskId;
       ddp.subscribe('task.withTaskId', [taskId], function () {});
@@ -301,6 +309,7 @@ function status() {
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
     ddp.subscribe('etls.withName', [name], function (err, data) {
+	  if (!ddp.collections.etls) die('etl not found:', name);
       var etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
       console.log(etl.name, 'status:', etl.running ? 'running' : 'exited');
       ddp.close();
