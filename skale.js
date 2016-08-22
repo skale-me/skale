@@ -143,7 +143,7 @@ function create(name) {
   fs.writeFileSync('.gitignore', gitIgnore);
   var npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
   if (npm.status) die('skale create error: npm install failed');
-  console.log('Project ${name} is now ready.\n' +
+  console.log('Project ' + name + ' is now ready.\n' +
     'Please change directory to ' + name + ': "cd ' + name + '"\n' +
     'To run your app locally: "skale test"\n' +
     'To modify your app: edit ' + name + '.js');
