@@ -135,7 +135,7 @@ function create(name) {
     'var sc = require(\'skale-engine\').context();\n' +
     '\n' +
     'sc.parallelize([\'Hello world\']).collect().then(function (res) {\n' +
-    ' console.log(res);\n' +
+    ' console.log(sc.worker.length + \' workers, res:\', res);\n' +
     ' sc.end();\n' +
     '});\n';
   fs.writeFileSync(name + '.js', src);
