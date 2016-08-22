@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.1.3](https://github.com/skale-me/skale-cli/tree/1.1.3) (2016-08-22)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.1.2...1.1.3)
+
+**Merged pull requests:**
+
+- fix error handling [\#23](https://github.com/skale-me/skale-cli/pull/23) ([mvertes](https://github.com/mvertes))
+- default app prints number of workers [\#22](https://github.com/skale-me/skale-cli/pull/22) ([mvertes](https://github.com/mvertes))
+- check validity of application name at creation [\#21](https://github.com/skale-me/skale-cli/pull/21) ([mvertes](https://github.com/mvertes))
+
 ## [1.1.2](https://github.com/skale-me/skale-cli/tree/1.1.2) (2016-07-29)
 [Full Changelog](https://github.com/skale-me/skale-cli/compare/1.1.1...1.1.2)
 
