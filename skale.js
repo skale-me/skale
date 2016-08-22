@@ -104,7 +104,12 @@ switch (argv._[0]) {
     die('Error: invalid command: ' + argv._[0]);
 }
 
+function checkName(name) {
+  return /^[A-Za-z][A-Za-z0-9_-]+$/.test(name);
+}
+
 function create(name) {
+  if (!checkName(name)) die('skale create error: invalid name ' + name);
   console.log('create application ' + name);
   try {
     fs.mkdirSync(name);
