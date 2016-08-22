@@ -164,7 +164,7 @@ function load_config(argv) {
 
 function save_config(config) {
   fs.writeFile(configPath, JSON.stringify(config, null, 2), function (err) {
-    if (err) throw new Error(err);
+    if (err) die('Could node write ' + configPath + ':', err);
   });
 }
 
@@ -228,18 +228,18 @@ function deploy(args) {
     var name = pkg.name;
 
     ddp.call('etls.add', [{name: name}], function (err, res) {
-      if (err) throw new Error(err);
+      if (err) die('Could not create application ' + name + ':', err);
       var a = res.url.split('/');
       var login = a[a.length - 2];
       var host = a[2].replace(/:.*/, '');
       var passwd = res.token;
       rc[host] = {login: login, password: passwd};
       netrc.save(rc);
-      console.log('deploying Application');
       child_process.exec('git remote remove skale; git remote add skale "' + res.url + '"; git add -A .; git commit -m "automatic commit"; git push skale master', function (err, stdout, stderr) {
-        if (err) throw new Error(err);
+        if (err) die('deploy error: ' + err);
         ddp.call('etls.deploy', [{name: name}], function (err, res) {
-          console.log('Application is being deployed ...')
+          if (err) console.error(err);
+          else console.log(name + ' deployed');
           ddp.close();
         });
       });
@@ -254,14 +254,13 @@ function run_remote(args) {
     else die('Error: content has changed, deploy first or run --force');
   }
   skale_session(function (err, ddp, isreconnect) {
-    if (err) throw new Error(err);
+    if (err) die('Could not connect:', err);
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
     var opt = {debug: process.env.SKALE_DEBUG};
 
     ddp.call('etls.run', [{name: name, opt: opt}], function (err, res) {
-      console.log('etls.run', err, res);
-	  if (err) die('run failed:', err);
+      if (err) die('run error:', err);
       if (res.alreadyStarted) die('Error: application is already running, use "skale attach" or "skale stop"');
       var taskId = res.taskId;
       ddp.subscribe('task.withTaskId', [taskId], function () {});
@@ -281,7 +280,7 @@ function run_remote(args) {
 
 function attach() {
   skale_session(function (err, ddp, isreconnect) {
-    if (err) throw new Error(err);
+    if (err) die('Could not connect:', err);
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
     ddp.subscribe('etls.withName', [name], function (err) {
@@ -310,7 +309,7 @@ function attach() {
 
 function status() {
   skale_session(function (err, ddp, isreconnect) {
-    if (err) throw new Error(err);
+    if (err) die('could node connect:', err);
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
     ddp.subscribe('etls.withName', [name], function (err, data) {
@@ -324,7 +323,7 @@ function status() {
 
 function stop() {
   skale_session(function (err, ddp, isreconnect) {
-    if (err) throw new Error(err);
+    if (err) die('could node connect:', err);
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
     ddp.call('etls.reset', [{name: name}], function (err, res) {
