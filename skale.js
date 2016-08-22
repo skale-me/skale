@@ -104,7 +104,12 @@ switch (argv._[0]) {
     die('Error: invalid command: ' + argv._[0]);
 }
 
+function checkName(name) {
+  return /^[A-Za-z][A-Za-z0-9_-]+$/.test(name);
+}
+
 function create(name) {
+  if (!checkName(name)) die('skale create error: invalid name ' + name);
   console.log('create application ' + name);
   try {
     fs.mkdirSync(name);
@@ -138,7 +143,7 @@ function create(name) {
   fs.writeFileSync('.gitignore', gitIgnore);
   var npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
   if (npm.status) die('skale create error: npm install failed');
-  console.log('Project ${name} is now ready.\n' +
+  console.log('Project ' + name + ' is now ready.\n' +
     'Please change directory to ' + name + ': "cd ' + name + '"\n' +
     'To run your app locally: "skale test"\n' +
     'To modify your app: edit ' + name + '.js');
