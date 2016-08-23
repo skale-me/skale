@@ -49,8 +49,8 @@
     "ws": "^1.1.0"
   },
   "devDependencies": {
-    "eslint": "^2.7.0",
-    "mocha": "^2.2.5"
+    "eslint": "^3.3.1",
+    "mocha": "^3.0.2"
   },
   "eslintConfig": {
     "rules": {
