@@ -184,14 +184,14 @@ function run_local(args) {
 }
 
 function skale_session(callback) {
-  var host = process.env.SKALE_SERVER || 'skale.me';
-  var port = process.env.SKALE_PORT || 3000;
+  var host = process.env.SKALE_SERVER || 'apps.skale.me';
+  var port = process.env.SKALE_PORT || 443;
 
   var ddp = new DDPClient({
     // All properties optional, defaults shown
     host : host,
     port : port,
-    ssl  : false,
+    ssl  : !process.env.SKALE_NOSSL,
     autoReconnect : true,
     autoReconnectTimer: 500,
     maintainCollections : true,
