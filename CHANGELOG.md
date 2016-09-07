@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.4](https://github.com/skale-me/skale-cli/tree/1.1.4) (2016-09-07)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.1.3...1.1.4)
+
+**Merged pull requests:**
+
+- Update connection to upcoming ssl server [\#25](https://github.com/skale-me/skale-cli/pull/25) ([mvertes](https://github.com/mvertes))
+
 ## [1.1.3](https://github.com/skale-me/skale-cli/tree/1.1.3) (2016-08-22)
 [Full Changelog](https://github.com/skale-me/skale-cli/compare/1.1.2...1.1.3)
 
