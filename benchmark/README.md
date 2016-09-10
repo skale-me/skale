@@ -1,6 +1,6 @@
 # A first benchmark
 
-In this first benchmark, the goal is to evaluate the performances
+In this first benchmark, the goal is to evaluate the performance
 of the skale data processing engine.
 
 For that, we use an iterative machine learning application, the
@@ -10,17 +10,17 @@ logistic regression.
 
 The same algorithm is implemented both in NodeJS/Skale ([skaleLR.js]),
 and Python/Spark ([sparkLR.py]). Note that we do not use the spark-ml
-library neither the skale-ml library, because our focus here is on
-the core engine performances, and we also want this test to remain
+library or the skale-ml library, because our focus here is on
+core engine performances, and we also want this test to remain
 standalone and stable accross multiple versions of Skale and Spark.
 
-We use the exact same input file, stored on the local file
-system, and run the test using the one same host. We randomly
+We use the exact same input file for both, stored on the local file
+system, and run the test using the same host. We randomly
 generated data using [gen_data.js] program.
 
 ## Results
 
-Tests are performed an AWS EC2 instance, called m4.4xlarge, with 16 cores and 64 GB RAM.
+Tests are performed on an AWS EC2 instance, called m4.4xlarge, with 16 cores and 64 GB RAM.
 The spark environment is spark-1.6.1, java-1.8.0_31, Python-3.4.2 (from https://hub.docker.com/r/gettyimages/spark/)
 The skale environment is skale-0.4.5, nodejs-4.4.3.
 
