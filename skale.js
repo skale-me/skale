@@ -22,7 +22,7 @@ var help = 'Usage: skale [options] <command> [<args>]\n' +
 '  attach              Attach to a running application\n' +
 '  log                 Print log of an application\n' +
 '  signup              Create an account on skale cloud\n' +
-'  status              Print status of application on skale cloud\n' +
+'  status [<name>]     Print status of application on skale cloud\n' +
 '  stop                Stop application on skale cloud\n' +
 '\n' +
 'Options:\n' +
@@ -92,7 +92,7 @@ switch (argv._[0]) {
     console.log('signup: not implemented yet');
     break;
   case 'status':
-    status();
+    status(argv._[1]);
     break;
   case 'stop':
     stop();
@@ -307,11 +307,18 @@ function attach() {
   });
 }
 
-function status() {
+function status(name) {
   skale_session(function (err, ddp, isreconnect) {
     if (err) die('could node connect:', err);
-    var pkg = JSON.parse(fs.readFileSync('package.json'));
-    var name = pkg.name;
+    if (!name) {
+      try {
+        var pkg = JSON.parse(fs.readFileSync('package.json'));
+        name = pkg.name;
+      } catch (err) {
+        die('Could not find package.json.  You need to run this command from a skale project directory.')
+      }
+    }
+
     ddp.subscribe('etls.withName', [name], function (err, data) {
 	  if (!ddp.collections.etls) die('etl not found:', name);
       var etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
