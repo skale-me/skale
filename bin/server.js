@@ -31,7 +31,6 @@ var opt = require('node-getopt').create([
   ['H', 'Host=ARG', 'primary server host (default none)'],
   ['l', 'local=ARG', 'start local worker controller (default ncpu workers)'],
   ['m', 'memory=ARG', 'set max memory in MB for workers in local mode (default 1024)'],
-  ['n', 'nworker=ARG', 'start local worker controller (default ncpu workers)'],
   ['N', 'Name=ARG', 'advertised server name (default localhost)'],
   ['P', 'Port=ARG', 'primary server port (default none)'],
   ['p', 'port=ARG', 'server port (default 12346)'],
