@@ -9,7 +9,7 @@
         
         <link rel="shortcut icon" href="../img/favicon.ico">
 
-	<title>Skale API 0.5 - skale</title>
+	<title>Skale API 0.6 - skale</title>
 
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -71,14 +71,14 @@
                     <ul class="dropdown-menu">
                     
                         
-<li >
-    <a href="../skale-API-0.6/">Skale API 0.6</a>
+<li class="active">
+    <a href="./">Skale API 0.6</a>
 </li>
 
                     
                         
-<li class="active">
-    <a href="./">Skale API 0.5</a>
+<li >
+    <a href="../skale-API-0.5/">Skale API 0.5</a>
 </li>
 
                     
@@ -102,12 +102,12 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="next" href="../skale-API-0.6/">
+                    <a rel="next" href="..">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../skale-API-0.4/">
+                    <a rel="prev" href="../skale-API-0.5/">
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -208,6 +208,7 @@
 <li><a href="#dsreducebykeyreducer-init-obj">ds.reduceByKey(reducer, init[, obj])</a></li>
 <li><a href="#dsrightouterjoinother">ds.rightOuterJoin(other)</a></li>
 <li><a href="#dssamplewithreplacement-frac-seed">ds.sample(withReplacement, frac, seed)</a></li>
+<li><a href="#dssaveurl-options-done">ds.save(url[, options][, done])</a></li>
 <li><a href="#dssortbykeyfunc-ascending">ds.sortBy(keyfunc[, ascending])</a></li>
 <li><a href="#dssortbykeyascending">ds.sortByKey(ascending)</a></li>
 <li><a href="#dssubtractother">ds.subtract(other)</a></li>
@@ -273,6 +274,10 @@ using the following sources:</p>
 </thead>
 <tbody>
 <tr>
+<td><a href="#scgzipfilepath">gzipFile(path)</a></td>
+<td>Create a dataset from a gzipped text file</td>
+</tr>
+<tr>
 <td><a href="#sclinestreaminput_stream">lineStream(stream)</a></td>
 <td>Create a dataset from a text stream</td>
 </tr>
@@ -290,7 +295,7 @@ using the following sources:</p>
 </tr>
 <tr>
 <td><a href="#sctextfilepath">textFile(path)</a></td>
-<td>Create a dataset from a regular text file</td>
+<td>Create a dataset from text file</td>
 </tr>
 </tbody>
 </table>
@@ -526,6 +531,11 @@ alternatively through a returned <a href="https://promisesaplus.com">ES6 promise
 <td>Return the top <code>num</code> elements of dataset</td>
 <td>array of value</td>
 </tr>
+<tr>
+<td><a href="#dssaveurl-options-done">save(url)</a></td>
+<td>Save the content of a dataset to an url</td>
+<td>empty</td>
+</tr>
 </tbody>
 </table>
 <h1 id="skale-module">Skale module<a class="headerlink" href="#skale-module" title="Permanent link">&para;</a></h1>
@@ -569,8 +579,12 @@ sc.range(10, -5, -3).collect().then(console.log)
 </code></pre>
 
 <h3 id="sctextfilepath">sc.textFile(path)<a class="headerlink" href="#sctextfilepath" title="Permanent link">&para;</a></h3>
-<p>Returns a new dataset of lines composing the file specified by path
-<em>String</em>.</p>
+<p>Returns a new dataset of lines in file specified by path <em>String</em>.</p>
+<p>if <em>path</em> ends by a '/' (directory separator), then the dataset
+will be composed of all the files in the directory. Sub-directories
+are not supported.</p>
+<p>If a file name ends by '.gz', then its content will be automatically
+uncompressed using GZIP.</p>
 <p>Note: If using a path on the local filesystem, the file must also
 be accessible at the same path on worker nodes. Either copy the
 file to all workers or use a network-mounted shared file system.</p>
@@ -641,7 +655,7 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the dataset.</li>
 <li><em>done</em>: a callback of the form <code>function(error, result)</code> which is
-  called at completion. If <em>undefined</em>, <code>aggregate()</code> returns an 
+  called at completion. If <em>undefined</em>, <code>aggregate()</code> returns an
   <a href="https://promisesaplus.com">ES6 promise</a>.</li>
 </ul>
 <p>The following example computes the average of a dataset, avoiding a <code>map()</code>:</p>
@@ -713,7 +727,7 @@ ds1.cartesian(ds2).collect().then(console.log);
 var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
 ds1.coGroup(ds2).collect().then(console.log);
 // [ [ 10, [ [ 1 ], [ 'world' ] ] ],
-//   [ 20, [ [ 2 ], [] ] ], 
+//   [ 20, [ [ 2 ], [] ] ],
 //   [ 30, [ [], [ 3 ] ] ] ]
 </code></pre>
 
@@ -1133,6 +1147,39 @@ without replacement, using a given random generator <em>seed</em>.</p>
    sample(true, 0.5, 0).
    collect().then(console.log);
 // [ 1, 1, 3, 4, 4, 5, 7 ]
+</code></pre>
+
+<h3 id="dssaveurl-options-done">ds.save(url[, options][, done])<a class="headerlink" href="#dssaveurl-options-done" title="Permanent link">&para;</a></h3>
+<p>This <a href="#actions">action</a> saves the content of the dataset to the destination URL. The
+destination is a flat directory which will contain as many files as partitions
+in the dataset. Files are named from partition numbers, starting at 0.
+The file format is a stream of JSON strings (one per dataset
+element) separated by newlines.</p>
+<ul>
+<li><em>url</em>: a <em>String</em> of the general form <code>protocol://host/path</code> or <code>/path</code>. See
+  below for supported protocols</li>
+<li><em>options</em>: an <em>Object</em> with the following fields:<ul>
+<li><em>gzip</em>: <em>Boolean</em> (default false) to enable gzip compression. If compression
+  is enabled, files are suffixed with <code>.gz</code></li>
+</ul>
+</li>
+<li><em>done</em>: an optional callback function of the form <code>function(error, result)</code>
+  called at completion. If not provided, an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</li>
+</ul>
+<h4 id="file-protocol">File protocol<a class="headerlink" href="#file-protocol" title="Permanent link">&para;</a></h4>
+<p>The URL form is <code>file://path</code> or simply <code>path</code> where <em>path</em> is an absolute
+pathname in the master host local file system.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.range(300).save('/tmp/results/').then(sc.end());
+// will produce /tmp/results/0, /tmp/results/1
+</code></pre>
+
+<h4 id="aws-s3-protocol">AWS S3 protocol<a class="headerlink" href="#aws-s3-protocol" title="Permanent link">&para;</a></h4>
+<p>The URL form is <code>s3://bucket/key</code>. AWS credentials must be provided by environment
+variables i.e <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_ACCESS_KEY_ID</code>.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.range(300).save('s3://myproject/mydataset', {gzip: true}).then(sc.end());
+// will produce https://myproject.s3.amazonaws.com/mydataset/0.gz
 </code></pre>
 
 <h3 id="dssortbykeyfunc-ascending">ds.sortBy(keyfunc[, ascending])<a class="headerlink" href="#dssortbykeyfunc-ascending" title="Permanent link">&para;</a></h3>
