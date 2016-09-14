@@ -1,6 +1,6 @@
 {
   "name": "skale-engine",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "license": "Apache-2.0",
   "description": "parallel and distributed data processing engine",
   "main": "index.js",
@@ -43,10 +43,10 @@
     "mkdirp": "^0.5.1",
     "node-getopt": "^0.2.3",
     "node-uuid": "^1.4.7",
-    "rimraf": "^2.5.2",
+    "rimraf": "^2.5.4",
     "thenify": "^3.2.0",
     "websocket-stream": "^3.3.0",
-    "ws": "^1.1.0"
+    "ws": "^1.1.1"
   },
   "devDependencies": {
     "eslint": "^2.13.1",

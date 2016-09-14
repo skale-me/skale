@@ -1,5 +1,23 @@
 # Change Log
 
+## [0.6.2](https://github.com/skale-me/skale-engine/tree/0.6.2) (2016-09-14)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.1...0.6.2)
+
+**Closed issues:**
+
+- bin/server doesn't use nworker parameter [\#82](https://github.com/skale-me/skale-engine/issues/82)
+
+**Merged pull requests:**
+
+- Fix save\(\) action to export a dataset to filesystem or S3 [\#84](https://github.com/skale-me/skale-engine/pull/84) ([mvertes](https://github.com/mvertes))
+- Remove unused nworker command line parameter [\#83](https://github.com/skale-me/skale-engine/pull/83) ([mark-bradshaw](https://github.com/mark-bradshaw))
+- Minor grammar update. [\#80](https://github.com/skale-me/skale-engine/pull/80) ([mark-bradshaw](https://github.com/mark-bradshaw))
+- Add streaming source from AWS S3 [\#78](https://github.com/skale-me/skale-engine/pull/78) ([mvertes](https://github.com/mvertes))
+- local worker: handle master disconnect [\#77](https://github.com/skale-me/skale-engine/pull/77) ([mvertes](https://github.com/mvertes))
+- Increase buffer size of zlib from 16kB to 64kB. Better performances [\#76](https://github.com/skale-me/skale-engine/pull/76) ([mvertes](https://github.com/mvertes))
+- textFile now supports directory as dataset source [\#75](https://github.com/skale-me/skale-engine/pull/75) ([mvertes](https://github.com/mvertes))
+- Coding style change. We now use the same as NodeJS core. [\#74](https://github.com/skale-me/skale-engine/pull/74) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.1](https://github.com/skale-me/skale-engine/tree/0.6.1) (2016-07-05)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.0...0.6.1)
 
