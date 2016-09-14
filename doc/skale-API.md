@@ -46,7 +46,7 @@
     - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
     - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
     - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
-	- [ds.save(url[, options][, done])](#dssaveurl-options-done)
+    - [ds.save(url[, options][, done])](#dssaveurl-options-done)
     - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
     - [ds.sortByKey(ascending)](#dssortbykeyascending)
     - [ds.subtract(other)](#dssubtractother)
