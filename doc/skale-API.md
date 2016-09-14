@@ -46,6 +46,7 @@
     - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
     - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
     - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
+    - [ds.save(url[, options][, done])](#dssaveurl-options-done)
     - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
     - [ds.sortByKey(ascending)](#dssortbykeyascending)
     - [ds.subtract(other)](#dssubtractother)
@@ -177,7 +178,7 @@ alternatively through a returned [ES6 promise].
 |[reduce(func, init)](#dsreducereducer-init-obj-done)| Aggregates dataset elements using a function into one value | value|
 |[take(num)](#dstakenum-done)         | Return the first `num` elements of dataset | array of value|
 |[top(num)](#dstopnum-done)           | Return the top `num` elements of dataset | array of value|
-|[save(file)](#dssavefile-done)       | Save the content of a dataset into a file | empty |
+|[save(url)](#dssaveurl-options-done)       | Save the content of a dataset to an url | empty |
 
 ## Skale module
 
@@ -326,7 +327,7 @@ The result is passed to the *done()* callback if provided, otherwise an
   serializable data from master to workers, obj is shared amongst
   mapper executions over each element of the dataset.
 - *done*: a callback of the form `function(error, result)` which is
-  called at completion. If *undefined*, `aggregate()` returns an 
+  called at completion. If *undefined*, `aggregate()` returns an
   [ES6 promise].
 
 The following example computes the average of a dataset, avoiding a `map()`:
@@ -407,7 +408,7 @@ var ds1 = sc.parallelize([[10, 1], [20, 2]]);
 var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
 ds1.coGroup(ds2).collect().then(console.log);
 // [ [ 10, [ [ 1 ], [ 'world' ] ] ],
-//   [ 20, [ [ 2 ], [] ] ], 
+//   [ 20, [ [ 2 ], [] ] ],
 //   [ 30, [ [], [ 3 ] ] ] ]
 ```
 
@@ -892,6 +893,46 @@ sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
    sample(true, 0.5, 0).
    collect().then(console.log);
 // [ 1, 1, 3, 4, 4, 5, 7 ]
+```
+
+#### ds.save(url[, options][, done])
+
+This [action] saves the content of the dataset to the destination URL. The
+destination is a flat directory which will contain as many files as partitions
+in the dataset. Files are named from partition numbers, starting at 0.
+The file format is a stream of JSON strings (one per dataset
+element) separated by newlines.
+
+- *url*: a *String* of the general form `protocol://host/path` or `/path`. See
+  below for supported protocols
+- *options*: an *Object* with the following fields:
+	- *gzip*: *Boolean* (default false) to enable gzip compression. If compression
+	  is enabled, files are suffixed with `.gz`
+- *done*: an optional callback function of the form `function(error, result)`
+  called at completion. If not provided, an [ES6 promise] is returned.
+
+##### File protocol
+
+The URL form is `file://path` or simply `path` where *path* is an absolute
+pathname in the master host local file system.
+
+Example:
+
+```javascript
+sc.range(300).save('/tmp/results/').then(sc.end());
+// will produce /tmp/results/0, /tmp/results/1
+```
+
+##### AWS S3 protocol
+
+The URL form is `s3://bucket/key`. AWS credentials must be provided by environment
+variables i.e `AWS_SECRET_ACCESS_KEY`, `AWS_ACCESS_KEY_ID`.
+
+Example:
+
+```javascript
+sc.range(300).save('s3://myproject/mydataset', {gzip: true}).then(sc.end());
+// will produce https://myproject.s3.amazonaws.com/mydataset/0.gz
 ```
 
 #### ds.sortBy(keyfunc[, ascending])

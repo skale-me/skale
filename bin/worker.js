@@ -8,10 +8,12 @@ var child_process = require('child_process');
 var fs = require('fs');
 var os = require('os');
 var cluster = require('cluster');
+var url = require('url');
 var zlib = require('zlib');
 var mkdirp = require('mkdirp');
 var uuid = require('node-uuid');
 var trace = require('line-trace');
+var AWS = require('aws-sdk');
 
 var SkaleClient = require('../lib/client.js');
 var Dataset = require('../lib/Dataset.js');
@@ -137,7 +139,7 @@ function runWorker(host, port) {
     // set worker side dependencies
     task.workerId = grid.host.uuid;
     task.mm = mm;
-    task.lib = {sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, uuid: uuid, trace: trace, zlib: zlib};
+    task.lib = {AWS: AWS, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, url: url, uuid: uuid, trace: trace, zlib: zlib};
     task.grid = grid;
     task.run(function(result) {grid.reply(msg, null, result);});
   }
