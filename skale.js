@@ -118,7 +118,12 @@ function create(name) {
   }
   process.chdir(name);
   console.log('create local repository');
-  child_process.execSync('git init');
+  try {
+    child_process.execSync('git init');
+  } catch (err) {
+    console.log('It looks like you may not have git installed.  Skale needs that to run.  See https://git-scm.com/ for installation.');
+    return;
+  }
 
   var pkg = {
     name: name,
@@ -143,10 +148,13 @@ function create(name) {
   fs.writeFileSync('.gitignore', gitIgnore);
   var npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
   if (npm.status) die('skale create error: npm install failed');
-  console.log('Project ' + name + ' is now ready.\n' +
+
+
+  console.log('\n----------------------------------' +
+    '\nProject ' + name + ' is now ready!\n' +
     'Please change directory to ' + name + ': "cd ' + name + '"\n' +
     'To run your app locally: "skale test"\n' +
-    'To modify your app: edit ' + name + '.js');
+    'To modify your app edit the file called ' + name + '.js');
 }
 
 function die(err) {
