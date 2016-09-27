@@ -4,16 +4,14 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        
-        
+
         <link rel="shortcut icon" href="./img/favicon.ico">
 
-	<title>skale</title>
+	      <title>skale</title>
 
         <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
-        <link rel="stylesheet" href="./css/highlight.css">
+        <link href="./css/highlight.css" rel="stylesheet">
         <link href="./css/base.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -22,7 +20,6 @@
             <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
 
-        
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -32,11 +29,10 @@
             ga('create', 'UA-75822605-1', 'skale-engine.github.io');
             ga('send', 'pageview');
         </script>
-        
+
     </head>
 
     <body>
-
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
 
@@ -58,40 +54,40 @@
         <div class="navbar-collapse collapse">
             <!-- Main navigation -->
             <ul class="nav navbar-nav">
-            
-            
+
+
                 <li class="active">
                     <a href=".">Home</a>
                 </li>
-            
-            
-            
+
+
+
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Skale API <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                    
-                        
+
+
 <li >
     <a href="skale-API-0.6/">Skale API 0.6</a>
 </li>
 
-                    
-                        
+
+
 <li >
     <a href="skale-API-0.5/">Skale API 0.5</a>
 </li>
 
-                    
-                        
+
+
 <li >
     <a href="skale-API-0.4/">Skale API 0.4</a>
 </li>
 
-                    
+
                     </ul>
                 </li>
-            
-            
+
+
             </ul>
 
             <!-- Search, Navigation and Repo links -->
@@ -111,16 +107,16 @@
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
-                
+
                 <li>
                     <a href="https://github.com/skale-me/skale-engine/">
-                        
+
                             <i class="fa fa-github"></i>
-                        
+
                         GitHub
                     </a>
                 </li>
-                
+
             </ul>
         </div>
     </div>
@@ -129,24 +125,24 @@
         <div class="container">
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-    
+
         <li class="main active"><a href="#skale-engine">skale-engine</a></li>
-        
+
             <li><a href="#features">Features</a></li>
-        
+
             <li><a href="#docs-community">Docs &amp; community</a></li>
-        
+
             <li><a href="#quickstart">Quickstart</a></li>
-        
+
             <li><a href="#examples">Examples</a></li>
-        
+
             <li><a href="#tests">Tests</a></li>
-        
+
             <li><a href="#people">People</a></li>
-        
+
             <li><a href="#license">License</a></li>
-        
-    
+
+
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
@@ -170,8 +166,8 @@ sc.textFile('/path/...')
 <li>In-memory computing</li>
 <li>Controlled memory usage, spill to disk when necessary</li>
 <li>Fast multiple distributed streams</li>
-<li>realtime lazy compiling and running of execution graphs</li>
-<li>workers can connect through TCP or websockets</li>
+<li>Realtime lazy compiling and running of execution graphs</li>
+<li>Workers can connect through TCP or websockets</li>
 </ul>
 <h2 id="docs-community">Docs &amp; community<a class="headerlink" href="#docs-community" title="Permanent link">&para;</a></h2>
 <ul>
@@ -188,12 +184,12 @@ and deploy skale applications.</p>
 <pre><code>$ npm install -g skale      # Install skale command once and for all
 $ skale create my_app       # Create a new app, install skale-engine
 $ cd my_app
-$ skale run                 # Starts a local cluster if necessary and run
+$ skale run                 # Starts a local cluster if necessary and runs
 </code></pre>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <p>In the following, we bypass <a href="https://www.npmjs.com/package/skale">skale</a>
-toolbelt, and use directly and only skale-engine. It's for you if you are
-rather more interested by the skale-engine architecture, details and internals.</p>
+toolbelt, and use skale-engine directly. It's for you if you are
+more interested in the skale-engine architecture, details and internals.</p>
 <p>To run the internal examples, clone the skale-engine repository and
 install the dependencies:</p>
 <pre><code>$ git clone git://github.com/skale-me/skale-engine.git --depth 1
@@ -221,7 +217,7 @@ contributors</a></p>
 
         <footer class="col-md-12">
             <hr>
-            
+
             <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
         </footer>
 
