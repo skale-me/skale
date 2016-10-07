@@ -49,6 +49,7 @@
     - [ds.save(url[, options][, done])](#dssaveurl-options-done)
     - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
     - [ds.sortByKey(ascending)](#dssortbykeyascending)
+	- [ds.stream([opt])](#dsstream-opt)
     - [ds.subtract(other)](#dssubtractother)
     - [ds.take(num[, done])](#dstakenum-done)
     - [ds.top(num[, done])](#dstopnum-done)
@@ -176,9 +177,10 @@ alternatively through a returned [ES6 promise].
 |[forEach(func)](#dsforeachcallback-obj-done)| Apply the provided function to each element of the dataset | empty |
 |[lookup(k)](#dslookupk-done)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | array of v|
 |[reduce(func, init)](#dsreducereducer-init-obj-done)| Aggregates dataset elements using a function into one value | value|
+|[save(url)](#dssaveurl-options-done)       | Save the content of a dataset to an url | empty |
+|[stream()](#dsstream-opt)            | Stream out a dataset | stream |
 |[take(num)](#dstakenum-done)         | Return the first `num` elements of dataset | array of value|
 |[top(num)](#dstopnum-done)           | Return the top `num` elements of dataset | array of value|
-|[save(url)](#dssaveurl-options-done)       | Save the content of a dataset to an url | empty |
 
 ## Skale module
 
@@ -966,6 +968,25 @@ sc.parallelize([['world', 2], ['cedric', 3], ['hello', 1]])
   .sortByKey()
   .collect().then(console.log)
 // [['cedric', 3], ['hello', 1], ['world', 2]]
+```
+
+#### ds.stream([opt])
+
+This [action] returns a [readable stream] of dataset content. The order
+of data and partitions is maintained.
+
+- *opt*: an object with the following fields:
+  - *gzip*: *Boolean*, when true, enable gzip compression. Default value: false.
+
+Example:
+
+```javascript
+var s = sc.range(4).stream();
+s.pipe(process.stdout);
+// 0
+// 1
+// 2
+// 3
 ```
 
 #### ds.subtract(other)
