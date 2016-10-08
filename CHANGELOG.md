@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.6.3](https://github.com/skale-me/skale-engine/tree/0.6.3) (2016-10-08)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.2...0.6.3)
+
+**Merged pull requests:**
+
+- Add new stream action, which allows to stream out a dataset [\#86](https://github.com/skale-me/skale-engine/pull/86) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.2](https://github.com/skale-me/skale-engine/tree/0.6.2) (2016-09-14)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.1...0.6.2)
 
