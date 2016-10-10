@@ -87,7 +87,7 @@ switch (argv._[0]) {
     list(argv._.splice(1));
     break;
   case 'log':
-    console.log('log: not implemented yet');
+    log.apply(null, argv._.splice(1));
     break;
   case 'run':
     run_remote(argv._.splice(1));
@@ -327,6 +327,24 @@ function attach() {
         }
       };
 
+    });
+  });
+}
+
+function log(name) {
+  if (!name) {
+    name = JSON.parse(fs.readFileSync('package.json')).name;
+  }
+  skale_session(function (err, ddp, isreconnect) {
+    if (err) die('could not connect:', err);
+    ddp.subscribe('etls.withName', [name], function () {
+      var etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
+      ddp.subscribe('task.withTaskId', [etl.taskId], function () {
+        var task = ddp.collections.tasks[Object.keys(ddp.collections.tasks)[0]];
+        for (var i = 0; i < task.out.length; i++)
+          console.log(task.out[i]);
+        ddp.close();
+      });
     });
   });
 }
