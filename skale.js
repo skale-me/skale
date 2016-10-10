@@ -20,6 +20,7 @@ var help = 'Usage: skale [options] <command> [<args>]\n' +
 '  deploy [<args>...]  Deploy application on skale cloud\n' +
 '  run [<args>...]     Run application on skale cloud\n' +
 '  attach              Attach to a running application\n' +
+'  list                List deployed applications\n' +
 '  log                 Print log of an application\n' +
 '  signup              Create an account on skale cloud\n' +
 '  status [<name>]     Print status of application on skale cloud\n' +
@@ -81,6 +82,9 @@ switch (argv._[0]) {
     break;
   case 'deploy':
     deploy(argv._.splice(1));
+    break;
+  case 'list':
+    list(argv._.splice(1));
     break;
   case 'log':
     console.log('log: not implemented yet');
@@ -251,6 +255,18 @@ function deploy(args) {
           ddp.close();
         });
       });
+    });
+  });
+}
+
+function list(args) {
+  skale_session(function (err, ddp, isreconnect) {
+    if (err) die('Could not connect:', err);
+    var user = Object.keys(ddp.collections.users)[0];
+    ddp.subscribe('etls', [user], function () {
+      var etls = ddp.collections.etls;
+      for (var i in etls) console.log(etls[i].name);
+      ddp.close();
     });
   });
 }
