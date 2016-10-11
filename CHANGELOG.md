@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.6.4](https://github.com/skale-me/skale-engine/tree/0.6.4) (2016-10-11)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.3...0.6.4)
+
+**Merged pull requests:**
+
+- dataset stream and save: preserve structure [\#88](https://github.com/skale-me/skale-engine/pull/88) ([mvertes](https://github.com/mvertes))
+- textFile: add capability to handle single AWS S3 files, gzipped or not. [\#87](https://github.com/skale-me/skale-engine/pull/87) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.3](https://github.com/skale-me/skale-engine/tree/0.6.3) (2016-10-08)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.2...0.6.3)
 
