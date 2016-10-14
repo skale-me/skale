@@ -272,10 +272,14 @@ function list(args) {
 }
 
 function run_remote(args) {
-  var diff = child_process.execSync('git diff skale/master');
-  if (diff.length) {
-    if (argv.force) console.error('Warning, running an obsolete version, you should deploy');
-    else die('Error: content has changed, deploy first or run --force');
+  try {
+    var diff = child_process.execSync('git diff skale/master', {stdio: ['pipe', 'pipe', 'ignore']});
+    if (diff.length) {
+      if (argv.force) console.error('Warning, running an obsolete version, you should deploy');
+      else die('Error: content has changed, deploy first or run --force');
+    }
+  } catch (err) {
+    die('This application is not deployed. Run first "skale deploy"');
   }
   skale_session(function (err, ddp, isreconnect) {
     if (err) die('Could not connect:', err);
