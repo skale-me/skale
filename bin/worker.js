@@ -16,8 +16,8 @@ var trace = require('line-trace');
 var AWS = require('aws-sdk');
 
 var SkaleClient = require('../lib/client.js');
-var Dataset = require('../lib/Dataset.js');
-var Task = require('../lib/Task.js');
+var Dataset = require('../lib/dataset.js');
+var Task = require('../lib/task.js');
 var Lines = require('../lib/lines.js');
 var sizeOf = require('../lib/rough-sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
