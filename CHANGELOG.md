@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.6.5](https://github.com/skale-me/skale-engine/tree/0.6.5) (2016-10-23)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.4...0.6.5)
+
+**Merged pull requests:**
+
+- bin/worker.js: fix typo in dependencies [\#91](https://github.com/skale-me/skale-engine/pull/91) ([mvertes](https://github.com/mvertes))
+- Debug traces sent to stderr instead of stdout [\#90](https://github.com/skale-me/skale-engine/pull/90) ([mvertes](https://github.com/mvertes))
+- save to S3: extend http timeout to 1h [\#89](https://github.com/skale-me/skale-engine/pull/89) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.4](https://github.com/skale-me/skale-engine/tree/0.6.4) (2016-10-11)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.3...0.6.4)
 
