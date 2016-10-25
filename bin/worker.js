@@ -157,16 +157,41 @@ function runWorker(host, port) {
   }
 
   function runztask(msg) {
+    log('runztask msg', msg);
     var file = msg.data.args;
-    fs.readFile(file, function (err, data) {
-      fs.unlink(file, function () {});
-      if (err) throw new Error(err);
+
+//    fs.readFile(file, function (err, data) {
+//      fs.unlink(file, function () {});
+//      if (err) throw new Error(err);
+//      zlib.gunzip(data, {chunkSize: 65536}, function (err, data) {
+//        if (err) throw new Error(err);
+//        msg.data.args = data;
+//        runTask(msg);
+//      });
+//    });
+
+    var s = getReadStream({path: file});
+    var data = Buffer.concat([]);
+    s.on('data', function (chunk) {
+      data = Buffer.concat([data, chunk]);
+    });
+    s.on('end', function () {
+      log('end stream ztask');
       zlib.gunzip(data, {chunkSize: 65536}, function (err, data) {
         if (err) throw new Error(err);
         msg.data.args = data;
         runTask(msg);
       });
     });
+
+    function getReadStream(fileObj, opt) {
+      try {
+        return fs.createReadStream(fileObj.path, opt);
+      } catch (err) {
+        if (!fileObj.host) fileObj.host = grid.muuid;
+        return grid.createStreamFrom(fileObj.host, {cmd: 'sendFile', path: fileObj.path, opt: opt});
+      }
+    }
   }
 
   var request = { runTask: runTask, runztask: runztask };
