@@ -101,17 +101,18 @@ function handleExit(worker, code, signal) {
 function runWorker(host, port) {
   var contextId, log;
   var start = process.hrtime();
-  if (process.env.SKALE_DEBUG) {
+  var wid = process.env.wsid + '-' + process.env.rank;
+  if (process.env.SKALE_DEBUG > 1) {
     log =  function() {
       var args = Array.prototype.slice.call(arguments);
       var elapsed = process.hrtime(start);
-      args.unshift('[master ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
+      args.unshift('[worker-' +  wid + ' ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
       console.error.apply(null, args);
     };
   } else {
     log = function () {};
   }
-  process.title = 'skale-worker_' + process.env.wsid + '_' + process.env.rank;
+  process.title = 'skale-worker_' + wid;
   process.on('uncaughtException', function (err) {
     grid.send(grid.muuid, {cmd: 'workerError', args: err.stack});
     process.exit(2);
@@ -156,13 +157,13 @@ function runWorker(host, port) {
   }
 
   function runztask(msg) {
-    var file = msg.req.args;
+    var file = msg.data.args;
     fs.readFile(file, function (err, data) {
       fs.unlink(file, function () {});
       if (err) throw new Error(err);
       zlib.gunzip(data, {chunkSize: 65536}, function (err, data) {
         if (err) throw new Error(err);
-        msg.req.args = data;
+        msg.data.args = data;
         runTask(msg);
       });
     });
