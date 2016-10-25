@@ -99,8 +99,18 @@ function handleExit(worker, code, signal) {
 }
 
 function runWorker(host, port) {
-  var contextId;
-
+  var contextId, log;
+  var start = process.hrtime();
+  if (process.env.SKALE_DEBUG) {
+    log =  function() {
+      var args = Array.prototype.slice.call(arguments);
+      var elapsed = process.hrtime(start);
+      args.unshift('[master ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
+      console.error.apply(null, args);
+    };
+  } else {
+    log = function () {};
+  }
   process.title = 'skale-worker_' + process.env.wsid + '_' + process.env.rank;
   process.on('uncaughtException', function (err) {
     grid.send(grid.muuid, {cmd: 'workerError', args: err.stack});
@@ -139,6 +149,7 @@ function runWorker(host, port) {
     // set worker side dependencies
     task.workerId = grid.host.uuid;
     task.mm = mm;
+    task.log = log;
     task.lib = {AWS: AWS, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, url: url, uuid: uuid, trace: trace, zlib: zlib};
     task.grid = grid;
     task.run(function(result) {grid.reply(msg, null, result);});
