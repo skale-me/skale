@@ -186,7 +186,8 @@ function runWorker(host, port) {
 
     function getReadStream(fileObj, opt) {
       try {
-        return fs.createReadStream(fileObj.path, opt);
+        var s = fs.createReadStream(fileObj.path, opt);
+        return s;
       } catch (err) {
         if (!fileObj.host) fileObj.host = grid.muuid;
         return grid.createStreamFrom(fileObj.host, {cmd: 'sendFile', path: fileObj.path, opt: opt});
