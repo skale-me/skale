@@ -157,13 +157,13 @@ function runWorker(host, port) {
   }
 
   function runztask(msg) {
-    var file = msg.req.args;
+    var file = msg.data.args;
     fs.readFile(file, function (err, data) {
       fs.unlink(file, function () {});
       if (err) throw new Error(err);
       zlib.gunzip(data, {chunkSize: 65536}, function (err, data) {
         if (err) throw new Error(err);
-        msg.req.args = data;
+        msg.data.args = data;
         runTask(msg);
       });
     });
