@@ -265,6 +265,10 @@ function parseTask(str) {
     }
     for (j in n.partitions) {
       Object.setPrototypeOf(task.nodes[i].partitions[j], Dataset.Partition.prototype);
+      task.nodes[i].partitions[j].count = 0;
+      task.nodes[i].partitions[j].bsize = 0;
+      task.nodes[i].partitions[j].tsize = 0;
+      task.nodes[i].partitions[j].skip = false;
     }
     if (n.type) {
       Object.setPrototypeOf(task.nodes[i], Dataset[n.type].prototype);
