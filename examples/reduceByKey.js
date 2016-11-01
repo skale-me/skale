@@ -3,7 +3,7 @@
 var sc = require('skale-engine').context();
 
 var data = [['hello', 1], ['hello', 1], ['world', 1]];
-var nPartitions = 1;
+var nPartitions = 2;
 
 var init = 0;
 
