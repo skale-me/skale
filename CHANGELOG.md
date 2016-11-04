@@ -1,5 +1,20 @@
 # Change Log
 
+## [0.6.6](https://github.com/skale-me/skale-engine/tree/0.6.6) (2016-11-04)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.5...0.6.6)
+
+**Merged pull requests:**
+
+- Task serialization is now correct in all cases. [\#100](https://github.com/skale-me/skale-engine/pull/100) ([mvertes](https://github.com/mvertes))
+- Optimize task data transfer by sending sparse datasets. [\#99](https://github.com/skale-me/skale-engine/pull/99) ([mvertes](https://github.com/mvertes))
+- Preliminary work for optimization of task data transfer [\#98](https://github.com/skale-me/skale-engine/pull/98) ([mvertes](https://github.com/mvertes))
+- improve getReadStream [\#97](https://github.com/skale-me/skale-engine/pull/97) ([mvertes](https://github.com/mvertes))
+- distributed mode: fixes in compressed transfers [\#96](https://github.com/skale-me/skale-engine/pull/96) ([mvertes](https://github.com/mvertes))
+- Improve distributed mode [\#95](https://github.com/skale-me/skale-engine/pull/95) ([mvertes](https://github.com/mvertes))
+- distributed mode: protocol debug traces enabled with SKALE\_DEBUG=3 [\#94](https://github.com/skale-me/skale-engine/pull/94) ([mvertes](https://github.com/mvertes))
+- sc.textFile: fix handling of S3 directories [\#93](https://github.com/skale-me/skale-engine/pull/93) ([mvertes](https://github.com/mvertes))
+- Fix log in distributed worker [\#92](https://github.com/skale-me/skale-engine/pull/92) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.5](https://github.com/skale-me/skale-engine/tree/0.6.5) (2016-10-23)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.4...0.6.5)
 
