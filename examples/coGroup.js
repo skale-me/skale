@@ -4,7 +4,7 @@ var sc = require('skale-engine').context();
 
 var data = [['hello', 1], ['world', 2], ['cedric', 3], ['cedric', 4]];
 var data2 = [['cedric', 3], ['world', 4], ['test', 5]];
-var nPartitions = 1;
+var nPartitions = 2;
 
 var a = sc.parallelize(data, nPartitions);
 var b = sc.parallelize(data2, nPartitions);
