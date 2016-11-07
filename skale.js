@@ -247,7 +247,7 @@ function deploy(args) {
       var passwd = res.token;
       rc[host] = {login: login, password: passwd};
       netrc.save(rc);
-      child_process.exec('git remote remove skale; git remote add skale "' + res.url + '"; git add -A .; git commit -m "automatic commit"; git push skale master', function (err, stdout, stderr) {
+      child_process.exec('git remote remove skale; git remote add skale "' + res.url + '"; git add -A .; git commit -m "automatic commit"; git pull --rebase -Xours skale master; git push skale master', function (err, stdout, stderr) {
         if (err) die('deploy error: ' + err);
         ddp.call('etls.deploy', [{name: name}], function (err, res) {
           if (err) console.error(err);
