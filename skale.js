@@ -72,6 +72,19 @@ var proto = config.ssl ? require('https') : require('http');
 var memory = argv.m || argv.memory || 4000;
 var worker = argv.w || argv.worker || 2;
 var rc = netrc();
+var start = process.hrtime();
+var trace;
+
+if (process.env.SKALE_DEBUG > 1) {
+  trace =  function() {
+    var args = Array.prototype.slice.call(arguments);
+    var elapsed = process.hrtime(start);
+    args.unshift('[skale ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
+    console.error.apply(null, args);
+  };
+} else {
+  trace = function () {};
+}
 
 switch (argv._[0]) {
   case 'attach':
@@ -221,6 +234,7 @@ function skale_session(callback) {
         config.token = userInfo.token;
         save_config(config);
       }
+      trace('connected to', host, port);
       return callback(err, ddp, isreconnect);
     });
   });
@@ -241,6 +255,7 @@ function deploy(args) {
 
     ddp.call('etls.add', [{name: name}], function (err, res) {
       if (err) die('Could not create application ' + name + ':', err);
+      trace('application added on server', name);
       var a = res.url.split('/');
       var login = a[a.length - 2];
       var host = a[2].replace(/:.*/, '');
@@ -249,9 +264,11 @@ function deploy(args) {
       netrc.save(rc);
       child_process.exec('git remote remove skale; git remote add skale "' + res.url + '"; git add -A .; git commit -m "automatic commit"; git pull --rebase -Xours skale master; git push skale master', function (err, stdout, stderr) {
         if (err) die('deploy error: ' + err);
+        trace('application transfered using git');
         ddp.call('etls.deploy', [{name: name}], function (err, res) {
           if (err) console.error(err);
           else console.log(name + ' deployed');
+          trace('done');
           ddp.close();
         });
       });
@@ -266,6 +283,7 @@ function list(args) {
     ddp.subscribe('etls', [user], function () {
       var etls = ddp.collections.etls;
       for (var i in etls) console.log(etls[i].name);
+      trace('done');
       ddp.close();
     });
   });
@@ -290,8 +308,8 @@ function run_remote(args) {
     ddp.call('etls.run', [{name: name, opt: opt}], function (err, res) {
       if (err) die('run error:', err);
       if (res.alreadyStarted) die('Error: application is already running, use "skale attach" or "skale stop"');
-      var taskId = res.taskId;
-      ddp.subscribe('task.withTaskId', [taskId], function () {});
+      ddp.subscribe('task.withTaskId', [res.taskId], function () {});
+      trace('run triggered');
 
       var observer = ddp.observe('tasks');
       observer.changed = function (id, oldFields, clearedFields, newFields) {
@@ -347,6 +365,7 @@ function log(name) {
         var task = ddp.collections.tasks[Object.keys(ddp.collections.tasks)[0]];
         for (var i = 0; i < task.out.length; i++)
           console.log(task.out[i]);
+        trace('done');
         ddp.close();
       });
     });
