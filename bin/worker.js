@@ -67,6 +67,9 @@ if (cluster.isMaster) {
   cgrid.on('connect', startWorkers);
   cgrid.on('getWorker', startWorkers);
   cgrid.on('close', process.exit);
+  cgrid.on('sendFile', function (msg) {
+    fs.createReadStream(msg.path, msg.opt).pipe(cgrid.createStreamTo(msg));
+  });
   console.log('worker controller ready');
 } else {
   runWorker(opt.options.Host, opt.options.Port);
@@ -75,8 +78,9 @@ if (cluster.isMaster) {
 function startWorkers(msg) {
   var worker = [], removed = {};
   var n = msg.n || ncpu;
+  console.log('worker-controller host', cgrid.uuid);
   for (var i = 0; i < n; i++)
-    worker[i] = cluster.fork({wsid: msg.wsid, rank: i});
+    worker[i] = cluster.fork({wsid: msg.wsid, rank: i, puuid: cgrid.uuid});
   worker.forEach(function (w) {
     w.on('message', function (msg) {
       switch (msg.cmd) {
