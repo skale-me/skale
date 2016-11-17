@@ -99,7 +99,6 @@ function startWorkers(msg) {
       case 'rm':
         if (msg.dir && !removed[msg.dir]) {
           removed[msg.dir] = true;
-          trace('remove ' + tmp + '/skale/' + msg.dir);
           child_process.execFile('/bin/rm', ['-rf', tmp + '/skale/' + msg.dir]);
         }
         break;
