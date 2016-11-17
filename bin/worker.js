@@ -12,7 +12,6 @@ var url = require('url');
 var zlib = require('zlib');
 var mkdirp = require('mkdirp');
 var uuid = require('node-uuid');
-var trace = require('line-trace');
 var AWS = require('aws-sdk');
 
 var SkaleClient = require('../lib/client.js');
@@ -48,7 +47,20 @@ var memory = Number(opt.options.memory || process.env.SKALE_MEMORY || 1024);
 var tmp = opt.options.tmp || process.env.SKALE_TMP || '/tmp';
 var cgrid;
 var mm = new MemoryManager(memory);
+var log;
+var start = process.hrtime();
 ncpu = Number(ncpu);
+
+if (process.env.SKALE_DEBUG > 1) {
+  log = function () {
+    var args = Array.prototype.slice.call(arguments);
+    var elapsed = process.hrtime(start);
+    args.unshift('[worker-controller ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
+    console.error.apply(null, args);
+  };
+} else {
+  log = function () {};
+}
 
 if (cluster.isMaster) {
   process.title = 'skale-worker-controller';
@@ -70,7 +82,7 @@ if (cluster.isMaster) {
   cgrid.on('sendFile', function (msg) {
     fs.createReadStream(msg.path, msg.opt).pipe(cgrid.createStreamTo(msg));
   });
-  console.log('worker controller ready');
+  log('worker controller ready');
 } else {
   runWorker(opt.options.Host, opt.options.Port);
 }
@@ -78,7 +90,7 @@ if (cluster.isMaster) {
 function startWorkers(msg) {
   var worker = [], removed = {};
   var n = msg.n || ncpu;
-  console.log('worker-controller host', cgrid.uuid);
+  log('worker-controller host', cgrid.uuid);
   for (var i = 0; i < n; i++)
     worker[i] = cluster.fork({wsid: msg.wsid, rank: i, puuid: cgrid.uuid});
   worker.forEach(function (w) {
@@ -92,14 +104,14 @@ function startWorkers(msg) {
         }
         break;
       default:
-        console.log('unexpected msg', msg);
+        console.error('unexpected msg', msg);
       }
     });
   });
 }
 
 function handleExit(worker, code, signal) {
-  console.log('worker pid', worker.process.pid, ', exited:', signal || code);
+  log('worker pid', worker.process.pid, ', exited:', signal || code);
 }
 
 function runWorker(host, port) {
@@ -107,10 +119,10 @@ function runWorker(host, port) {
   var start = process.hrtime();
   var wid = process.env.wsid + '-' + process.env.rank;
   if (process.env.SKALE_DEBUG > 1) {
-    log =  function() {
+    log = function () {
       var args = Array.prototype.slice.call(arguments);
       var elapsed = process.hrtime(start);
-      args.unshift('[worker-' +  wid + ' ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
+      args.unshift('[worker-' +  process.env.rank + ' ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
       console.error.apply(null, args);
     };
   } else {
@@ -138,12 +150,12 @@ function runWorker(host, port) {
       jobId: ''
     }
   }, function (err, res) {
-    console.log('id: ', res.id, 'uuid: ', res.uuid);
+    log('id:', res.id, ', uuid:', res.uuid);
     grid.host = {uuid: res.uuid, id: res.id};
   });
 
   grid.on('error', function (err) {
-    console.log('grid error', err);
+    console.error('grid error', err);
     process.exit(2);
   });
 
@@ -155,7 +167,7 @@ function runWorker(host, port) {
     task.workerId = grid.host.uuid;
     task.mm = mm;
     task.log = log;
-    task.lib = {AWS: AWS, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, url: url, uuid: uuid, trace: trace, zlib: zlib};
+    task.lib = {AWS: AWS, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
     task.run(function(result) {grid.reply(msg, null, result);});
   }
@@ -174,7 +186,7 @@ function runWorker(host, port) {
 //      });
 //    });
 
-    var s = getReadStream({path: file});
+    var s = getReadStreamSync({path: file});
     var data = Buffer.concat([]);
     s.on('data', function (chunk) {
       data = Buffer.concat([data, chunk]);
@@ -188,7 +200,7 @@ function runWorker(host, port) {
       });
     });
 
-    function getReadStream(fileObj, opt) {
+    function getReadStreamSync(fileObj, opt) {
       if (fs.existsSync(fileObj.path)) return fs.createReadStream(fileObj.path, opt);
       if (!fileObj.host) fileObj.host = grid.muuid;
       return grid.createStreamFrom(fileObj.host, {cmd: 'sendFile', path: fileObj.path, opt: opt});
