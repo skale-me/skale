@@ -11,7 +11,7 @@ var cluster = require('cluster');
 var url = require('url');
 var zlib = require('zlib');
 var mkdirp = require('mkdirp');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var AWS = require('aws-sdk');
 
 var SkaleClient = require('../lib/client.js');
