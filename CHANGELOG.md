@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.6.7](https://github.com/skale-me/skale-engine/tree/0.6.7) (2016-11-22)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.6...0.6.7)
+
+**Merged pull requests:**
+
+- Document standalone and distributed modes [\#105](https://github.com/skale-me/skale-engine/pull/105) ([mvertes](https://github.com/mvertes))
+- Distributed mode: Implement peer-to-peer through HTTP for shuffle data transfer [\#104](https://github.com/skale-me/skale-engine/pull/104) ([mvertes](https://github.com/mvertes))
+- Improve traces and file transfer. [\#103](https://github.com/skale-me/skale-engine/pull/103) ([mvertes](https://github.com/mvertes))
+- Improve task scheduling [\#102](https://github.com/skale-me/skale-engine/pull/102) ([mvertes](https://github.com/mvertes))
+- Fix mocha dependency. Skip yarn files. [\#101](https://github.com/skale-me/skale-engine/pull/101) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.6](https://github.com/skale-me/skale-engine/tree/0.6.6) (2016-11-04)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.5...0.6.6)
 
