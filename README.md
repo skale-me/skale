@@ -29,6 +29,7 @@ sc.textFile('/path/...')
 * Fast multiple distributed streams
 * realtime lazy compiling and running of execution graphs
 * workers can connect through TCP or websockets
+* simple [standalone](#standalone-local-mode) or [fully distributed](#distributed-mode) mode
 * very fast, see [benchmark](benchmark/)
 
 ## Docs & community
@@ -70,6 +71,53 @@ Then start a skale-engine server and workers on local host:
 Then run whichever example you want
 
 	$ ./examples/wordcount.js /etc/hosts
+
+## Standalone local mode
+
+The standalone mode is the default operating mode. All the processes,
+master and workers are running on the local host, using the
+[cluster](https://nodejs.org/dist/latest-v7.x/docs/api/cluster.html) core
+NodeJS module. This mode is the simplest to operate: no
+dependency, and no server nor cluster setup and management required.
+It is used as any standard NodeJS package: simply `require('skale-engine')`,
+and that's it.
+
+This mode is perfect for development, fast prototyping and tests
+on a single machine (i.e. a laptop). For unlimited scalibity, see
+distributed mode below.
+
+## Distributed mode
+
+The distributed mode allows to run the exact same code as in standalone over
+a network of multiple machines, thus achieving horizontal scalability.
+
+The distributed mode involves two executables, which must
+be running prior to launch application programs:
+
+- a `skale-server` process, which is the access point
+  where the `master` (user application) and `workers` (running
+  slaves) connect to, either by direct TCP connections, or by
+  websockets.
+- A `skale-worker` process, which is a worker controller, running
+  on each machine of the computing cluster, and connecting to
+  the `skale-server`. The worker controller will spawn worker
+  processes on demand (typically one per CPU), each time a
+  new job is submitted.
+
+To run in distributed mode, the environment variable `SKALE_HOST` must
+be set to the `skale-server` hostname or IP address. If unset, the
+application will run in standalone mode. Multiple applications, each
+with its own set of workers and master processes can run simultaneously
+using the same server and worker controllers.
+
+Although not mandatory, running an external HTTP server on worker hosts, exposing
+skale temporary files, allows efficient peer-to-peer shuffle data
+transfer between workers. If not available, this traffic will go through
+the centralized `skale-server`. Any external HTTP server
+such as nginx, apache or even busybox httpd, or even NodeJS (although not the
+most efficient for static file serving) will do.
+
+For further details, see command line help for `skale-worker` and `skale-server`.
 
 ## Tests
 
