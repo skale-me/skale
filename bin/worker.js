@@ -27,8 +27,9 @@ var opt = require('node-getopt').create([
   ['h', 'help', 'print this help text'],
   ['d', 'debug', 'print debug traces'],
   ['m', 'memory=ARG', 'set max memory in MB for workers (default 1024)'],
-  ['M', 'MyHost=ARG', 'advertised hostname'],
+  ['M', 'MyHost=ARG', 'advertised hostname (peer-to-peer)'],
   ['n', 'nworker=ARG', 'number of workers (default: number of cpus)'],
+  ['s', 'slow', 'disable peer-to-peer file transfers though HTTP'],
   ['t', 'tmp=ARG', 'set tmp dirname (default: /tmp)'],
   ['H', 'Host=ARG', 'server hostname (default localhost)'],
   ['P', 'Port=ARG', 'server port (default 12346)'],
@@ -42,14 +43,16 @@ if (opt.options.version) {
 
 var debug = opt.options.debug || false;
 var ncpu = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
-var hostname = opt.options.MyHost || os.hostname();
 var memory = Number(opt.options.memory || process.env.SKALE_MEMORY || 1024);
 var tmp = opt.options.tmp || process.env.SKALE_TMP || '/tmp';
 var cgrid;
 var mm = new MemoryManager(memory);
 var log;
+var hostname;
 var start = process.hrtime();
 ncpu = Number(ncpu);
+if (!opt.options.slow)
+  hostname = opt.options.MyHost || os.hostname();
 
 if (process.env.SKALE_DEBUG > 1) {
   log = function () {
@@ -143,7 +146,7 @@ function runWorker(host, port) {
       arch: os.arch(),
       usedmem: process.memoryUsage().rss,
       totalmem: os.totalmem(),
-      hostname: hostname,
+      hostname: hostname || process.env.puuid,
       type: 'worker',
       wsid: process.env.wsid,
       jobId: ''

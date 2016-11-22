@@ -36,6 +36,7 @@ var opt = require('node-getopt').create([
   ['N', 'Name=ARG', 'advertised server name (default localhost)'],
   ['P', 'Port=ARG', 'primary server port (default none)'],
   ['p', 'port=ARG', 'server port (default 12346)'],
+  ['s', 'slow', 'disable peer-to-peer file transfers though HTTP'],
   ['w', 'wsport=ARG', 'listen on websocket port (default none)'],
   ['V', 'version', 'print version']
 ]).bindHelp().parseSystem();
@@ -276,11 +277,9 @@ if (wsport) {
 if (opt.options.local) startWorker();
 
 function startWorker() {
-  var worker =  child_process.spawn(
-    __dirname + '/worker.js',
-    ['-P', port, '-n', nworker, '-m', memory, '-M', hostname],
-    {stdio: 'inherit'}
-  );
+  var args = ['-P', port, '-n', nworker, '-m', memory];
+  args = args.concat(opt.options.slow ? ['-s'] : ['-M', hostname]);
+  var worker =  child_process.spawn( __dirname + '/worker.js', args, {stdio: 'inherit'});
   worker.on('close', startWorker);
 }
 
