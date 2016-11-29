@@ -5,6 +5,7 @@
 
 
 - [Overview](#overview)
+- [Core concepts](#core-concepts)
 - [Working with datasets](#working-with-datasets)
   - [Sources](#sources)
   - [Transformations](#transformations)
@@ -106,6 +107,50 @@ sc.parallelize([1, 2, 3, 4]).				// source
    then(console.log);						// process result: 14
 ```
 
+## Core concepts
+
+As stated above, a program can be considered as a workflow of steps,
+each step consisting of a transformation which inputs from one or
+more datasets (parents), and outputs to a new dataset (child).
+
+### Partitioning
+
+Dataset are divided into several partitions, so each partition can
+be assigned to a separate worker, and processing can occur concurently
+in a distributed and parallel system. 
+
+The consequence of this partitioning is that two kind of transformations
+exist:
+
+- *Narrow* transformations, where each partition of the parent dataset
+  is used by at most one partition of the child dataset. This is the
+  case for example for `map()` or `filter()`, where each dataset entry
+  is processed independently from each other.
+  Partitions are decoupled, no synchronization
+  between workers is required, and narrow transformations can be
+  pipelined on each worker.
+
+- *Wide* transformations, where multiple child partitions may depend
+  on one parent partition. This is the case for example for `sortBy()`
+  or `groupByKey()`. Data need to be exchanged between workers or
+  *shuffled*, in order to complete the transformation. This introduces
+  synchronization points which prevents pipelining.
+
+### Pipeline stages and shuffles
+
+Internally, each wide transformation consists of a pre-shuffle and
+a post-shuffle part. All sequences of steps from source to pre-shuffle,
+or from post-shuffle to next pre-shuffle or action, are thus only
+narrow transformations, or pipelined stages (the most efficient
+pattern).  A skale program is therefore simply a sequence of stages
+and shuffles, shuffles being global serialization points.
+
+It's important to grab this concept as it sets the limit to the
+level of parallelism which can be achieved by a given code.
+
+The synoptic table of [transformations](#transformations) indicates
+for each transformation if it is narrow or wide (shuffle).
+
 ## Working with datasets
 
 ### Sources
@@ -134,32 +179,32 @@ of 2 elements array of key and value (`[k,v]` dataset):
 A special transformation `persist()` enables one to *persist* a dataset
 in memory, allowing efficient reuse accross parallel operations.
 
-|Transformation Name              | Description                                   | in    | out   |
-| -----------------               |-----------------------------------------------|-------|-------|
-|[aggregateByKey(func, func, init)](#dsaggregatebykeyreducer-combiner-init-obj)| reduce and combine by key using functions| [k,v]| [k,v]|
-|[cartesian(other)](#dscartesianother) | Perform a cartesian product with the other dataset | v w | [v,w]|
-|[coGroup(other)](#dscogroupother) | Group data from both datasets sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|
-|[distinct()](#dsdistinct)    | Return a dataset where duplicates are removed | v | w|
-|[filter(func)](#dsfilterfilter-obj)| Return a dataset of elements on which function returns true | v | w|
-|[flatMap(func)](#dsflatmapflatmapper-obj)| Pass the dataset elements to a function which returns a sequence | v | w|
-|[flatMapValues(func)](#dsflatmapflatvaluesmapper-obj)| Pass the dataset [k,v] elements to a function without changing the keys | [k,v] | [k,w]|
-|[groupByKey()](#dsgroupbykey)| Group values with the same key | [k,v] | [k,[v]]|
-|[intersection(other)](#dsintersectionother) | Return a dataset containing only elements found in both datasets | v w | v|
-|[join(other)](#dsjoinother)       | Perform an inner join between 2 datasets | [k,v] | [k,[v,w]]|
-|[leftOuterJoin(other)](#dsleftouterjoinother) | Join 2 datasets where the key must be present in the other | [k,v] | [k,[v,w]]|
-|[rightOuterJoin(other)](#dsrightouterjoinother) | Join 2 datasets where the key must be present in the first | [k,v] | [k,[v,w]]|
-|[keys()](#dskeys)            | Return a dataset of just the keys | [k,v] | k|
-|[map(func)](#dsmapmapper-obj) | Return a dataset where elements are passed through a function | v | w|
-|[mapValues(func)](#dsmapvaluesmapper-obj)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|
-|[reduceByKey(func, init)](#dsreducebykeyreducer-init-obj)| Combine values with the same key | [k,v] | [k,w]|
-|[partitionBy(partitioner)](#dspartitionbypartitioner)| Partition using the partitioner | v | v|
-|[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|
-|[sample(rep, frac, seed)](#dssamplewithreplacement-frac-seed) | Sample a dataset, with or without replacement | v | w|
-|[sortBy(func)](#dssortbykeyfunc-ascending) | Sort a dataset | v | v|
-|[sortByKey()](#dssortbykeyascending) | Sort a [k,v] dataset | [k,v] | [k,v]|
-|[subtract(other)](#dssubtractother) | Remove the content of one dataset | v w | v|
-|[union(other)](#dsunionother)     | Return a dataset containing elements from both datasets | v | v w|
-|[values()](#dsvalues)        | Return a dataset of just the values | [k,v] | v|
+|Transformation Name              | Description                                   | In    | Out   |Shuffle|
+| -----------------               |-----------------------------------------------|-------|-------|-------|
+|[aggregateByKey(func, func, init)](#dsaggregatebykeyreducer-combiner-init-obj)| reduce and combine by key using functions| [k,v]| [k,v]|yes|
+|[cartesian(other)](#dscartesianother) | Perform a cartesian product with the other dataset | v w | [v,w]|yes|
+|[coGroup(other)](#dscogroupother) | Group data from both datasets sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|yes|
+|[distinct()](#dsdistinct)    | Return a dataset where duplicates are removed | v | w|yes|
+|[filter(func)](#dsfilterfilter-obj)| Return a dataset of elements on which function returns true | v | w|no|
+|[flatMap(func)](#dsflatmapflatmapper-obj)| Pass the dataset elements to a function which returns a sequence | v | w|no|
+|[flatMapValues(func)](#dsflatmapflatvaluesmapper-obj)| Pass the dataset [k,v] elements to a function without changing the keys | [k,v] | [k,w]|no|
+|[groupByKey()](#dsgroupbykey)| Group values with the same key | [k,v] | [k,[v]]|yes|
+|[intersection(other)](#dsintersectionother) | Return a dataset containing only elements found in both datasets | v w | v|yes|
+|[join(other)](#dsjoinother)       | Perform an inner join between 2 datasets | [k,v] | [k,[v,w]]|yes|
+|[leftOuterJoin(other)](#dsleftouterjoinother) | Join 2 datasets where the key must be present in the other | [k,v] | [k,[v,w]]|yes|
+|[rightOuterJoin(other)](#dsrightouterjoinother) | Join 2 datasets where the key must be present in the first | [k,v] | [k,[v,w]]|yes|
+|[keys()](#dskeys)            | Return a dataset of just the keys | [k,v] | k|no|
+|[map(func)](#dsmapmapper-obj) | Return a dataset where elements are passed through a function | v | w|no|
+|[mapValues(func)](#dsmapvaluesmapper-obj)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|no|
+|[reduceByKey(func, init)](#dsreducebykeyreducer-init-obj)| Combine values with the same key | [k,v] | [k,w]|yes|
+|[partitionBy(partitioner)](#dspartitionbypartitioner)| Partition using the partitioner | v | v|yes|
+|[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|no|
+|[sample(rep, frac, seed)](#dssamplewithreplacement-frac-seed) | Sample a dataset, with or without replacement | v | w|no|
+|[sortBy(func)](#dssortbykeyfunc-ascending) | Sort a dataset | v | v|yes|
+|[sortByKey()](#dssortbykeyascending) | Sort a [k,v] dataset | [k,v] | [k,v]|yes|
+|[subtract(other)](#dssubtractother) | Remove the content of one dataset | v w | v|yes|
+|[union(other)](#dsunionother)     | Return a dataset containing elements from both datasets | v | v w|no|
+|[values()](#dsvalues)        | Return a dataset of just the values | [k,v] | v|no|
 
 ### Actions
 
