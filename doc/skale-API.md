@@ -11,6 +11,7 @@
   - [Actions](#actions)
 - [Skale module](#skale-module)
   - [skale.context([config])](#skalecontextconfig)
+    - [sc.env](#scenv)
     - [sc.end()](#scend)
     - [sc.parallelize(array)](#scparallelizearray)
     - [sc.range(start[, end[, step]])](#scrangestart-end-step)
@@ -206,6 +207,20 @@ Example:
 ```javascript
 var skale = require('skale-engine');
 var sc = skale.context();
+```
+
+#### sc.env
+
+The `sc.env` property returns an object containing user environment variables
+to be set in workers.
+
+To set and propagate an environment variable to all workers, assign `sc.env` object
+prior to invoking an action.
+
+Example:
+
+```javascript
+sc.env.MY_VAR = 'my_value';
 ```
 
 #### sc.end()
