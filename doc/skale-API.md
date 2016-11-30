@@ -115,11 +115,11 @@ more datasets (parents), and outputs to a new dataset (child).
 
 ### Partitioning
 
-Dataset are divided into several partitions, so each partition can
+Datasets are divided into several partitions, so each partition can
 be assigned to a separate worker, and processing can occur concurently
 in a distributed and parallel system. 
 
-The consequence of this partitioning is that two kind of transformations
+The consequence of this partitioning is that two types of transformations
 exist:
 
 - *Narrow* transformations, where each partition of the parent dataset
@@ -134,7 +134,7 @@ exist:
   on one parent partition. This is the case for example for `sortBy()`
   or `groupByKey()`. Data need to be exchanged between workers or
   *shuffled*, in order to complete the transformation. This introduces
-  synchronization points which prevents pipelining.
+  synchronization points which prevent pipelining.
 
 ### Pipeline stages and shuffles
 
