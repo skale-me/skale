@@ -36,15 +36,15 @@
   ],
   "author": "Skale team",
   "dependencies": {
-    "aws-sdk": "^2.6.12",
+    "aws-sdk": "^2.7.10",
     "line-trace": "^1.0.4",
     "merge2": "^1.0.2",
     "mkdirp": "^0.5.1",
     "node-getopt": "^0.2.3",
     "rimraf": "^2.5.4",
     "thenify": "^3.2.1",
-    "uuid": "^3.0.0",
-    "websocket-stream": "^3.3.0",
+    "uuid": "^3.0.1",
+    "websocket-stream": "^3.3.3",
     "ws": "^1.1.1"
   },
   "devDependencies": {
