@@ -102,7 +102,7 @@ function startWorkers(msg) {
       case 'rm':
         if (msg.dir && !removed[msg.dir]) {
           removed[msg.dir] = true;
-          child_process.execFile('/bin/rm', ['-rf', tmp + '/skale/' + msg.dir]);
+          child_process.execFile('/bin/rm', ['-rf', msg.dir]);
         }
         break;
       default:
@@ -117,7 +117,7 @@ function handleExit(worker, code, signal) {
 }
 
 function runWorker(host, port) {
-  var contextId, log;
+  var basedir, log;
   var start = process.hrtime();
   var wid = process.env.wsid + '-' + process.env.rank;
   if (process.env.SKALE_DEBUG > 1) {
@@ -164,7 +164,7 @@ function runWorker(host, port) {
   function runTask(msg) {
     grid.muuid = msg.data.master_uuid;
     var task = parseTask(msg.data.args);
-    contextId = task.contextId;
+    basedir = task.basedir;
     // set worker side dependencies
     task.workerId = grid.host.uuid;
     task.mm = mm;
@@ -212,7 +212,7 @@ function runWorker(host, port) {
   var request = { runTask: runTask, runztask: runztask };
 
   grid.on('remoteClose', function () {
-    process.send({cmd: 'rm', dir: contextId});
+    process.send({cmd: 'rm', dir: basedir});
     process.exit();
   });
 
