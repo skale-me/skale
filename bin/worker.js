@@ -30,7 +30,6 @@ var opt = require('node-getopt').create([
   ['M', 'MyHost=ARG', 'advertised hostname (peer-to-peer)'],
   ['n', 'nworker=ARG', 'number of workers (default: number of cpus)'],
   ['s', 'slow', 'disable peer-to-peer file transfers though HTTP'],
-  ['t', 'tmp=ARG', 'set tmp dirname (default: /tmp)'],
   ['H', 'Host=ARG', 'server hostname (default localhost)'],
   ['P', 'Port=ARG', 'server port (default 12346)'],
   ['V', 'version', 'print version']
@@ -44,7 +43,6 @@ if (opt.options.version) {
 var debug = opt.options.debug || false;
 var ncpu = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
 var memory = Number(opt.options.memory || process.env.SKALE_MEMORY || 1024);
-var tmp = opt.options.tmp || process.env.SKALE_TMP || '/tmp';
 var cgrid;
 var mm = new MemoryManager(memory);
 var log;
