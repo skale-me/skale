@@ -1,5 +1,22 @@
 # Change Log
 
+## [0.6.8](https://github.com/skale-me/skale-engine/tree/0.6.8) (2016-12-14)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.7...0.6.8)
+
+**Fixed bugs:**
+
+- In distributed mode, temporary files are not deleted at end of program [\#110](https://github.com/skale-me/skale-engine/issues/110)
+
+**Merged pull requests:**
+
+- Advertise benchmark in README [\#113](https://github.com/skale-me/skale-engine/pull/113) ([mvertes](https://github.com/mvertes))
+- server, worker-controller: add current statistics [\#112](https://github.com/skale-me/skale-engine/pull/112) ([mvertes](https://github.com/mvertes))
+- Fix bug \#110 where temporary files were not deleted at end of task in… [\#111](https://github.com/skale-me/skale-engine/pull/111) ([mvertes](https://github.com/mvertes))
+- use SKALE\_WORKERS to set number of workers in distributed mode, as in… [\#109](https://github.com/skale-me/skale-engine/pull/109) ([mvertes](https://github.com/mvertes))
+- update dependencies [\#108](https://github.com/skale-me/skale-engine/pull/108) ([mvertes](https://github.com/mvertes))
+- Doc: add a section on core concepts, label shuffle transforms [\#107](https://github.com/skale-me/skale-engine/pull/107) ([mvertes](https://github.com/mvertes))
+- Refactor internal Task API, to propagate env and dependencies. In pro… [\#106](https://github.com/skale-me/skale-engine/pull/106) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.7](https://github.com/skale-me/skale-engine/tree/0.6.7) (2016-11-22)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.6...0.6.7)
 

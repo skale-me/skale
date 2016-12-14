@@ -115,12 +115,12 @@ application will run in standalone mode. Multiple applications, each
 with its own set of workers and master processes can run simultaneously
 using the same server and worker controllers.
 
-Although not mandatory, running an external HTTP server on worker hosts, exposing
-skale temporary files, allows efficient peer-to-peer shuffle data
-transfer between workers. If not available, this traffic will go through
-the centralized `skale-server`. Any external HTTP server
-such as nginx, apache or even busybox httpd, or even NodeJS (although not the
-most efficient for static file serving) will do.
+Although not mandatory, running an external HTTP server on worker
+hosts, exposing skale temporary files, allows efficient peer-to-peer
+shuffle data transfer between workers. If not available, this traffic
+will go through the centralized `skale-server`. Any external HTTP
+server such as nginx, apache or busybox httpd, or even NodeJS
+(although not the most efficient for static file serving) will do.
 
 For further details, see command line help for `skale-worker` and `skale-server`.
 
