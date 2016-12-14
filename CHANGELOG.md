@@ -1,5 +1,23 @@
 # Change Log
 
+## [1.1.5](https://github.com/skale-me/skale-cli/tree/1.1.5) (2016-12-14)
+[Full Changelog](https://github.com/skale-me/skale-cli/compare/1.1.4...1.1.5)
+
+**Closed issues:**
+
+- Fail running `skale run` [\#24](https://github.com/skale-me/skale-cli/issues/24)
+
+**Merged pull requests:**
+
+- improve debug traces. Allow stop --force to reset remote app [\#34](https://github.com/skale-me/skale-cli/pull/34) ([mvertes](https://github.com/mvertes))
+- add more debug traces [\#33](https://github.com/skale-me/skale-cli/pull/33) ([mvertes](https://github.com/mvertes))
+- Deploy: avoid git conflicts and preserve history. [\#32](https://github.com/skale-me/skale-cli/pull/32) ([mvertes](https://github.com/mvertes))
+- Handle error in running an undeployed application [\#31](https://github.com/skale-me/skale-cli/pull/31) ([mvertes](https://github.com/mvertes))
+- implement log function [\#30](https://github.com/skale-me/skale-cli/pull/30) ([mvertes](https://github.com/mvertes))
+- add list command to show deployed apps [\#29](https://github.com/skale-me/skale-cli/pull/29) ([mvertes](https://github.com/mvertes))
+- Make sure git is installed [\#28](https://github.com/skale-me/skale-cli/pull/28) ([mark-bradshaw](https://github.com/mark-bradshaw))
+- Allow status to have a name passed in, and clearer error with missing package.json [\#27](https://github.com/skale-me/skale-cli/pull/27) ([mark-bradshaw](https://github.com/mark-bradshaw))
+
 ## [1.1.4](https://github.com/skale-me/skale-cli/tree/1.1.4) (2016-09-07)
 [Full Changelog](https://github.com/skale-me/skale-cli/compare/1.1.3...1.1.4)
 
