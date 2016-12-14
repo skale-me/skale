@@ -63,7 +63,7 @@ if (argv.V || argv.version) {
   process.exit();
 }
 if (argv.d || argv.debug) {
-  process.env.SKALE_DEBUG = 3;
+  process.env.SKALE_DEBUG = 2;
 }
 
 var configPath = argv.c || argv.config || process.env.SKALE_CONFIG || process.env.HOME + '/.skalerc';
@@ -238,6 +238,8 @@ function skale_session(callback) {
       return callback(err, ddp, isreconnect);
     });
   });
+
+  ddp.on('socker-close', function () {trace('disconnected');});
 }
 
 function deploy(args) {
@@ -304,16 +306,33 @@ function run_remote(args) {
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
     var opt = {debug: process.env.SKALE_DEBUG};
+    var ltrace;
 
+    trace('run triggered, wait for machine');
     ddp.call('etls.run', [{name: name, opt: opt}], function (err, res) {
       if (err) die('run error:', err);
       if (res.alreadyStarted) die('Error: application is already running, use "skale attach" or "skale stop"');
       ddp.subscribe('task.withTaskId', [res.taskId], function () {});
-      trace('run triggered');
 
       var observer = ddp.observe('tasks');
+      observer.added = function (id) {
+        var task = ddp.collections.tasks[id];
+        if (task.trace !== ltrace) {
+          ltrace = task.trace;
+          trace(ltrace);
+        }
+        //trace('added', ddp.collections.tasks[id]);
+      };
+
       observer.changed = function (id, oldFields, clearedFields, newFields) {
-        if (newFields.status && newFields.status != 'pending') ddp.close();
+        if (newFields.trace && newFields.trace !== ltrace) {
+          ltrace = newFields.trace;
+          trace(ltrace);
+        }
+        if (newFields.status === 'ok' || newFields.status === 'failed') {
+          trace('job end', newFields.status);
+          ddp.close();
+        }
         if (newFields.out) {
           var olen = oldFields.out ? oldFields.out.length : 0;
           var nlen = newFields.out.length;
@@ -398,7 +417,7 @@ function stop() {
     if (err) die('could node connect:', err);
     var pkg = JSON.parse(fs.readFileSync('package.json'));
     var name = pkg.name;
-    ddp.call('etls.reset', [{name: name}], function (err, res) {
+    ddp.call('etls.reset', [{name: name, reset: argv.force}], function (err, res) {
       ddp.close();
     });
   });
