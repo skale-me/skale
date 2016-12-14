@@ -68,7 +68,7 @@ var access = process.env.SKALE_KEY;
 var stats = {
   masters: 0,
   workerControllers: 0,
-  workers: 0,
+  workers: 0
 };
 
 process.title = 'skale-server ' + port;
