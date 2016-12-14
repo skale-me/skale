@@ -293,6 +293,7 @@ function startWorker() {
 }
 
 // update statistics every 3s
+fs.mkdir('/tmp/skale', function () {});
 setInterval(function () {
   fs.writeFile('/tmp/skale/server-stats', JSON.stringify(stats), function () {});
 }, 3000);

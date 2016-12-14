@@ -85,6 +85,7 @@ if (cluster.isMaster) {
     fs.createReadStream(msg.path, msg.opt).pipe(cgrid.createStreamTo(msg));
   });
   // Periodic stats
+  fs.mkdir('/tmp/skale', function () {});
   setInterval(function () {
     var stats = { nworkers: Object.keys(cluster.workers).length };
     fs.writeFile('/tmp/skale/worker-controller-stats', JSON.stringify(stats), function () {}); }, 3000);
