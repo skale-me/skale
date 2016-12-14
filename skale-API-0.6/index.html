@@ -136,6 +136,13 @@
         <li class="main "><a href="#overview">Overview</a></li>
         
     
+        <li class="main "><a href="#core-concepts">Core concepts</a></li>
+        
+            <li><a href="#partitioning">Partitioning</a></li>
+        
+            <li><a href="#pipeline-stages-and-shuffles">Pipeline stages and shuffles</a></li>
+        
+    
         <li class="main "><a href="#working-with-datasets">Working with datasets</a></li>
         
             <li><a href="#sources">Sources</a></li>
@@ -165,12 +172,14 @@
 
 <ul>
 <li><a href="#overview">Overview</a></li>
+<li><a href="#core-concepts">Core concepts</a></li>
 <li><a href="#working-with-datasets">Working with datasets</a></li>
 <li><a href="#sources">Sources</a></li>
 <li><a href="#transformations">Transformations</a></li>
 <li><a href="#actions">Actions</a></li>
 <li><a href="#skale-module">Skale module</a></li>
 <li><a href="#skalecontextconfig">skale.context([config])</a><ul>
+<li><a href="#scenv">sc.env</a></li>
 <li><a href="#scend">sc.end()</a></li>
 <li><a href="#scparallelizearray">sc.parallelize(array)</a></li>
 <li><a href="#scrangestart-end-step">sc.range(start[, end[, step]])</a></li>
@@ -211,6 +220,7 @@
 <li><a href="#dssaveurl-options-done">ds.save(url[, options][, done])</a></li>
 <li><a href="#dssortbykeyfunc-ascending">ds.sortBy(keyfunc[, ascending])</a></li>
 <li><a href="#dssortbykeyascending">ds.sortByKey(ascending)</a></li>
+<li><a href="#dsstream-opt">ds.stream([opt])</a></li>
 <li><a href="#dssubtractother">ds.subtract(other)</a></li>
 <li><a href="#dstakenum-done">ds.take(num[, done])</a></li>
 <li><a href="#dstopnum-done">ds.top(num[, done])</a></li>
@@ -260,6 +270,45 @@ sc.parallelize([1, 2, 3, 4]).               // source
    then(console.log);                       // process result: 14
 </code></pre>
 
+<h1 id="core-concepts">Core concepts<a class="headerlink" href="#core-concepts" title="Permanent link">&para;</a></h1>
+<p>As stated above, a program can be considered as a workflow of steps,
+each step consisting of a transformation which inputs from one or
+more datasets (parents), and outputs to a new dataset (child).</p>
+<h2 id="partitioning">Partitioning<a class="headerlink" href="#partitioning" title="Permanent link">&para;</a></h2>
+<p>Datasets are divided into several partitions, so each partition can
+be assigned to a separate worker, and processing can occur concurently
+in a distributed and parallel system. </p>
+<p>The consequence of this partitioning is that two types of transformations
+exist:</p>
+<ul>
+<li>
+<p><em>Narrow</em> transformations, where each partition of the parent dataset
+  is used by at most one partition of the child dataset. This is the
+  case for example for <code>map()</code> or <code>filter()</code>, where each dataset entry
+  is processed independently from each other.
+  Partitions are decoupled, no synchronization
+  between workers is required, and narrow transformations can be
+  pipelined on each worker.</p>
+</li>
+<li>
+<p><em>Wide</em> transformations, where multiple child partitions may depend
+  on one parent partition. This is the case for example for <code>sortBy()</code>
+  or <code>groupByKey()</code>. Data need to be exchanged between workers or
+  <em>shuffled</em>, in order to complete the transformation. This introduces
+  synchronization points which prevent pipelining.</p>
+</li>
+</ul>
+<h2 id="pipeline-stages-and-shuffles">Pipeline stages and shuffles<a class="headerlink" href="#pipeline-stages-and-shuffles" title="Permanent link">&para;</a></h2>
+<p>Internally, each wide transformation consists of a pre-shuffle and
+a post-shuffle part. All sequences of steps from source to pre-shuffle,
+or from post-shuffle to next pre-shuffle or action, are thus only
+narrow transformations, or pipelined stages (the most efficient
+pattern).  A skale program is therefore simply a sequence of stages
+and shuffles, shuffles being global serialization points.</p>
+<p>It's important to grab this concept as it sets the limit to the
+level of parallelism which can be achieved by a given code.</p>
+<p>The synoptic table of <a href="#transformations">transformations</a> indicates
+for each transformation if it is narrow or wide (shuffle).</p>
 <h1 id="working-with-datasets">Working with datasets<a class="headerlink" href="#working-with-datasets" title="Permanent link">&para;</a></h1>
 <h2 id="sources">Sources<a class="headerlink" href="#sources" title="Permanent link">&para;</a></h2>
 <p>After having initialized a cluster context using
@@ -312,8 +361,9 @@ in memory, allowing efficient reuse accross parallel operations.</p>
 <tr>
 <th>Transformation Name</th>
 <th>Description</th>
-<th>in</th>
-<th>out</th>
+<th>In</th>
+<th>Out</th>
+<th>Shuffle</th>
 </tr>
 </thead>
 <tbody>
@@ -322,144 +372,168 @@ in memory, allowing efficient reuse accross parallel operations.</p>
 <td>reduce and combine by key using functions</td>
 <td>[k,v]</td>
 <td>[k,v]</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dscartesianother">cartesian(other)</a></td>
 <td>Perform a cartesian product with the other dataset</td>
 <td>v w</td>
 <td>[v,w]</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dscogroupother">coGroup(other)</a></td>
 <td>Group data from both datasets sharing the same key</td>
 <td>[k,v] [k,w]</td>
 <td>[k,[[v],[w]]]</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dsdistinct">distinct()</a></td>
 <td>Return a dataset where duplicates are removed</td>
 <td>v</td>
 <td>w</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dsfilterfilter-obj">filter(func)</a></td>
 <td>Return a dataset of elements on which function returns true</td>
 <td>v</td>
 <td>w</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="#dsflatmapflatmapper-obj">flatMap(func)</a></td>
 <td>Pass the dataset elements to a function which returns a sequence</td>
 <td>v</td>
 <td>w</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="#dsflatmapflatvaluesmapper-obj">flatMapValues(func)</a></td>
 <td>Pass the dataset [k,v] elements to a function without changing the keys</td>
 <td>[k,v]</td>
 <td>[k,w]</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="#dsgroupbykey">groupByKey()</a></td>
 <td>Group values with the same key</td>
 <td>[k,v]</td>
 <td>[k,[v]]</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dsintersectionother">intersection(other)</a></td>
 <td>Return a dataset containing only elements found in both datasets</td>
 <td>v w</td>
 <td>v</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dsjoinother">join(other)</a></td>
 <td>Perform an inner join between 2 datasets</td>
 <td>[k,v]</td>
 <td>[k,[v,w]]</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dsleftouterjoinother">leftOuterJoin(other)</a></td>
 <td>Join 2 datasets where the key must be present in the other</td>
 <td>[k,v]</td>
 <td>[k,[v,w]]</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dsrightouterjoinother">rightOuterJoin(other)</a></td>
 <td>Join 2 datasets where the key must be present in the first</td>
 <td>[k,v]</td>
 <td>[k,[v,w]]</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dskeys">keys()</a></td>
 <td>Return a dataset of just the keys</td>
 <td>[k,v]</td>
 <td>k</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="#dsmapmapper-obj">map(func)</a></td>
 <td>Return a dataset where elements are passed through a function</td>
 <td>v</td>
 <td>w</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="#dsmapvaluesmapper-obj">mapValues(func)</a></td>
 <td>Map a function to the value field of key-value dataset</td>
 <td>[k,v]</td>
 <td>[k,w]</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="#dsreducebykeyreducer-init-obj">reduceByKey(func, init)</a></td>
 <td>Combine values with the same key</td>
 <td>[k,v]</td>
 <td>[k,w]</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dspartitionbypartitioner">partitionBy(partitioner)</a></td>
 <td>Partition using the partitioner</td>
 <td>v</td>
 <td>v</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dspersist">persist()</a></td>
 <td>Idempotent. Keep content of dataset in cache for further reuse.</td>
 <td>v</td>
 <td>v</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="#dssamplewithreplacement-frac-seed">sample(rep, frac, seed)</a></td>
 <td>Sample a dataset, with or without replacement</td>
 <td>v</td>
 <td>w</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="#dssortbykeyfunc-ascending">sortBy(func)</a></td>
 <td>Sort a dataset</td>
 <td>v</td>
 <td>v</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dssortbykeyascending">sortByKey()</a></td>
 <td>Sort a [k,v] dataset</td>
 <td>[k,v]</td>
 <td>[k,v]</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dssubtractother">subtract(other)</a></td>
 <td>Remove the content of one dataset</td>
 <td>v w</td>
 <td>v</td>
+<td>yes</td>
 </tr>
 <tr>
 <td><a href="#dsunionother">union(other)</a></td>
 <td>Return a dataset containing elements from both datasets</td>
 <td>v</td>
 <td>v w</td>
+<td>no</td>
 </tr>
 <tr>
 <td><a href="#dsvalues">values()</a></td>
 <td>Return a dataset of just the values</td>
 <td>[k,v]</td>
 <td>v</td>
+<td>no</td>
 </tr>
 </tbody>
 </table>
@@ -522,6 +596,16 @@ alternatively through a returned <a href="https://promisesaplus.com">ES6 promise
 <td>value</td>
 </tr>
 <tr>
+<td><a href="#dssaveurl-options-done">save(url)</a></td>
+<td>Save the content of a dataset to an url</td>
+<td>empty</td>
+</tr>
+<tr>
+<td><a href="#dsstream-opt">stream()</a></td>
+<td>Stream out a dataset</td>
+<td>stream</td>
+</tr>
+<tr>
 <td><a href="#dstakenum-done">take(num)</a></td>
 <td>Return the first <code>num</code> elements of dataset</td>
 <td>array of value</td>
@@ -530,11 +614,6 @@ alternatively through a returned <a href="https://promisesaplus.com">ES6 promise
 <td><a href="#dstopnum-done">top(num)</a></td>
 <td>Return the top <code>num</code> elements of dataset</td>
 <td>array of value</td>
-</tr>
-<tr>
-<td><a href="#dssaveurl-options-done">save(url)</a></td>
-<td>Save the content of a dataset to an url</td>
-<td>empty</td>
 </tr>
 </tbody>
 </table>
@@ -555,6 +634,15 @@ with the following defaults:</p>
 <p>Example:</p>
 <pre><code class="javascript">var skale = require('skale-engine');
 var sc = skale.context();
+</code></pre>
+
+<h3 id="scenv">sc.env<a class="headerlink" href="#scenv" title="Permanent link">&para;</a></h3>
+<p>The <code>sc.env</code> property returns an object containing user environment variables
+to be set in workers.</p>
+<p>To set and propagate an environment variable to all workers, assign <code>sc.env</code> object
+prior to invoking an action.</p>
+<p>Example:</p>
+<pre><code class="javascript">sc.env.MY_VAR = 'my_value';
 </code></pre>
 
 <h3 id="scend">sc.end()<a class="headerlink" href="#scend" title="Permanent link">&para;</a></h3>
@@ -1206,6 +1294,22 @@ the sort direction, true by default.</p>
   .sortByKey()
   .collect().then(console.log)
 // [['cedric', 3], ['hello', 1], ['world', 2]]
+</code></pre>
+
+<h3 id="dsstreamopt">ds.stream([opt])<a class="headerlink" href="#dsstreamopt" title="Permanent link">&para;</a></h3>
+<p>This <a href="#actions">action</a> returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of dataset content. The order
+of data and partitions is maintained.</p>
+<ul>
+<li><em>opt</em>: an object with the following fields:</li>
+<li><em>gzip</em>: <em>Boolean</em>, when true, enable gzip compression. Default value: false.</li>
+</ul>
+<p>Example:</p>
+<pre><code class="javascript">var s = sc.range(4).stream();
+s.pipe(process.stdout);
+// 0
+// 1
+// 2
+// 3
 </code></pre>
 
 <h3 id="dssubtractother">ds.subtract(other)<a class="headerlink" href="#dssubtractother" title="Permanent link">&para;</a></h3>
