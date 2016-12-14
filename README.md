@@ -10,7 +10,7 @@ Skale-engine is a fast and general purpose distributed data processing
 system. It provides a high-level API in Javascript and an optimized
 parallel execution engine on top of NodeJS.
 
-The following figure is a comparison against [Spark](http://spark.apache.org) for a
+The following figure is a [comparison](benchmark/README.md) against [Spark](http://spark.apache.org) for a
 logistic regression program:
 
 ![logreg1](benchmark/logreg-10.png)
