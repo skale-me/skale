@@ -48,6 +48,7 @@ var mm = new MemoryManager(memory);
 var log;
 var hostname;
 var start = process.hrtime();
+
 ncpu = Number(ncpu);
 if (!opt.options.slow)
   hostname = opt.options.MyHost || os.hostname();
@@ -83,6 +84,10 @@ if (cluster.isMaster) {
   cgrid.on('sendFile', function (msg) {
     fs.createReadStream(msg.path, msg.opt).pipe(cgrid.createStreamTo(msg));
   });
+  // Periodic stats
+  setInterval(function () {
+    var stats = { nworkers: Object.keys(cluster.workers).length };
+    fs.writeFile('/tmp/skale/worker-controller-stats', JSON.stringify(stats), function () {}); }, 3000);
   log('worker controller ready');
 } else {
   runWorker(opt.options.Host, opt.options.Port);

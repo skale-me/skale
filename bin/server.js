@@ -11,6 +11,7 @@
 'use strict';
 
 var child_process = require('child_process');
+var fs = require('fs');
 var net = require('net');
 var os = require('os');
 var util = require('util');
@@ -64,6 +65,11 @@ var wsport = opt.options.wsport || port + 2;
 var crossbar = {};
 var nworker = (opt.options.local > 0) ? opt.options.local : 0;
 var access = process.env.SKALE_KEY;
+var stats = {
+  masters: 0,
+  workerControllers: 0,
+  workers: 0,
+};
 
 process.title = 'skale-server ' + port;
 
@@ -134,6 +140,7 @@ var clientRequest = {
       msg.data.wsid = wsid;
       expectedWorkers += msg.data.ncpu;
       workerControllers.push(msg.data);
+      stats.workerControllers++;
       break;
     case 'worker':
       if (wsid == msg.data.wsid) {
@@ -147,6 +154,7 @@ var clientRequest = {
           postMaster(master.data.uuid);
         }
       }
+      stats.workers++;
       break;
     case 'master':
       if (expectedWorkers && workerStock.length >= expectedWorkers) {
@@ -156,6 +164,7 @@ var clientRequest = {
         pendingMasters.push(msg);
         ret = false;
       }
+      stats.masters++;
       break;
     }
     console.log('## Connect', msg.data.type, msg.data.id, msg.data.uuid);
@@ -283,6 +292,11 @@ function startWorker() {
   worker.on('close', startWorker);
 }
 
+// update statistics every 3s
+setInterval(function () {
+  fs.writeFile('/tmp/skale/server-stats', JSON.stringify(stats), function () {});
+}, 3000);
+
 function handleClose(sock) {
   var i, cli = sock.client;
   if (cli) {
@@ -298,6 +312,7 @@ function handleClose(sock) {
           workerControllers.splice(i, 1);
         }
       }
+      stats.workerControllers--;
       break;
     case 'worker':
       // Remove worker from stock
@@ -305,6 +320,7 @@ function handleClose(sock) {
         if (cli.uuid == workerStock[i].uuid)
           workerStock.splice(i, 1);
       }
+      stats.workers--;
       break;
     case 'master':
       // Remove master from pending masters, avoiding future useless workers start
@@ -314,6 +330,7 @@ function handleClose(sock) {
           break;
         }
       }
+      stats.masters--;
       break;
     }
     for (i in cli.closeListeners) {
