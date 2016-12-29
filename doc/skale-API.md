@@ -1036,6 +1036,7 @@ This [action] returns a [readable stream] of dataset content. The order
 of data and partitions is maintained.
 
 - *opt*: an object with the following fields:
+  - *end*: *Boolean*, when true, call `sc.end()` on stream `end` event. Default value: false.
   - *gzip*: *Boolean*, when true, enable gzip compression. Default value: false.
 
 Example:
