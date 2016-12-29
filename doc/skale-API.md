@@ -51,7 +51,7 @@
     - [ds.save(url[, options][, done])](#dssaveurl-options-done)
     - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
     - [ds.sortByKey(ascending)](#dssortbykeyascending)
-	- [ds.stream([opt])](#dsstream-opt)
+	- [ds.stream([opt])](#dsstreamopt)
     - [ds.subtract(other)](#dssubtractother)
     - [ds.take(num[, done])](#dstakenum-done)
     - [ds.top(num[, done])](#dstopnum-done)
