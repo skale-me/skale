@@ -16,7 +16,7 @@
     - [sc.end()](#scend)
     - [sc.parallelize(array)](#scparallelizearray)
     - [sc.range(start[, end[, step]])](#scrangestart-end-step)
-    - [sc.textFile(path)](#sctextfilepath)
+    - [sc.textFile(path[, options])](#sctextfilepath-options)
     - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
     - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
   - [Dataset methods](#dataset-methods)
@@ -159,14 +159,14 @@ After having initialized a cluster context using
 [skale.context()](#skale-context), one can create a dataset
 using the following sources:
 
-| Source Name                                       | Description                                            |
-| ------------------------------------------------- | ------------------------------------------------------ |
-|[gzipFile(path)](#scgzipfilepath)                  | Create a dataset from a gzipped text file              |
-|[lineStream(stream)](#sclinestreaminput_stream)    | Create a dataset from a text stream                    |
-|[objectStream(stream)](#scobjectstreaminput_stream)| Create a dataset from an object stream                 |
-|[parallelize(array)](#scparallelizearray)          | Create a dataset from an array                         |
-|[range(start,end,step)](#scrangestart-end-step)    | Create a dataset containing integers from start to end |
-|[textFile(path)](#sctextfilepath)                  | Create a dataset from text file                        |
+| Source Name                                        | Description                                            |
+| -------------------------------------------------- | ------------------------------------------------------ |
+|[gzipFile(path)](#scgzipfilepath)                   | Create a dataset from a gzipped text file              |
+|[lineStream(stream)](#sclinestreaminput_stream)     | Create a dataset from a text stream                    |
+|[objectStream(stream)](#scobjectstreaminput_stream) | Create a dataset from an object stream                 |
+|[parallelize(array)](#scparallelizearray)           | Create a dataset from an array                         |
+|[range(start,end,step)](#scrangestart-end-step)     | Create a dataset containing integers from start to end |
+|[textFile(path[, options])](#sctextfilepath-options)| Create a dataset from text file                        |
 
 ### Transformations
 
@@ -298,9 +298,14 @@ sc.range(10, -5, -3).collect().then(console.log)
 // [ 10, 7, 4, 1, -2 ]
 ```
 
-#### sc.textFile(path)
+#### sc.textFile(path[, options])
 
 Returns a new dataset of lines in file specified by path *String*.
+
+- *path*: a *String* of the general form `protocol://host/path` or `/path`.
+- *options*: an *Object* with the following fields:
+  - *maxFiles*: a *Number* of maximum files to process if the path refers
+    to a directory.
 
 if *path* ends by a '/' (directory separator), then the dataset
 will be composed of all the files in the directory. Sub-directories
