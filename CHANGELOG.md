@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.6.9](https://github.com/skale-me/skale-engine/tree/0.6.9) (2017-01-02)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.8...0.6.9)
+
+**Merged pull requests:**
+
+- textFile: add a maxFiles option, to limit the number of files to process [\#117](https://github.com/skale-me/skale-engine/pull/117) ([mvertes](https://github.com/mvertes))
+- Increase number of streams over skale protocol [\#116](https://github.com/skale-me/skale-engine/pull/116) ([mvertes](https://github.com/mvertes))
+- stream\(\) action: add option to terminate context on stream end [\#115](https://github.com/skale-me/skale-engine/pull/115) ([mvertes](https://github.com/mvertes))
+- doc: Fix TOC link [\#114](https://github.com/skale-me/skale-engine/pull/114) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.8](https://github.com/skale-me/skale-engine/tree/0.6.8) (2016-12-14)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.7...0.6.8)
 
