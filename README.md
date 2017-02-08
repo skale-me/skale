@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/skale-me/skale-engine](https://badges.gitter.im/skale-me/skale-engine.svg)](https://gitter.im/skale-me/skale-engine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build
 Status](https://travis-ci.org/skale-me/skale-engine.svg?branch=master)](https://travis-ci.org/skale-me/skale-engine)
-[https://ci.appveyor.com/api/projects/status/github/mvertes/skale-engine?branch=master&svg=true](https://ci.appveyor.com/api/projects/status/github/mvertes/skale-engine?branch=master&svg=true)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/mvertes/skale-engine?branch=master&svg=truei)](https://ci.appveyor.com/api/projects/status/github/mvertes/skale-engine?branch=master&svg=true)
 
 
 High performance distributed data processing engine
