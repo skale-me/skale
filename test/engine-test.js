@@ -27,7 +27,7 @@ function tryConnect(nTry, timeout, done) {
 beforeEach(function (done) {
   if (sc === undefined) {
     this.timeout(10000);
-    spawn('./bin/server.js', ['-p', skalePort, '-l', '0']);
+    spawn('node', ['./bin/server.js', '-p', skalePort, '-l', '0']);
     tryConnect(100, 100, function (err) {
       console.log(err);
       sl = local.context();
