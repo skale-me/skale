@@ -1,5 +1,7 @@
 environment:
   nodejs_version: "6"
+  SKALE_WORKERS: "2"
+  SKALE_MEMORY: "512"
 
 init:
   - git config --global core.autocrlf true
