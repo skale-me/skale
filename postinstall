@@ -1,2 +1,0 @@
-#!/usr/bin/env node
-require('fs').writeFileSync('node_modules/skale-engine.js', 'module.exports = require("..");\n');
