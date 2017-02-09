@@ -26,7 +26,7 @@ var readSplit = require('../lib/readsplit.js').readSplit;
 var opt = require('node-getopt').create([
   ['h', 'help', 'print this help text'],
   ['d', 'debug', 'print debug traces'],
-  ['m', 'memory=ARG', 'set max memory in MB for workers (default 1024)'],
+  ['m', 'memory=ARG', 'set max memory in MB for workers'],
   ['M', 'MyHost=ARG', 'advertised hostname (peer-to-peer)'],
   ['n', 'nworker=ARG', 'number of workers (default: number of cpus)'],
   ['s', 'slow', 'disable peer-to-peer file transfers though HTTP'],
@@ -42,7 +42,7 @@ if (opt.options.version) {
 
 var debug = opt.options.debug || false;
 var ncpu = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
-var memory = Number(opt.options.memory || process.env.SKALE_MEMORY || 1024);
+var memory = Number(opt.options.memory || process.env.SKALE_MEMORY);
 var cgrid;
 var mm = new MemoryManager(memory);
 var log;
@@ -66,7 +66,7 @@ if (process.env.SKALE_DEBUG > 1) {
 
 if (cluster.isMaster) {
   process.title = 'skale-worker-controller';
-  cluster.setupMaster({execArgv: ['--max_old_space_size=' + memory]});
+  cluster.setupMaster({execArgv: memory ? ['--max_old_space_size=' + memory] : undefined});
   cluster.on('exit', handleExit);
   cgrid = new SkaleClient({
     debug: debug,
@@ -234,6 +234,7 @@ function runWorker(host, port) {
 }
 
 function MemoryManager(memory) {
+  memory = memory || 1024;
   var Kb = 1024, Mb = 1024 * Kb;
   var MAX_MEMORY = (memory - 100) * Mb;
   var maxStorageMemory = MAX_MEMORY * 0.4;

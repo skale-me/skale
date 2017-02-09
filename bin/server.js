@@ -32,7 +32,7 @@ var opt = require('node-getopt').create([
   ['h', 'help', 'print this help text'],
   ['H', 'Host=ARG', 'primary server host (default none)'],
   ['l', 'local=ARG', 'start local worker controller (default ncpu workers)'],
-  ['m', 'memory=ARG', 'set max memory in MB for workers in local mode (default 1024)'],
+  ['m', 'memory=ARG', 'set max memory in MB for workers in local mode'],
   ['M', 'MyHost=ARG', 'advertised hostname'],
   ['N', 'Name=ARG', 'advertised server name (default localhost)'],
   ['P', 'Port=ARG', 'primary server port (default none)'],
@@ -56,7 +56,7 @@ var topicNum = -1;
 var UInt32Max = 4294967296;
 var topicMax = UInt32Max - minMulticast;
 var topicIndex = {};
-var memory = opt.options.memory || process.env.SKALE_MEMORY || 1024;
+var memory = opt.options.memory || process.env.SKALE_MEMORY || 0;
 //var name = opt.options.name || 'localhost';   // Unused until FT comes back
 var hostname = opt.options.MyHost || os.hostname();
 var port = Number(opt.options.port) || 12346;
