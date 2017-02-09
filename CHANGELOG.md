@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.6.10](https://github.com/skale-me/skale-engine/tree/0.6.10) (2017-02-09)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.9...0.6.10)
+
+**Merged pull requests:**
+
+- Add node 6 target for travis, use system default memory settings [\#119](https://github.com/skale-me/skale-engine/pull/119) ([mvertes](https://github.com/mvertes))
+- Allow to run on windows [\#118](https://github.com/skale-me/skale-engine/pull/118) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.9](https://github.com/skale-me/skale-engine/tree/0.6.9) (2017-01-02)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.8...0.6.9)
 
