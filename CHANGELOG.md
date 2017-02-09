@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.6.11](https://github.com/skale-me/skale-engine/tree/0.6.11) (2017-02-09)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.10...0.6.11)
+
+**Merged pull requests:**
+
+- fix regression at install [\#120](https://github.com/skale-me/skale-engine/pull/120) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.10](https://github.com/skale-me/skale-engine/tree/0.6.10) (2017-02-09)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.9...0.6.10)
 
