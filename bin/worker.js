@@ -182,16 +182,6 @@ function runWorker(host, port) {
     log('runztask msg', msg);
     var file = msg.data.args;
 
-//    fs.readFile(file, function (err, data) {
-//      fs.unlink(file, function () {});
-//      if (err) throw new Error(err);
-//      zlib.gunzip(data, {chunkSize: 65536}, function (err, data) {
-//        if (err) throw new Error(err);
-//        msg.data.args = data;
-//        runTask(msg);
-//      });
-//    });
-
     var s = getReadStreamSync({path: file});
     var data = Buffer.concat([]);
     s.on('data', function (chunk) {
@@ -221,8 +211,9 @@ function runWorker(host, port) {
   });
 
   grid.on('request', function (msg) {
-    try {request[msg.data.cmd](msg);} 
-    catch (error) {
+    try {
+      request[msg.data.cmd](msg);
+    } catch (error) {
       console.error(error.stack);
       grid.reply(msg, error, null);
     }
