@@ -41,7 +41,7 @@
     "merge2": "^1.0.2",
     "mkdirp": "^0.5.1",
     "node-getopt": "^0.2.3",
-    "node-parquet": "github:mvertes/node-parquet",
+    "node-parquet": "^0.2.0",
     "rimraf": "^2.5.4",
     "thenify": "^3.2.1",
     "uuid": "^3.0.1",
