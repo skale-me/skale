@@ -13,6 +13,7 @@ var zlib = require('zlib');
 var mkdirp = require('mkdirp');
 var uuid = require('uuid');
 var AWS = require('aws-sdk');
+var parquet = require('node-parquet');
 
 var SkaleClient = require('../lib/client.js');
 var Dataset = require('../lib/dataset.js');
@@ -173,7 +174,7 @@ function runWorker(host, port) {
     task.workerId = grid.host.uuid;
     task.mm = mm;
     task.log = log;
-    task.lib = {AWS: AWS, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, url: url, uuid: uuid, zlib: zlib};
+    task.lib = {AWS: AWS, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
     task.run(function(result) {grid.reply(msg, null, result);});
   }
