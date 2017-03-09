@@ -9,7 +9,7 @@ var schema = {
 
 sc.range(900).
   map(a => [a, 2 * a]).
-  save('/tmp/truc', {parquet: true, schema: schema}, (err, res) => {
+  save('/tmp/truc', {parquet: {schema: schema}}, (err, res) => {
     console.log(res);
     sc.end();
   });
