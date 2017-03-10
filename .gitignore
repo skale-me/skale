@@ -3,5 +3,4 @@
 /node_modules/
 npm-debug.log
 bin/tmp/*.js
-yarn.lock
 yarn-error.log

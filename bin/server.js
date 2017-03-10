@@ -97,9 +97,12 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
       } else if (--len === 0) done();
     }
   } else if (to > 1) {  // Unicast
-    if (crossbar[to])
+    if (crossbar[to]) {
       crossbar[to].write(chunk, done);
-    else done();
+    } else {
+      console.error('# Unknown destination', to);
+      done();
+    }
   } else if (to === 1) {  // Foreign (to be done)
   } else if (to === 0) {  // Server request
     try {
@@ -112,6 +115,7 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
       o.error = 'Invalid command: ' + o.cmd;
       o.cmd = 'reply';
       this.sock.write(SkaleClient.encode(o), done);
+      console.error('# clientRequest error:', o.error);
     } else if (clientRequest[o.cmd](this.sock, o)) {
       o.cmd = 'reply';
       this.sock.write(SkaleClient.encode(o), done);

@@ -47,6 +47,9 @@
     "eslint": "^2.13.1",
     "mocha": "^3.1.2"
   },
+  "peerDependencies": {
+    "node-parquet": "^0.2.3"
+  },
   "eslintConfig": {
     "rules": {
       "indent": [

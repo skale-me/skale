@@ -20,6 +20,7 @@ var Task = require('../lib/task.js');
 var Lines = require('../lib/lines.js');
 var sizeOf = require('../lib/rough-sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
+var parquet = require('../lib/parquet.js');
 
 //var global = {require: require};
 
@@ -173,7 +174,7 @@ function runWorker(host, port) {
     task.workerId = grid.host.uuid;
     task.mm = mm;
     task.log = log;
-    task.lib = {AWS: AWS, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, url: url, uuid: uuid, zlib: zlib};
+    task.lib = {AWS: AWS, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
     task.run(function(result) {grid.reply(msg, null, result);});
   }
@@ -181,16 +182,7 @@ function runWorker(host, port) {
   function runztask(msg) {
     log('runztask msg', msg);
     var file = msg.data.args;
-
-//    fs.readFile(file, function (err, data) {
-//      fs.unlink(file, function () {});
-//      if (err) throw new Error(err);
-//      zlib.gunzip(data, {chunkSize: 65536}, function (err, data) {
-//        if (err) throw new Error(err);
-//        msg.data.args = data;
-//        runTask(msg);
-//      });
-//    });
+    grid.muuid = msg.data.master_uuid;
 
     var s = getReadStreamSync({path: file});
     var data = Buffer.concat([]);
@@ -221,8 +213,9 @@ function runWorker(host, port) {
   });
 
   grid.on('request', function (msg) {
-    try {request[msg.data.cmd](msg);} 
-    catch (error) {
+    try {
+      request[msg.data.cmd](msg);
+    } catch (error) {
       console.error(error.stack);
       grid.reply(msg, error, null);
     }
