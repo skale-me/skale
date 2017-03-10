@@ -182,6 +182,7 @@ function runWorker(host, port) {
   function runztask(msg) {
     log('runztask msg', msg);
     var file = msg.data.args;
+    grid.muuid = msg.data.master_uuid;
 
     var s = getReadStreamSync({path: file});
     var data = Buffer.concat([]);
