@@ -13,7 +13,6 @@ var zlib = require('zlib');
 var mkdirp = require('mkdirp');
 var uuid = require('uuid');
 var AWS = require('aws-sdk');
-var parquet = require('node-parquet');
 
 var SkaleClient = require('../lib/client.js');
 var Dataset = require('../lib/dataset.js');
@@ -21,6 +20,7 @@ var Task = require('../lib/task.js');
 var Lines = require('../lib/lines.js');
 var sizeOf = require('../lib/rough-sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
+var parquet = require('../lib/parquet.js');
 
 //var global = {require: require};
 
