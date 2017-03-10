@@ -4,7 +4,7 @@ var sc = require('skale-engine').context();
 
 var schema = {
   int1: {type: 'int32'},
-  int2: {type: 'int32'},
+  int2: {type: 'int32'}
 };
 
 sc.range(900).
