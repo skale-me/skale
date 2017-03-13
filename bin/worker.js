@@ -180,7 +180,7 @@ function runWorker(host, port) {
   }
 
   function runztask(msg) {
-    log('runztask msg', msg);
+    //log('runztask msg', msg);
     var file = msg.data.args;
     grid.muuid = msg.data.master_uuid;
 
@@ -190,7 +190,7 @@ function runWorker(host, port) {
       data = Buffer.concat([data, chunk]);
     });
     s.on('end', function () {
-      log('end stream ztask');
+      //log('end stream ztask');
       zlib.gunzip(data, {chunkSize: 65536}, function (err, data) {
         if (err) throw new Error(err);
         msg.data.args = data;

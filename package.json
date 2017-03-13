@@ -50,6 +50,9 @@
   "peerDependencies": {
     "node-parquet": "^0.2.3"
   },
+  "engines": {
+    "node": ">=4.0"
+  },
   "eslintConfig": {
     "rules": {
       "indent": [
