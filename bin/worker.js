@@ -67,7 +67,8 @@ if (process.env.SKALE_DEBUG > 1) {
 
 if (cluster.isMaster) {
   process.title = 'skale-worker-controller';
-  cluster.setupMaster({execArgv: memory ? ['--max_old_space_size=' + memory] : undefined});
+  if (memory)
+    cluster.setupMaster({execArgv: ['--max_old_space_size=' + memory]});
   cluster.on('exit', handleExit);
   cgrid = new SkaleClient({
     debug: debug,
@@ -176,7 +177,10 @@ function runWorker(host, port) {
     task.log = log;
     task.lib = {AWS: AWS, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
-    task.run(function(result) {grid.reply(msg, null, result);});
+    task.run(function(result) {
+      result.workerId = 'g' + grid.id;
+      grid.reply(msg, null, result);
+    });
   }
 
   function runztask(msg) {
