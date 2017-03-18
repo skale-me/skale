@@ -33,6 +33,7 @@
   "author": "Skale team",
   "dependencies": {
     "aws-sdk": "^2.7.10",
+    "azure-storage": "^2.1.0",
     "line-trace": "^1.0.4",
     "merge2": "^1.0.2",
     "mkdirp": "^0.5.1",
