@@ -36,6 +36,7 @@
     "azure-storage": "^2.1.0",
     "line-trace": "^1.0.4",
     "merge2": "^1.0.2",
+    "micromatch": "^2.3.11",
     "mkdirp": "^0.5.1",
     "node-getopt": "^0.2.3",
     "rimraf": "^2.5.4",
