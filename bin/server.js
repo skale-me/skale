@@ -182,16 +182,8 @@ var clientRequest = {
         clients[muuid].closeListeners[wuuid] = true;
         clients[wuuid].closeListeners[muuid] = true;
       }
-      // Pre-fork new workers to renew the stock
-      wsid++;
-      workerStock = [];
-      for (i = 0; i < workerControllers.length; i++) {
-        clients[workerControllers[i].uuid].sock.write(SkaleClient.encode({
-          cmd: 'getWorker',
-          wsid: wsid,
-          n: workerControllers[i].ncpu
-        }));
-      }
+
+      //startWorkerStock();
     }
   },
   devices: function (sock, msg) {
@@ -242,6 +234,19 @@ var clientRequest = {
     return false;
   }
 };
+
+function startWorkerStock() {
+  // Pre-fork new workers to renew the stock
+  wsid++;
+  workerStock = [];
+  for (var i = 0; i < workerControllers.length; i++) {
+    clients[workerControllers[i].uuid].sock.write(SkaleClient.encode({
+      cmd: 'getWorker',
+      wsid: wsid,
+      n: workerControllers[i].ncpu
+    }));
+  }
+}
 
 // Create a source stream and topic for monitoring info publishing
 var mstream = new SwitchBoard({});
@@ -336,6 +341,7 @@ function handleClose(sock) {
         }
       }
       stats.masters--;
+      startWorkerStock();
       break;
     }
     for (i in cli.closeListeners) {
