@@ -182,8 +182,6 @@ var clientRequest = {
         clients[muuid].closeListeners[wuuid] = true;
         clients[wuuid].closeListeners[muuid] = true;
       }
-
-      //startWorkerStock();
     }
   },
   devices: function (sock, msg) {
