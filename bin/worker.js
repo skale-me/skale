@@ -174,13 +174,13 @@ function runWorker(host, port) {
     var task = parseTask(msg.data.args);
     basedir = task.basedir;
     // set worker side dependencies
-    task.workerId = grid.host.uuid;
+    task.workerId = 'w' + grid.id;
     task.mm = mm;
     task.log = log;
     task.lib = {AWS: AWS, azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
     task.run(function(result) {
-      result.workerId = 'g' + grid.id;
+      result.workerId = task.workerId;
       grid.reply(msg, null, result);
     });
   }
