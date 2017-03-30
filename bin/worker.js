@@ -13,7 +13,7 @@ var zlib = require('zlib');
 
 var mkdirp = require('mkdirp');
 var uuid = require('uuid');
-var AWS = require('aws-sdk');
+var aws = require('aws-sdk');
 var azure = require('azure-storage');
 
 var SkaleClient = require('../lib/client.js');
@@ -177,7 +177,7 @@ function runWorker(host, port) {
     task.workerId = 'w' + grid.id;
     task.mm = mm;
     task.log = log;
-    task.lib = {AWS: AWS, azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, url: url, uuid: uuid, zlib: zlib};
+    task.lib = {aws: aws, azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
     task.run(function(result) {
       result.workerId = task.workerId;
