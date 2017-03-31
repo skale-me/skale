@@ -10,6 +10,7 @@ var os = require('os');
 var cluster = require('cluster');
 var url = require('url');
 var zlib = require('zlib');
+var stream = require('stream');
 
 var mkdirp = require('mkdirp');
 var uuid = require('uuid');
@@ -177,7 +178,7 @@ function runWorker(host, port) {
     task.workerId = 'w' + grid.id;
     task.mm = mm;
     task.log = log;
-    task.lib = {aws: aws, azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, url: url, uuid: uuid, zlib: zlib};
+    task.lib = {aws: aws, azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, stream: stream, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
     task.run(function(result) {
       result.workerId = task.workerId;
