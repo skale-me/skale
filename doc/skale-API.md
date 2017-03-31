@@ -117,7 +117,7 @@ more datasets (parents), and outputs to a new dataset (child).
 
 Datasets are divided into several partitions, so each partition can
 be assigned to a separate worker, and processing can occur concurently
-in a distributed and parallel system. 
+in a distributed and parallel system.
 
 The consequence of this partitioning is that two types of transformations
 exist:
@@ -302,17 +302,27 @@ sc.range(10, -5, -3).collect().then(console.log)
 
 Returns a new dataset of lines in file specified by path *String*.
 
-- *path*: a *String* of the general form `protocol://host/path` or `/path`.
+- *path*: a *String* of the general form `protocol://host/path` or `/path`,
+  where protocol can be one of:
+  - *file*: if path is on local filesystem
+  - *s3*: if path relates to a repository on AWS [S3] storage system
+  - *wasb*: if path relates to a repository on Azure blob storage system
 - *options*: an *Object* with the following fields:
   - *maxFiles*: a *Number* of maximum files to process if the path refers
     to a directory.
+  - *parquet*: a *Boolean* to indicate that all files are in the
+    [parquet] format. Default value is *false*.
 
 if *path* ends by a '/' (directory separator), then the dataset
 will be composed of all the files in the directory. Sub-directories
-are not supported.
+are not supported. Wildcard characters such as `*`, `?`, etc, as
+in the Unix Shell globbing patterns are supported.
 
 If a file name ends by '.gz', then its content will be automatically
 uncompressed using GZIP.
+
+If a file name ends by '.parquet', it will automatically be processed
+as a [parquet].
 
 Note: If using a path on the local filesystem, the file must also
 be accessible at the same path on worker nodes. Either copy the
@@ -1002,6 +1012,12 @@ sc.range(300).save('s3://myproject/mydataset', {gzip: true}).then(sc.end());
 // will produce https://myproject.s3.amazonaws.com/mydataset/0.gz
 ```
 
+##### Azure blob storage protocol
+
+The URL form is `wasb://container@user.blob.core.windows.net/blob_name`. Azure
+credentials must be provided by environment variables i.e
+`AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`.
+
 #### ds.sortBy(keyfunc[, ascending])
 
 Returns a dataset sorted by the given *keyfunc*.
@@ -1182,3 +1198,4 @@ var dataset = sc.range(10).partitionBy(rp)
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
 [ES6 promise]: https://promisesaplus.com
 [action]: #actions
+[parquet]: https://parquet.apache.org
