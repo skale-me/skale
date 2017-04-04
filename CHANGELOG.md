@@ -1,5 +1,42 @@
 # Change Log
 
+## [0.7.0](https://github.com/skale-me/skale-engine/tree/0.7.0) (2017-04-04)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.11...0.7.0)
+
+**Fixed bugs:**
+
+- textFile: fix a bug where the 1st file in S3 dir was skipped [\#126](https://github.com/skale-me/skale-engine/pull/126) ([mvertes](https://github.com/mvertes))
+
+**Closed issues:**
+
+- skale-engine version 0.5.3 regression? [\#61](https://github.com/skale-me/skale-engine/issues/61)
+- sizeOf is incomplete and inaccurate [\#52](https://github.com/skale-me/skale-engine/issues/52)
+
+**Merged pull requests:**
+
+- update dependencies [\#143](https://github.com/skale-me/skale-engine/pull/143) ([mvertes](https://github.com/mvertes))
+- textFile, save: document new protocols and formats [\#142](https://github.com/skale-me/skale-engine/pull/142) ([mvertes](https://github.com/mvertes))
+- save: support direct streaming to S3 [\#141](https://github.com/skale-me/skale-engine/pull/141) ([mvertes](https://github.com/mvertes))
+- textFile: support file globbing \(i.e. src/\*\*/\*.js\) in path argument [\#140](https://github.com/skale-me/skale-engine/pull/140) ([mvertes](https://github.com/mvertes))
+- save: support direct streaming to azure. [\#139](https://github.com/skale-me/skale-engine/pull/139) ([mvertes](https://github.com/mvertes))
+- azure: handle server errors with internal retry policy filter [\#138](https://github.com/skale-me/skale-engine/pull/138) ([mvertes](https://github.com/mvertes))
+- AggregateByKey: faster processing of shuffle files [\#137](https://github.com/skale-me/skale-engine/pull/137) ([mvertes](https://github.com/mvertes))
+- aggregateByKey, coGroup: performance improvements [\#136](https://github.com/skale-me/skale-engine/pull/136) ([mvertes](https://github.com/mvertes))
+- Performance increase of aggregateByKey and coGroup [\#135](https://github.com/skale-me/skale-engine/pull/135) ([mvertes](https://github.com/mvertes))
+- azure: handle errors from storage server: fetch before process and implement retries. [\#134](https://github.com/skale-me/skale-engine/pull/134) ([mvertes](https://github.com/mvertes))
+- distributed mode: pre-fork new workers at end of master [\#133](https://github.com/skale-me/skale-engine/pull/133) ([mvertes](https://github.com/mvertes))
+- textFile: fix compute of partitions for Azure [\#132](https://github.com/skale-me/skale-engine/pull/132) ([mvertes](https://github.com/mvertes))
+- save: upload datasets to azure for urls in wasb:// [\#131](https://github.com/skale-me/skale-engine/pull/131) ([mvertes](https://github.com/mvertes))
+- textFile: support file globbing, azure blobs only for now [\#130](https://github.com/skale-me/skale-engine/pull/130) ([mvertes](https://github.com/mvertes))
+- textFile: support reading from azure storage blobs [\#129](https://github.com/skale-me/skale-engine/pull/129) ([mvertes](https://github.com/mvertes))
+- Simplify top and take actions, and fix out of memory errors for large datasets. [\#128](https://github.com/skale-me/skale-engine/pull/128) ([mvertes](https://github.com/mvertes))
+- Aggregate now guarantees partitions ordering. Improve traces. [\#127](https://github.com/skale-me/skale-engine/pull/127) ([mvertes](https://github.com/mvertes))
+- textFile: read parquet from local and S3 directories [\#125](https://github.com/skale-me/skale-engine/pull/125) ([mvertes](https://github.com/mvertes))
+- Add Parquet support [\#124](https://github.com/skale-me/skale-engine/pull/124) ([mvertes](https://github.com/mvertes))
+- Readme: Fix appveyor badge [\#123](https://github.com/skale-me/skale-engine/pull/123) ([mvertes](https://github.com/mvertes))
+- fix benchmark [\#122](https://github.com/skale-me/skale-engine/pull/122) ([mvertes](https://github.com/mvertes))
+- Fix handling internal dependency on self. [\#121](https://github.com/skale-me/skale-engine/pull/121) ([mvertes](https://github.com/mvertes))
+
 ## [0.6.11](https://github.com/skale-me/skale-engine/tree/0.6.11) (2017-02-09)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.10...0.6.11)
 
