@@ -93,9 +93,9 @@ async@^2.0.1:
   dependencies:
     lodash "^4.14.0"
 
-aws-sdk@^2.7.10:
-  version "2.26.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.26.0.tgz#44b2157ac25dfc9d1527937218aeb5c9019f5bd1"
+aws-sdk@^2.37.0:
+  version "2.37.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.37.0.tgz#0da2c9e54beed9074ed30867d40fab52952fc68f"
   dependencies:
     buffer "4.9.1"
     crypto-browserify "1.0.9"
@@ -1549,9 +1549,16 @@ write@^0.2.1:
   dependencies:
     mkdirp "^0.5.1"
 
-ws@^1.0.1, ws@^1.1.1:
+ws@^1.0.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/ws/-/ws-1.1.2.tgz#8a244fa052401e08c9886cf44a85189e1fd4067f"
+  dependencies:
+    options ">=0.0.5"
+    ultron "1.0.x"
+
+ws@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-1.1.4.tgz#57f40d036832e5f5055662a397c4de76ed66bf61"
   dependencies:
     options ">=0.0.5"
     ultron "1.0.x"

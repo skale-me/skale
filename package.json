@@ -32,7 +32,7 @@
   ],
   "author": "Skale team",
   "dependencies": {
-    "aws-sdk": "^2.7.10",
+    "aws-sdk": "^2.37.0",
     "azure-storage": "^2.1.0",
     "line-trace": "^1.0.4",
     "merge2": "^1.0.2",
@@ -43,7 +43,7 @@
     "thenify": "^3.2.1",
     "uuid": "^3.0.1",
     "websocket-stream": "^3.3.3",
-    "ws": "^1.1.1"
+    "ws": "^1.1.4"
   },
   "devDependencies": {
     "eslint": "^2.13.1",
