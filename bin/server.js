@@ -290,7 +290,7 @@ if (wsport) {
 }
 
 // Start local workers if required
-if (opt.options.local) startWorker();
+if (opt.options.local && opt.options.local !== '0') startWorker();
 
 function startWorker() {
   var args = ['-P', port, '-n', nworker, '-m', memory];
