@@ -16,7 +16,6 @@ var net = require('net');
 var os = require('os');
 var util = require('util');
 var stream = require('stream');
-var trace = require('line-trace');
 var uuidGen = require('uuid');
 var SkaleClient = require('../lib/client.js');
 var webSocketServer = require('ws').Server;
@@ -254,12 +253,11 @@ function pubmon(data) {
 }
 
 process.on('uncaughtException', function uncaughtException(err) {
-  trace(err);
   console.error(err.stack);
 });
 
 process.on('SIGTERM', function sigterm() {
-  trace('terminated, exit');
+  console.error('terminated, exit');
   process.exit();
 });
 

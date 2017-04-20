@@ -942,10 +942,6 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-line-trace@^1.0.4:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/line-trace/-/line-trace-1.0.5.tgz#99c87cf60240cb0ac24e8af5d87175ac824c0333"
-
 lodash._baseassign@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/lodash._baseassign/-/lodash._baseassign-3.2.0.tgz#8c38a099500f215ad09e59f1722fd0c52bfe0a4e"
