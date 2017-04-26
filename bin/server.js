@@ -67,7 +67,8 @@ var access = process.env.SKALE_KEY;
 var stats = {
   masters: 0,
   workerControllers: 0,
-  workers: 0
+  workers: 0,
+  workerHosts: {}
 };
 
 process.title = 'skale-server ' + port;
@@ -141,9 +142,19 @@ var clientRequest = {
     switch (msg.data.type) {
     case 'worker-controller':
       msg.data.wsid = wsid;
-      expectedWorkers += msg.data.ncpu;
+      expectedWorkers += msg.data.nworkers;
       workerControllers.push(msg.data);
       stats.workerControllers++;
+      stats.workerHosts[msg.data.id] = {
+        hostname: msg.data.hostname,
+        nworkers: msg.data.nworkers,
+        ncpus: msg.data.ncpus,
+        memory: msg.data.memory,
+        platform: msg.data.platform,
+        arch: msg.data.arch,
+        cpumodel: msg.data.cpumodel,
+        cpuspeed: msg.data.cpuspeed
+      };
       break;
     case 'worker':
       if (wsid == msg.data.wsid) {
@@ -240,7 +251,7 @@ function startWorkerStock() {
     clients[workerControllers[i].uuid].sock.write(SkaleClient.encode({
       cmd: 'getWorker',
       wsid: wsid,
-      n: workerControllers[i].ncpu
+      n: workerControllers[i].nworkers
     }));
   }
 }
@@ -312,9 +323,10 @@ function handleClose(sock) {
     switch (cli.data.type) {
     case 'worker-controller':
       // Resize stock capacity
-      expectedWorkers -= cli.data.ncpu;
+      expectedWorkers -= cli.data.nworkers;
       for (i = 0; i < workerControllers.length; i++) {
         if (cli.uuid == workerControllers[i].uuid) {
+          delete stats.workerHosts[workerControllers[i].id];
           workerControllers.splice(i, 1);
         }
       }

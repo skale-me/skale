@@ -16,6 +16,7 @@ var mkdirp = require('mkdirp');
 var uuid = require('uuid');
 var aws = require('aws-sdk');
 var azure = require('azure-storage');
+var parquet = require('../lib/stub-parquet.js');
 
 var SkaleClient = require('../lib/client.js');
 var Dataset = require('../lib/dataset.js');
@@ -23,7 +24,6 @@ var Task = require('../lib/task.js');
 var Lines = require('../lib/lines.js');
 var sizeOf = require('../lib/rough-sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
-var parquet = require('../lib/parquet.js');
 
 //var global = {require: require};
 
@@ -45,7 +45,7 @@ if (opt.options.version) {
 }
 
 var debug = opt.options.debug || false;
-var ncpu = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
+var nworkers = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
 var memory = Number(opt.options.memory || process.env.SKALE_MEMORY);
 var cgrid;
 var mm = new MemoryManager(memory);
@@ -53,7 +53,7 @@ var log;
 var hostname;
 var start = process.hrtime();
 
-ncpu = Number(ncpu);
+nworkers = Number(nworkers);
 if (!opt.options.slow)
   hostname = opt.options.MyHost || os.hostname();
 
@@ -73,6 +73,7 @@ if (cluster.isMaster) {
   if (memory)
     cluster.setupMaster({execArgv: ['--max_old_space_size=' + memory]});
   cluster.on('exit', handleExit);
+  var cpus = os.cpus();
   cgrid = new SkaleClient({
     debug: debug,
     host: opt.options.Host,
@@ -80,7 +81,13 @@ if (cluster.isMaster) {
     data: {
       type: 'worker-controller',
       hostname: hostname,
-      ncpu: ncpu
+      nworkers: nworkers,
+      ncpus: cpus.length,
+      memory: os.totalmem(),
+      platform: os.platform(),
+      arch: os.arch(),
+      cpumodel: cpus[0].model,
+      cpuspeed: cpus[0].speed
     }
   });
   cgrid.on('connect', startWorkers);
@@ -101,7 +108,7 @@ if (cluster.isMaster) {
 
 function startWorkers(msg) {
   var worker = [], removed = {};
-  var n = msg.n || ncpu;
+  var n = msg.n || nworkers;
   log('worker-controller host', cgrid.uuid);
   for (var i = 0; i < n; i++)
     worker[i] = cluster.fork({wsid: msg.wsid, rank: i, puuid: cgrid.uuid});
