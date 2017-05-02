@@ -100,17 +100,17 @@ A new transform can be implemented either by deriving a new class from the Datas
 [Compiles then run]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L223
 [runs the next task]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L129
 [worker-local.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/worker-local.js
-[worker.js]: https://github.com/skale-me/skale-engine/  blob/0.7.0/bin/worker.js
+[worker.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js
 [task.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/task.js
 [dataset.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js
 [serialization]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L141
-[deserialization]: https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker. js#L275
+[deserialization]: https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js#L275
 [cluster]: https://nodejs.org/dist/latest-v7.x/docs/api/cluster.html
 [TextLocal]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L911-L919
 [TextLocal.getPartitions]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L921-L941
 [TextLocal.iterate]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L943
 [iterateStream]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L800
-[readable stream]: https://nodejs.   org/api/stream.html#stream_class_stream_readable
-[textFile]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context. js#L112-121
+[readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
+[textFile]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L112-121
 [parallelize]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L107
 [distinct]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L121-L125
