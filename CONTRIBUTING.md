@@ -11,6 +11,9 @@ contribution at a time by users just like you.
 * If you think you have found a bug within skale-engine, open an
   [issue].  Do not forget to check that it doesn't already exist
   in our [issue database]
+* If you want to learn more about skale internals, architecture and
+  how to extend skale-engine, see the
+  [Skale Hacker's Guide](doc/skale-hackers-guide.md)
 * If you have a suggestion for improvement or a new feature, create
   a [pull request] so it can be discussed and reviewed by the
   community and project committers. Even the project committers

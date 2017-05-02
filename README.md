@@ -47,6 +47,7 @@ sc.textFile('/path/...')
 * [skale](https://groups.google.com/forum/#!forum/skale)
   mailing list for discussion about use and development
 * [Contributing guide](CONTRIBUTING.md)
+* [Skale Hacker's Guide](doc/skale-hackers-guide.md)
 * [Roadmap](Roadmap.md)
 
 ## Quickstart
