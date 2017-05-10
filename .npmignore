@@ -3,5 +3,6 @@ Roadmap.md
 appveyor.yml
 benchmark/
 doc/
+docker/
 examples/
 test/

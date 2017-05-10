@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+
+  skale-server:
+    image: skale/skale
+    command: skale-server
+    ports:
+      - 12346:12346
+      - 81:80
+
+  skale-worker:
+    image: skale/skale
+    command: skale-worker -H skale-server
+    ports:
+      - 82:80
