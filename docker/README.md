@@ -4,6 +4,8 @@ This directory contains a sample Dockerfile for skale-engine container, based on
 
 It also contains a sample Compose file to deploy a minimal stack on a single host or a docker swarm.
 
+This docker configuration is not meant for production, ok for evaluation or experimentation.
+
 ## Installing
 
 As a prerequisite, [Docker](https://docker.com) must be installed, in version v1.12.0 or higher.
