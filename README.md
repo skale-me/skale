@@ -132,8 +132,8 @@ For further details, see command line help for `skale-worker` and `skale-server`
 ## Docker
 
 A sample docker image and compose file are provided, to run a minimal
-distributed skale stack, on a single machine or on a swarm cluster, as explained
-[here](docker/README.md).
+distributed skale stack for experimentation purpose, on a single machine
+or on a swarm cluster, as explained [here](docker/README.md).
 
 ## Tests
 
