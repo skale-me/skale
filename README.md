@@ -129,6 +129,12 @@ server such as nginx, apache or busybox httpd, or even NodeJS
 
 For further details, see command line help for `skale-worker` and `skale-server`.
 
+## Docker
+
+A sample docker image and compose file are provided, to run a minimal
+distributed skale stack for experimentation purpose, on a single machine
+or on a swarm cluster, as explained [here](docker/README.md).
+
 ## Tests
 
 To run the test suite, first install the dependencies, then run `npm test`:
