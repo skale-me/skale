@@ -7,8 +7,13 @@ var stream = require('stream');
 var os = require('os');
 var util = require('util');
 var thenify = require('thenify').withCallback;
+var seedrandom = require('seedrandom');
 //var trace = require('line-trace');
 var Lines = require('../../lib/lines.js');
+
+
+if (process.env.SKALE_RANDOM_SEED)
+  seedrandom(process.env.SKALE_RANDOM_SEED, {global: true});
 
 module.exports = LocalArray;
 module.exports.TextStream = TextStream;
@@ -522,16 +527,13 @@ function sample(v, withReplacement, frac, num, seed) {
   for (var w = 0; w < P; w++) {
     var p = 0;
     var tmp = [];
-    // FIXME: include a random class
-    //var rng = new ml.Random(seed);
-    var rng;
     for (i in workerMap[w]) {
       var L = workerMap[w][i].length;
       L = num ? num : Math.ceil(L * frac);
       tmp[p] = {data: []};
       var idxVect = [];
       while (tmp[p].data.length != L) {
-        var idx = Math.round(Math.abs(rng.next()) * (L - 1));
+        var idx = Math.round(Math.abs(Math.random()) * (L - 1));
         if ((idxVect.indexOf(idx) != -1) &&  !withReplacement)
           continue; // if already picked but no replacement mode
         idxVect.push[idx];

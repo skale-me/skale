@@ -146,6 +146,8 @@ function runWorker(host, port) {
   } else {
     log = function () {};
   }
+  if (process.env.SKALE_RANDOM_SEED)
+    Dataset.setRandomSeed(process.SKALE_RANDOM_SEED);
   process.title = 'skale-worker_' + wid;
   process.on('uncaughtException', function (err) {
     grid.send(grid.muuid, {cmd: 'workerError', args: err.stack});

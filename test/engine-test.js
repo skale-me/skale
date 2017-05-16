@@ -1,5 +1,7 @@
 // Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
 
+process.env.SKALE_RANDOM_SEED = 'skale';
+
 var fs = require('fs');
 var net = require('net');
 var spawn = require('child_process').spawn;
@@ -61,7 +63,7 @@ var transforms = [
   {name: 'mapValues', args: [data.valueMapper]},
 //  {name: 'persist', args: []},
   {name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0], sort: true}
-//  {name: 'sample', args: [true, 0.1], sort: true, lengthOnly: true},
+//  {name: 'sample', args: [false, 0.9], sort: true, lengthOnly: true}
 //  {name: 'values', args: []},
 ];
 
