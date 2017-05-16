@@ -17,6 +17,5 @@ module.exports = {
   context: Context,
   HashPartitioner: Dataset.HashPartitioner,
   RangePartitioner: Dataset.RangePartitioner,
-  Random: Dataset.Random,
   Source: Dataset.Source
 };
