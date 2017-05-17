@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.7.1](https://github.com/skale-me/skale-engine/tree/0.7.1) (2017-05-17)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.7.0...0.7.1)
+
+**Merged pull requests:**
+
+- API doc: add a section on environment variables [\#155](https://github.com/skale-me/skale-engine/pull/155) ([mvertes](https://github.com/mvertes))
+- doc: fix some typos [\#154](https://github.com/skale-me/skale-engine/pull/154) ([mvertes](https://github.com/mvertes))
+- Fix a worker crash when using ds.sample\(\) with replacement. [\#153](https://github.com/skale-me/skale-engine/pull/153) ([mvertes](https://github.com/mvertes))
+- add sample docker files [\#152](https://github.com/skale-me/skale-engine/pull/152) ([mvertes](https://github.com/mvertes))
+- doc: fix links [\#151](https://github.com/skale-me/skale-engine/pull/151) ([mvertes](https://github.com/mvertes))
+- mention the Skale Hacker's Guide [\#150](https://github.com/skale-me/skale-engine/pull/150) ([mvertes](https://github.com/mvertes))
+- add a Skale Hacker's Guide [\#149](https://github.com/skale-me/skale-engine/pull/149) ([mvertes](https://github.com/mvertes))
+- Clean up dependency, more info at worker-controller connection [\#147](https://github.com/skale-me/skale-engine/pull/147) ([mvertes](https://github.com/mvertes))
+- Added .npmignore [\#146](https://github.com/skale-me/skale-engine/pull/146) ([mvertes](https://github.com/mvertes))
+- worker: retry initial network connection to server [\#145](https://github.com/skale-me/skale-engine/pull/145) ([mvertes](https://github.com/mvertes))
+
 ## [0.7.0](https://github.com/skale-me/skale-engine/tree/0.7.0) (2017-04-04)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.6.11...0.7.0)
 
