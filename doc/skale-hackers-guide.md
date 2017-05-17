@@ -20,7 +20,7 @@ In a nutshell, the master performs the following:
 
 1. Creates a new skale [context] object to hold the state of cluster, datasets and tasks, then in this context:
 2. Allocates a new cluster, i.e. and array of [workers]: connected slave processes on each worker host (1 process per CPU).
-3. [Compiles then run] an execution graph from the user code, the *job*, consisting of a sequence of *stages*. This compilation is only triggered when an *action* is met, thus in *lazy* mode.
+3. [Compiles then runs] an execution graph derived from the user code, the *job*, consisting of a sequence of *stages*. This compilation is only triggered when an *action* is met, thus in *lazy* mode.
 4. For each stage, [runs the next task]: serialize and send stage code and metadata about input dataset partitions to the next free worker, trigger execution, wait for result, repeat until all stage's tasks are completed.
 
 *Stage explanation here*
@@ -65,7 +65,7 @@ Dataset objects have methods that can be run either on master side or on worker 
 
 ### Local standalone mode
 
-The standalone local mode limits the scalability to the single machine but simplifies the use, as it is only necessary to `require('skale-engine')`, and avoid cluster or extra server and configuaration management.
+The standalone local mode limits the scalability to the single machine but simplifies the use, as it is only necessary to `require('skale-engine')`, and avoid cluster or extra server and configuration management.
 
 In local standalone mode, the workers processes are created on the same host as the master, by the master itself, using the NodeJS core [cluster] module.
 
@@ -97,7 +97,7 @@ A new transform can be implemented either by deriving a new class from the Datas
 [context.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js
 [context]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L22
 [workers]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L51-L53
-[Compiles then run]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L223
+[Compiles then runs]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L223
 [runs the next task]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L129
 [worker-local.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/worker-local.js
 [worker.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js
