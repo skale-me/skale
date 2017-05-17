@@ -1195,6 +1195,16 @@ var rp = new skale.RangePartitioner(3, a => a, dataset)
 var dataset = sc.range(10).partitionBy(rp)
 ```
 
+### Environment variables
+
+- `SKALE_HOST`: The hostname of the skale-server process in distributed mode. If unset, the master runs in standalone mode.
+- `SKALE_PORT`: The port of the skale-server process in distributed mode. Default value: "12346"
+- `SKALE_KEY`: An authentication token which may be required by the skale-server process
+- `SKALE_DEBUG`: set the debug trace level to the following values:
+  - `0`: or unset: no traces
+  - `1`: debug traces from master side
+  - `2`: above traces plus worker traces
+  - `3`: above traces plus network protocol traces (if running in distributed mode)
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
 [ES6 promise]: https://promisesaplus.com
 [action]: #actions
