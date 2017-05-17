@@ -60,6 +60,7 @@
   - [Partitioners](#partitioners)
     - [HashPartitioner(numPartitions)](#hashpartitionernumpartitions)
     - [RangePartitioner(numPartitions, keyfunc, dataset)](#rangepartitionernumpartitions-keyfunc-dataset)
+  - [Environment variables](#environment-variables)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
