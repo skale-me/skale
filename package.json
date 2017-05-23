@@ -32,7 +32,7 @@
   ],
   "author": "Skale team",
   "dependencies": {
-    "aws-sdk": "^2.37.0",
+    "aws-sdk": "^2.55.0",
     "azure-storage": "^2.1.0",
     "merge2": "^1.0.2",
     "micromatch": "^2.3.11",
@@ -40,17 +40,17 @@
     "node-getopt": "^0.2.3",
     "rimraf": "^2.5.4",
     "seedrandom": "^2.4.3",
-    "thenify": "^3.2.1",
+    "thenify": "^3.3.0",
     "uuid": "^3.0.1",
-    "websocket-stream": "^3.3.3",
-    "ws": "^1.1.4"
+    "websocket-stream": "^5.0.0",
+    "ws": "^3.0.0"
   },
   "devDependencies": {
-    "eslint": "^2.13.1",
-    "mocha": "^3.1.2"
+    "eslint": "^3.19.0",
+    "mocha": "^3.4.1"
   },
   "peerDependencies": {
-    "node-parquet": "^0.2.3"
+    "node-parquet": "^0.2.4"
   },
   "engines": {
     "node": ">=4.0"
