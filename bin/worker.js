@@ -143,8 +143,16 @@ function runWorker(host, port) {
       args.unshift('[worker-' +  process.env.rank + ' ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
       console.error.apply(null, args);
     };
+    var dlog = function() {
+      var args = Array.prototype.slice.call(arguments);
+      var elapsed = process.hrtime(start);
+      var elapsed1 = process.hrtime(args.shift());
+      args.unshift('[worker-' +  process.env.rank + ' ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
+      args.push('in ' + (elapsed1[0] + elapsed1[1] / 1e9).toFixed(3) + 's');
+      console.error.apply(null, args);
+    };
   } else {
-    log = function () {};
+    dlog = log = function () {};
   }
   if (process.env.SKALE_RANDOM_SEED)
     Dataset.setRandomSeed(process.SKALE_RANDOM_SEED);
@@ -187,6 +195,7 @@ function runWorker(host, port) {
     task.workerId = 'w' + grid.id;
     task.mm = mm;
     task.log = log;
+    task.dlog = dlog;
     task.lib = {aws: aws, azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, stream: stream, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
     task.run(function(result) {
