@@ -25,14 +25,13 @@ var Lines = require('../lib/lines.js');
 var sizeOf = require('../lib/rough-sizeof.js');
 var readSplit = require('../lib/readsplit.js').readSplit;
 
-//var global = {require: require};
-
 var opt = require('node-getopt').create([
   ['h', 'help', 'print this help text'],
   ['d', 'debug', 'print debug traces'],
   ['m', 'memory=ARG', 'set max memory in MB for workers'],
   ['M', 'MyHost=ARG', 'advertised hostname (peer-to-peer)'],
   ['n', 'nworker=ARG', 'number of workers (default: number of cpus)'],
+  ['r', 'retry=ARG', 'number of connection retry (default 0)'],
   ['s', 'slow', 'disable peer-to-peer file transfers though HTTP'],
   ['H', 'Host=ARG', 'server hostname (default localhost)'],
   ['P', 'Port=ARG', 'server port (default 12346)'],
@@ -76,6 +75,7 @@ if (cluster.isMaster) {
   var cpus = os.cpus();
   cgrid = new SkaleClient({
     debug: debug,
+    retry: opt.options.retry,
     host: opt.options.Host,
     port: opt.options.Port,
     data: {
@@ -100,7 +100,8 @@ if (cluster.isMaster) {
   fs.mkdir('/tmp/skale', function () {});
   setInterval(function () {
     var stats = { nworkers: Object.keys(cluster.workers).length };
-    fs.writeFile('/tmp/skale/worker-controller-stats', JSON.stringify(stats), function () {}); }, 3000);
+    fs.writeFile('/tmp/skale/worker-controller-stats', JSON.stringify(stats), function () {});
+  }, 3000);
   log('worker controller ready');
 } else {
   runWorker(opt.options.Host, opt.options.Port);
