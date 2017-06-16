@@ -50,7 +50,7 @@ var cgrid;
 var mm = new MemoryManager(memory);
 var log;
 var hostname;
-var start = process.hrtime();
+var start = Date.now();
 
 nworkers = Number(nworkers);
 if (!opt.options.slow)
@@ -59,8 +59,7 @@ if (!opt.options.slow)
 if (process.env.SKALE_DEBUG > 1) {
   log = function () {
     var args = Array.prototype.slice.call(arguments);
-    var elapsed = process.hrtime(start);
-    args.unshift('[worker-controller ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
+    args.unshift('[worker-controller ' + (Date.now() - start) / 1000 + 's]');
     console.error.apply(null, args);
   };
 } else {
@@ -135,21 +134,20 @@ function handleExit(worker, code, signal) {
 
 function runWorker(host, port) {
   var basedir, log;
-  var start = process.hrtime();
+  var start = Date.now();
   var wid = process.env.wsid + '-' + process.env.rank;
   if (process.env.SKALE_DEBUG > 1) {
     log = function () {
       var args = Array.prototype.slice.call(arguments);
-      var elapsed = process.hrtime(start);
-      args.unshift('[worker-' +  process.env.rank + ' ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
+      args.unshift('[worker-' +  process.env.rank + ' ' + (Date.now() - start) / 1000 + 's]');
       console.error.apply(null, args);
     };
     var dlog = function() {
       var args = Array.prototype.slice.call(arguments);
-      var elapsed = process.hrtime(start);
-      var elapsed1 = process.hrtime(args.shift());
-      args.unshift('[worker-' +  process.env.rank + ' ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
-      args.push('in ' + (elapsed1[0] + elapsed1[1] / 1e9).toFixed(3) + 's');
+      var now = Date.now();
+      var lstart = args.shift();
+      args.unshift('[worker-' +  process.env.rank + ' ' + (now - start) / 1000 + 's]');
+      args.push('in ' + (now - lstart) / 1000 + 's');
       console.error.apply(null, args);
     };
   } else {
