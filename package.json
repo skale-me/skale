@@ -57,7 +57,7 @@
     "node-parquet": "^0.2.4"
   },
   "engines": {
-    "node": ">=4.0"
+    "node": ">=6.0"
   },
   "eslintConfig": {
     "rules": {
