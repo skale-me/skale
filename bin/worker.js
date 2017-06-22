@@ -69,7 +69,7 @@ if (process.env.SKALE_DEBUG > 1) {
 if (cluster.isMaster) {
   process.title = 'skale-worker-controller';
   if (memory)
-    cluster.setupMaster({execArgv: ['--max_old_space_size=' + memory]});
+    cluster.setupMaster({execArgv: ['--expose-gc', '--max_old_space_size=' + memory]});
   cluster.on('exit', handleExit);
   var cpus = os.cpus();
   cgrid = new SkaleClient({
@@ -135,18 +135,18 @@ function handleExit(worker, code, signal) {
 function runWorker(host, port) {
   var basedir, log;
   var start = Date.now();
-  var wid = process.env.wsid + '-' + process.env.rank;
+  var wid = process.env.rank;
   if (process.env.SKALE_DEBUG > 1) {
     log = function () {
       var args = Array.prototype.slice.call(arguments);
-      args.unshift('[worker-' +  process.env.rank + ' ' + (Date.now() - start) / 1000 + 's]');
+      args.unshift('[worker-' +  wid + ' ' + (Date.now() - start) / 1000 + 's]');
       console.error.apply(null, args);
     };
     var dlog = function() {
       var args = Array.prototype.slice.call(arguments);
       var now = Date.now();
       var lstart = args.shift();
-      args.unshift('[worker-' +  process.env.rank + ' ' + (now - start) / 1000 + 's]');
+      args.unshift('[worker-' +  wid + ' ' + (now - start) / 1000 + 's]');
       args.push('in ' + (now - lstart) / 1000 + 's');
       console.error.apply(null, args);
     };
@@ -155,7 +155,6 @@ function runWorker(host, port) {
   }
   if (process.env.SKALE_RANDOM_SEED)
     Dataset.setRandomSeed(process.SKALE_RANDOM_SEED);
-  process.title = 'skale-worker_' + wid;
   process.on('uncaughtException', function (err) {
     grid.send(grid.muuid, {cmd: 'workerError', args: err.stack});
     process.exit(2);
@@ -178,7 +177,9 @@ function runWorker(host, port) {
     }
   }, function (err, res) {
     log('id:', res.id, ', uuid:', res.uuid);
+    wid = 'w' + res.id;
     grid.host = {uuid: res.uuid, id: res.id};
+    process.title = 'skale-worker_w' + res.id;
   });
 
   grid.on('error', function (err) {
@@ -200,6 +201,14 @@ function runWorker(host, port) {
     task.run(function(result) {
       result.workerId = task.workerId;
       grid.reply(msg, null, result);
+      if (global.gc) {
+        setImmediate(function () {
+          var gcs = Date.now();
+          global.gc();
+          dlog(gcs, 'gc');
+        });
+      }
+      else log('no global.gc');
     });
   }
 
