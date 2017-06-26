@@ -304,7 +304,10 @@ if (opt.options.local) startWorker();
 function startWorker() {
   var args = ['-P', port, '-n', nworker, '-m', memory];
   args = args.concat(opt.options.slow ? ['-s'] : ['-M', hostname]);
-  var worker =  child_process.spawn( __dirname + '/worker.js', args, {stdio: 'inherit'});
+  var worker =  child_process.fork( __dirname + '/worker.js', args, {
+    execArgv: [ '--expose-gc' ],
+    stdio: 'inherit'
+  });
   worker.on('close', startWorker);
 }
 
