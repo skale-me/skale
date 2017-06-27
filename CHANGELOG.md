@@ -1,5 +1,25 @@
 # Change Log
 
+## [0.7.2](https://github.com/skale-me/skale-engine/tree/0.7.2) (2017-06-27)
+[Full Changelog](https://github.com/skale-me/skale-engine/compare/0.7.1...0.7.2)
+
+**Merged pull requests:**
+
+- update dependencies build files [\#169](https://github.com/skale-me/skale-engine/pull/169) ([mvertes](https://github.com/mvertes))
+- update dependencies [\#168](https://github.com/skale-me/skale-engine/pull/168) ([mvertes](https://github.com/mvertes))
+- workers: reduce amount of traces during shuffle [\#167](https://github.com/skale-me/skale-engine/pull/167) ([mvertes](https://github.com/mvertes))
+- worker: manually call garbage collector at end of task. Experimental [\#166](https://github.com/skale-me/skale-engine/pull/166) ([mvertes](https://github.com/mvertes))
+- add interactive REPL shell, supporting async/await [\#165](https://github.com/skale-me/skale-engine/pull/165) ([mvertes](https://github.com/mvertes))
+- Fix and improved tracing of time measurements [\#164](https://github.com/skale-me/skale-engine/pull/164) ([mvertes](https://github.com/mvertes))
+- worker: allow to retry connections using -r \<nbretry\> option [\#163](https://github.com/skale-me/skale-engine/pull/163) ([mvertes](https://github.com/mvertes))
+- dataset: fix parsing of shuffle in aggregateByKey, clean code [\#162](https://github.com/skale-me/skale-engine/pull/162) ([mvertes](https://github.com/mvertes))
+- performance: block processing for pipelines at source level, part 2 [\#161](https://github.com/skale-me/skale-engine/pull/161) ([mvertes](https://github.com/mvertes))
+- eslint: allow arrow functions and async/await [\#160](https://github.com/skale-me/skale-engine/pull/160) ([mvertes](https://github.com/mvertes))
+- Fix previous task serialization change which impacted sc.range\(\) [\#159](https://github.com/skale-me/skale-engine/pull/159) ([mvertes](https://github.com/mvertes))
+- Clean code, improve traces for performances, set maximum partitions. [\#158](https://github.com/skale-me/skale-engine/pull/158) ([mvertes](https://github.com/mvertes))
+- update dependencies [\#157](https://github.com/skale-me/skale-engine/pull/157) ([mvertes](https://github.com/mvertes))
+- textFile: Fix handling of gzipped files in local filesystem [\#156](https://github.com/skale-me/skale-engine/pull/156) ([mvertes](https://github.com/mvertes))
+
 ## [0.7.1](https://github.com/skale-me/skale-engine/tree/0.7.1) (2017-05-17)
 [Full Changelog](https://github.com/skale-me/skale-engine/compare/0.7.0...0.7.1)
 
