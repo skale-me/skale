@@ -41,13 +41,13 @@ beforeEach(function (done) {
 
 var sources = [
   [{name: 'parallelize', args: [data.v[0]]}],
-//  [{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
+  // [{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
   [{name: 'textFile', args: [data.files[0]]}, {name: 'map', args: [data.textParser]}]
 ];
 
 var sources2 = [
   [{name: 'parallelize', args: [data.v[1]]}],
-//  [{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
+  // [{name: 'lineStream', args: []}, {name: 'map', args: [data.textParser]}],
   [{name: 'textFile', args: [data.files[1]]}, {name: 'map', args: [data.textParser]}]
 ];
 
@@ -58,13 +58,13 @@ var transforms = [
   {name: 'flatMap', args: [data.flatMapper]},
   {name: 'flatMapValues', args: [data.valueFlatMapper]},
   {name: 'groupByKey', args: [], sort: true},
-//  {name: 'keys', args: []},
+  // {name: 'keys', args: []},
   {name: 'map', args: [data.mapper]},
   {name: 'mapValues', args: [data.valueMapper]},
-//  {name: 'persist', args: []},
+  // {name: 'persist', args: []},
   {name: 'reduceByKey', args: [function (a, b) {return a + b;}, 0], sort: true}
-//  {name: 'sample', args: [false, 0.9], sort: true, lengthOnly: true}
-//  {name: 'values', args: []},
+  // {name: 'sample', args: [false, 0.9], sort: true, lengthOnly: true}
+  // {name: 'values', args: []},
 ];
 
 var dualTransforms = [
@@ -82,14 +82,14 @@ var actions = [
   {name: 'collect', args: []},
   {name: 'count', args: []},
   {name: 'countByValue', args: [], sort: true},
-//  {name: 'lookup', args: [data.v[0][0][0]]},
+  // {name: 'lookup', args: [data.v[0][0][0]]},
   {name: 'reduce', args: [data.reducer, [0, 0]]}
-//  {name: 'take', args: [2], lengthOnly: true, stream: true},
-//  {name: 'takeOrdered', args: [2, function (a, b) {return a < b;}], stream: true},
-//  {name: 'top', args: [2], stream: true},
-//  {name: 'takeSample', args: [true, 2, 1], stream: true},
-// XXXXX TODO:
-// foreach,
+  // {name: 'take', args: [2], lengthOnly: true, stream: true},
+  // {name: 'takeOrdered', args: [2, function (a, b) {return a < b;}], stream: true},
+  // {name: 'top', args: [2], stream: true},
+  // {name: 'takeSample', args: [true, 2, 1], stream: true},
+  // XXXXX TODO:
+  // foreach,
 ];
 
 sources.forEach(function (source) {describe('sc.' + source[0].name + '()', function() {
