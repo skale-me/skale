@@ -33,6 +33,7 @@ var opt = require('node-getopt').create([
   ['n', 'nworker=ARG', 'number of workers (default: number of cpus)'],
   ['r', 'retry=ARG', 'number of connection retry (default 0)'],
   ['s', 'slow', 'disable peer-to-peer file transfers though HTTP'],
+  ['G', 'forcegc', 'workers force garbage collect at end of task'],
   ['H', 'Host=ARG', 'server hostname (default localhost)'],
   ['P', 'Port=ARG', 'server port (default 12346)'],
   ['V', 'version', 'print version']
@@ -44,6 +45,7 @@ if (opt.options.version) {
 }
 
 var debug = opt.options.debug || false;
+var forceGc = opt.options.forcegc || false;
 var nworkers = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
 var memory = Number(opt.options.memory || process.env.SKALE_MEMORY);
 var cgrid;
@@ -201,7 +203,7 @@ function runWorker(host, port) {
     task.run(function(result) {
       result.workerId = task.workerId;
       grid.reply(msg, null, result);
-      if (global.gc) {
+      if (global.gc && forcegc) {
         setImmediate(function () {
           var gcs = Date.now();
           global.gc();
