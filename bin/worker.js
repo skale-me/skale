@@ -203,7 +203,7 @@ function runWorker(host, port) {
     task.run(function(result) {
       result.workerId = task.workerId;
       grid.reply(msg, null, result);
-      if (global.gc && forcegc) {
+      if (global.gc && forceGc) {
         setImmediate(function () {
           var gcs = Date.now();
           global.gc();
