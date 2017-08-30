@@ -2,5 +2,6 @@
 .DS_Store
 /node_modules/
 npm-debug.log
+tags
 yarn-error.log
 bin/tmp/*.js
