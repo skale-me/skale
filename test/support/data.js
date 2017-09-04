@@ -14,8 +14,8 @@ var raw_data = [
 function textParser(s) {return s.split(' ').map(parseFloat);}
 
 var v = [
-  raw_data[0].split('\n').filter(function (l) {return l != '';}).map(textParser),
-  raw_data[1].split('\n').filter(function (l) {return l != '';}).map(textParser)
+  raw_data[0].split('\n').filter(function (l) {return l !== '';}).map(textParser),
+  raw_data[1].split('\n').filter(function (l) {return l !== '';}).map(textParser)
 ];
 
 // Helper functions for tests

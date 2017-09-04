@@ -234,7 +234,7 @@ util.inherits(BlockStream, stream.Transform);
 BlockStream.prototype._transform = function (msg, encoding, done) {
   for (var i = 0; i < msg.length; i++) {
     this.buf.push(msg[i]);
-    if (++this.cnt == this.len) {
+    if (++this.cnt === this.len) {
       this.push(this.buf);
       this.buf = [];
       this.cnt = 0;
@@ -327,12 +327,12 @@ function coGroup(v1, v2) {
     J = v1[i][1];
     idx = -1;
     for (j = 0; j < v.length; j++) {
-      if (v[j][0] == I) {
+      if (v[j][0] === I) {
         idx = j;
         break;
       }
     }
-    if (idx != -1) v[idx][1][0].push(J);
+    if (idx !== -1) v[idx][1][0].push(J);
     else v[v.length] = [I, [[J], []]];
   }
   for (i = 0; i < v2.length; i++) {
@@ -340,12 +340,12 @@ function coGroup(v1, v2) {
     J = v2[i][1];
     idx = -1;
     for (j = 0; j < v.length; j++) {
-      if (v[j][0] == I) {
+      if (v[j][0] === I) {
         idx = j;
         break;
       }
     }
-    if (idx != -1) v[idx][1][1].push(J);
+    if (idx !== -1) v[idx][1][1].push(J);
     else v[v.length] = [I, [[], [J]]];
   }
   return v;
@@ -400,7 +400,7 @@ function flatMapValues(v, mapper) {
 function groupByKey(v) {
   var i, idx, keys = [], out = [];
   for (i = 0; i < v.length; i++)
-    if (keys.indexOf(v[i][0]) == -1)
+    if (keys.indexOf(v[i][0]) === -1)
       keys.push(v[i][0]);
   for (i = 0; i < keys.length; i++)
     out.push([keys[i], []]);
@@ -415,9 +415,9 @@ function intersection(v1, v2) {
   var e, i, j, v = [];
   for (i = 0; i < v1.length; i++) {
     e = JSON.stringify(v1[i]);
-    if (v.indexOf(e) != -1) continue;
+    if (v.indexOf(e) !== -1) continue;
     for (j = 0; j < v2.length; j++) {
-      if (JSON.stringify(v2[j]) == e) {
+      if (JSON.stringify(v2[j]) === e) {
         v.push(v1[i]);
         break;
       }
@@ -431,7 +431,7 @@ function leftOuterJoin(v1, v2) {
   for (i = 0; i < v1.length; i++) {
     found = false;
     for (j = 0; j < v2.length; j++) {
-      if (v1[i][0] == v2[j][0]) {
+      if (v1[i][0] === v2[j][0]) {
         found = true;
         v.push([v1[i][0], [v1[i][1], v2[j][1]]]);
       }
@@ -446,7 +446,7 @@ function join(v1, v2) {
   var i, j, v = [];
   for (i = 0; i < v1.length; i++)
     for (j = 0; j < v2.length; j++)
-      if (v1[i][0] == v2[j][0])
+      if (v1[i][0] === v2[j][0])
         v.push([v1[i][0], [v1[i][1], v2[j][1]]]);
   return v;
 }
@@ -456,7 +456,7 @@ function keys(v) {
 }
 
 function lookup(v, key) {
-  return v.filter(function (e) {return e[0] == key;});
+  return v.filter(function (e) {return e[0] === key;});
 }
 
 function map(v, mapper) {
@@ -474,7 +474,7 @@ function reduce(v, reducer, init) {
 function reduceByKey(v, reducer, init) {
   var i, idx, keys = [], res = [];
   for (i = 0; i < v.length; i++)
-    if (keys.indexOf(v[i][0]) == -1)
+    if (keys.indexOf(v[i][0]) === -1)
       keys.push(v[i][0]);
   for (i = 0; i < keys.length; i++)
     res.push([keys[i], init]);
@@ -490,7 +490,7 @@ function rightOuterJoin(v1, v2) {
   for (i = 0; i < v2.length; i++) {
     found = false;
     for (j = 0; j < v1.length; j++) {
-      if (v2[i][0] == v1[j][0]) {
+      if (v2[i][0] === v1[j][0]) {
         found = true;
         v.push([v2[i][0], [v1[j][1], v2[i][1]]]);
       }
@@ -532,9 +532,9 @@ function sample(v, withReplacement, frac, num, seed) {
       L = num ? num : Math.ceil(L * frac);
       tmp[p] = {data: []};
       var idxVect = [];
-      while (tmp[p].data.length != L) {
+      while (tmp[p].data.length !== L) {
         var idx = Math.round(Math.abs(Math.random()) * (L - 1));
-        if ((idxVect.indexOf(idx) != -1) &&  !withReplacement)
+        if ((idxVect.indexOf(idx) !== -1) &&  !withReplacement)
           continue; // if already picked but no replacement mode
         idxVect.push[idx];
         tmp[p].data.push(workerMap[w][i][idx]);
@@ -551,7 +551,7 @@ function subtract(v1, v2) {
   for (i = 0; i < s1.length; i++) {
     found = false;
     for (j = 0; j < s2.length; j++)
-      if (s2[j] == s1[i]) {
+      if (s2[j] === s1[i]) {
         found = true;
         break;
       }

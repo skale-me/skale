@@ -92,7 +92,7 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
       // Flow control: adjust to the slowest receiver
       if (crossbar[sub[i]]) {
         crossbar[sub[i]].write(chunk, function () {
-          if (++n == len) done();
+          if (++n === len) done();
         });
       } else if (--len === 0) done();
     }
@@ -128,7 +128,7 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 var clientRequest = {
   connect: function (sock, msg) {
     var i, ret = true, master;
-    if (access && msg.access != access) {
+    if (access && msg.access !== access) {
       console.log('## Skale connect failed: access denied');
       msg.error = 'access denied, check SKALE_KEY';
       return true;
@@ -157,7 +157,7 @@ var clientRequest = {
       };
       break;
     case 'worker':
-      if (wsid == msg.data.wsid) {
+      if (wsid === msg.data.wsid) {
         workerStock.push(msg.data);
         if (pendingMasters.length && workerStock.length >= expectedWorkers) {
           master = pendingMasters.shift();
@@ -217,7 +217,7 @@ var clientRequest = {
     return false;
   },
   set: function (sock, msg) {
-    if (typeof msg.data != 'object') return false;
+    if (typeof msg.data !== 'object') return false;
     for (var i in msg.data)
       sock.client.data[i] = msg.data[i];
     pubmon({event: 'set', uuid: sock.client.uuid, data: msg.data});
@@ -328,7 +328,7 @@ function handleClose(sock) {
       // Resize stock capacity
       expectedWorkers -= cli.data.nworkers;
       for (i = 0; i < workerControllers.length; i++) {
-        if (cli.uuid == workerControllers[i].uuid) {
+        if (cli.uuid === workerControllers[i].uuid) {
           delete stats.workerHosts[workerControllers[i].id];
           workerControllers.splice(i, 1);
         }
@@ -338,7 +338,7 @@ function handleClose(sock) {
     case 'worker':
       // Remove worker from stock
       for (i = 0; i < workerStock.length; i++) {
-        if (cli.uuid == workerStock[i].uuid)
+        if (cli.uuid === workerStock[i].uuid)
           workerStock.splice(i, 1);
       }
       stats.workers--;
@@ -346,7 +346,7 @@ function handleClose(sock) {
     case 'master':
       // Remove master from pending masters, avoiding future useless workers start
       for (i in pendingMasters) {
-        if (pendingMasters[i].data.uuid == cli.uuid) {
+        if (pendingMasters[i].data.uuid === cli.uuid) {
           pendingMasters.splice(i, 1);
           break;
         }
@@ -424,7 +424,7 @@ function devices(msg) {
     if (!clients[i].sock) continue;
     var match = true;
     for (var j in query) {
-      if (!clients[i].data || clients[i].data[j] != query[j]) {
+      if (!clients[i].data || clients[i].data[j] !== query[j]) {
         match = false;
         break;
       }

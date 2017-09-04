@@ -99,7 +99,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 
       if (transform.sort || action.sort) check.sort = true;
       if (transform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
-      if (transform.name == 'groupByKey' && action.name == 'reduce') check.lengthOnly = true;
+      if (transform.name === 'groupByKey' && action.name === 'reduce') check.lengthOnly = true;
 
       it('run local', function (done) {
         var src_args, action_args, da;
@@ -236,7 +236,7 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
 
         if (dualTransform.sort || action.sort) check.sort = true;
         if (dualTransform.lengthOnly || action.lengthOnly) check.lengthOnly = true;
-        if (action.name == 'reduce') {
+        if (action.name === 'reduce') {
           switch (dualTransform.name) {
           case 'coGroup':
           case 'cartesian':
