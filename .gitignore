@@ -5,3 +5,4 @@ npm-debug.log
 tags
 yarn-error.log
 bin/tmp/*.js
+.idea

@@ -289,16 +289,16 @@ function MemoryManager(memory) {
   };
 
   this.isAvailable = function (partition) {
-    return (this.partitions[partition.datasetId + '.' + partition.partitionIndex] != undefined);
+    return (this.partitions[partition.datasetId + '.' + partition.partitionIndex] !== undefined);
   };
 }
 
 function parseTask(str) {
   var i, j, n, ref;
   var task = JSON.parse(str, function (key, value) {
-    if (typeof value == 'string') {
+    if (typeof value === 'string') {
       // String value can be a regular function or an ES6 arrow function
-      if (value.substring(0, 8) == 'function') {
+      if (value.substring(0, 8) === 'function') {
         var args = value.match(/\(([^)]*)/)[1];
         var body = value.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
         value = new Function(args, body);

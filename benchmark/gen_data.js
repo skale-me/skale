@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 
-if (process.argv.length != 4) {
+if (process.argv.length !== 4) {
   console.log('Usage: gen_data.js file size_in_Mo');
   process.exit(1);
 }
