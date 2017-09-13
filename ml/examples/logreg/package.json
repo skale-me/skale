@@ -1,0 +1,12 @@
+{
+  "name": "logreg",
+  "version": "0.0.0",
+  "private": true,
+  "keywords": [
+    "skale"
+  ],
+  "dependencies": {
+    "skale-engine": "^0.5.0",
+    "skale-ml": "^0.2.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "metrics",
+  "version": "0.0.0",
+  "private": true,
+  "keywords": [
+    "skale"
+  ],
+  "dependencies": {
+    "co": "^4.6.0",
+    "gnuplot": "^0.3.1",
+    "skale-engine": "^0.5.0",
+    "skale-ml": "^0.2.0"
+  }
+}
