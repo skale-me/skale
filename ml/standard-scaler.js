@@ -1,8 +1,10 @@
+// Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
+
 var thenify = require('thenify');
 
 module.exports = function() {
   var self = this;
-  this.mean;      // features means
+  this.mean;    // features means
   this.std;     // features std 
 
   this.transform = function(point) {

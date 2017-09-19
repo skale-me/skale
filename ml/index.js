@@ -1,23 +1,18 @@
-// /* skale machine learning library */
-
-// 'use strict';
-
-// module.exports = require('./lib/ml.js');
-
 // Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
 
 'use strict';
 
 var thenify = require('thenify');
-var Source = require('skale-engine').Source;
+//var Source = require('skale-engine').Source;
 
 var ml = {};
 module.exports = ml;
 
-ml.StandardScaler = require('./lib/StandardScaler.js');
-ml.BinaryClassificationMetrics = require('./lib/BinaryClassificationMetrics.js');
-ml.LogisticRegressionWithSGD = require('./lib/LogisticRegressionWithSGD.js');
+ml.StandardScaler = require('./standard-scaler.js');
+ml.BinaryClassificationMetrics = require('./binary-classification-metrics.js');
+ml.LogisticRegressionWithSGD = require('./logistic-regression-with-sgd.js');
 
+/*
 ml.randomSVMData = function (sc, N, D, seed, nPartitions) {
   function randomSVMLine(i, a) {
     var seed = i * (a.D + 1);
@@ -44,6 +39,16 @@ ml.randomSVMLine = function(rng, D) {
   data[0] = Math.round(Math.abs(data[0])) * 2 - 1;
   return [data.shift(), data];
 };
+*/
+
+// Return a label -1 or 1, and features between -1 and 1
+ml.randomSVMLine = function (index, D) {
+  var label = Math.floor(Math.random() * 2) * 2 - 1;
+  var features = [];
+  for (var i = 0; i < D; i++)
+    features.push(Math.random() * 2 - 1);
+  return [label, features];
+}
 
 /*
   Linear Models:

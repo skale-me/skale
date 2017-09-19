@@ -1,4 +1,4 @@
-/* skale framework */
+// Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
 
 'use strict';
 
