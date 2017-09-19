@@ -14,11 +14,11 @@
   - [skale.context([config])](#skalecontextconfig)
     - [sc.env](#scenv)
     - [sc.end()](#scend)
+    - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
+    - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
     - [sc.parallelize(array)](#scparallelizearray)
     - [sc.range(start[, end[, step]])](#scrangestart-end-step)
     - [sc.textFile(path[, options])](#sctextfilepath-options)
-    - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
-    - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
   - [Dataset methods](#dataset-methods)
     - [ds.aggregate(reducer, combiner, init[, obj][, done])](#dsaggregatereducer-combiner-init-obj-done)
     - [ds.aggregateByKey(reducer, combiner, init,[ obj])](#dsaggregatebykeyreducer-combiner-init-obj)
@@ -273,6 +273,36 @@ sc.env.MY_VAR = 'my_value';
 
 Closes the connection to the cluster.
 
+#### sc.lineStream(input_stream)
+
+Returns a new dataset of lines of text read from input_stream
+*Object*, which is a [readable stream] where dataset content is
+read from.
+
+The following example computes the size of a file using streams:
+
+```javascript
+var stream = fs.createReadStream('data.txt', 'utf8');
+sc.lineStream(stream).
+   map(s => s.length).
+   reduce((a, b) => a + b, 0).
+   then(console.log);
+```
+
+#### sc.objectStream(input_stream)
+
+Returns a new dataset of Javascript *Objects* read from input_stream
+*Object*, which is a [readable stream] where dataset content is
+read from.
+
+The following example counts the number of objects returned in an
+object stream using the mongodb native Javascript driver:
+
+```javascript
+var cursor = db.collection('clients').find();
+sc.objectStream(cursor).count().then(console.log);
+```
+
 #### sc.parallelize(array)
 
 Returns a new dataset containing elements from the *Array* array.
@@ -334,36 +364,6 @@ Example, the following program prints the length of a text file:
 ```javascript
 var lines = sc.textFile('data.txt');
 lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log);
-```
-
-#### sc.lineStream(input_stream)
-
-Returns a new dataset of lines of text read from input_stream
-*Object*, which is a [readable stream] where dataset content is
-read from.
-
-The following example computes the size of a file using streams:
-
-```javascript
-var stream = fs.createReadStream('data.txt', 'utf8');
-sc.lineStream(stream).
-   map(s => s.length).
-   reduce((a, b) => a + b, 0).
-   then(console.log);
-```
-
-#### sc.objectStream(input_stream)
-
-Returns a new dataset of Javascript *Objects* read from input_stream
-*Object*, which is a [readable stream] where dataset content is
-read from.
-
-The following example counts the number of objects returned in an
-object stream using the mongodb native Javascript driver:
-
-```javascript
-var cursor = db.collection('clients').find();
-sc.objectStream(cursor).count().then(console.log);
 ```
 
 ### Dataset methods
