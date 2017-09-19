@@ -48,7 +48,7 @@ ml.randomSVMLine = function (index, D) {
   for (var i = 0; i < D; i++)
     features.push(Math.random() * 2 - 1);
   return [label, features];
-}
+};
 
 /*
   Linear Models:
