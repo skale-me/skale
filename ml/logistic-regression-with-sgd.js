@@ -16,16 +16,15 @@ function LogisticRegression(dataset, options) {
   this.regParam = options.regParam || 1;
   this.D;
   this.N;
+// For now prediction returns a soft output, TODO: include threshold and hard output
+  this.predict = function (point) {
+    var margin = 0;
+    for (var i = 0; i < point.length; i++)
+      margin += this.weights[i] * point[i];
+    var prediction = 1 / (1 + Math.exp(-margin));
+    return prediction;
+  };
 }
-
-// For now prediction returns a soft output, TODO: include threshold and hard output 
-LogisticRegression.prototype.predict = function (point) {
-  var margin = 0;
-  for (var i = 0; i < point.length; i++)
-    margin += this.weights[i] * point[i];
-  var prediction = 1 / (1 + Math.exp(-margin));
-  return prediction;
-};
 
 LogisticRegression.prototype.train = thenify(function (nIterations, callback) {
   var self = this;
@@ -54,7 +53,7 @@ LogisticRegression.prototype.train = thenify(function (nIterations, callback) {
         for (var j = 0; j < self.weights.length; j++)
           self.weights[j] -= thisIterStepSize * (gradient[j] / self.N + self.regParam * self.weights[j]); // L2 regularizer
         // for (var j = 0; j < self.weights.length; j++) {
-        //  self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1));                 // zero regularizer 
+        //  self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1));                 // zero regularizer
         //  // self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1)) + (self.weights[j] > 0 ? 1 : -1); // L1 regularizer
         //  // self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1)) + self.weights[j];          // L2 regularizer
         // }
