@@ -16,7 +16,7 @@ function LogisticRegression(dataset, options) {
   this.regParam = options.regParam || 1;
   this.D;
   this.N;
-// For now prediction returns a soft output, TODO: include threshold and hard output
+  // For now prediction returns a soft output, TODO: include threshold and hard output
   this.predict = function (point) {
     var margin = 0;
     for (var i = 0; i < point.length; i++)
