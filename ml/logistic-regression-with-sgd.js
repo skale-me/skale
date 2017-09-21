@@ -46,7 +46,7 @@ LogisticRegression.prototype.train = thenify(function (nIterations, callback) {
 
   function iterate() {
     self.points
-      .map(logisticLossGradient, {weights: self.weights})
+      .map(logisticLossGradient, self.weights)
       .reduce((a, b) => a.map((e, i) => e + b[i]), new Array(self.D).fill(0))
       .then(function(gradient) {
         var thisIterStepSize = self.stepSize / Math.sqrt(i + 1);
@@ -64,11 +64,11 @@ LogisticRegression.prototype.train = thenify(function (nIterations, callback) {
 });
 
 // valid for labels in [-1, 1]
-function logisticLossGradient(p, args) {
+function logisticLossGradient(p, weights) {
   var label = p[0], features = p[1], grad = [], dotProd = 0, tmp, i;
 
   for (i = 0; i < features.length; i++)
-    dotProd += features[i] * args.weights[i];
+    dotProd += features[i] * weights[i];
 
   tmp = 1 / (1 + Math.exp(-dotProd)) - label;
 

@@ -2,16 +2,17 @@
 
 'use strict';
 
+// Adult dataset processing as per http://scg.sdsu.edu/dataset-adult_r/
 // In this example we:
 // - train a logistic regression on the adult training set.
 // - evaluate the model on the adult test set
 // - generate ROC curves as png images
 
-// Adult dataset processing as per http://scg.sdsu.edu/dataset-adult_r/
 var sc = require('skale-engine').context();
 var ml = require('skale-engine/ml');
 var plot = require('plotter').plot;
 
+// Todo: should be automatically extracted from dataset + type schema
 var metadata = {
   workclass: [
     'Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov',
@@ -53,7 +54,7 @@ var metadata = {
 };
 
 function featurize(data, metadata) {
-  var label = ((data[14] == '>50K') || (data[14] == '>50K.')) ? 1 : -1;
+  var label = (data[14] === '>50K' || data[14] === '>50K.') ? 1 : -1;
   var features = [
     Number(data[0]),                          // 1 age
     metadata.workclass.indexOf(data[1]),      // 2 workclass
@@ -74,15 +75,15 @@ function featurize(data, metadata) {
 }
 
 var trainingSet = sc.textFile('adult.data')
-  .map(line => line.split(',').map(str => str.trim()))    // split csv lines
-  .filter(data => data.indexOf('?') == -1)                // remove incomplete data
-  .map(featurize, metadata)                               // transform string data to number
+  .map(line => line.split(',').map(str => str.trim()))              // split csv lines
+  .filter(data => data.length === 15 && data.indexOf('?') === -1)   // remove incomplete data
+  .map(featurize, metadata)                                         // transform string data to number
   .persist();
 
 var testSet = sc.textFile('adult.test')
-  .map(line => line.split(',').map(str => str.trim()))    // split csv lines
-  .filter(data => data.indexOf('?') == -1)                // remove incomplete data
-  .map(featurize, metadata);                              // transform string data to number
+  .map(line => line.split(',').map(str => str.trim()))              // split csv lines
+  .filter(data => data.length === 15 && data.indexOf('?') === -1)   // remove incomplete data
+  .map(featurize, metadata);                                        // transform string data to number
 
 // Wrap asynchronous code into ES7 async function, to limit callback imbrications
 (async function main() {
@@ -90,8 +91,6 @@ var testSet = sc.textFile('adult.test')
   var scaler = new ml.StandardScaler();
 
   await scaler.fit(trainingSet.map(point => point[1]));
-
-  console.log('scaler:', scaler);
 
   // Use scaler to standardize training and test datasets
   var trainingSetStd = trainingSet
@@ -107,8 +106,6 @@ var testSet = sc.textFile('adult.test')
   var model = new ml.LogisticRegressionWithSGD(trainingSetStd, parameters);
 
   await model.train(nIterations);
-
-  console.log('model:', model);
 
   // Evaluate classifier performance on standardized test set
   var predictionAndLabels = testSetStd.map((p, args) => [args.model.predict(p[1]), p[0]], {model: model});
