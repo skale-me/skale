@@ -1,3 +1,5 @@
+// Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
+
 var thenify = require('thenify');
 
 module.exports = function(predictionAndLabels) {

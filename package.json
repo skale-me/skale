@@ -50,7 +50,8 @@
   },
   "devDependencies": {
     "eslint": "^4.6.1",
-    "mocha": "^3.5.3"
+    "mocha": "^3.5.3",
+    "plotter": "^0.5.0"
   },
   "peerDependencies": {
     "node-parquet": "^0.2.4"
