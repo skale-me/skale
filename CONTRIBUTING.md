@@ -32,6 +32,30 @@ contribution at a time by users just like you.
   create a pull request from there. Reference any relevant issue by
   including its number in the message, e.g. #123
 
+## Documentation
+
+The [documentation guidelines] from Google provide a good reference
+for writing consistent and good technical documents, in particular
+[API documentation rules].
+
+Note: skale documentation was started before knowing this standard,
+thus is not yet fully compliant! Fixes are welcome here.
+
+## Coding rules
+
+In addition to applying the already mentioned [coding style],
+the following conventions should be applied as well:
+
+* Use `const` instead of `var` for declarations, whenever possible
+* Use `let` instead of `var` if reference must be reassigned
+* Use array or object destructuring to set variables from array or
+  object: `let [a, b] = [1, 2, 3]`
+* Use arrow functions in callbacks, where applicable: `map`, `reduce`,
+  `aggregate`, etc
+
+Note: the code base is not yet fully compliant to these rules. Contributions
+are welcome here.
+
 [coding style]: https://github.com/felixge/node-style-guide
 [gitter]: https://gitter.im/skale-me/skale-engine
 [google group]: https://groups.google.com/forum/#!forum/skale
@@ -39,3 +63,5 @@ contribution at a time by users just like you.
 [issue]: https://github.com/skale-me/skale-engine/issues/new
 [pull request]: #submitting-a-pull-request
 [fork]: https://github.com/skale-me/skale-engine
+[documentation guidelines]: https://developers.google.com/style/
+[API documentation rules]: https://developers.google.com/style/api-reference-comments
