@@ -10,9 +10,9 @@
 
 var sc = require('skale-engine').context();
 var ml = require('skale-engine/ml');
-var plot = require('plotter').plot;
+var plot = require('plotter').plot;     // Todo: should be replaced by D3
 
-// Todo: should be automatically extracted from dataset + type schema
+// Todo: features should be automatically extracted from dataset + type schema
 var metadata = {
   workclass: [
     'Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov',
@@ -74,13 +74,13 @@ function featurize(data, metadata) {
   return [label, features];
 }
 
-var trainingSet = sc.textFile('adult.data')
+var trainingSet = sc.textFile(__dirname + '/adult.data')
   .map(line => line.split(',').map(str => str.trim()))              // split csv lines
   .filter(data => data.length === 15 && data.indexOf('?') === -1)   // remove incomplete data
   .map(featurize, metadata)                                         // transform string data to number
   .persist();
 
-var testSet = sc.textFile('adult.test')
+var testSet = sc.textFile(__dirname + '/adult.test')
   .map(line => line.split(',').map(str => str.trim()))              // split csv lines
   .filter(data => data.length === 15 && data.indexOf('?') === -1)   // remove incomplete data
   .map(featurize, metadata);                                        // transform string data to number
@@ -94,8 +94,7 @@ var testSet = sc.textFile('adult.test')
 
   // Use scaler to standardize training and test datasets
   var trainingSetStd = trainingSet
-    .map((p, scaler) => [p[0], scaler.transform(p[1])], scaler)
-    .persist();
+    .map((p, scaler) => [p[0], scaler.transform(p[1])], scaler);
 
   var testSetStd = testSet
     .map((p, scaler) => [p[0], scaler.transform(p[1])], scaler);
@@ -103,32 +102,29 @@ var testSet = sc.textFile('adult.test')
   // Train logistic regression with SGD on standardized training set
   var nIterations = 10;
   var parameters = {regParam: 0.01, stepSize: 1};
-  var model = new ml.LogisticRegressionWithSGD(trainingSetStd, parameters);
+  var model = new ml.LogisticRegression(trainingSetStd, parameters);
 
   await model.train(nIterations);
 
-  // Evaluate classifier performance on standardized test set
-  var predictionAndLabels = testSetStd.map((p, args) => [args.model.predict(p[1]), p[0]], {model: model});
-  var metrics = new ml.BinaryClassificationMetrics(predictionAndLabels);
+  var predictionAndLabels = testSetStd.map((p, model) => [model.predict(p[1]), p[0]], model);
+  var metrics = await ml.binaryClassificationMetrics(predictionAndLabels, {});
 
-  console.log('\n# Receiver Operating characteristic (ROC)');
-  var roc = await metrics.roc();
-  console.log('\nThreshold\tSpecificity(FPR)\tSensitivity(TPR)');
-  for (var i in roc)
-    console.log(roc[i][0].toFixed(2) + '\t' + roc[i][1][0].toFixed(2) + '\t' + roc[i][1][1].toFixed(2));
+  console.log('ROC curve: roc.png');
+  console.log('ROC AUC:', metrics.auroc);
+  console.log('Best threshold (F1 max):', metrics.threshold);
+  sc.end();
 
-  // Ploting ROC curve as roc.png
-  var xy = {};
-  for (i in roc)
-    xy[roc[i][1][0].toFixed(2)] = roc[i][1][1].toFixed(2);
-  xy['0.00'] = '0.00';
-  var data = {};
+  // Plot ROC curve
+  const xy = {'0.00': 0};
+  for (let i = 0; i < metrics.rates.length; i++)
+    xy[metrics.rates[i].fpr] = metrics.rates[i].recall;
+  const data = {};
   data['regParam: ' + parameters.regParam + ', stepSize: ' + parameters.stepSize] = xy;
-  data['Random'] = {0 :0, 1 : 1};
+  data['Random'] = {'0.00': 0, 1: 1};
   plot({
     title: 'Logistic Regression ROC Curve',
     data: data,
     filename: 'roc.png',
-    finish: function() {sc.end();}
   });
+
 })(); // main

@@ -8,8 +8,8 @@ var ml = {};
 module.exports = ml;
 
 ml.StandardScaler = require('./standard-scaler.js');
-ml.BinaryClassificationMetrics = require('./binary-classification-metrics.js');
-ml.LogisticRegressionWithSGD = require('./logistic-regression-with-sgd.js');
+ml.binaryClassificationMetrics = require('./binary-classification-metrics.js');
+ml.LogisticRegression = require('./Logistic-regression.js');
 
 // Return a label -1 or 1, and features between -1 and 1
 ml.randomSVMLine = function (index, D) {
