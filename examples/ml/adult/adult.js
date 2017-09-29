@@ -10,9 +10,9 @@
 
 var sc = require('skale-engine').context();
 var ml = require('skale-engine/ml');
-var plot = require('plotter').plot;
+var plot = require('plotter').plot;     // Todo: should be replaced by D3
 
-// Todo: should be automatically extracted from dataset + type schema
+// Todo: features should be automatically extracted from dataset + type schema
 var metadata = {
   workclass: [
     'Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov',
@@ -102,7 +102,7 @@ var testSet = sc.textFile(__dirname + '/adult.test')
   // Train logistic regression with SGD on standardized training set
   var nIterations = 10;
   var parameters = {regParam: 0.01, stepSize: 1};
-  var model = new ml.LogisticRegressionWithSGD(trainingSetStd, parameters);
+  var model = new ml.LogisticRegression(trainingSetStd, parameters);
 
   await model.train(nIterations);
 
@@ -110,7 +110,7 @@ var testSet = sc.textFile(__dirname + '/adult.test')
   var metrics = await ml.binaryClassificationMetrics(predictionAndLabels, {});
 
   console.log('ROC curve: roc.png');
-  console.log('ROC AUC:', metrics.rocauc);
+  console.log('ROC AUC:', metrics.auroc);
   console.log('Best threshold (F1 max):', metrics.threshold);
   sc.end();
 

@@ -1,6 +1,6 @@
 // Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
 
-var thenify = require('thenify');
+const thenify = require('thenify');
 
 function reducer(acc, point) {
   let [prediction, label] = point;
@@ -32,8 +32,8 @@ function combiner(acc1, acc2) {
 }
 
 // Compute Receiver Operating Charateristic (ROC) Area Under Curve (AUC)
-function rocauc(rates) {
-  // ROC is parametric, sort to have FPR (ROC absciss) in ascending order
+function auroc(rates) {
+  // ROC is parametric, sort to have FPR (ROC abscissa) in ascending order
   const sortedRates = rates.sort((a, b) => a.fpr > b.fpr);
   let x = 0;
   let y = 0;
@@ -63,12 +63,11 @@ const binaryClassificationMetrics = thenify(function (points, options, callback)
       e.fpr = e.fp / (e.fp + e.tn);
       e.f1 = 2 / (1 / e.recall + 1 / e.precision);  // F1 measure
       e.J = e.recall + e.specificity - 1;           // Younden's J statistic
-      // Todo: add MCC
       return e;
     });
-    const auc = rocauc(result);
+    const auc = auroc(result);
     const maxF1 = result.reduce((a, b) => a.f1 > b.f1 ? a : b, result[0]);
-    callback(null, {rates: result, rocauc: auc, threshold: maxF1.threshold});
+    callback(null, {rates: result, auroc: auc, threshold: maxF1.threshold});
   });
 });
 

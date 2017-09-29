@@ -4,11 +4,13 @@
 
 'use strict';
 
-var thenify = require('thenify');
+const thenify = require('thenify');
 
 module.exports = LogisticRegression;
 
 function LogisticRegression(dataset, options) {
+  if (!(this instanceof LogisticRegression))
+    return new LogisticRegression(dataset, options);
   options = options || {};
   this.points = dataset;
   this.weights = options.weights;         // May be undefined on startup
@@ -18,10 +20,10 @@ function LogisticRegression(dataset, options) {
   this.N;
   // For now prediction returns a soft output, TODO: include threshold and hard output
   this.predict = function (point) {
-    var margin = 0;
-    for (var i = 0; i < point.length; i++)
+    let margin = 0;
+    for (let i = 0; i < point.length; i++)
       margin += this.weights[i] * point[i];
-    var prediction = 1 / (1 + Math.exp(-margin));
+    let prediction = 1 / (1 + Math.exp(-margin));
     return prediction;
   };
 }
