@@ -55,8 +55,8 @@ LogisticRegression.prototype.train = thenify(function (trainingSet, nIterations,
         for (var j = 0; j < self.weights.length; j++) {
           console.log('j:', j, 'weigth:', self.weights[j]);
           console.log('j:', j, 'gradient:', gradient[j] || 0);
-        //  self.weights[j] -= thisIterStepSize * (gradient[j] / self.N + self.regParam * self.weights[j]); // L2 regularizer
-          self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1)) + (self.weights[j] > 0 ? 1 : -1); // L1 regularizer
+          self.weights[j] -= thisIterStepSize * (gradient[j] / self.N + self.regParam * self.weights[j]); // L2 regularizer
+          //self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1)) + (self.weights[j] > 0 ? 1 : -1); // L1 regularizer
           console.log('j:', j, 'weigth:', self.weights[j]);
         }
         //  self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1));                 // zero regularizer

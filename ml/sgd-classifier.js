@@ -83,7 +83,7 @@ function regularizeNone(weights, gradientCount) {
     let grad = (gradient[i] || 0) / count;
     weights[i] = (weights[i] || 0) - grad;
   }
-};
+}
 
 function regularizeL1(weights, gradientCount, stepSize) {
   const [gradient, count] = gradientCount;
@@ -93,7 +93,7 @@ function regularizeL1(weights, gradientCount, stepSize) {
     weights[i] = weights[i] || 0;
     weights[i] -= stepSize * grad + (weights[i] > 0 ? 1 : -1);
   }
-};
+}
 
 function regularizeL2(weights, gradientCount, stepSize, regParam) {
   const [gradient, count] = gradientCount;
@@ -103,7 +103,7 @@ function regularizeL2(weights, gradientCount, stepSize, regParam) {
     weights[i] = weights[i] || 0;
     weights[i] -= stepSize * (grad + regParam * weights[i]);
   }
-};
+}
 
 // TODO #1: elastic-net regularizer: combine L1 and L2 with an
 // alpha parameter in range [0, 1] where 1 => L1, 0 => L2,
