@@ -14,7 +14,7 @@ function SGDClassifier(options) {
   options = options || {};
   this.weights = options.weights || [];
   this.stepSize = options.stepSize || 1;
-  this.regParam = options.regParam || 1;
+  this.regParam = options.regParam || 0.001;
     
   if (!options.penalty)                this.regularize = regularizeL2;
   else if (options.penalty === 'l2')   this.regularize = regularizeL2;
@@ -24,8 +24,8 @@ function SGDClassifier(options) {
 
   if (!options.loss)                    this.loss = hingeLoss;
   else if (options.loss === 'hinge')    this.loss = hingeLoss;
-  else if (options.loss === 'logistic') this.loss = logisticLoss;
-  else if (options.loss === 'squared')  this.loss = squaredLoss;
+  else if (options.loss === 'log')      this.loss = logisticLoss;
+  else if (options.loss === 'square')   this.loss = squaredLoss;
   else throw 'Invalid loss parameter: ' + options.loss;
 
   // For now prediction returns a soft output, TODO: include threshold and hard output

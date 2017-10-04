@@ -12,56 +12,64 @@
   - [Actions](#actions)
 - [Skale module](#skale-module)
   - [skale.context([config])](#skalecontextconfig)
-    - [sc.env](#scenv)
-    - [sc.end()](#scend)
-    - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
-    - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
-    - [sc.parallelize(array)](#scparallelizearray)
-    - [sc.range(start[, end[, step]])](#scrangestart-end-step)
-    - [sc.source(size, callback[, args])](#scsourcesize-callback-args)
-    - [sc.textFile(path[, options])](#sctextfilepath-options)
+      - [sc.env](#scenv)
+      - [sc.end()](#scend)
+      - [sc.lineStream(input_stream)](#sclinestreaminput_stream)
+      - [sc.objectStream(input_stream)](#scobjectstreaminput_stream)
+      - [sc.parallelize(array)](#scparallelizearray)
+      - [sc.range(start[, end[, step]])](#scrangestart-end-step)
+      - [sc.source(size, callback[, args])](#scsourcesize-callback-args)
+      - [sc.textFile(path[, options])](#sctextfilepath-options)
   - [Dataset methods](#dataset-methods)
-    - [ds.aggregate(reducer, combiner, init[, obj][, done])](#dsaggregatereducer-combiner-init-obj-done)
-    - [ds.aggregateByKey(reducer, combiner, init,[ obj])](#dsaggregatebykeyreducer-combiner-init-obj)
-    - [ds.cartesian(other)](#dscartesianother)
-    - [ds.coGroup(other)](#dscogroupother)
-    - [ds.collect([done])](#dscollectdone)
-    - [ds.count([done])](#dscountdone)
-    - [ds.countByKey([done])](#dscountbykeydone)
-    - [ds.countByValue([done])](#dscountbyvaluedone)
-    - [ds.distinct()](#dsdistinct)
-    - [ds.filter(filter[, obj])](#dsfilterfilter-obj)
-    - [ds.first([done])](#dsfirstdone)
-    - [ds.flatMap(flatMapper[, obj])](#dsflatmapflatmapper-obj)
-    - [ds.flatMapValues(flatMapper[, obj])](#dsflatmapvaluesflatmapper-obj)
-    - [ds.forEach(callback[, obj][, done])](#dsforeachcallback-obj-done)
-    - [ds.groupByKey()](#dsgroupbykey)
-    - [ds.intersection(other)](#dsintersectionother)
-    - [ds.join(other)](#dsjoinother)
-    - [ds.keys()](#dskeys)
-    - [ds.leftOuterJoin(other)](#dsleftouterjoinother)
-    - [ds.lookup(k[, done])](#dslookupk-done)
-    - [ds.map(mapper[, obj])](#dsmapmapper-obj)
-    - [ds.mapValues(mapper[, obj])](#dsmapvaluesmapper-obj)
-    - [ds.partitionBy(partitioner)](#dspartitionbypartitioner)
-    - [ds.persist()](#dspersist)
-    - [ds.reduce(reducer, init[, obj][, done])](#dsreducereducer-init-obj-done)
-    - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
-    - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
-    - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
-    - [ds.save(url[, options][, done])](#dssaveurl-options-done)
-    - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
-    - [ds.sortByKey(ascending)](#dssortbykeyascending)
-	- [ds.stream([opt])](#dsstreamopt)
-    - [ds.subtract(other)](#dssubtractother)
-    - [ds.take(num[, done])](#dstakenum-done)
-    - [ds.top(num[, done])](#dstopnum-done)
-    - [ds.union(other)](#dsunionother)
-    - [ds.values()](#dsvalues)
+      - [ds.aggregate(reducer, combiner, init[, obj][, done])](#dsaggregatereducer-combiner-init-obj-done)
+      - [ds.aggregateByKey(reducer, combiner, init,[ obj])](#dsaggregatebykeyreducer-combiner-init-obj)
+      - [ds.cartesian(other)](#dscartesianother)
+      - [ds.coGroup(other)](#dscogroupother)
+      - [ds.collect([done])](#dscollectdone)
+      - [ds.count([done])](#dscountdone)
+      - [ds.countByKey([done])](#dscountbykeydone)
+      - [ds.countByValue([done])](#dscountbyvaluedone)
+      - [ds.distinct()](#dsdistinct)
+      - [ds.filter(filter[, obj])](#dsfilterfilter-obj)
+      - [ds.first([done])](#dsfirstdone)
+      - [ds.flatMap(flatMapper[, obj])](#dsflatmapflatmapper-obj)
+      - [ds.flatMapValues(flatMapper[, obj])](#dsflatmapvaluesflatmapper-obj)
+      - [ds.forEach(callback[, obj][, done])](#dsforeachcallback-obj-done)
+      - [ds.groupByKey()](#dsgroupbykey)
+      - [ds.intersection(other)](#dsintersectionother)
+      - [ds.join(other)](#dsjoinother)
+      - [ds.keys()](#dskeys)
+      - [ds.leftOuterJoin(other)](#dsleftouterjoinother)
+      - [ds.lookup(k[, done])](#dslookupk-done)
+      - [ds.map(mapper[, obj])](#dsmapmapper-obj)
+      - [ds.mapValues(mapper[, obj])](#dsmapvaluesmapper-obj)
+      - [ds.partitionBy(partitioner)](#dspartitionbypartitioner)
+      - [ds.persist()](#dspersist)
+      - [ds.reduce(reducer, init[, obj][, done])](#dsreducereducer-init-obj-done)
+      - [ds.reduceByKey(reducer, init[, obj])](#dsreducebykeyreducer-init-obj)
+      - [ds.rightOuterJoin(other)](#dsrightouterjoinother)
+      - [ds.sample(withReplacement, frac, seed)](#dssamplewithreplacement-frac-seed)
+      - [ds.save(url[, options][, done])](#dssaveurl-options-done)
+      - [ds.sortBy(keyfunc[, ascending])](#dssortbykeyfunc-ascending)
+      - [ds.sortByKey(ascending)](#dssortbykeyascending)
+      - [ds.stream([opt])](#dsstreamopt)
+      - [ds.subtract(other)](#dssubtractother)
+      - [ds.take(num[, done])](#dstakenum-done)
+      - [ds.top(num[, done])](#dstopnum-done)
+      - [ds.union(other)](#dsunionother)
+      - [ds.values()](#dsvalues)
   - [Partitioners](#partitioners)
-    - [HashPartitioner(numPartitions)](#hashpartitionernumpartitions)
-    - [RangePartitioner(numPartitions, keyfunc, dataset)](#rangepartitionernumpartitions-keyfunc-dataset)
+      - [HashPartitioner(numPartitions)](#hashpartitionernumpartitions)
+      - [RangePartitioner(numPartitions, keyfunc, dataset)](#rangepartitionernumpartitions-keyfunc-dataset)
   - [Environment variables](#environment-variables)
+- [Machine Learning Module](#machine-learning-module)
+  - [ml.binaryClassifiationMetrics(measures, options[, done])](#mlbinaryclassificationmetricsmeasures-options-done)
+  - [ml.SGDClassifier(options)](#mlsgdclassifieroptions)
+      - [sgdClassifier.fit(trainingSet, iterations[, done])](#mlsgdclassifierfittrainingset-iterations-done)
+      - [sgdClassifier.predict(sample)](#mlsgdclassifierpredictsample)
+  - [ml.StandardScaler()](#mlstandardscaler)
+      - [standardScaler.fit(dataset[, done])](#standardscalerfitdataset-done)
+      - [standardScaler.transform(features)](#standardscalertransformfeatures)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1235,7 +1243,64 @@ var dataset = sc.range(10).partitionBy(rp)
   - `2`: above traces plus worker traces
   - `3`: above traces plus network protocol traces (if running in distributed mode)
 
+## Machine Learning module
+
+The Machine Learning (ML) module provides scalable functions for
+supervised (classification, regression) and unsupervised (clustering)
+statistical learning on top of skale datasets and distributed
+map-reduce engine.
+
+The module can be loaded using:
+
+```javascript
+var ml = require('skale-engine/ml')
+```
+
+### ml.binaryClassificationMetrics(measures, options[, done])
+
+### ml.SGDClassifier(options)
+
+Creates a regularized linear classifier model fitted via [stochastic
+gradient descent] learning. SGD is sensitive to the scaling
+of the features. For best results, the data should have zero mean and
+unit variance, which can be achieved with [ml.StandardScaler].
+
+The model it fits can be controlled with the *loss* option; by default,
+it fits a linear [support vector machine] (SVM). A regularization term
+can be added to the loss, by default the squared euclidean norm L2.
+
+- *options*: an *Object* with the following fields:
+  - *loss*: *String* specifying the [loss function] to be used. Possible values are:
+      - `hinge`: (default), gives a linear SVM
+      - `log`: gives logistic loss, a probabilistic classifier
+      - `square`: gives square loss fit
+  - *penalty*: *String*  specifying the [regularization] term. Possible values are:
+      - `l2`: (default) squared euclidean norm L2, standard regularizer for linear SVM models
+      - `l1`: absolute norm L1, might bring sparsity to the model, not achievable with `l2`
+      - `none`: zero penalty
+  - *regParam*: *Number*  >= 0, defaults to 0.001, defines the trade-off between the
+    two goals of minimizing the loss (i.e. training error) and minimizing model complexity
+    (i.e. to avoid overfitting)
+  - *stepSize*: *Number* >= 0, defaults to 1, defines the initial step size of the gradient
+    descent
+
+#### sgdClassifier.fit(trainingSet, iterations[, done])
+
+#### sdgClassifier.predict(sample)
+
+### ml.StandardScaler()
+
+#### standardScaler.fit(dataset, [done])
+
+#### standardScaler.transform(features)
+
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
 [ES6 promise]: https://promisesaplus.com
 [action]: #actions
+[loss function]: https://en.wikipedia.org/wiki/Loss_functions_for_classification
+[logistic regression]: https://en.wikipedia.org/wiki/Logistic_regression
+[ml.StandardScaler]: #mlstandardscaler
 [parquet]: https://parquet.apache.org
+[regularization]: https://en.wikipedia.org/wiki/Regularization_(mathematics)
+[stochastic gradient descent]: https://en.wikipedia.org/wiki/Stochastic_gradient_descent
+[support vector machine]: https://en.wikipedia.org/wiki/Support_vector_machine
