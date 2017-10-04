@@ -1286,7 +1286,7 @@ can be added to the loss, by default the squared euclidean norm L2.
 
 #### sgdClassifier.fit(trainingSet, iterations[, done])
 
-#### sdgClassifier.predict(sample)
+#### sgdClassifier.predict(sample)
 
 ### ml.StandardScaler()
 
