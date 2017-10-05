@@ -102,7 +102,7 @@
 
   // Train logistic regression with SGD on standardized training set
   var nIterations = 10;
-  var parameters = {loss: 'hinge', penalty: 'none', regParam: 0.001, stepSize: 1};
+  var parameters = {loss: 'log', penalty: 'l2', regParam: 0.001, stepSize: 1, proba: true};
   var model = new ml.SGDClassifier(parameters);
 
   await model.fit(trainingSetStd, nIterations);

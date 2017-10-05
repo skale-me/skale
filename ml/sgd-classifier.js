@@ -52,7 +52,7 @@ SGDClassifier.prototype.fit = thenify(function (trainingSet, nIterations, callba
   let iter = 0;
 
   if (this.fitIntercept)
-    trainingSet = trainingSet.map(a => {a[1].unshift(1); return a});
+    trainingSet = trainingSet.map(a => {a[1].unshift(1); return a;});
 
   iterate();
 
