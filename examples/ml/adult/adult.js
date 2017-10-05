@@ -102,15 +102,16 @@
 
   // Train logistic regression with SGD on standardized training set
   var nIterations = 10;
-  var parameters = {loss: 'hinge', penalty: 'l2', regParam: 0.0001, stepSize: 1};
+  var parameters = {loss: 'hinge', penalty: 'none', regParam: 0.001, stepSize: 1};
   var model = new ml.SGDClassifier(parameters);
 
   await model.fit(trainingSetStd, nIterations);
 
   var predictionAndLabels = testSetStd.map((p, model) => [model.predict(p[1]), p[0]], model);
-  var metrics = await ml.binaryClassificationMetrics(predictionAndLabels, {});
+  var metrics = await ml.binaryClassificationMetrics(predictionAndLabels, {steps: 10});
 
   console.log('model weights:', model.weights);
+  console.log('intercept:', model.intercept);
   console.log('ROC curve: roc.png');
   console.log('ROC AUC:', metrics.auroc);
   console.log('Best threshold (F1 max):', metrics.threshold);
@@ -119,7 +120,8 @@
   // Plot ROC curve
   const xy = {'0.00': 0};
   for (let i = 0; i < metrics.rates.length; i++)
-    xy[metrics.rates[i].fpr] = metrics.rates[i].recall;
+    xy[metrics.rates[i].fpr.toFixed(2)] = metrics.rates[i].recall;
+  xy['1.00'] = 1;
   const data = {};
   data['regParam: ' + parameters.regParam + ', stepSize: ' + parameters.stepSize] = xy;
   data['Random'] = {'0.00': 0, 1: 1};

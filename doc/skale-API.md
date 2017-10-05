@@ -1270,6 +1270,7 @@ it fits a linear [support vector machine] (SVM). A regularization term
 can be added to the loss, by default the squared euclidean norm L2.
 
 - *options*: an *Object* with the following fields:
+  - *fitIntercept*: *Boolean* indicating whether to include an intercept. Default: *true*
   - *loss*: *String* specifying the [loss function] to be used. Possible values are:
       - `hinge`: (default), gives a linear SVM
       - `log`: gives logistic loss, a probabilistic classifier
@@ -1278,6 +1279,7 @@ can be added to the loss, by default the squared euclidean norm L2.
       - `l2`: (default) squared euclidean norm L2, standard regularizer for linear SVM models
       - `l1`: absolute norm L1, might bring sparsity to the model, not achievable with `l2`
       - `none`: zero penalty
+  - *proba*: *Boolean* (default *false*). If *true* predict returns a probability rather than a raw number. Only applicable when logisitic loss is selected.
   - *regParam*: *Number*  >= 0, defaults to 0.001, defines the trade-off between the
     two goals of minimizing the loss (i.e. training error) and minimizing model complexity
     (i.e. to avoid overfitting)

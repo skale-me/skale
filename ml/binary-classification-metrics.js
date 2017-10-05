@@ -34,7 +34,7 @@ function combiner(acc1, acc2) {
 // Compute Receiver Operating Charateristic (ROC) Area Under Curve (AUC)
 function auroc(rates) {
   // ROC is parametric, sort to have FPR (ROC abscissa) in ascending order
-  const sortedRates = rates.sort((a, b) => a.fpr > b.fpr);
+  const sortedRates = rates.sort((a, b) => a.fpr - b.fpr);
   let x = 0;
   let y = 0;
   let auc = 0;
