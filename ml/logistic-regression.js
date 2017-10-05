@@ -12,7 +12,6 @@ function LogisticRegression(dataset, options) {
   if (!(this instanceof LogisticRegression))
     return new LogisticRegression(dataset, options);
   options = options || {};
-  this.points = dataset;
   this.weights = options.weights;         // May be undefined on startup
   this.stepSize = options.stepSize || 1;
   this.regParam = options.regParam || 1;
@@ -28,13 +27,13 @@ function LogisticRegression(dataset, options) {
   };
 }
 
-LogisticRegression.prototype.train = thenify(function (nIterations, callback) {
+LogisticRegression.prototype.train = thenify(function (trainingSet, nIterations, callback) {
   var self = this;
   var i = 0;
 
   // If undefined, find out the number of features and the number of entries in training set
   if (self.D === undefined || self.N === undefined) {
-    self.points.aggregate(
+    trainingSet.aggregate(
       (acc, val) => ({first: acc.first || val, count: acc.count + 1}),
       (acc1, acc2) => ({first: acc1.first || acc2.first, count: acc1.count + acc2.count}),
       {count: 0}
@@ -47,13 +46,20 @@ LogisticRegression.prototype.train = thenify(function (nIterations, callback) {
   } else iterate();
 
   function iterate() {
-    self.points
+    trainingSet
       .map(logisticLossGradient, self.weights)
       .reduce((a, b) => a.map((e, i) => e + b[i]), new Array(self.D).fill(0))
       .then(function(gradient) {
         var thisIterStepSize = self.stepSize / Math.sqrt(i + 1);
-        for (var j = 0; j < self.weights.length; j++)
+        console.log('N:', self.N, 'i:', i);
+        for (var j = 0; j < self.weights.length; j++) {
+          console.log('j:', j, 'weigth:', self.weights[j]);
+          console.log('j:', j, 'gradient:', gradient[j] || 0);
           self.weights[j] -= thisIterStepSize * (gradient[j] / self.N + self.regParam * self.weights[j]); // L2 regularizer
+          //self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1)) + (self.weights[j] > 0 ? 1 : -1); // L1 regularizer
+          console.log('j:', j, 'weigth:', self.weights[j]);
+        }
+        //  self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1));                 // zero regularizer
         // for (var j = 0; j < self.weights.length; j++) {
         //  self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1));                 // zero regularizer
         //  // self.weights[j] -= gradient[j] / (self.N * Math.sqrt(i + 1)) + (self.weights[j] > 0 ? 1 : -1); // L1 regularizer
