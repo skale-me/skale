@@ -1284,7 +1284,31 @@ can be added to the loss, by default the squared euclidean norm L2.
   - *stepSize*: *Number* >= 0, defaults to 1, defines the initial step size of the gradient
     descent
 
+Example:
+
+```javascript
+var trainingSet = sc.parallelize([
+ [1, [0.5, -0.7]],
+ [-1 [-0.5, 0.7]]
+]);
+var model = new ml.SGDClassifier()
+await model.fit(trainingSet, 2)
+model.weights
+// [ 0.8531998372026804, -1.1944797720837526 ]
+model.predict([2, -2])
+// 0.9836229103782058
+```
+
 #### sgdClassifier.fit(trainingSet, iterations[, done])
+
+This [action] updates *sgdClassifier* model by fitting it to the
+input dataset *trainingSet*.
+
+- *trainingSet*: a dataset where entries are in the following format:
+  `[label, [feature0, feature1, ...]]` with *label* being either 1 or -1,
+  and *featureN* being a float number, preferentially with a zero mean and
+  unit variance (in range [-1, 1]). Sparse vectors with undefined features
+  are supported.
 
 #### sgdClassifier.predict(sample)
 
