@@ -108,7 +108,7 @@
   await model.fit(trainingSetStd, nIterations);
 
   var predictionAndLabels = testSetStd.map((p, model) => [model.predict(p[1]), p[0]], model);
-  var metrics = await ml.binaryClassificationMetrics(predictionAndLabels, {steps: 10});
+  var metrics = await ml.binaryClassificationMetrics(predictionAndLabels, {steps: 100});
 
   console.log('model weights:', model.weights);
   console.log('intercept:', model.intercept);
@@ -120,7 +120,7 @@
   // Plot ROC curve
   const xy = {'0.00': 0};
   for (let i = 0; i < metrics.rates.length; i++)
-    xy[metrics.rates[i].fpr.toFixed(2)] = metrics.rates[i].recall;
+    xy[metrics.rates[i].fpr] = metrics.rates[i].recall;
   xy['1.00'] = 1;
   const data = {};
   data['regParam: ' + parameters.regParam + ', stepSize: ' + parameters.stepSize] = xy;
