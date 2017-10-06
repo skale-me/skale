@@ -15,6 +15,9 @@ function SGDClassifier(options) {
   this.weights = options.weights || [];
   this.stepSize = options.stepSize || 1;
   this.regParam = options.regParam || 0.001;
+  this.fitIntercept = options.fitIntercept || true;
+  this.proba = options.proba || false;
+  this.intercept = 0;
     
   if (!options.penalty)                this.regularize = regularizeL2;
   else if (options.penalty === 'l2')   this.regularize = regularizeL2;
@@ -30,10 +33,12 @@ function SGDClassifier(options) {
 
   // For now prediction returns a soft output, TODO: include threshold and hard output
   this.predict = function (point) {
-    let margin = 0;
-    for (let i = 0; i < point.length; i++)
+    let margin = this.intercept;
+    for (let i = 0; i < this.weights.length; i++)
       margin += (this.weights[i] || 0) * (point[i] || 0);
-    return 1 / (1 + Math.exp(-margin));
+    if (this.proba)
+      return 1 / (1 + Math.exp(-margin));
+    return margin;
   };
 }
 
@@ -45,6 +50,9 @@ function SGDClassifier(options) {
 SGDClassifier.prototype.fit = thenify(function (trainingSet, nIterations, callback) {
   const self = this;
   let iter = 0;
+
+  if (this.fitIntercept)
+    trainingSet = trainingSet.map(a => {a[1].unshift(1); return a;});
 
   iterate();
 
@@ -69,8 +77,11 @@ SGDClassifier.prototype.fit = thenify(function (trainingSet, nIterations, callba
         function (err, result) {
           const iterStepSize = self.stepSize / Math.sqrt(iter + 1);
           self.regularize(self.weights, result, iterStepSize, self.regParam);
-          if (++iter === nIterations) callback();
-          else iterate();
+          if (++iter === nIterations) {
+            if (self.fitIntercept)
+              self.intercept = self.weights.shift();
+            callback();
+          } else iterate();
         }
       );
   }
