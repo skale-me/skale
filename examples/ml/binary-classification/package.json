@@ -6,9 +6,7 @@
     "skale"
   ],
   "dependencies": {
-    "co": "^4.6.0",
     "plotter": "^0.5.0",
-    "skale-engine": "^0.5.0",
-    "skale-ml": "^0.2.0"
+    "skale-engine": "^0.7.0",
   }
 }

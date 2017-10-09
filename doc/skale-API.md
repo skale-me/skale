@@ -64,7 +64,7 @@
   - [Environment variables](#environment-variables)
 - [Machine Learning Module](#machine-learning-module)
   - [ml.binaryClassifiationMetrics(measures, options[, done])](#mlbinaryclassificationmetricsmeasures-options-done)
-  - [ml.SGDClassifier(options)](#mlsgdclassifieroptions)
+  - [ml.SGDLinearModel(options)](#mlsgdlinearmodeloptions)
       - [sgdClassifier.fit(trainingSet, iterations[, done])](#sgdclassifierfittrainingset-iterations-done)
       - [sgdClassifier.predict(sample)](#sgdclassifierpredictsample)
   - [ml.StandardScaler()](#mlstandardscaler)
@@ -1258,10 +1258,12 @@ var ml = require('skale-engine/ml')
 
 ### ml.binaryClassificationMetrics(measures, options[, done])
 
-### ml.SGDClassifier(options)
+### ml.SGDLinearModel(options)
 
-Creates a regularized linear classifier model fitted via [stochastic
-gradient descent] learning. SGD is sensitive to the scaling
+Creates a regularized linear model fitted via [stochastic
+gradient descent] learning. Such model can be used either for 
+regression or classification, as training method is identical,
+only prediction changes. SGD is sensitive to the scaling
 of the features. For best results, the data should have zero mean and
 unit variance, which can be achieved with [ml.StandardScaler].
 
@@ -1293,7 +1295,7 @@ var trainingSet = sc.parallelize([
  [1, [0.5, -0.7]],
  [-1 [-0.5, 0.7]]
 ]);
-var model = new ml.SGDClassifier()
+var model = new ml.SGDLinearModel()
 await model.fit(trainingSet, 2)
 model.weights
 // [ 0.8531998372026804, -1.1944797720837526 ]

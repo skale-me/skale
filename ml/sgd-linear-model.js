@@ -1,4 +1,4 @@
-// Stochastic Gradient Descent Classifier for Skale
+// Regularized Linear models trained by Stochastic Gradient Descent (SGD)
 // Authors: M. Vertes (current), C. Artigue (preliminary)
 // License: Apache License 2.0
 
@@ -6,11 +6,11 @@
 
 const thenify = require('thenify');
 
-module.exports = SGDClassifier;
+module.exports = SGDLinearModel;
 
-function SGDClassifier(options) {
-  if (!(this instanceof SGDClassifier))
-    return new SGDClassifier(options);
+function SGDLinearModel(options) {
+  if (!(this instanceof SGDLinearModel))
+    return new SGDLinearModel(options);
   options = options || {};
   this.weights = options.weights || [];
   this.stepSize = options.stepSize || 1;
@@ -47,7 +47,7 @@ function SGDClassifier(options) {
 //   - finalize gradient (sum and average loss per feature)
 //   - regularize loss weigths using a penalty function of gradient
 
-SGDClassifier.prototype.fit = thenify(function (trainingSet, nIterations, callback) {
+SGDLinearModel.prototype.fit = thenify(function (trainingSet, nIterations, callback) {
   const self = this;
   let iter = 0;
 
@@ -87,6 +87,7 @@ SGDClassifier.prototype.fit = thenify(function (trainingSet, nIterations, callba
   }
 });
 
+// None, a.k.a ordinary least squares
 function regularizeNone(weights, gradientCount) {
   const [gradient, count] = gradientCount;
 
@@ -96,6 +97,7 @@ function regularizeNone(weights, gradientCount) {
   }
 }
 
+// L1, a.k.a Lasso
 function regularizeL1(weights, gradientCount, stepSize) {
   const [gradient, count] = gradientCount;
 
@@ -106,6 +108,7 @@ function regularizeL1(weights, gradientCount, stepSize) {
   }
 }
 
+// L2, a.k.a ridge regression
 function regularizeL2(weights, gradientCount, stepSize, regParam) {
   const [gradient, count] = gradientCount;
 
