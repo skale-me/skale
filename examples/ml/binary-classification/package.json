@@ -7,6 +7,6 @@
   ],
   "dependencies": {
     "plotter": "^0.5.0",
-    "skale-engine": "^0.7.0",
+    "skale-engine": "^0.7.0"
   }
 }
