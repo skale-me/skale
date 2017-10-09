@@ -14,7 +14,7 @@
     });
   //console.log(await labelFeatures.take(1));
 
-  const model = ml.SGDClassifier({});
+  const model = ml.SGDLinearModel({});
   await model.fit(labelFeatures, 10);
   console.log('model:', model);
 
