@@ -9,7 +9,6 @@ module.exports = ml;
 
 ml.StandardScaler = require('./standard-scaler.js');
 ml.binaryClassificationMetrics = require('./binary-classification-metrics.js');
-ml.LogisticRegression = require('./Logistic-regression.js');
 ml.SGDClassifier = require('./sgd-classifier.js');
 
 // Return a label -1 or 1, and features between -1 and 1
