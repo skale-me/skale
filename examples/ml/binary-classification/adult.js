@@ -77,7 +77,7 @@
     return [label, features];
   }
 
-  var trainingSet = sc.textFile(__dirname + '/adult-fit.csv')
+  var trainingSet = sc.textFile(__dirname + '/adult-fit/*.csv')
     .map(line => line.split(',').map(str => str.trim()))              // split csv lines
     .filter(data => data.length === 15 && data.indexOf('?') === -1)   // remove incomplete data
     .map(featurize, metadata)                                         // transform string data to number
