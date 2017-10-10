@@ -9,7 +9,7 @@ module.exports = ml;
 
 ml.StandardScaler = require('./standard-scaler.js');
 ml.binaryClassificationMetrics = require('./binary-classification-metrics.js');
-ml.SGDClassifier = require('./sgd-classifier.js');
+ml.SGDLinearModel = require('./sgd-linear-model.js');
 
 // Return a label -1 or 1, and features between -1 and 1
 ml.randomSVMLine = function (index, D) {
