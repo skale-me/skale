@@ -11,9 +11,9 @@ var nIterations = 10;
 
 var points = sc.source(nObservations, ml.randomSVMLine, nFeatures).persist();
 
-var model = new ml.LogisticRegressionWithSGD(points);
+var model = new ml.SGDLinearModel();
 
-model.train(nIterations, function() {
+model.fit(points, nIterations, function() {
   console.log(model.weights);
   sc.end();
 });
