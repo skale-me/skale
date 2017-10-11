@@ -31,19 +31,17 @@ function combiner(acc1, acc2) {
   return acc1;
 }
 
-// Compute Receiver Operating Charateristic (ROC) Area Under Curve (AUC)
-function auroc(rates) {
-  // ROC is parametric, sort to have FPR (ROC abscissa) in ascending order
-  const sortedRates = rates.sort((a, b) => a.fpr - b.fpr);
-  let x = 0;
-  let y = 0;
+// Compute area under curve, where curve is an Array of Objects {x, y}
+function areaUnder(curve, sortx) {
+  const sorted = sortx ? curve.sort((a, b) => a.x - b.x) : curve;
   let auc = 0;
+  let {x, y} = sorted[0];
 
-  for (let i = 0; i < sortedRates.length; i++) {
-    let e = sortedRates[i];
-    auc += (e.fpr - x) * (y + (e.recall - y) / 2);
-    x = e.fpr;
-    y = e.recall;
+  for (let i = 0; i < sorted.length; i++) {
+    let e = sorted[i];
+    auc += (e.x - x) * (y + (e.y - y) / 2);
+    x = e.x;
+    y = e.y;
   }
   return auc;
 }
@@ -65,9 +63,10 @@ const classificationMetrics = thenify(function (points, options, callback) {
       e.J = e.recall + e.specificity - 1;           // Younden's J statistic
       return e;
     });
-    const auc = auroc(result);
+    const auROC = areaUnder(result.map(a => ({x: a.fpr, y: a.recall})), true);
+    const auPR = areaUnder(result.map(a => ({x: a.recall, y: a.precision})), true);
     const maxF1 = result.reduce((a, b) => a.f1 > b.f1 ? a : b, result[0]);
-    callback(null, {rates: result, auroc: auc, threshold: maxF1.threshold});
+    callback(null, {rates: result, auROC: auROC, auPR: auPR, threshold: maxF1.threshold});
   });
 });
 
