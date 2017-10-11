@@ -46,8 +46,10 @@ sc.textFile('/path/...')
   discussion
 * [skale](https://groups.google.com/forum/#!forum/skale)
   mailing list for discussion about use and development
+* [Code of conduct](CODE_OF_CONDUCT.md)
 * [Contributing guide](CONTRIBUTING.md)
 * [Skale Hacker's Guide](doc/skale-hackers-guide.md)
+* [API reference](doc/skale-API.md)
 * [Roadmap](Roadmap.md)
 
 ## Quickstart
