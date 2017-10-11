@@ -108,7 +108,7 @@
   await model.fit(trainingSetStd, nIterations);
 
   var predictionAndLabels = testSetStd.map((p, model) => [model.predict(p[1]), p[0]], model);
-  var metrics = await ml.binaryClassificationMetrics(predictionAndLabels, {steps: 100});
+  var metrics = await ml.classificationMetrics(predictionAndLabels, {steps: 100});
 
   console.log('model weights:', model.weights);
   console.log('intercept:', model.intercept);

@@ -48,7 +48,7 @@ function auroc(rates) {
   return auc;
 }
 
-const binaryClassificationMetrics = thenify(function (points, options, callback) {
+const classificationMetrics = thenify(function (points, options, callback) {
   options = options || {};
   const steps = Number(options.steps) || 10;
   const init = Array(steps).fill({tp: 0, tn: 0, fp: 0, fn: 0}); // Confusion matrices
@@ -71,4 +71,4 @@ const binaryClassificationMetrics = thenify(function (points, options, callback)
   });
 });
 
-module.exports = binaryClassificationMetrics;
+module.exports = classificationMetrics;
