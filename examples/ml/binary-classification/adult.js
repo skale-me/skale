@@ -77,13 +77,13 @@
     return [label, features];
   }
 
-  var trainingSet = sc.textFile(__dirname + '/adult.data')
+  var trainingSet = sc.textFile(__dirname + '/dataset/adult-0*.csv')
     .map(line => line.split(',').map(str => str.trim()))              // split csv lines
     .filter(data => data.length === 15 && data.indexOf('?') === -1)   // remove incomplete data
     .map(featurize, metadata)                                         // transform string data to number
     .persist();
 
-  var testSet = sc.textFile(__dirname + '/adult.test')
+  var testSet = sc.textFile(__dirname + '/dataset/adult-1*.csv')
     .map(line => line.split(',').map(str => str.trim()))              // split csv lines
     .filter(data => data.length === 15 && data.indexOf('?') === -1)   // remove incomplete data
     .map(featurize, metadata);                                        // transform string data to number
