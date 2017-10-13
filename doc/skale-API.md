@@ -55,6 +55,7 @@
       - [ds.stream([opt])](#dsstreamopt)
       - [ds.subtract(other)](#dssubtractother)
       - [ds.take(num[, done])](#dstakenum-done)
+      - [ds.takeSample(withReplacement, num[, done])](#dstakesamplewithreplacement-num-done)
       - [ds.top(num[, done])](#dstopnum-done)
       - [ds.union(other)](#dsunionother)
       - [ds.values()](#dsvalues)
@@ -236,6 +237,7 @@ alternatively through a returned [ES6 promise].
 |[save(url)](#dssaveurl-options-done)       | Save the content of a dataset to an url | empty |
 |[stream()](#dsstream-opt)            | Stream out a dataset | stream |
 |[take(num)](#dstakenum-done)         | Return the first `num` elements of dataset | array of value|
+|[takeSample(withReplacement, num)](#dstakesamplewithreplacement-num-done)         | Return a sample of `num` elements of dataset | array of value|
 |[top(num)](#dstopnum-done)           | Return the top `num` elements of dataset | array of value|
 
 ## Skale module
@@ -1128,6 +1130,7 @@ This [action] returns an array of the `num` first elements of the
 source dataset.  The result is passed to the *done()* callback if
 provided, otherwise an [ES6 promise] is returned.
 
+- *num*: positive integer *Number* of elements
 - *done*: a callback of the form `function(error, result)` which is
   called at completion.
 
@@ -1138,12 +1141,32 @@ sc.range(5).take(2).then(console.log);
 // [1, 2]
 ```
 
+#### ds.takeSample(withReplacement, num[, done])
+
+This [action] returns an array with a random sample of `num` elements
+of the dataset, with or without replacement. The result is passed to
+the *done()* callback if provided, otherwise an [ES6 promise] is returned.
+
+- *withReplacement*: *Boolean* value, *true* if data must be sampled
+  with replacement
+- *num*: positive integer *Number* of elements
+- *done*: a callback of the form `function(error, result)` which is
+  called at completion.
+
+Example:
+
+```javascript
+sc.range(100).takeSample(4).then(console.log);
+// [ 18, 75, 4, 57 ]
+```
+
 #### ds.top(num[, done])
 
 This [action] returns an array of the `num` top elements of the
 source dataset.  The result is passed to the *done()* callback if
 provided, otherwise an [ES6 promise] is returned.
 
+- *num*: positive integer *Number* of elements
 - *done*: a callback of the form `function(error, result)` which is
   called at completion.
 
