@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-process.env.SKALE_RANDOM_SEED = "skale";
+process.env.SKALE_RANDOM_SEED = 'skale';
 
 const sc = require('skale-engine').context();
 
