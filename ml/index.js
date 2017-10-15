@@ -10,6 +10,7 @@ module.exports = ml;
 ml.StandardScaler = require('./standard-scaler.js');
 ml.classificationMetrics = require('./classification-metrics.js');
 ml.SGDLinearModel = require('./sgd-linear-model.js');
+ml.KMeans = require('./kmeans.js');
 
 // Return a label -1 or 1, and features between -1 and 1
 ml.randomSVMLine = function (index, D) {
@@ -122,74 +123,3 @@ ml.LinearRegression = function (data, D, N, w) {
 //    ID3(S,A,V) recursively until reach node that has entropy=0 or reach leaf node.
 // End ID3  
 
-ml.KMeans = function (data, nClusters, initMeans) {
-  var seed = 1;
-  var maxMse = 0.0000001;
-  this.mse = [];
-  this.means = initMeans;
-
-  var D = initMeans ? initMeans[0].length : undefined ;
-  var self = this;
-
-  this.closestSpectralNorm = function (element, args) {
-    var smallestSn = Infinity;
-    var smallestSnIdx = 0;
-    for (var i = 0; i < args.means.length; i++) {
-      var sn = 0;
-      for (var j = 0; j < element.length; j++)
-        sn += Math.pow(element[1][j] - args.means[i][j], 2);
-      if (sn < smallestSn) {
-        smallestSnIdx = i;
-        smallestSn = sn;
-      }
-    }
-    return [smallestSnIdx, {data: element[1], sum: 1}];
-  };
-
-  this.train = thenify(function(nIterations, callback) {
-    var i = 0;
-
-    if (self.means === undefined) {
-      console.time(i);
-      data.takeSample(false, nClusters, seed, function(err, res) {
-        console.timeEnd(i++);
-        self.means = res;
-        D = self.means[0].length;
-        iterate();
-      });
-    } else iterate();
-
-    function accumulate(a, b) {
-      a.sum += b.sum;
-      for (var i = 0; i < b.data.length; i++)
-        a.data[i] += b.data[i];
-      return a;
-    }
-
-    function iterate() {
-      console.time(i);
-      var newMeans = [];
-      var res = data.map(self.closestSpectralNorm, {means: self.means})
-        .reduceByKey(accumulate, {data: new Array(D).fill(0), sum: 0})
-        .map(function(a) {
-          return a[1].data.map(function(e) {return e / a[1].sum;});
-        }, [])
-        .collect();
-      res.on('data', function(data) {
-        newMeans.push(data);
-      });
-      res.on('end',function(){
-        console.timeEnd(i);
-        var dist = 0;
-        for (var k = 0; k < nClusters; k++)
-          for (var j = 0; j < self.means[k].length; j++)
-            dist += Math.pow(newMeans[k][j] - self.means[k][j], 2);
-        self.means = newMeans;
-        self.mse.push(dist);
-        console.log('mse: ' + dist);
-        if ((dist < maxMse) || (++i == nIterations)) callback();
-        else iterate();
-      });
-    }
-  });
-};
