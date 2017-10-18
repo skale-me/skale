@@ -65,7 +65,7 @@
   - [Environment variables](#environment-variables)
 - [Machine Learning Module](#machine-learning-module)
   - [ml.binaryClassifiationMetrics(measures, options[, done])](#mlbinaryclassificationmetricsmeasures-options-done)
-  - [ml.SGDLinearModel(options)](#mlsgdlinearmodeloptions)
+  - [ml.SGDLinearModel([options])](#mlsgdlinearmodeloptions)
       - [sgdClassifier.fit(trainingSet, iterations[, done])](#sgdclassifierfittrainingset-iterations-done)
       - [sgdClassifier.predict(sample)](#sgdclassifierpredictsample)
   - [ml.StandardScaler()](#mlstandardscaler)
@@ -1281,7 +1281,36 @@ var ml = require('skale-engine/ml')
 
 ### ml.binaryClassificationMetrics(measures, options[, done])
 
-### ml.SGDLinearModel(options)
+### ml.KMeans(nbClusters[, options])
+
+Creates a clusterization model fitted via [K-Means] algorithm.
+
+- *nbClusters*: *Number*, specifying the number of clusters in the model
+- *Options*: an optional *Object* with the following fields:
+  - *maxMse*: *Number* defining the maximum mean square error between cluster
+    centers since previous iteration. Used to stop iterations. Default to 1e-7.
+  - *maxIterations*: *Number* defining the maximum number of iterations. Default: 100.
+  - *means*: an initial array of vectors (arrays) of numbers, default undefined.
+
+#### kmeans.fit(trainingSet[, done])
+
+This [action] updates *kmeans* model by fitting it to the input
+dataset *trainingSet*. The result is passed to the *done()* callback
+if provided, otherwise an [ES6 promise] is returned.
+
+- *trainingSet*: a dataset where entries are in the following format:
+  `[feature0, feature1, ...]` with *featureN* being a float number.
+- *done*: an optional callback of the form `function(error, result)`
+  which is called at completion.
+
+#### kmeans.predict(sample)
+
+Returns the closest cluster index for the *sample*.
+
+- *sample*: an *Array* with the format `[feature0, feature 1, ...]`
+  with *featureN* being a float number.
+
+### ml.SGDLinearModel([options])
 
 Creates a regularized linear model fitted via [stochastic
 gradient descent] learning. Such model can be used either for 
@@ -1329,13 +1358,16 @@ model.predict([2, -2])
 #### sgdClassifier.fit(trainingSet, iterations[, done])
 
 This [action] updates *sgdClassifier* model by fitting it to the
-input dataset *trainingSet*.
+input dataset *trainingSet*. The result is passed to the *done()*
+callback if provided, otherwise an [ES6 promise] is returned.
 
 - *trainingSet*: a dataset where entries are in the following format:
   `[label, [feature0, feature1, ...]]` with *label* being either 1 or -1,
   and *featureN* being a float number, preferentially with a zero mean and
   unit variance (in range [-1, 1]). Sparse vectors with undefined features
   are supported.
+- *done*: an optional callback of the form `function(error, result)`
+  which is called at completion.
 
 #### sgdClassifier.predict(sample)
 
@@ -1348,6 +1380,7 @@ input dataset *trainingSet*.
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
 [ES6 promise]: https://promisesaplus.com
 [action]: #actions
+[K-Means]: https://en.wikipedia.org/wiki/K-means_clustering
 [loss function]: https://en.wikipedia.org/wiki/Loss_functions_for_classification
 [logistic regression]: https://en.wikipedia.org/wiki/Logistic_regression
 [ml.StandardScaler]: #mlstandardscaler
