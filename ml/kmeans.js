@@ -8,7 +8,7 @@ const thenify = require('thenify');
 
 function KMeans(nClusters, options) {
   if (!(this instanceof KMeans))
-    return new KMeans(options);
+    return new KMeans(nClusters, options);
   options = options || {};
   this.nClusters = nClusters;
   this.maxMse = options.maxMse || 0.0000001;

@@ -8,14 +8,14 @@
   const ml = require('skale-engine/ml');
 
   const rawdata = sc.textFile(__dirname + '/iris.csv');
-  console.log(await rawdata.collect());
+  //console.log(await rawdata.collect());
 
   const data = rawdata
     .filter(a => a[0] !== 'S')
     .map(a => a.split(','))
     .map(a => [a.pop(), a.map(Number)])   // [species, array of numeric features]
     .persist();
-  //console.log(await data.collect());
+  console.log(await data.map(a => a[1]).collect());
 
   const model = new ml.KMeans(3);
   await model.fit(data.map(a => a[1]));

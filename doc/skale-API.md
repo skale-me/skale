@@ -1292,6 +1292,23 @@ Creates a clusterization model fitted via [K-Means] algorithm.
   - *maxIterations*: *Number* defining the maximum number of iterations. Default: 100.
   - *means*: an initial array of vectors (arrays) of numbers, default undefined.
 
+Example:
+
+```javascript
+var dataset = sc.parallelize([
+  [1, 2], [1, 4], [1, 0],
+  [4, 2], [4, 4], [4, 0]
+]);
+kmeans = ml.KMeans(2);
+await kmeans.fit(dataset);
+kmeans.means
+// [ [ 2.5, 1 ], [ 2.5, 4 ] ]
+kmeans.predict([0, 0])
+// 0
+kmeans.predict([4, 4]
+// 1
+```
+
 #### kmeans.fit(trainingSet[, done])
 
 This [action] updates *kmeans* model by fitting it to the input
