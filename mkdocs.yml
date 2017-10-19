@@ -1,0 +1,27 @@
+site_name: Skale
+site_description: Skale documentation
+dev_addr: 0.0.0.0:8000
+
+docs_dir: docs
+theme: 'material'
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+
+extra:
+  logo: 'images/logo.svg'
+  palette:
+    primary: 'indigo'
+    accent: 'light blue'
+
+pages:
+  - 'index.md'
+  - 'skale-API.md'
+  - 'skale-hackers-guide.md'
+
+repo_url: https://github.com/skale-me/skale-engine/
+google_analytics: ['UA-75822605-1', 'skale-engine.github.io']

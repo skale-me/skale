@@ -48,8 +48,8 @@ sc.textFile('/path/...')
   mailing list for discussion about use and development
 * [Code of conduct](CODE_OF_CONDUCT.md)
 * [Contributing guide](CONTRIBUTING.md)
-* [Skale Hacker's Guide](doc/skale-hackers-guide.md)
-* [API reference](doc/skale-API.md)
+* [Skale Hacker's Guide](docs/skale-hackers-guide.md)
+* [API reference](docs/skale-API.md)
 * [Roadmap](Roadmap.md)
 
 ## Quickstart

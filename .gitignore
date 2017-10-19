@@ -1,6 +1,7 @@
 *.swp
 .DS_Store
 /node_modules/
+/site/
 npm-debug.log
 tags
 yarn-error.log
