@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="no-js ie6"><![endif]-->
+<!--[if IE 7 ]><html class="no-js ie7"><![endif]-->
+<!--[if IE 8 ]><html class="no-js ie8"><![endif]-->
+<!--[if IE 9 ]><html class="no-js ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    
+      
+        <title>Skale hackers guide - Skale</title>
+      
+      
+      
+      
+    
+    <meta property="og:url" content="None">
+    <meta property="og:title" content="Skale">
+    <meta property="og:image" content="None/../images/logo.svg">
+    <meta name="apple-mobile-web-app-title" content="Skale">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+      <link rel="apple-touch-icon" href="../images/logo.svg">
+    
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-e565ddfa3b.ico">
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon-e565ddfa3b.ico">
+    <style>
+      @font-face {
+      	font-family: 'Icon';
+      	src: url('../assets/fonts/icon.eot?52m981');
+      	src: url('../assets/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+      		   url('../assets/fonts/icon.woff?52m981')
+               format('woff'),
+      		   url('../assets/fonts/icon.ttf?52m981')
+               format('truetype'),
+      		   url('../assets/fonts/icon.svg?52m981#icon')
+               format('svg');
+      	font-weight: normal;
+      	font-style: normal;
+      }
+    </style>
+    <link rel="stylesheet" href="../assets/stylesheets/application-a422ff04cc.css">
+    
+      <link rel="stylesheet" href="../assets/stylesheets/palettes-05ab2406df.css">
+    
+    
+      
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu+Mono">
+      <style>
+        body, input {
+          font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+        }
+        pre, code {
+          font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+        }
+      </style>
+    
+    
+    <script src="../assets/javascripts/modernizr-4ab42b99fd.js"></script>
+    
+  </head>
+  
+  
+  
+  <body class="palette-primary-indigo palette-accent-light-blue">
+    
+      
+      
+    
+    <div class="backdrop">
+      <div class="backdrop-paper"></div>
+    </div>
+    <input class="toggle" type="checkbox" id="toggle-drawer">
+    <input class="toggle" type="checkbox" id="toggle-search">
+    <label class="toggle-button overlay" for="toggle-drawer"></label>
+    <header class="header">
+      <nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        
+          <span class="path">
+            
+          </span>
+        
+        Skale hackers guide
+      </div>
+    </div>
+    
+    
+    <div class="button button-search" role="button" aria-label="Search">
+      <label class="toggle-button icon icon-search" title="Search" for="toggle-search"></label>
+    </div>
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+    </header>
+    <main class="main">
+      
+      <div class="drawer">
+        <nav aria-label="Navigation">
+  
+  <a href="https://github.com/skale-me/skale-engine" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="../images/logo.svg">
+        </div>
+      
+      <div class="name">
+        <strong>
+          Skale
+          <span class="version">
+            
+          </span>
+        </strong>
+        
+          <br>
+          skale-me/skale-engine
+        
+      </div>
+    </div>
+  </a>
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            
+            <a href="https://github.com/skale-me/skale-engine/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+          <li class="repo-stars">
+            <a href="https://github.com/skale-me/skale-engine/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+      <div class="toc">
+        <ul>
+          
+            
+  <li>
+    <a class="" title="Home" href="..">
+      Home
+    </a>
+    
+  </li>
+
+          
+            
+  <li>
+    <a class="" title="skale API" href="../skale-API/">
+      skale API
+    </a>
+    
+  </li>
+
+          
+            
+  <li>
+    <a class="current" title="Skale hackers guide" href="./">
+      Skale hackers guide
+    </a>
+    
+      
+        
+      
+      
+        <ul>
+          
+            <li class="anchor">
+              <a title="Introduction" href="#introduction">
+                Introduction
+              </a>
+            </li>
+          
+            <li class="anchor">
+              <a title="Architecture" href="#architecture">
+                Architecture
+              </a>
+            </li>
+          
+            <li class="anchor">
+              <a title="Adding a new source" href="#adding-a-new-source">
+                Adding a new source
+              </a>
+            </li>
+          
+            <li class="anchor">
+              <a title="Adding a new transform" href="#adding-a-new-transform">
+                Adding a new transform
+              </a>
+            </li>
+          
+            <li class="anchor">
+              <a title="Adding a new action" href="#adding-a-new-action">
+                Adding a new action
+              </a>
+            </li>
+          
+        </ul>
+      
+    
+  </li>
+
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+      </div>
+      <article class="article">
+        <div class="wrapper">
+          
+          <h1 id="skale-hackers-guide">Skale Hacker's Guide<a class="headerlink" href="#skale-hackers-guide" title="Permanent link">&para;</a></h1>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<p>Skale is a fast and general purpose distributed data processing system. It provides a high-level API in Javascript and an optimized parallel execution engine.</p>
+<p>This document gives an overview of its design and architecture, then some details on internals and code organisation, and finally presents how to extends various parts of the engine.</p>
+<p>It is assumed that the reader is already familiar with using skale and with the <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/doc/skale-API.md">reference guide</a>, at least the <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/doc/skale-API.md#core-concepts">core concepts</a>.</p>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<p>This section describes the core architecture of skale. At high level, a skale application consists of a <em>master</em> program which launches various parallel tasks on <em>worker</em> nodes. The tasks read and write <em>datasets</em>, i.e. arrays of data of abritrary size, split in <em>partitions</em> distributed on workers.</p>
+<h3 id="master">Master<a class="headerlink" href="#master" title="Permanent link">&para;</a></h3>
+<p>The corresponding code is in <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context-local.js">context-local.js</a> for the standalone mode, or <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js">context.js</a> for the distributed mode, the only difference between the 2 being the way workers are created and connected to the master.</p>
+<p>In a nutshell, the master performs the following:</p>
+<ol>
+<li>Creates a new skale <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L22">context</a> object to hold the state of cluster, datasets and tasks, then in this context:</li>
+<li>Allocates a new cluster, i.e. and array of <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L51-L53">workers</a>: connected slave processes on each worker host (1 process per CPU).</li>
+<li><a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L223">Compiles then runs</a> an execution graph derived from the user code, the <em>job</em>, consisting of a sequence of <em>stages</em>. This compilation is only triggered when an <em>action</em> is met, thus in <em>lazy</em> mode.</li>
+<li>For each stage, <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L129">runs the next task</a>: serialize and send stage code and metadata about input dataset partitions to the next free worker, trigger execution, wait for result, repeat until all stage's tasks are completed.</li>
+</ol>
+<p><em>Stage explanation here</em></p>
+<h3 id="worker">Worker<a class="headerlink" href="#worker" title="Permanent link">&para;</a></h3>
+<p>The corresponding code is in <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/worker-local.js">worker-local.js</a> for the standalone mode and <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js">worker.js</a> for the distributed mode. The common part is implemented in <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/task.js">task.js</a>.</p>
+<p>A worker performs the following:</p>
+<ol>
+<li>Connects to the master and wait for the next task to execute, then for each task:</li>
+<li>Select input partition(s), possible cases are:</li>
+<li>in memory local partition computed from a previous stage, already loaded</li>
+<li>on-disk local partition computed from a previous stage, spilled to disk</li>
+<li>remote partition stored on a separate worker (post-shuffle)</li>
+<li>external data source, through a source connector</li>
+<li>Iterate on partition(s), applying for each record a <em>pipeline</em> of functions as defined by the user for the current stage (for example a filter function, followed by a mapper function, followed by a reducer function)</li>
+<li>The last function of the pipeline is either an <em>action</em> (function returning data to master), or a pre-shuffle function (saving data on disk for remote access at start of next stage, i.e post-shuffle)</li>
+<li>At end of task, a result is sent to master, usually metadata for output files, used for next stage or for final combiner action</li>
+</ol>
+<p><em>Explain communication model here, for data transfers and remote procedure calls</em></p>
+<h3 id="datasets">Datasets<a class="headerlink" href="#datasets" title="Permanent link">&para;</a></h3>
+<p>The main abstraction provided by skale is a <em>dataset</em> which is similar to a Javascript array, but partitioned accross the workers that can be operated in parallel.</p>
+<p>A dataset object is always created first on the master side, either by a <em>source</em> function which returns a dataset from an external input or from scratch, or by a <em>transformation</em> function, which takes a dataset in input and outputs a new dataset.</p>
+<p>The same code, in <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js">dataset.js</a> is loaded both in master and workers. A dataset object instantiated on master will be replicated on each worker through task <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L141">serialization</a> and <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js#L275">deserialization</a> process.</p>
+<p>From an object oriented perspective, all <em>sources</em> and <em>transformations</em>, as dataset contructors, are classes which derive and inherit from the <em>Dataset</em> class, whereas <em>actions</em>, which operate on a dataset object, are simply methods of the <em>Dataset</em> class.</p>
+<p>Dataset objects have methods that can be run either on master side or on worker side (never on both), the following table provides a summary of these:</p>
+<table>
+<thead>
+<tr>
+<th>Dataset method</th>
+<th>on master</th>
+<th>on worker</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>getPartitions</td>
+<td>✓</td>
+<td></td>
+<td>source, post-shuffle transform</td>
+<td>Allocate output dataset partitions</td>
+</tr>
+<tr>
+<td>getPreferedLocation</td>
+<td>✓</td>
+<td></td>
+<td>source</td>
+<td>return prefered worker for a given partition</td>
+</tr>
+<tr>
+<td>iterate</td>
+<td></td>
+<td>✓</td>
+<td>source, post-shuffle transform</td>
+<td>iterate stage pipeline on partition entries</td>
+</tr>
+<tr>
+<td>transform</td>
+<td></td>
+<td>✓</td>
+<td>transform</td>
+<td>Apply a custom operation on each input dataset entry, pre-shuffle</td>
+</tr>
+<tr>
+<td>spillToDisk</td>
+<td></td>
+<td>✓</td>
+<td>pre-shuffle transform</td>
+<td>dump partition data to disk during pre-shuffle, for next stage</td>
+</tr>
+</tbody>
+</table>
+<h3 id="local-standalone-mode">Local standalone mode<a class="headerlink" href="#local-standalone-mode" title="Permanent link">&para;</a></h3>
+<p>The standalone local mode limits the scalability to the single machine but simplifies the use, as it is only necessary to <code>require('skale-engine')</code>, and avoid cluster or extra server and configuration management.</p>
+<p>In local standalone mode, the workers processes are created on the same host as the master, by the master itself, using the NodeJS core <a href="https://nodejs.org/dist/latest-v7.x/docs/api/cluster.html">cluster</a> module.</p>
+<h3 id="distributed-mode">Distributed mode<a class="headerlink" href="#distributed-mode" title="Permanent link">&para;</a></h3>
+<h2 id="adding-a-new-source">Adding a new source<a class="headerlink" href="#adding-a-new-source" title="Permanent link">&para;</a></h2>
+<p>A source returns a dataset from an external input or from scratch. For example, to be able to process data from kafka in a parallel manner, i.e. one topic partition per worker, one has to implement a kafka source in skale.</p>
+<p>Adding a new source is a matter of:</p>
+<ul>
+<li>Deriving a new class from the Dataset class, see as for example <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L911-L919">TextLocal</a>, which implements a textFile source from local filesystem</li>
+<li>Providing a <code>getPartition</code> method prototype, which allocates a fixed number of partitions, see <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L921-L941">TextLocal.getPartitions</a> as an example of allocating one partition per file. This method will be run on the master, when triggered by the action, and prior to dispatch tasks to workers</li>
+<li>Optionally providing a <code>getPreferedLocation</code> method prototype, to select a given worker according to your source semantics. If not provided, the master will dispatch the partition by default to the next free worker at execution time.</li>
+<li>Providing an <code>iterate</code> method prototype, which operates this time on the worker to execute the stage pipeline on each partition entry. See for example <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L943">TextLocal.iterate</a> and <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L800">iterateStream</a> which processes each line of a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a>. If the partition can be mapped to a readable stream, as it is the case for many NodeJS connectors, one can just reuse <code>iterateStream</code> as is.</li>
+<li>Exposing the source in the API, either by extending <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L112-121">textFile</a> to process a new URL protocol, or adding a new source method in the context, see for example <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L107">parallelize</a>.</li>
+</ul>
+<h2 id="adding-a-new-transform">Adding a new transform<a class="headerlink" href="#adding-a-new-transform" title="Permanent link">&para;</a></h2>
+<p>A new transform can be implemented either by deriving a new class from the Dataset class then providing dataset methods as in the previous table of dataset methods, or by composing existing tranform methods to issue a new one, see for example <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L121-L125">distinct</a>.</p>
+<p><em>Here give details on narrow vs wide transforms and impact on implementation</em></p>
+<h2 id="adding-a-new-action">Adding a new action<a class="headerlink" href="#adding-a-new-action" title="Permanent link">&para;</a></h2>
+          <aside class="copyright" role="note">
+            
+            Documentation built with
+            <a href="http://www.mkdocs.org" target="_blank">MkDocs</a>
+            using the
+            <a href="http://squidfunk.github.io/mkdocs-material/" target="_blank">
+              Material
+            </a>
+            theme.
+          </aside>
+          
+            <footer class="footer">
+              
+  <nav class="pagination" aria-label="Footer">
+    <div class="previous">
+      
+        <a href="../skale-API/" title="skale API">
+          <span class="direction">
+            Previous
+          </span>
+          <div class="page">
+            <div class="button button-previous" role="button" aria-label="Previous">
+              <i class="icon icon-back"></i>
+            </div>
+            <div class="stretch">
+              <div class="title">
+                skale API
+              </div>
+            </div>
+          </div>
+        </a>
+      
+    </div>
+    <div class="next">
+      
+    </div>
+  </nav>
+
+            </footer>
+          
+        </div>
+      </article>
+      <div class="results" role="status" aria-live="polite">
+        <div class="scrollable">
+          <div class="wrapper">
+            <div class="meta"></div>
+            <div class="list"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      var base_url = '..';
+      var repo_id  = 'skale-me/skale-engine';
+    </script>
+    <script src="../assets/javascripts/application-997097ee0c.js"></script>
+    
+    
+      <script>
+        (function(i,s,o,g,r,a,m){
+          i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||
+          []).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
+          m.parentNode.insertBefore(a,m)
+        })(window, document,
+          'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+        /* General initialization */
+        ga('create', 'UA-75822605-1', 'skale-engine.github.io');
+        ga('set', 'anonymizeIp', true);
+        ga('send', 'pageview');
+        /* Track outbound links */
+        var buttons = document.querySelectorAll('a');
+        Array.prototype.map.call(buttons, function(item) {
+          if (item.host != document.location.host) {
+            item.addEventListener('click', function() {
+              var action = item.getAttribute('data-action') || 'follow';
+              ga('send', 'event', 'outbound', action, item.href);
+            });
+          }
+        });
+        /* Register handler to log search on blur */
+        var query = document.querySelector('.query');
+        query.addEventListener('blur', function() {
+          if (this.value) {
+            var path = document.location.pathname;
+            ga('send', 'pageview', path + '?q=' + this.value);
+          }
+        });
+      </script>
+    
+  </body>
+</html>
