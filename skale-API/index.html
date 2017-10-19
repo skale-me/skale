@@ -1,248 +1,1493 @@
+
 <!DOCTYPE html>
-<!--[if lt IE 7 ]><html class="no-js ie6"><![endif]-->
-<!--[if IE 7 ]><html class="no-js ie7"><![endif]-->
-<!--[if IE 8 ]><html class="no-js ie8"><![endif]-->
-<!--[if IE 9 ]><html class="no-js ie9"><![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
+<html lang="en" class="no-js">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Skale documentation">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.languages" content="">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      
+        <link rel="shortcut icon" href="../assets/images/favicon.png">
+      
+      <meta name="generator" content="mkdocs-0.16.3, mkdocs-material-1.11.0">
+    
     
       
         <title>skale API - Skale</title>
       
+    
+    
+      <script src="../assets/javascripts/modernizr-e826f8942a.js"></script>
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application-0741cbeb94.css">
       
+        <link rel="stylesheet" href="../assets/stylesheets/application-23f75ab9c7.palette.css">
       
-      
-    
-    <meta property="og:url" content="None">
-    <meta property="og:title" content="Skale">
-    <meta property="og:image" content="None/../images/logo.svg">
-    <meta name="apple-mobile-web-app-title" content="Skale">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-      <link rel="apple-touch-icon" href="../images/logo.svg">
-    
-    
-    <link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon-e565ddfa3b.ico">
-    <link rel="icon" type="image/x-icon" href="../assets/images/favicon-e565ddfa3b.ico">
-    <style>
-      @font-face {
-      	font-family: 'Icon';
-      	src: url('../assets/fonts/icon.eot?52m981');
-      	src: url('../assets/fonts/icon.eot?#iefix52m981')
-               format('embedded-opentype'),
-      		   url('../assets/fonts/icon.woff?52m981')
-               format('woff'),
-      		   url('../assets/fonts/icon.ttf?52m981')
-               format('truetype'),
-      		   url('../assets/fonts/icon.svg?52m981#icon')
-               format('svg');
-      	font-weight: normal;
-      	font-style: normal;
-      }
-    </style>
-    <link rel="stylesheet" href="../assets/stylesheets/application-a422ff04cc.css">
-    
-      <link rel="stylesheet" href="../assets/stylesheets/palettes-05ab2406df.css">
     
     
       
+        
+        
+        
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
-      
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu+Mono">
-      <style>
-        body, input {
-          font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
-        }
-        pre, code {
-          font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
-        }
-      </style>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     
     
-    <script src="../assets/javascripts/modernizr-4ab42b99fd.js"></script>
     
   </head>
   
   
   
-  <body class="palette-primary-indigo palette-accent-light-blue">
-    
-      
-      
-    
-    <div class="backdrop">
-      <div class="backdrop-paper"></div>
-    </div>
-    <input class="toggle" type="checkbox" id="toggle-drawer">
-    <input class="toggle" type="checkbox" id="toggle-search">
-    <label class="toggle-button overlay" for="toggle-drawer"></label>
-    <header class="header">
-      <nav aria-label="Header">
-  <div class="bar default">
-    <div class="button button-menu" role="button" aria-label="Menu">
-      <label class="toggle-button icon icon-menu" for="toggle-drawer">
-        <span></span>
-      </label>
-    </div>
-    <div class="stretch">
-      <div class="title">
-        
-          <span class="path">
-            
-          </span>
-        
-        skale API
-      </div>
-    </div>
-    
-    
-    <div class="button button-search" role="button" aria-label="Search">
-      <label class="toggle-button icon icon-search" title="Search" for="toggle-search"></label>
-    </div>
-  </div>
-  <div class="bar search">
-    <div class="button button-close" role="button" aria-label="Close">
-      <label class="toggle-button icon icon-back" for="toggle-search"></label>
-    </div>
-    <div class="stretch">
-      <div class="field">
-        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
-      </div>
-    </div>
-    <div class="button button-reset" role="button" aria-label="Search">
-      <button class="toggle-button icon icon-close" id="reset-search"></button>
-    </div>
-  </div>
-</nav>
-    </header>
-    <main class="main">
-      
-      <div class="drawer">
-        <nav aria-label="Navigation">
   
-  <a href="https://github.com/skale-me/skale-engine" class="project">
-    <div class="banner">
-      
-        <div class="logo">
-          <img src="../images/logo.svg">
-        </div>
-      
-      <div class="name">
-        <strong>
-          Skale
-          <span class="version">
-            
-          </span>
-        </strong>
+    <body data-md-color-primary="indigo" data-md-color-accent="light-blue">
+  
+    <svg class="md-svg">
+      <defs>
         
-          <br>
-          skale-me/skale-engine
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search">
+    <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href=".." title="Skale" class="md-header-nav__button md-logo">
+          
+            
+              <img src="../images/logo.svg" width="24" height="24">
+            
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <span class="md-flex__ellipsis md-header-nav__title">
+          
+            
+              
+            
+            skale API
+          
+        </span>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="search"></label>
+  <div class="md-search__inner">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" required placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query">
+      <label class="md-icon md-search__icon" for="search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset">&#xE5CD;</button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
         
       </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+
+  <a href="https://github.com/skale-me/skale-engine" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
     </div>
   </a>
-  <div class="scrollable">
-    <div class="wrapper">
+
+          </div>
+        </div>
       
-        <ul class="repo">
-          <li class="repo-download">
-            
-            <a href="https://github.com/skale-me/skale-engine/archive/master.zip" target="_blank" title="Download" data-action="download">
-              <i class="icon icon-download"></i> Download
-            </a>
-          </li>
-          <li class="repo-stars">
-            <a href="https://github.com/skale-me/skale-engine/stargazers" target="_blank" title="Stargazers" data-action="star">
-              <i class="icon icon-star"></i> Stars
-              <span class="count">&ndash;</span>
-            </a>
-          </li>
-        </ul>
-        <hr>
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
       
-      <div class="toc">
-        <ul>
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
           
             
-  <li>
-    <a class="" title="Home" href="..">
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="drawer">
+    <div class="md-nav__button md-logo">
+      
+        
+          <img src="../images/logo.svg">
+        
+      
+    </div>
+    Skale
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+
+  <a href="https://github.com/skale-me/skale-engine" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
       Home
     </a>
-    
   </li>
 
-          
-            
-  <li>
-    <a class="current" title="skale API" href="./">
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        skale API
+      </label>
+    
+    <a href="./" title="skale API" class="md-nav__link md-nav__link--active">
       skale API
     </a>
     
       
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" title="Overview" class="md-nav__link">
+    Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-concepts" title="Core concepts" class="md-nav__link">
+    Core concepts
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
         
+          <li class="md-nav__item">
+  <a href="#partitioning" title="Partitioning" class="md-nav__link">
+    Partitioning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-stages-and-shuffles" title="Pipeline stages and shuffles" class="md-nav__link">
+    Pipeline stages and shuffles
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-datasets" title="Working with datasets" class="md-nav__link">
+    Working with datasets
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sources" title="Sources" class="md-nav__link">
+    Sources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformations" title="Transformations" class="md-nav__link">
+    Transformations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#actions" title="Actions" class="md-nav__link">
+    Actions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#skale-module" title="Skale module" class="md-nav__link">
+    Skale module
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#skalecontextconfig" title="skale.context([config])" class="md-nav__link">
+    skale.context([config])
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenv" title="sc.env" class="md-nav__link">
+    sc.env
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scend" title="sc.end()" class="md-nav__link">
+    sc.end()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sclinestreaminput_stream" title="sc.lineStream(input_stream)" class="md-nav__link">
+    sc.lineStream(input_stream)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scobjectstreaminput_stream" title="sc.objectStream(input_stream)" class="md-nav__link">
+    sc.objectStream(input_stream)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scparallelizearray" title="sc.parallelize(array)" class="md-nav__link">
+    sc.parallelize(array)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scrangestart-end-step" title="sc.range(start[, end[, step]])" class="md-nav__link">
+    sc.range(start[, end[, step]])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scsourcesize-callback-args" title="sc.source(size, callback[, args])" class="md-nav__link">
+    sc.source(size, callback[, args])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sctextfilepath-options" title="sc.textFile(path[, options])" class="md-nav__link">
+    sc.textFile(path[, options])
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dataset-methods" title="Dataset methods" class="md-nav__link">
+    Dataset methods
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dsaggregatereducer-combiner-init-obj-done" title="ds.aggregate(reducer, combiner, init[, obj][, done])" class="md-nav__link">
+    ds.aggregate(reducer, combiner, init[, obj][, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsaggregatebykeyreducer-combiner-init-obj" title="ds.aggregateByKey(reducer, combiner, init,[ obj])" class="md-nav__link">
+    ds.aggregateByKey(reducer, combiner, init,[ obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscartesianother" title="ds.cartesian(other)" class="md-nav__link">
+    ds.cartesian(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscogroupother" title="ds.coGroup(other)" class="md-nav__link">
+    ds.coGroup(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscollectdone" title="ds.collect([done])" class="md-nav__link">
+    ds.collect([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscountdone" title="ds.count([done])" class="md-nav__link">
+    ds.count([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscountbykeydone" title="ds.countByKey([done])" class="md-nav__link">
+    ds.countByKey([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscountbyvaluedone" title="ds.countByValue([done])" class="md-nav__link">
+    ds.countByValue([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsdistinct" title="ds.distinct()" class="md-nav__link">
+    ds.distinct()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsfilterfilter-obj" title="ds.filter(filter[, obj])" class="md-nav__link">
+    ds.filter(filter[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsfirstdone" title="ds.first([done])" class="md-nav__link">
+    ds.first([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsflatmapflatmapper-obj" title="ds.flatMap(flatMapper[, obj])" class="md-nav__link">
+    ds.flatMap(flatMapper[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsflatmapvaluesflatmapper-obj" title="ds.flatMapValues(flatMapper[, obj])" class="md-nav__link">
+    ds.flatMapValues(flatMapper[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsforeachcallback-obj-done" title="ds.forEach(callback[, obj][, done])" class="md-nav__link">
+    ds.forEach(callback[, obj][, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsgroupbykey" title="ds.groupByKey()" class="md-nav__link">
+    ds.groupByKey()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsintersectionother" title="ds.intersection(other)" class="md-nav__link">
+    ds.intersection(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsjoinother" title="ds.join(other)" class="md-nav__link">
+    ds.join(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dskeys" title="ds.keys()" class="md-nav__link">
+    ds.keys()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsleftouterjoinother" title="ds.leftOuterJoin(other)" class="md-nav__link">
+    ds.leftOuterJoin(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dslookupk-done" title="ds.lookup(k[, done])" class="md-nav__link">
+    ds.lookup(k[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsmapmapper-obj" title="ds.map(mapper[, obj])" class="md-nav__link">
+    ds.map(mapper[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsmapvaluesmapper-obj" title="ds.mapValues(mapper[, obj])" class="md-nav__link">
+    ds.mapValues(mapper[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dspartitionbypartitioner" title="ds.partitionBy(partitioner)" class="md-nav__link">
+    ds.partitionBy(partitioner)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dspersist" title="ds.persist()" class="md-nav__link">
+    ds.persist()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsreducereducer-init-obj-done" title="ds.reduce(reducer, init[, obj][, done])" class="md-nav__link">
+    ds.reduce(reducer, init[, obj][, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsreducebykeyreducer-init-obj" title="ds.reduceByKey(reducer, init[, obj])" class="md-nav__link">
+    ds.reduceByKey(reducer, init[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsrightouterjoinother" title="ds.rightOuterJoin(other)" class="md-nav__link">
+    ds.rightOuterJoin(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssamplewithreplacement-frac-seed" title="ds.sample(withReplacement, frac, seed)" class="md-nav__link">
+    ds.sample(withReplacement, frac, seed)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssaveurl-options-done" title="ds.save(url[, options][, done])" class="md-nav__link">
+    ds.save(url[, options][, done])
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-protocol" title="File protocol" class="md-nav__link">
+    File protocol
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws-s3-protocol" title="AWS S3 protocol" class="md-nav__link">
+    AWS S3 protocol
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-blob-storage-protocol" title="Azure blob storage protocol" class="md-nav__link">
+    Azure blob storage protocol
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssortbykeyfunc-ascending" title="ds.sortBy(keyfunc[, ascending])" class="md-nav__link">
+    ds.sortBy(keyfunc[, ascending])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssortbykeyascending" title="ds.sortByKey(ascending)" class="md-nav__link">
+    ds.sortByKey(ascending)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsstreamopt" title="ds.stream([opt])" class="md-nav__link">
+    ds.stream([opt])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssubtractother" title="ds.subtract(other)" class="md-nav__link">
+    ds.subtract(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dstakenum-done" title="ds.take(num[, done])" class="md-nav__link">
+    ds.take(num[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dstakesamplewithreplacement-num-done" title="ds.takeSample(withReplacement, num[, done])" class="md-nav__link">
+    ds.takeSample(withReplacement, num[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dstopnum-done" title="ds.top(num[, done])" class="md-nav__link">
+    ds.top(num[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsunionother" title="ds.union(other)" class="md-nav__link">
+    ds.union(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsvalues" title="ds.values()" class="md-nav__link">
+    ds.values()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partitioners" title="Partitioners" class="md-nav__link">
+    Partitioners
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hashpartitionernumpartitions" title="HashPartitioner(numPartitions)" class="md-nav__link">
+    HashPartitioner(numPartitions)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rangepartitionernumpartitions-keyfunc-dataset" title="RangePartitioner(numPartitions, keyfunc, dataset)" class="md-nav__link">
+    RangePartitioner(numPartitions, keyfunc, dataset)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" title="Environment variables" class="md-nav__link">
+    Environment variables
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#machine-learning-module" title="Machine Learning module" class="md-nav__link">
+    Machine Learning module
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mlbinaryclassificationmetricsmeasures-options-done" title="ml.binaryClassificationMetrics(measures, options[, done])" class="md-nav__link">
+    ml.binaryClassificationMetrics(measures, options[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlkmeansnbclusters-options" title="ml.KMeans(nbClusters[, options])" class="md-nav__link">
+    ml.KMeans(nbClusters[, options])
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kmeansfittrainingset-done" title="kmeans.fit(trainingSet[, done])" class="md-nav__link">
+    kmeans.fit(trainingSet[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kmeanspredictsample" title="kmeans.predict(sample)" class="md-nav__link">
+    kmeans.predict(sample)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlsgdlinearmodeloptions" title="ml.SGDLinearModel([options])" class="md-nav__link">
+    ml.SGDLinearModel([options])
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgdclassifierfittrainingset-iterations-done" title="sgdClassifier.fit(trainingSet, iterations[, done])" class="md-nav__link">
+    sgdClassifier.fit(trainingSet, iterations[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgdclassifierpredictsample" title="sgdClassifier.predict(sample)" class="md-nav__link">
+    sgdClassifier.predict(sample)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlstandardscaler" title="ml.StandardScaler()" class="md-nav__link">
+    ml.StandardScaler()
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standardscalerfitdataset-done" title="standardScaler.fit(dataset, [done])" class="md-nav__link">
+    standardScaler.fit(dataset, [done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#standardscalertransformfeatures" title="standardScaler.transform(features)" class="md-nav__link">
+    standardScaler.transform(features)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
       
-        <ul>
-          
-            <li class="anchor">
-              <a title="Overview" href="#overview">
-                Overview
-              </a>
-            </li>
-          
-            <li class="anchor">
-              <a title="Core concepts" href="#core-concepts">
-                Core concepts
-              </a>
-            </li>
-          
-            <li class="anchor">
-              <a title="Working with datasets" href="#working-with-datasets">
-                Working with datasets
-              </a>
-            </li>
-          
-            <li class="anchor">
-              <a title="Skale module" href="#skale-module">
-                Skale module
-              </a>
-            </li>
-          
-            <li class="anchor">
-              <a title="Machine Learning module" href="#machine-learning-module">
-                Machine Learning module
-              </a>
-            </li>
-          
-        </ul>
       
+    </ul>
+  
+</nav>
     
   </li>
 
-          
-            
-  <li>
-    <a class="" title="Skale hackers guide" href="../skale-hackers-guide/">
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../skale-hackers-guide/" title="Skale hackers guide" class="md-nav__link">
       Skale hackers guide
     </a>
-    
   </li>
 
-          
-        </ul>
-        
-      </div>
-    </div>
-  </div>
+    
+  </ul>
 </nav>
-      </div>
-      <article class="article">
-        <div class="wrapper">
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" title="Overview" class="md-nav__link">
+    Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-concepts" title="Core concepts" class="md-nav__link">
+    Core concepts
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#partitioning" title="Partitioning" class="md-nav__link">
+    Partitioning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-stages-and-shuffles" title="Pipeline stages and shuffles" class="md-nav__link">
+    Pipeline stages and shuffles
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-datasets" title="Working with datasets" class="md-nav__link">
+    Working with datasets
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sources" title="Sources" class="md-nav__link">
+    Sources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformations" title="Transformations" class="md-nav__link">
+    Transformations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#actions" title="Actions" class="md-nav__link">
+    Actions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#skale-module" title="Skale module" class="md-nav__link">
+    Skale module
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#skalecontextconfig" title="skale.context([config])" class="md-nav__link">
+    skale.context([config])
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenv" title="sc.env" class="md-nav__link">
+    sc.env
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scend" title="sc.end()" class="md-nav__link">
+    sc.end()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sclinestreaminput_stream" title="sc.lineStream(input_stream)" class="md-nav__link">
+    sc.lineStream(input_stream)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scobjectstreaminput_stream" title="sc.objectStream(input_stream)" class="md-nav__link">
+    sc.objectStream(input_stream)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scparallelizearray" title="sc.parallelize(array)" class="md-nav__link">
+    sc.parallelize(array)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scrangestart-end-step" title="sc.range(start[, end[, step]])" class="md-nav__link">
+    sc.range(start[, end[, step]])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scsourcesize-callback-args" title="sc.source(size, callback[, args])" class="md-nav__link">
+    sc.source(size, callback[, args])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sctextfilepath-options" title="sc.textFile(path[, options])" class="md-nav__link">
+    sc.textFile(path[, options])
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dataset-methods" title="Dataset methods" class="md-nav__link">
+    Dataset methods
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dsaggregatereducer-combiner-init-obj-done" title="ds.aggregate(reducer, combiner, init[, obj][, done])" class="md-nav__link">
+    ds.aggregate(reducer, combiner, init[, obj][, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsaggregatebykeyreducer-combiner-init-obj" title="ds.aggregateByKey(reducer, combiner, init,[ obj])" class="md-nav__link">
+    ds.aggregateByKey(reducer, combiner, init,[ obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscartesianother" title="ds.cartesian(other)" class="md-nav__link">
+    ds.cartesian(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscogroupother" title="ds.coGroup(other)" class="md-nav__link">
+    ds.coGroup(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscollectdone" title="ds.collect([done])" class="md-nav__link">
+    ds.collect([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscountdone" title="ds.count([done])" class="md-nav__link">
+    ds.count([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscountbykeydone" title="ds.countByKey([done])" class="md-nav__link">
+    ds.countByKey([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscountbyvaluedone" title="ds.countByValue([done])" class="md-nav__link">
+    ds.countByValue([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsdistinct" title="ds.distinct()" class="md-nav__link">
+    ds.distinct()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsfilterfilter-obj" title="ds.filter(filter[, obj])" class="md-nav__link">
+    ds.filter(filter[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsfirstdone" title="ds.first([done])" class="md-nav__link">
+    ds.first([done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsflatmapflatmapper-obj" title="ds.flatMap(flatMapper[, obj])" class="md-nav__link">
+    ds.flatMap(flatMapper[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsflatmapvaluesflatmapper-obj" title="ds.flatMapValues(flatMapper[, obj])" class="md-nav__link">
+    ds.flatMapValues(flatMapper[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsforeachcallback-obj-done" title="ds.forEach(callback[, obj][, done])" class="md-nav__link">
+    ds.forEach(callback[, obj][, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsgroupbykey" title="ds.groupByKey()" class="md-nav__link">
+    ds.groupByKey()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsintersectionother" title="ds.intersection(other)" class="md-nav__link">
+    ds.intersection(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsjoinother" title="ds.join(other)" class="md-nav__link">
+    ds.join(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dskeys" title="ds.keys()" class="md-nav__link">
+    ds.keys()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsleftouterjoinother" title="ds.leftOuterJoin(other)" class="md-nav__link">
+    ds.leftOuterJoin(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dslookupk-done" title="ds.lookup(k[, done])" class="md-nav__link">
+    ds.lookup(k[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsmapmapper-obj" title="ds.map(mapper[, obj])" class="md-nav__link">
+    ds.map(mapper[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsmapvaluesmapper-obj" title="ds.mapValues(mapper[, obj])" class="md-nav__link">
+    ds.mapValues(mapper[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dspartitionbypartitioner" title="ds.partitionBy(partitioner)" class="md-nav__link">
+    ds.partitionBy(partitioner)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dspersist" title="ds.persist()" class="md-nav__link">
+    ds.persist()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsreducereducer-init-obj-done" title="ds.reduce(reducer, init[, obj][, done])" class="md-nav__link">
+    ds.reduce(reducer, init[, obj][, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsreducebykeyreducer-init-obj" title="ds.reduceByKey(reducer, init[, obj])" class="md-nav__link">
+    ds.reduceByKey(reducer, init[, obj])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsrightouterjoinother" title="ds.rightOuterJoin(other)" class="md-nav__link">
+    ds.rightOuterJoin(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssamplewithreplacement-frac-seed" title="ds.sample(withReplacement, frac, seed)" class="md-nav__link">
+    ds.sample(withReplacement, frac, seed)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssaveurl-options-done" title="ds.save(url[, options][, done])" class="md-nav__link">
+    ds.save(url[, options][, done])
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-protocol" title="File protocol" class="md-nav__link">
+    File protocol
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws-s3-protocol" title="AWS S3 protocol" class="md-nav__link">
+    AWS S3 protocol
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-blob-storage-protocol" title="Azure blob storage protocol" class="md-nav__link">
+    Azure blob storage protocol
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssortbykeyfunc-ascending" title="ds.sortBy(keyfunc[, ascending])" class="md-nav__link">
+    ds.sortBy(keyfunc[, ascending])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssortbykeyascending" title="ds.sortByKey(ascending)" class="md-nav__link">
+    ds.sortByKey(ascending)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsstreamopt" title="ds.stream([opt])" class="md-nav__link">
+    ds.stream([opt])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dssubtractother" title="ds.subtract(other)" class="md-nav__link">
+    ds.subtract(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dstakenum-done" title="ds.take(num[, done])" class="md-nav__link">
+    ds.take(num[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dstakesamplewithreplacement-num-done" title="ds.takeSample(withReplacement, num[, done])" class="md-nav__link">
+    ds.takeSample(withReplacement, num[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dstopnum-done" title="ds.top(num[, done])" class="md-nav__link">
+    ds.top(num[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsunionother" title="ds.union(other)" class="md-nav__link">
+    ds.union(other)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dsvalues" title="ds.values()" class="md-nav__link">
+    ds.values()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partitioners" title="Partitioners" class="md-nav__link">
+    Partitioners
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hashpartitionernumpartitions" title="HashPartitioner(numPartitions)" class="md-nav__link">
+    HashPartitioner(numPartitions)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rangepartitionernumpartitions-keyfunc-dataset" title="RangePartitioner(numPartitions, keyfunc, dataset)" class="md-nav__link">
+    RangePartitioner(numPartitions, keyfunc, dataset)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" title="Environment variables" class="md-nav__link">
+    Environment variables
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#machine-learning-module" title="Machine Learning module" class="md-nav__link">
+    Machine Learning module
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mlbinaryclassificationmetricsmeasures-options-done" title="ml.binaryClassificationMetrics(measures, options[, done])" class="md-nav__link">
+    ml.binaryClassificationMetrics(measures, options[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlkmeansnbclusters-options" title="ml.KMeans(nbClusters[, options])" class="md-nav__link">
+    ml.KMeans(nbClusters[, options])
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kmeansfittrainingset-done" title="kmeans.fit(trainingSet[, done])" class="md-nav__link">
+    kmeans.fit(trainingSet[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kmeanspredictsample" title="kmeans.predict(sample)" class="md-nav__link">
+    kmeans.predict(sample)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlsgdlinearmodeloptions" title="ml.SGDLinearModel([options])" class="md-nav__link">
+    ml.SGDLinearModel([options])
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgdclassifierfittrainingset-iterations-done" title="sgdClassifier.fit(trainingSet, iterations[, done])" class="md-nav__link">
+    sgdClassifier.fit(trainingSet, iterations[, done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgdclassifierpredictsample" title="sgdClassifier.predict(sample)" class="md-nav__link">
+    sgdClassifier.predict(sample)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mlstandardscaler" title="ml.StandardScaler()" class="md-nav__link">
+    ml.StandardScaler()
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standardscalerfitdataset-done" title="standardScaler.fit(dataset, [done])" class="md-nav__link">
+    standardScaler.fit(dataset, [done])
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#standardscalertransformfeatures" title="standardScaler.transform(features)" class="md-nav__link">
+    standardScaler.transform(features)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
-          <h1 id="skale-reference">Skale Reference<a class="headerlink" href="#skale-reference" title="Permanent link">&para;</a></h1>
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/skale-me/skale-engine/edit/master/docs/skale-API.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="skale-reference">Skale Reference<a class="headerlink" href="#skale-reference" title="Permanent link">&para;</a></h1>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>Skale is a fast and general purpose distributed data processing
 system. It provides a high-level API in Javascript and an optimized
@@ -270,11 +1515,12 @@ using some function, and returns the final result to the master.</p>
 start right away, but are triggered by <em>actions</em>, thus allowing
 efficient pipelined execution and optimized data transfers.</p>
 <p>A first example:</p>
-<pre class="codehilite"><code class="language-javascript">var sc = require('skale-engine').context();     // create a new context
-sc.parallelize([1, 2, 3, 4]).               // source
-   map(function (x) {return x+1}).          // transform
-   reduce(function (a, b) {return a+b}, 0). // action
-   then(console.log);                       // process result: 14</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine&#39;</span><span class="p">).</span><span class="nx">context</span><span class="p">();</span>     <span class="c1">// create a new context</span>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>               <span class="c1">// source</span>
+   <span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="nx">x</span><span class="o">+</span><span class="mi">1</span><span class="p">}).</span>          <span class="c1">// transform</span>
+   <span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">},</span> <span class="mi">0</span><span class="p">).</span> <span class="c1">// action</span>
+   <span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>                       <span class="c1">// process result: 14</span>
+</pre></div>
 
 
 <h2 id="core-concepts">Core concepts<a class="headerlink" href="#core-concepts" title="Permanent link">&para;</a></h2>
@@ -359,7 +1605,8 @@ using the following sources:</p>
 <p>Transformations operate on a dataset and return a new dataset. Note that some
 transformation operate only on datasets where each element is in the form
 of 2 elements array of key and value (<code>[k,v]</code> dataset):</p>
-<pre class="codehilite"><code>[[Ki,Vi], ..., [Kj, Vj]]</code></pre>
+<div class="codehilite"><pre><span></span>[[Ki,Vi], ..., [Kj, Vj]]
+</pre></div>
 
 
 <p>A special transformation <code>persist()</code> enables one to <em>persist</em> a dataset
@@ -638,15 +1885,17 @@ To use it, one must <code>require('skale-engine')</code>.</p>
 to the Skale cluster, and which can be used to create datasets on that
 cluster. Config is an <em>Object</em> which defines the cluster server,
 with the following defaults:</p>
-<pre class="codehilite"><code class="language-javascript">{
-  host: 'localhost',    // Cluster server host, settable also by SKALE_HOST env
-  port: '12346'         // Cluster server port, settable also by SKALE_PORT env
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+  <span class="nx">host</span><span class="o">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>    <span class="c1">// Cluster server host, settable also by SKALE_HOST env</span>
+  <span class="nx">port</span><span class="o">:</span> <span class="s1">&#39;12346&#39;</span>         <span class="c1">// Cluster server port, settable also by SKALE_PORT env</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var skale = require('skale-engine');
-var sc = skale.context();</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">skale</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">skale</span><span class="p">.</span><span class="nx">context</span><span class="p">();</span>
+</pre></div>
 
 
 <h4 id="scenv">sc.env<a class="headerlink" href="#scenv" title="Permanent link">&para;</a></h4>
@@ -655,7 +1904,8 @@ to be set in workers.</p>
 <p>To set and propagate an environment variable to all workers, assign <code>sc.env</code> object
 prior to invoking an action.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.env.MY_VAR = 'my_value';</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">MY_VAR</span> <span class="o">=</span> <span class="s1">&#39;my_value&#39;</span><span class="p">;</span>
+</pre></div>
 
 
 <h4 id="scend">sc.end()<a class="headerlink" href="#scend" title="Permanent link">&para;</a></h4>
@@ -665,11 +1915,12 @@ prior to invoking an action.</p>
 <em>Object</em>, which is a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> where dataset content is
 read from.</p>
 <p>The following example computes the size of a file using streams:</p>
-<pre class="codehilite"><code class="language-javascript">var stream = fs.createReadStream('data.txt', 'utf8');
-sc.lineStream(stream).
-   map(s =&gt; s.length).
-   reduce((a, b) =&gt; a + b, 0).
-   then(console.log);</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">stream</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">createReadStream</span><span class="p">(</span><span class="s1">&#39;data.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">);</span>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">lineStream</span><span class="p">(</span><span class="nx">stream</span><span class="p">).</span>
+   <span class="nx">map</span><span class="p">(</span><span class="nx">s</span> <span class="p">=&gt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span>
+   <span class="nx">reduce</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
+   <span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+</pre></div>
 
 
 <h4 id="scobjectstreaminput_stream">sc.objectStream(input_stream)<a class="headerlink" href="#scobjectstreaminput_stream" title="Permanent link">&para;</a></h4>
@@ -678,14 +1929,16 @@ sc.lineStream(stream).
 read from.</p>
 <p>The following example counts the number of objects returned in an
 object stream using the mongodb native Javascript driver:</p>
-<pre class="codehilite"><code class="language-javascript">var cursor = db.collection('clients').find();
-sc.objectStream(cursor).count().then(console.log);</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">cursor</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">collection</span><span class="p">(</span><span class="s1">&#39;clients&#39;</span><span class="p">).</span><span class="nx">find</span><span class="p">();</span>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">objectStream</span><span class="p">(</span><span class="nx">cursor</span><span class="p">).</span><span class="nx">count</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+</pre></div>
 
 
 <h4 id="scparallelizearray">sc.parallelize(array)<a class="headerlink" href="#scparallelizearray" title="Permanent link">&para;</a></h4>
 <p>Returns a new dataset containing elements from the <em>Array</em> array.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var a = sc.parallelize(['Hello', 'World']);</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="s1">&#39;World&#39;</span><span class="p">]);</span>
+</pre></div>
 
 
 <h4 id="scrangestart-end-step">sc.range(start[, end[, step]])<a class="headerlink" href="#scrangestart-end-step" title="Permanent link">&para;</a></h4>
@@ -693,12 +1946,13 @@ sc.objectStream(cursor).count().then(console.log);</code></pre>
 increased by <em>step</em> (default 1) every element. If called with a
 single argument, the argument is interpreted as <em>end</em>, and <em>start</em>
 is set to 0.</p>
-<pre class="codehilite"><code class="language-javascript">sc.range(5).collect().then(console.log)
-// [ 0, 1, 2, 3, 4 ]
-sc.range(2, 4).collect().then(console.log)
-// [ 2, 3 ]
-sc.range(10, -5, -3).collect().then(console.log)
-// [ 10, 7, 4, 1, -2 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+<span class="c1">// [ 0, 1, 2, 3, 4 ]</span>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+<span class="c1">// [ 2, 3 ]</span>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+<span class="c1">// [ 10, 7, 4, 1, -2 ]</span>
+</pre></div>
 
 
 <h4 id="scsourcesize-callback-args">sc.source(size, callback[, args])<a class="headerlink" href="#scsourcesize-callback-args" title="Permanent link">&para;</a></h4>
@@ -717,15 +1971,16 @@ generated by a custom function <em>callback</em> executed on workers.</p>
 </li>
 <li><em>args</em>: user custom parameter, passed to <em>callback</em></li>
 </ul>
-<pre class="codehilite"><code class="language-javascript">function randArray(index, len) {
-  var arr = [];
-  for (var i = 0; i &lt; len; i++)
-    arr.push(Math.floor(Math.random() * 100));
-  return arr;
-}
+<div class="codehilite"><pre><span></span><span class="kd">function</span> <span class="nx">randArray</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">arr</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">));</span>
+  <span class="k">return</span> <span class="nx">arr</span><span class="p">;</span>
+<span class="p">}</span>
 
-sc.source(3, randArray, 2).collect().then(console.log);
-// [ [ 31, 85 ], [ 93, 21 ], [ 99, 58 ] ]</code></pre>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">source</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">randArray</span><span class="p">,</span> <span class="mi">2</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ 31, 85 ], [ 93, 21 ], [ 99, 58 ] ]</span>
+</pre></div>
 
 
 <h4 id="sctextfilepath-options">sc.textFile(path[, options])<a class="headerlink" href="#sctextfilepath-options" title="Permanent link">&para;</a></h4>
@@ -754,8 +2009,9 @@ as a <a href="https://parquet.apache.org">parquet</a>.</p>
 be accessible at the same path on worker nodes. Either copy the
 file to all workers or use a network-mounted shared file system.</p>
 <p>For example, the following program prints the length of a text file:</p>
-<pre class="codehilite"><code class="language-javascript">var lines = sc.textFile('data.txt');
-lines.map(s =&gt; s.length).reduce((a, b) =&gt; a + b, 0).then(console.log);</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">lines</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">textFile</span><span class="p">(</span><span class="s1">&#39;data.txt&#39;</span><span class="p">);</span>
+<span class="nx">lines</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">s</span> <span class="p">=&gt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+</pre></div>
 
 
 <h3 id="dataset-methods">Dataset methods<a class="headerlink" href="#dataset-methods" title="Permanent link">&para;</a></h3>
@@ -802,13 +2058,14 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
   <a href="https://promisesaplus.com">ES6 promise</a>.</li>
 </ul>
 <p>The following example computes the average of a dataset, avoiding a <code>map()</code>:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([3, 5, 2, 7, 4, 8]).
-   aggregate((a, v) =&gt; [a[0] + v, a[1] + 1],
-    (a1, a2) =&gt; [a1[0] + a2[0], a1[1] + a2[1]], [0, 0]).
-   then(function(data) {
-    console.log(data[0] / data[1]);
-  })
-// 4.8333</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]).</span>
+   <span class="nx">aggregate</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">(</span><span class="nx">a1</span><span class="p">,</span> <span class="nx">a2</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">a1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">a1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a2</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]).</span>
+   <span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="nx">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+  <span class="p">})</span>
+<span class="c1">// 4.8333</span>
+</pre></div>
 
 
 <h4 id="dsaggregatebykeyreducer-combiner-init-obj">ds.aggregateByKey(reducer, combiner, init,[ obj])<a class="headerlink" href="#dsaggregatebykeyreducer-combiner-init-obj" title="Permanent link">&para;</a></h4>
@@ -845,33 +2102,36 @@ different from element type.</p>
   mapper executions over each element of the dataset.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([['hello', 1], ['hello', 1], ['world', 1]]).
-   aggregateByKey((a, b) =&gt; a + b, (a, b) =&gt; a + b, 0).
-   collect().then(console.log);
-// [ [ 'hello', 2 ], [ 'world', 1 ] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]).</span>
+   <span class="nx">aggregateByKey</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
+   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ &#39;hello&#39;, 2 ], [ &#39;world&#39;, 1 ] ]</span>
+</pre></div>
 
 
 <h4 id="dscartesianother">ds.cartesian(other)<a class="headerlink" href="#dscartesianother" title="Permanent link">&para;</a></h4>
 <p>Returns a dataset wich contains all possible pairs <code>[a, b]</code> where <code>a</code>
 is in the source dataset and <code>b</code> is in the <em>other</em> dataset.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var ds1 = sc.parallelize([1, 2]);
-var ds2 = sc.parallelize(['a', 'b', 'c']);
-ds1.cartesian(ds2).collect().then(console.log);
-// [ [ 1, 'a' ], [ 1, 'b' ], [ 1, 'c' ],
-//   [ 2, 'a' ], [ 2, 'b' ], [ 2, 'c' ] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ds1</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">ds2</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]);</span>
+<span class="nx">ds1</span><span class="p">.</span><span class="nx">cartesian</span><span class="p">(</span><span class="nx">ds2</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ 1, &#39;a&#39; ], [ 1, &#39;b&#39; ], [ 1, &#39;c&#39; ],</span>
+<span class="c1">//   [ 2, &#39;a&#39; ], [ 2, &#39;b&#39; ], [ 2, &#39;c&#39; ] ]</span>
+</pre></div>
 
 
 <h4 id="dscogroupother">ds.coGroup(other)<a class="headerlink" href="#dscogroupother" title="Permanent link">&para;</a></h4>
 <p>When called on dataset of type <code>[k,v]</code> and <code>[k,w]</code>, returns a dataset of type
 <code>[k, [[v], [w]]]</code>, where data of both datasets share the same key.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var ds1 = sc.parallelize([[10, 1], [20, 2]]);
-var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
-ds1.coGroup(ds2).collect().then(console.log);
-// [ [ 10, [ [ 1 ], [ 'world' ] ] ],
-//   [ 20, [ [ 2 ], [] ] ],
-//   [ 30, [ [], [ 3 ] ] ] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ds1</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]);</span>
+<span class="kd">var</span> <span class="nx">ds2</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]);</span>
+<span class="nx">ds1</span><span class="p">.</span><span class="nx">coGroup</span><span class="p">(</span><span class="nx">ds2</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ 10, [ [ 1 ], [ &#39;world&#39; ] ] ],</span>
+<span class="c1">//   [ 20, [ [ 2 ], [] ] ],</span>
+<span class="c1">//   [ 30, [ [], [ 3 ] ] ] ]</span>
+</pre></div>
 
 
 <h4 id="dscollectdone">ds.collect([done])<a class="headerlink" href="#dscollectdone" title="Permanent link">&para;</a></h4>
@@ -883,11 +2143,12 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([1, 2, 3, 4]).
-   collect(function (err, res) {
-     console.log(res);
-   });
-// [ 1, 2, 3, 4 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>
+   <span class="nx">collect</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
+   <span class="p">});</span>
+<span class="c1">// [ 1, 2, 3, 4 ]</span>
+</pre></div>
 
 
 <h4 id="dscountdone">ds.count([done])<a class="headerlink" href="#dscountdone" title="Permanent link">&para;</a></h4>
@@ -899,8 +2160,9 @@ an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([10, 20, 30, 40]).count().then(console.log);
-// 4</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">]).</span><span class="nx">count</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// 4</span>
+</pre></div>
 
 
 <h4 id="dscountbykeydone">ds.countByKey([done])<a class="headerlink" href="#dscountbykeydone" title="Permanent link">&para;</a></h4>
@@ -914,9 +2176,10 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([[10, 1], [20, 2], [10, 4]]).
-   countByKey().then(console.log);
-// [ [ 10, 2 ], [ 20, 1 ] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]).</span>
+   <span class="nx">countByKey</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ 10, 2 ], [ 20, 1 ] ]</span>
+</pre></div>
 
 
 <h4 id="dscountbyvaluedone">ds.countByValue([done])<a class="headerlink" href="#dscountbyvaluedone" title="Permanent link">&para;</a></h4>
@@ -930,18 +2193,20 @@ promise</a> is returned.</p>
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([ 1, 2, 3, 1, 3, 2, 5 ]).
-   countByValue().then(console.log);
-// [ [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 5, 1 ] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span> <span class="p">]).</span>
+   <span class="nx">countByValue</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 5, 1 ] ]</span>
+</pre></div>
 
 
 <h4 id="dsdistinct">ds.distinct()<a class="headerlink" href="#dsdistinct" title="Permanent link">&para;</a></h4>
 <p>Returns a dataset where duplicates are removed.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
-   distinct().
-   collect().then(console.log);
-// [ 1, 2, 3, 4, 5 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span> <span class="p">]).</span>
+   <span class="nx">distinct</span><span class="p">().</span>
+   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 1, 2, 3, 4, 5 ]</span>
+</pre></div>
 
 
 <h4 id="dsfilterfilter-obj">ds.filter(filter[, obj])<a class="headerlink" href="#dsfilterfilter-obj" title="Permanent link">&para;</a></h4>
@@ -962,12 +2227,13 @@ promise</a> is returned.</p>
 dataset and returns a new dataset containing the elements that passed the
 test.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">function filter(data, obj) { return data % obj.modulo; }
+<div class="codehilite"><pre><span></span><span class="kd">function</span> <span class="nx">filter</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">data</span> <span class="o">%</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">modulo</span><span class="p">;</span> <span class="p">}</span>
 
-sc.parallelize([1, 2, 3, 4]).
-   filter(filter, {modulo: 2}).
-   collect().then(console.log);
-// [ 1, 3 ]</code></pre>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>
+   <span class="nx">filter</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="p">{</span><span class="nx">modulo</span><span class="o">:</span> <span class="mi">2</span><span class="p">}).</span>
+   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 1, 3 ]</span>
+</pre></div>
 
 
 <h4 id="dsfirstdone">ds.first([done])<a class="headerlink" href="#dsfirstdone" title="Permanent link">&para;</a></h4>
@@ -978,8 +2244,9 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
 <li><em>done</em>: a callback of the form <code>function(error, result)</code> which is
   called at completion.</li>
 </ul>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([1, 2, 3]).first().then(console.log);
-// 1</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]).</span><span class="nx">first</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// 1</span>
+</pre></div>
 
 
 <h4 id="dsflatmapflatmapper-obj">ds.flatMap(flatMapper[, obj])<a class="headerlink" href="#dsflatmapflatmapper-obj" title="Permanent link">&para;</a></h4>
@@ -999,8 +2266,9 @@ dataset and returns a new dataset.</p>
   mapper executions over each element of the dataset</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.range(5).flatMap(a =&gt; [a, a]).collect().then(console.log);
-// [ 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">a</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">a</span><span class="p">,</span> <span class="nx">a</span><span class="p">]).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 ]</span>
+</pre></div>
 
 
 <h4 id="dsflatmapvaluesflatmapper-obj">ds.flatMapValues(flatMapper[, obj])<a class="headerlink" href="#dsflatmapvaluesflatmapper-obj" title="Permanent link">&para;</a></h4>
@@ -1023,16 +2291,17 @@ for each source element.</p>
   mapper executions over each element of the dataset</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">function valueFlatMapper(data, obj) {
-    var tmp = [];
-    for (var i = 0; i &lt; obj.N; i++) tmp.push(data * obj.fact);
-    return tmp;
-}
+<div class="codehilite"><pre><span></span><span class="kd">function</span> <span class="nx">valueFlatMapper</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="nx">tmp</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">data</span> <span class="o">*</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">fact</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">tmp</span><span class="p">;</span>
+<span class="p">}</span>
 
-sc.parallelize([['hello', 1], ['world', 2]]).
-   flatMapValues(valueFlatMapper, {N: 2, fact: 2}).
-   collect().then(console.log);
-// [ [ 'hello', 2 ], [ 'hello', 2 ], [ 'world', 4 ], [ 'world', 4 ] ]</code></pre>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]).</span>
+   <span class="nx">flatMapValues</span><span class="p">(</span><span class="nx">valueFlatMapper</span><span class="p">,</span> <span class="p">{</span><span class="nx">N</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">fact</span><span class="o">:</span> <span class="mi">2</span><span class="p">}).</span>
+   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ &#39;hello&#39;, 2 ], [ &#39;hello&#39;, 2 ], [ &#39;world&#39;, 4 ], [ &#39;world&#39;, 4 ] ]</span>
+</pre></div>
 
 
 <h4 id="dsforeachcallback-obj-done">ds.forEach(callback[, obj][, done])<a class="headerlink" href="#dsforeachcallback-obj-done" title="Permanent link">&para;</a></h4>
@@ -1057,26 +2326,29 @@ If provided, the <em>done()</em> callback is invoked at completion, otherwise an
 </ul>
 <p>In the following example, the <code>console.log()</code> callback provided
 to <code>forEach()</code> is executed on workers and may be not visible:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([1, 2, 3, 4]).
-   forEach(console.log).then(console.log('finished'));</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>
+   <span class="nx">forEach</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;finished&#39;</span><span class="p">));</span>
+</pre></div>
 
 
 <h4 id="dsgroupbykey">ds.groupByKey()<a class="headerlink" href="#dsgroupbykey" title="Permanent link">&para;</a></h4>
 <p>When called on a dataset of type <code>[k,v]</code>, returns a dataset of type <code>[k, [v]]</code>
 where values with the same key are grouped.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([[10, 1], [20, 2], [10, 4]]).
-   groupByKey().collect().then(console.log);
-// [ [ 10, [ 1, 4 ] ], [ 20, [ 2 ] ] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]).</span>
+   <span class="nx">groupByKey</span><span class="p">().</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ 10, [ 1, 4 ] ], [ 20, [ 2 ] ] ]</span>
+</pre></div>
 
 
 <h4 id="dsintersectionother">ds.intersection(other)<a class="headerlink" href="#dsintersectionother" title="Permanent link">&para;</a></h4>
 <p>Returns a dataset containing only elements found in source dataset and <em>other</em>
 dataset.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
-var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
-ds1.intersection(ds2).collect().then(console.log); // [ 3, 4, 5 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ds1</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">ds2</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]);</span>
+<span class="nx">ds1</span><span class="p">.</span><span class="nx">intersection</span><span class="p">(</span><span class="nx">ds2</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span> <span class="c1">// [ 3, 4, 5 ]</span>
+</pre></div>
 
 
 <h4 id="dsjoinother">ds.join(other)<a class="headerlink" href="#dsjoinother" title="Permanent link">&para;</a></h4>
@@ -1084,19 +2356,21 @@ ds1.intersection(ds2).collect().then(console.log); // [ 3, 4, 5 ]</code></pre>
 <code>[k,w]</code>, returns a dataset of type <code>[k, [v, w]]</code> pairs with all pairs
 of elements for each key.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var ds1 = sc.parallelize([[10, 1], [20, 2]]);
-var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
-ds1.join(ds2).collect().then(console.log);
-// [ [ 10, [ 1, 'world' ] ] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ds1</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]);</span>
+<span class="kd">var</span> <span class="nx">ds2</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]);</span>
+<span class="nx">ds1</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">ds2</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ 10, [ 1, &#39;world&#39; ] ] ]</span>
+</pre></div>
 
 
 <h4 id="dskeys">ds.keys()<a class="headerlink" href="#dskeys" title="Permanent link">&para;</a></h4>
 <p>When called on source dataset of type <code>[k,v]</code>, returns a dataset with just
 the elements <code>k</code>.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([[10, 'world'], [30, 3]]).
-   keys.collect().then(console.log);
-// [ 10, 30 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]).</span>
+   <span class="nx">keys</span><span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 10, 30 ]</span>
+</pre></div>
 
 
 <h4 id="dsleftouterjoinother">ds.leftOuterJoin(other)<a class="headerlink" href="#dsleftouterjoinother" title="Permanent link">&para;</a></h4>
@@ -1104,10 +2378,11 @@ the elements <code>k</code>.</p>
 <code>[k,w]</code>, returns a dataset of type <code>[k, [v, w]]</code> pairs where the key
 must be present in the <em>other</em> dataset.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var ds1 = sc.parallelize([[10, 1], [20, 2]]);
-var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
-ds1.leftOuterJoin(ds2).collect().then(console.log);
-// [ [ 10, [ 1, 'world' ] ], [ 20, [ 2, null ] ] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ds1</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]);</span>
+<span class="kd">var</span> <span class="nx">ds2</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]);</span>
+<span class="nx">ds1</span><span class="p">.</span><span class="nx">leftOuterJoin</span><span class="p">(</span><span class="nx">ds2</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ 10, [ 1, &#39;world&#39; ] ], [ 20, [ 2, null ] ] ]</span>
+</pre></div>
 
 
 <h4 id="dslookupk-done">ds.lookup(k[, done])<a class="headerlink" href="#dslookupk-done" title="Permanent link">&para;</a></h4>
@@ -1120,9 +2395,10 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([[10, 'world'], [20, 2], [10, 1], [30, 3]]).
-   lookup(10).then(console.log);
-// [ world, 1 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]).</span>
+   <span class="nx">lookup</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ world, 1 ]</span>
+</pre></div>
 
 
 <h4 id="dsmapmapper-obj">ds.map(mapper[, obj])<a class="headerlink" href="#dsmapmapper-obj" title="Permanent link">&para;</a></h4>
@@ -1142,10 +2418,11 @@ dataset and returns a new dataset.</p>
   mapper executions over each element of the dataset</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([1, 2, 3, 4]).
-   map((data, obj) =&gt; data * obj.scaling, {scaling: 1.2}).
-   collect().then(console.log);
-// [ 1.2, 2.4, 3.6, 4.8 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>
+   <span class="nx">map</span><span class="p">((</span><span class="nx">data</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">data</span> <span class="o">*</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">scaling</span><span class="p">,</span> <span class="p">{</span><span class="nx">scaling</span><span class="o">:</span> <span class="mf">1.2</span><span class="p">}).</span>
+   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 1.2, 2.4, 3.6, 4.8 ]</span>
+</pre></div>
 
 
 <h4 id="dsmapvaluesmapper-obj">ds.mapValues(mapper[, obj])<a class="headerlink" href="#dsmapvaluesmapper-obj" title="Permanent link">&para;</a></h4>
@@ -1168,10 +2445,11 @@ element of the source dataset and return a new dataset containing elements
 defined as <code>[k, mapper(v)]</code>, keeping the key unchanged for each
 source element.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([['hello', 1], ['world', 2]]).
-   mapValues((a, obj) =&gt; a*obj.fact, {fact: 2}).
-   collect().then(console.log);
-// [ ['hello', 2], ['world', 4] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]).</span>
+   <span class="nx">mapValues</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span><span class="o">*</span><span class="nx">obj</span><span class="p">.</span><span class="nx">fact</span><span class="p">,</span> <span class="p">{</span><span class="nx">fact</span><span class="o">:</span> <span class="mi">2</span><span class="p">}).</span>
+   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [&#39;hello&#39;, 2], [&#39;world&#39;, 4] ]</span>
+</pre></div>
 
 
 <h4 id="dspartitionbypartitioner">ds.partitionBy(partitioner)<a class="headerlink" href="#dspartitionbypartitioner" title="Permanent link">&para;</a></h4>
@@ -1180,13 +2458,14 @@ purpose of this transformation is not to change the dataset content,
 but to increase processing speed by ensuring that the elements
 accessed by further transfomations reside in the same partition.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var skale = require('skale-engine');
-var sc = skale.context();
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">skale</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">skale</span><span class="p">.</span><span class="nx">context</span><span class="p">();</span>
 
-sc.parallelize([['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric', 3]])
-  .partitionBy(new skale.HashPartitioner(3))
-  .collect.then(console.log)
-// [ ['world', 1], ['world', 2], ['hello', 1], ['hello', 2], ['cedric', 3] ]</code></pre>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;cedric&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">partitionBy</span><span class="p">(</span><span class="k">new</span> <span class="nx">skale</span><span class="p">.</span><span class="nx">HashPartitioner</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+<span class="c1">// [ [&#39;world&#39;, 1], [&#39;world&#39;, 2], [&#39;hello&#39;, 1], [&#39;hello&#39;, 2], [&#39;cedric&#39;, 3] ]</span>
+</pre></div>
 
 
 <h4 id="dspersist">ds.persist()<a class="headerlink" href="#dspersist" title="Permanent link">&para;</a></h4>
@@ -1194,13 +2473,14 @@ sc.parallelize([['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric
 in memory if available) in order to directly reuse content in further
 tasks.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var dataset = sc.range(100).map(a =&gt; a * a);
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">dataset</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">100</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">a</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">*</span> <span class="nx">a</span><span class="p">);</span>
 
-// First action: compute dataset
-dataset.collect().then(console.log)
+<span class="c1">// First action: compute dataset</span>
+<span class="nx">dataset</span><span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
 
-// Second action: reuse dataset, avoid map transform
-dataset.collect().then(console.log)</code></pre>
+<span class="c1">// Second action: reuse dataset, avoid map transform</span>
+<span class="nx">dataset</span><span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+</pre></div>
 
 
 <h4 id="dsreducereducer-init-obj-done">ds.reduce(reducer, init[, obj][, done])<a class="headerlink" href="#dsreducereducer-init-obj-done" title="Permanent link">&para;</a></h4>
@@ -1230,10 +2510,11 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([1, 2, 4, 8]).
-   reduce((a, b) =&gt; a + b, 0).
-   then(console.log);
-// 15</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]).</span>
+   <span class="nx">reduce</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
+   <span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// 15</span>
+</pre></div>
 
 
 <h4 id="dsreducebykeyreducer-init-obj">ds.reduceByKey(reducer, init[, obj])<a class="headerlink" href="#dsreducebykeyreducer-init-obj" title="Permanent link">&para;</a></h4>
@@ -1259,10 +2540,11 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
 where the values of each key are aggregated using the <em>reducer</em>
 function and the <em>init</em> initial value.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([[10, 1], [10, 2], [10, 4]]).
-   reduceByKey((a,b) =&gt; a+b, 0).
-   collect().then(console.log);
-// [ [10, 7] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]).</span>
+   <span class="nx">reduceByKey</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
+   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [10, 7] ]</span>
+</pre></div>
 
 
 <h4 id="dsrightouterjoinother">ds.rightOuterJoin(other)<a class="headerlink" href="#dsrightouterjoinother" title="Permanent link">&para;</a></h4>
@@ -1270,10 +2552,11 @@ function and the <em>init</em> initial value.</p>
 <code>[k,w]</code>, returns a dataset of type <code>[k, [v, w]]</code> pairs where the key
 must be present in the <em>source</em> dataset.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var ds1 = sc.parallelize([[10, 1], [20, 2]]);
-var ds2 = sc.parallelize([[10, 'world'], [30, 3]]);
-ds1.rightOuterJoin(ds2).collect().then(console.log);
-// [ [ 10, [ 1, 'world' ] ], [ 30, [ null, 2 ] ] ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ds1</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]);</span>
+<span class="kd">var</span> <span class="nx">ds2</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]);</span>
+<span class="nx">ds1</span><span class="p">.</span><span class="nx">rightOuterJoin</span><span class="p">(</span><span class="nx">ds2</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ [ 10, [ 1, &#39;world&#39; ] ], [ 30, [ null, 2 ] ] ]</span>
+</pre></div>
 
 
 <h4 id="dssamplewithreplacement-frac-seed">ds.sample(withReplacement, frac, seed)<a class="headerlink" href="#dssamplewithreplacement-frac-seed" title="Permanent link">&para;</a></h4>
@@ -1286,10 +2569,11 @@ ds1.rightOuterJoin(ds2).collect().then(console.log);
 <p>Returns a dataset by sampling a fraction <em>frac</em> of source dataset, with or
 without replacement, using a given random generator <em>seed</em>.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
-   sample(true, 0.5, 0).
-   collect().then(console.log);
-// [ 1, 1, 3, 4, 4, 5, 7 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]).</span>
+   <span class="nx">sample</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
+   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 1, 1, 3, 4, 4, 5, 7 ]</span>
+</pre></div>
 
 
 <h4 id="dssaveurl-options-done">ds.save(url[, options][, done])<a class="headerlink" href="#dssaveurl-options-done" title="Permanent link">&para;</a></h4>
@@ -1313,16 +2597,18 @@ element) separated by newlines.</p>
 <p>The URL form is <code>file://path</code> or simply <code>path</code> where <em>path</em> is an absolute
 pathname in the master host local file system.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.range(300).save('/tmp/results/').then(sc.end());
-// will produce /tmp/results/0, /tmp/results/1</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">300</span><span class="p">).</span><span class="nx">save</span><span class="p">(</span><span class="s1">&#39;/tmp/results/&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">sc</span><span class="p">.</span><span class="nx">end</span><span class="p">());</span>
+<span class="c1">// will produce /tmp/results/0, /tmp/results/1</span>
+</pre></div>
 
 
 <h5 id="aws-s3-protocol">AWS S3 protocol<a class="headerlink" href="#aws-s3-protocol" title="Permanent link">&para;</a></h5>
 <p>The URL form is <code>s3://bucket/key</code>. AWS credentials must be provided by environment
 variables i.e <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_ACCESS_KEY_ID</code>.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.range(300).save('s3://myproject/mydataset', {gzip: true}).then(sc.end());
-// will produce https://myproject.s3.amazonaws.com/mydataset/0.gz</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">300</span><span class="p">).</span><span class="nx">save</span><span class="p">(</span><span class="s1">&#39;s3://myproject/mydataset&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">gzip</span><span class="o">:</span> <span class="kc">true</span><span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">sc</span><span class="p">.</span><span class="nx">end</span><span class="p">());</span>
+<span class="c1">// will produce https://myproject.s3.amazonaws.com/mydataset/0.gz</span>
+</pre></div>
 
 
 <h5 id="azure-blob-storage-protocol">Azure blob storage protocol<a class="headerlink" href="#azure-blob-storage-protocol" title="Permanent link">&para;</a></h5>
@@ -1338,10 +2624,11 @@ credentials must be provided by environment variables i.e
 <li><em>ascending</em>: a boolean to set the sort direction. Default: true</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([4, 6, 10, 5, 1, 2, 9, 7, 3, 0])
-  .sortBy(a =&gt; a)
-  .collect().then(console.log)
-// [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">sortBy</span><span class="p">(</span><span class="nx">a</span> <span class="p">=&gt;</span> <span class="nx">a</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+<span class="c1">// [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</span>
+</pre></div>
 
 
 <h4 id="dssortbykeyascending">ds.sortByKey(ascending)<a class="headerlink" href="#dssortbykeyascending" title="Permanent link">&para;</a></h4>
@@ -1349,10 +2636,11 @@ credentials must be provided by environment variables i.e
 sorted on <code>k</code>. The optional parameter <em>ascending</em> is a boolean which sets
 the sort direction, true by default.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([['world', 2], ['cedric', 3], ['hello', 1]])
-  .sortByKey()
-  .collect().then(console.log)
-// [['cedric', 3], ['hello', 1], ['world', 2]]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;cedric&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">sortByKey</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
+<span class="c1">// [[&#39;cedric&#39;, 3], [&#39;hello&#39;, 1], [&#39;world&#39;, 2]]</span>
+</pre></div>
 
 
 <h4 id="dsstreamopt">ds.stream([opt])<a class="headerlink" href="#dsstreamopt" title="Permanent link">&para;</a></h4>
@@ -1364,22 +2652,24 @@ of data and partitions is maintained.</p>
 <li><em>gzip</em>: <em>Boolean</em>, when true, enable gzip compression. Default value: false.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var s = sc.range(4).stream();
-s.pipe(process.stdout);
-// 0
-// 1
-// 2
-// 3</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="nx">stream</span><span class="p">();</span>
+<span class="nx">s</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">stdout</span><span class="p">);</span>
+<span class="c1">// 0</span>
+<span class="c1">// 1</span>
+<span class="c1">// 2</span>
+<span class="c1">// 3</span>
+</pre></div>
 
 
 <h4 id="dssubtractother">ds.subtract(other)<a class="headerlink" href="#dssubtractother" title="Permanent link">&para;</a></h4>
 <p>Returns a dataset containing only elements of source dataset which
 are not in <em>other</em> dataset.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
-var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
-ds1.subtract(ds2).collect().then(console.log);
-// [ 1, 2 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ds1</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">ds2</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]);</span>
+<span class="nx">ds1</span><span class="p">.</span><span class="nx">subtract</span><span class="p">(</span><span class="nx">ds2</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 1, 2 ]</span>
+</pre></div>
 
 
 <h4 id="dstakenum-done">ds.take(num[, done])<a class="headerlink" href="#dstakenum-done" title="Permanent link">&para;</a></h4>
@@ -1392,8 +2682,9 @@ provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is re
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.range(5).take(2).then(console.log);
-// [1, 2]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="nx">take</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [1, 2]</span>
+</pre></div>
 
 
 <h4 id="dstakesamplewithreplacement-num-done">ds.takeSample(withReplacement, num[, done])<a class="headerlink" href="#dstakesamplewithreplacement-num-done" title="Permanent link">&para;</a></h4>
@@ -1408,8 +2699,9 @@ the <em>done()</em> callback if provided, otherwise an <a href="https://promises
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.range(100).takeSample(4).then(console.log);
-// [ 18, 75, 4, 57 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">100</span><span class="p">).</span><span class="nx">takeSample</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 18, 75, 4, 57 ]</span>
+</pre></div>
 
 
 <h4 id="dstopnum-done">ds.top(num[, done])<a class="headerlink" href="#dstopnum-done" title="Permanent link">&para;</a></h4>
@@ -1422,27 +2714,30 @@ provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is re
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.range(5).top(2).then(console.log);
-// [3, 4]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="nx">top</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [3, 4]</span>
+</pre></div>
 
 
 <h4 id="dsunionother">ds.union(other)<a class="headerlink" href="#dsunionother" title="Permanent link">&para;</a></h4>
 <p>Returns a dataset that contains the union of the elements in the source
 dataset and the <em>other</em> dataset.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var ds1 = sc.parallelize([1, 2, 3, 4, 5]);
-var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
-ds1.union(ds2).collect().then(console.log);
-// [ 1, 2, 3, 4, 5, 3, 4, 5, 6, 7 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ds1</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">ds2</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]);</span>
+<span class="nx">ds1</span><span class="p">.</span><span class="nx">union</span><span class="p">(</span><span class="nx">ds2</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 1, 2, 3, 4, 5, 3, 4, 5, 6, 7 ]</span>
+</pre></div>
 
 
 <h4 id="dsvalues">ds.values()<a class="headerlink" href="#dsvalues" title="Permanent link">&para;</a></h4>
 <p>When called on source dataset of type <code>[k,v]</code>, returns a dataset with just
 the elements <code>v</code>.</p>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">sc.parallelize([[10, 'world'], [30, 3]]).
-   keys.collect().then(console.log);
-// [ 'world', 3 ]</code></pre>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]).</span>
+   <span class="nx">keys</span><span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ &#39;world&#39;, 3 ]</span>
+</pre></div>
 
 
 <h3 id="partitioners">Partitioners<a class="headerlink" href="#partitioners" title="Permanent link">&para;</a></h3>
@@ -1468,8 +2763,9 @@ using a hash checksum of each element as a string.</p>
 <li><em>numPartitions</em>: <em>Number</em> of partitions for this dataset</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var hp = new skale.HashPartitioner(3)
-var dataset = sc.range(10).partitionBy(hp)</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">hp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">skale</span><span class="p">.</span><span class="nx">HashPartitioner</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">dataset</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="nx">partitionBy</span><span class="p">(</span><span class="nx">hp</span><span class="p">)</span>
+</pre></div>
 
 
 <h4 id="rangepartitionernumpartitions-keyfunc-dataset">RangePartitioner(numPartitions, keyfunc, dataset)<a class="headerlink" href="#rangepartitionernumpartitions-keyfunc-dataset" title="Permanent link">&para;</a></h4>
@@ -1483,9 +2779,10 @@ the dataset and then places elements by comparing them with ranges.</p>
 <li><em>dataset</em>: the dataset object on which <code>partitionBy()</code> operates</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var dataset = sc.range(100)
-var rp = new skale.RangePartitioner(3, a =&gt; a, dataset)
-var dataset = sc.range(10).partitionBy(rp)</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">dataset</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">rp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">skale</span><span class="p">.</span><span class="nx">RangePartitioner</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">a</span> <span class="p">=&gt;</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">dataset</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">dataset</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="nx">partitionBy</span><span class="p">(</span><span class="nx">rp</span><span class="p">)</span>
+</pre></div>
 
 
 <h3 id="environment-variables">Environment variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h3>
@@ -1505,7 +2802,8 @@ supervised (classification, regression) and unsupervised (clustering)
 statistical learning on top of skale datasets and distributed
 map-reduce engine.</p>
 <p>The module can be loaded using:</p>
-<pre class="codehilite"><code class="language-javascript">var ml = require('skale-engine/ml')</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ml</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine/ml&#39;</span><span class="p">)</span>
+</pre></div>
 
 
 <h3 id="mlbinaryclassificationmetricsmeasures-options-done">ml.binaryClassificationMetrics(measures, options[, done])<a class="headerlink" href="#mlbinaryclassificationmetricsmeasures-options-done" title="Permanent link">&para;</a></h3>
@@ -1520,18 +2818,19 @@ map-reduce engine.</p>
 <li><em>means</em>: an initial array of vectors (arrays) of numbers, default undefined.</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var dataset = sc.parallelize([
-  [1, 2], [1, 4], [1, 0],
-  [4, 2], [4, 4], [4, 0]
-]);
-kmeans = ml.KMeans(2);
-await kmeans.fit(dataset);
-kmeans.means
-// [ [ 2.5, 1 ], [ 2.5, 4 ] ]
-kmeans.predict([0, 0])
-// 0
-kmeans.predict([4, 4]
-// 1</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">dataset</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span>
+  <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+  <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="p">]);</span>
+<span class="nx">kmeans</span> <span class="o">=</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">KMeans</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="nx">await</span> <span class="nx">kmeans</span><span class="p">.</span><span class="nx">fit</span><span class="p">(</span><span class="nx">dataset</span><span class="p">);</span>
+<span class="nx">kmeans</span><span class="p">.</span><span class="nx">means</span>
+<span class="c1">// [ [ 2.5, 1 ], [ 2.5, 4 ] ]</span>
+<span class="nx">kmeans</span><span class="p">.</span><span class="nx">predict</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="c1">// 0</span>
+<span class="nx">kmeans</span><span class="p">.</span><span class="nx">predict</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="c1">// 1</span>
+</pre></div>
 
 
 <h4 id="kmeansfittrainingset-done">kmeans.fit(trainingSet[, done])<a class="headerlink" href="#kmeansfittrainingset-done" title="Permanent link">&para;</a></h4>
@@ -1583,16 +2882,17 @@ can be added to the loss, by default the squared euclidean norm L2.</p>
     descent</li>
 </ul>
 <p>Example:</p>
-<pre class="codehilite"><code class="language-javascript">var trainingSet = sc.parallelize([
- [1, [0.5, -0.7]],
- [-1 [-0.5, 0.7]]
-]);
-var model = new ml.SGDLinearModel()
-await model.fit(trainingSet, 2)
-model.weights
-// [ 0.8531998372026804, -1.1944797720837526 ]
-model.predict([2, -2])
-// 0.9836229103782058</code></pre>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">trainingSet</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span>
+ <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">]],</span>
+ <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]]</span>
+<span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">SGDLinearModel</span><span class="p">()</span>
+<span class="nx">await</span> <span class="nx">model</span><span class="p">.</span><span class="nx">fit</span><span class="p">(</span><span class="nx">trainingSet</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nx">model</span><span class="p">.</span><span class="nx">weights</span>
+<span class="c1">// [ 0.8531998372026804, -1.1944797720837526 ]</span>
+<span class="nx">model</span><span class="p">.</span><span class="nx">predict</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+<span class="c1">// 0.9836229103782058</span>
+</pre></div>
 
 
 <h4 id="sgdclassifierfittrainingset-iterations-done">sgdClassifier.fit(trainingSet, iterations[, done])<a class="headerlink" href="#sgdclassifierfittrainingset-iterations-done" title="Permanent link">&para;</a></h4>
@@ -1612,111 +2912,85 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
 <h3 id="mlstandardscaler">ml.StandardScaler()<a class="headerlink" href="#mlstandardscaler" title="Permanent link">&para;</a></h3>
 <h4 id="standardscalerfitdataset-done">standardScaler.fit(dataset, [done])<a class="headerlink" href="#standardscalerfitdataset-done" title="Permanent link">&para;</a></h4>
 <h4 id="standardscalertransformfeatures">standardScaler.transform(features)<a class="headerlink" href="#standardscalertransformfeatures" title="Permanent link">&para;</a></h4>
-          <aside class="copyright" role="note">
-            
-            Documentation built with
-            <a href="http://www.mkdocs.org" target="_blank">MkDocs</a>
-            using the
-            <a href="http://squidfunk.github.io/mkdocs-material/" target="_blank">
-              Material
-            </a>
-            theme.
-          </aside>
-          
-            <footer class="footer">
+                
+                  
+                
               
-  <nav class="pagination" aria-label="Footer">
-    <div class="previous">
+              
+                
+              
+            </article>
+          </div>
+        </div>
+      </main>
       
-        <a href=".." title="Home">
-          <span class="direction">
-            Previous
-          </span>
-          <div class="page">
-            <div class="button button-previous" role="button" aria-label="Previous">
-              <i class="icon icon-back"></i>
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href=".." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
-            <div class="stretch">
-              <div class="title">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
                 Home
-              </div>
+              </span>
             </div>
-          </div>
-        </a>
-      
-    </div>
-    <div class="next">
-      
-        <a href="../skale-hackers-guide/" title="Skale hackers guide">
-          <span class="direction">
-            Next
-          </span>
-          <div class="page">
-            <div class="stretch">
-              <div class="title">
+          </a>
+        
+        
+          <a href="../skale-hackers-guide/" title="Skale hackers guide" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
                 Skale hackers guide
-              </div>
+              </span>
             </div>
-            <div class="button button-next" role="button" aria-label="Next">
-              <i class="icon icon-forward"></i>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
             </div>
-          </div>
-        </a>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
+        and
+        <a href="http://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
+          Material for MkDocs</a>
+      </div>
+      
+        
       
     </div>
-  </nav>
-
-            </footer>
-          
-        </div>
-      </article>
-      <div class="results" role="status" aria-live="polite">
-        <div class="scrollable">
-          <div class="wrapper">
-            <div class="meta"></div>
-            <div class="list"></div>
-          </div>
-        </div>
-      </div>
-    </main>
-    <script>
-      var base_url = '..';
-      var repo_id  = 'skale-me/skale-engine';
-    </script>
-    <script src="../assets/javascripts/application-997097ee0c.js"></script>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application-268d62d82d.js"></script>
+      
+      
+      <script>app.initialize({url:{base:".."}})</script>
+      
     
     
-      <script>
-        (function(i,s,o,g,r,a,m){
-          i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||
-          []).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
-          m.parentNode.insertBefore(a,m)
-        })(window, document,
-          'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-        /* General initialization */
-        ga('create', 'UA-75822605-1', 'skale-engine.github.io');
-        ga('set', 'anonymizeIp', true);
-        ga('send', 'pageview');
-        /* Track outbound links */
-        var buttons = document.querySelectorAll('a');
-        Array.prototype.map.call(buttons, function(item) {
-          if (item.host != document.location.host) {
-            item.addEventListener('click', function() {
-              var action = item.getAttribute('data-action') || 'follow';
-              ga('send', 'event', 'outbound', action, item.href);
-            });
-          }
-        });
-        /* Register handler to log search on blur */
-        var query = document.querySelector('.query');
-        query.addEventListener('blur', function() {
-          if (this.value) {
-            var path = document.location.pathname;
-            ga('send', 'pageview', path + '?q=' + this.value);
-          }
-        });
-      </script>
+      
+      <script>!function(e,t,a,n,o,c,i){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,c=t.createElement(a),i=t.getElementsByTagName(a)[0],c.async=1,c.src=n,i.parentNode.insertBefore(c,i)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-75822605-1","skale-engine.github.io"),ga("set","anonymizeIp",!0),ga("send","pageview");var links=document.getElementsByTagName("a");Array.prototype.map.call(links,function(e){e.host!=document.location.host&&e.addEventListener("click",function(){var t=e.getAttribute("data-md-action")||"follow";ga("send","event","outbound",t,e.href)})});var query=document.forms.search.query;query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})</script>
+      
     
   </body>
 </html>
