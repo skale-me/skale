@@ -6,4 +6,4 @@ edit:
 
 # Maintainer only, to deploy static doc website on github pages
 deploy:
-	docker run --rm -it -v $${PWD%/*}:/docs squidfunk/mkdocs-material gh-deploy
+	docker run --rm -it -v $$HOME/.ssh:/root/.ssh -v $${PWD%/*}:/docs squidfunk/mkdocs-material gh-deploy
