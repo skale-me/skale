@@ -7,7 +7,7 @@
   "scripts": {
     "start": "pf=/tmp/skale-server.pid; test -f $pf && exit 1; bin/server.js -l 0 & echo $! > $pf",
     "stop": "pf=/tmp/skale-server.pid; test -f $pf || exit 1; kill $(cat $pf); rm -f $pf",
-    "test": "mocha -t 5000",
+    "test": "mocha -t 5000 --exit",
     "pretest": "eslint .",
     "lint": "eslint ."
   },
@@ -34,23 +34,22 @@
   "author": "Skale team",
   "dependencies": {
     "await-outside": "^2.1.2",
-    "aws-sdk": "^2.114.0",
-    "azure-storage": "^2.5.0",
+    "aws-sdk": "^2.137.0",
+    "azure-storage": "^2.6.0",
     "merge2": "^1.2.0",
     "micromatch": "^3.1.0",
     "mkdirp": "^0.5.1",
     "node-getopt": "^0.2.3",
-    "request": "^2.81.0",
     "rimraf": "^2.6.2",
     "seedrandom": "^2.4.3",
     "thenify": "^3.3.0",
     "uuid": "^3.1.0",
     "websocket-stream": "^5.0.1",
-    "ws": "^3.1.0"
+    "ws": "^3.2.0"
   },
   "devDependencies": {
-    "eslint": "^4.6.1",
-    "mocha": "^3.5.3",
+    "eslint": "^4.9.0",
+    "mocha": "^4.0.1",
     "plotter": "^0.5.0"
   },
   "peerDependencies": {
