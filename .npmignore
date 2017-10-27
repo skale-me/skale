@@ -7,3 +7,4 @@ docker/
 examples/
 site/
 test/
+tape-test/
