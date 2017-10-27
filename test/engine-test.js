@@ -3,40 +3,18 @@
 process.env.SKALE_RANDOM_SEED = 'skale';
 
 var fs = require('fs');
-var net = require('net');
-var spawn = require('child_process').spawn;
-//var trace = require('line-trace');
 var skale = require('../');
 var data = require('./support/data.js');
 var local = require('./support/local.js');
-// use a non default port dedicated to tests
-var skalePort = 2121;
 
 var sc, sl;
 
-function tryConnect(nTry, timeout, done) {
-  const sock = net.connect(skalePort);
-  sock.on('connect', function() {
-    sock.end();
-    done();
-  });
-  sock.on('error', function (err) {
-    if (--nTry <= 0) return done('skale-server not ok: ' + err);
-    setTimeout(function () {tryConnect(nTry, timeout, done);}, timeout);
-  });
-}
-
 beforeEach(function (done) {
   if (sc === undefined) {
-    this.timeout(10000);
-    spawn('node', ['./bin/server.js', '-p', skalePort, '-l', '0']);
-    tryConnect(100, 100, function (err) {
-      console.log(err);
-      sl = local.context();
-      sc = skale.context({port: skalePort});
-      done();
-    });
-  } else done();
+    sl = local.context();
+    sc = skale.context();
+  }
+  done();
 });
 
 var sources = [
@@ -116,14 +94,8 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
         da = sl[source[0].name].apply(sl, src_args);
         if (source.length > 1 ) da = da[source[1].name].apply(da, source[1].args);
         if (transform.name) da = da[transform.name].apply(da, transform.args);
-        if (action.stream) {
-          action_args = [].concat(action.args);
-          da = da[action.name].apply(da, action_args);
-          da.toArray(function(err, res) {lres = res; done();});
-        } else {
-          action_args = [].concat(action.args, function (err, res) {lres = res; done();});
-          da[action.name].apply(da, action_args);
-        }
+        action_args = [].concat(action.args, function (err, res) {lres = res; done();});
+        da[action.name].apply(da, action_args);
       });
 
       it('run distributed', function (done) {
@@ -142,14 +114,8 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
         da = sc[source[0].name].apply(sc, src_args);
         if (source.length > 1 ) da = da[source[1].name].apply(da, source[1].args);
         if (transform.name) da = da[transform.name].apply(da, transform.args);
-        if (action.stream) {
-          action_args = [].concat(action.args);
-          da = da[action.name].apply(da, action_args);
-          da.toArray(function(err, res) {dres = res; done();});
-        } else {
-          action_args = [].concat(action.args, function (err, res) {dres = res; done();});
-          da[action.name].apply(da, action_args);
-        }
+        action_args = [].concat(action.args, function (err, res) {dres = res; done();});
+        da[action.name].apply(da, action_args);
       });
 
       it('check distributed results', function () {
@@ -176,12 +142,8 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
           switch (source[0].name) {
           case 'parallelize': src_args[0].push([3, 4]); break;
           }
-          if (action.stream) {
-            da[action.name].apply(da, action_args).toArray(done);
-          } else {
-            action_args = [].concat(action.args, function (err, res) {pres1 = res; done();});
-            da[action.name].apply(da, action_args);
-          }
+          action_args = [].concat(action.args, function (err, res) {pres1 = res; done();});
+          da[action.name].apply(da, action_args);
         });
         var da2 = da[action.name].apply(da, action_args);
         if (action.stream) da2.toArray(function (err, res) {pres1 = res; done();});
@@ -207,12 +169,8 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
           switch (source[0].name) {
           case 'parallelize': src_args[0].push([3, 4]); break;
           }
-          if (action.stream) {
-            da[action.name].apply(da, action_args).toArray(done);
-          } else {
-            action_args = [].concat(action.args, function (err, res) {pres2 = res; done();});
-            da[action.name].apply(da, action_args);
-          }
+          action_args = [].concat(action.args, function (err, res) {pres2 = res; done();});
+          da[action.name].apply(da, action_args);
         });
         var da2 = da[action.name].apply(da, action_args);
         if (action.stream) da2.toArray(function (err, res) {pres2 = res; done();});
@@ -277,14 +235,8 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
           }
           transform_args = [].concat(other, dualTransform.args);
           da = da[dualTransform.name].apply(da, transform_args);
-          if (action.stream) {
-            action_args = [].concat(action.args);
-            da = da[action.name].apply(da, action_args);
-            da.toArray(function(err, res) {lres = res; done();});
-          } else {
-            action_args = [].concat(action.args, function (err, res) {lres = res; done();});
-            da[action.name].apply(da, action_args);
-          }
+          action_args = [].concat(action.args, function (err, res) {lres = res; done();});
+          da[action.name].apply(da, action_args);
         });
 
         it('run distributed', function (done) {
@@ -315,14 +267,8 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
           if (source2.length > 1) other = other[source2[1].name].apply(other, source2[1].args);
           transform_args = [].concat(other, dualTransform.args);
           da = da[dualTransform.name].apply(da, transform_args);
-          if (action.stream) {
-            action_args = [].concat(action.args);
-            da = da[action.name].apply(da, action_args);
-            da.toArray(function(err, res) {dres = res; done();});
-          } else {
-            action_args = [].concat(action.args, function (err, res) {dres = res; done();});
-            da[action.name].apply(da, action_args);
-          }
+          action_args = [].concat(action.args, function (err, res) {dres = res; done();});
+          da[action.name].apply(da, action_args);
         });
 
         it('check distributed results', function () {
@@ -366,12 +312,8 @@ sources.forEach(function (source) {describe('sc.' + source[0].name + '()', funct
             switch (source2[0].name) {
             case 'parallelize': src2_args[0].push([3, 4]); break;
             }
-            if (action.stream) {
-              da[action.name].apply(da, action_args).toArray(done);
-            } else {
-              action2_args = [].concat(action.args, function (err, res) {pres1 = res; done();});
-              da[action.name].apply(da, action2_args);
-            }
+            action2_args = [].concat(action.args, function (err, res) {pres1 = res; done();});
+            da[action.name].apply(da, action2_args);
           });
           var da2 = da[action.name].apply(da, action_args);
           if (action.stream) da2.toArray(function (err, res) {pres1 = res; done();});
