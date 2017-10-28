@@ -14,10 +14,10 @@ t.test('coGroup', function (t) {
 
   a.coGroup(b).collect(function (err, res) {
     t.deepEqual(res.sort(), [
-      ["cedric", [[3, 4], [3]]],
-      ["hello", [[1], []]],
-      ["test", [[], [5]]],
-      ["world", [[2], [4]]],
+      ['cedric', [[3, 4], [3]]],
+      ['hello', [[1], []]],
+      ['test', [[], [5]]],
+      ['world', [[2], [4]]],
     ]);
   });
 });
