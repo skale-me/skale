@@ -9,7 +9,8 @@
     "stop": "pf=/tmp/skale-server.pid; test -f $pf || exit 1; kill $(cat $pf); rm -f $pf",
     "test": "mocha -t 5000 --exit",
     "pretest": "eslint .",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "tape": "tape tape-test/**/*.js"
   },
   "bin": {
     "skale-server": "./bin/server.js",
@@ -50,7 +51,9 @@
   "devDependencies": {
     "eslint": "^4.9.0",
     "mocha": "^4.0.1",
-    "plotter": "^0.5.0"
+    "plotter": "^0.5.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.8.0"
   },
   "peerDependencies": {
     "node-parquet": "^0.2.4"
