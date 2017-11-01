@@ -1,177 +1,9 @@
-# Skale Reference
-
-## Overview
-
-Skale is a fast and general purpose distributed data processing
-system. It provides a high-level API in Javascript and an optimized
-parallel execution engine.
-
-A Skale application consists of a *master* program that runs the
-user code and executes various *parallel operations* on a cluster
-of *workers*.
-
-The main abstraction Skale provides is a *dataset* which is similar
-to a Javascript *array*, but partitioned accross the workers that
-can be operated in parallel.
-
-There are several ways to create a dataset: *parallelizing* an existing
-array in the master program, or referencing a dataset in a distributed
-storage system (such as HDFS), or *streaming* the content of any
-source that can be processed through Node.js *Streams*. We call
-*source* a function which initializes a dataset.
-
-Datasets support two kinds of operations: *transformations*, which create
-a new dataset from an existing one, and *actions*, which
-return a value to the *master* program after running a computation
-on the dataset.
-
-For example, `map` is a transformation that applies a function to
-each element of a dataset, returning a new dataset. On the other
-hand, `reduce` is an action that aggregates all elements of a dataset
-using some function, and returns the final result to the master.
-
-*Sources* and *transformations* in Skale are *lazy*. They do not
-start right away, but are triggered by *actions*, thus allowing
-efficient pipelined execution and optimized data transfers.
-
-A first example:
-
-```javascript
-var sc = require('skale-engine').context();		// create a new context
-sc.parallelize([1, 2, 3, 4]).				// source
-   map(function (x) {return x+1}).			// transform
-   reduce(function (a, b) {return a+b}, 0).	// action
-   then(console.log);						// process result: 14
-```
-
-## Core concepts
-
-As stated above, a program can be considered as a workflow of steps,
-each step consisting of a transformation which inputs from one or
-more datasets (parents), and outputs to a new dataset (child).
-
-### Partitioning
-
-Datasets are divided into several partitions, so each partition can
-be assigned to a separate worker, and processing can occur concurently
-in a distributed and parallel system.
-
-The consequence of this partitioning is that two types of transformations
-exist:
-
-- *Narrow* transformations, where each partition of the parent dataset
-  is used by at most one partition of the child dataset. This is the
-  case for example for `map()` or `filter()`, where each dataset entry
-  is processed independently from each other.
-  Partitions are decoupled, no synchronization
-  between workers is required, and narrow transformations can be
-  pipelined on each worker.
-
-- *Wide* transformations, where multiple child partitions may depend
-  on one parent partition. This is the case for example for `sortBy()`
-  or `groupByKey()`. Data need to be exchanged between workers or
-  *shuffled*, in order to complete the transformation. This introduces
-  synchronization points which prevent pipelining.
-
-### Pipeline stages and shuffles
-
-Internally, each wide transformation consists of a pre-shuffle and
-a post-shuffle part. All sequences of steps from source to pre-shuffle,
-or from post-shuffle to next pre-shuffle or action, are thus only
-narrow transformations, or pipelined stages (the most efficient
-pattern).  A skale program is therefore simply a sequence of stages
-and shuffles, shuffles being global serialization points.
-
-It's important to grab this concept as it sets the limit to the
-level of parallelism which can be achieved by a given code.
-
-The synoptic table of [transformations](#transformations) indicates
-for each transformation if it is narrow or wide (shuffle).
-
-## Working with datasets
-
-### Sources
-
-After having initialized a cluster context using
-[skale.context()](#skale-context), one can create a dataset
-using the following sources:
-
-| Source Name                                         | Description                                            |
-| ------------------------------------------------------- | ------------------------------------------------------ |
-|[lineStream(stream)](#sclinestreaminput_stream)          | Create a dataset from a text stream                    |
-|[objectStream(stream)](#scobjectstreaminput_stream)      | Create a dataset from an object stream                 |
-|[parallelize(array)](#scparallelizearray)                | Create a dataset from an array                         |
-|[range(start,end,step)](#scrangestart-end-step)          | Create a dataset containing integers from start to end |
-|[source(size,callback,args)](#scsourcesize-callback-args)| Create a dataset from a custom source function         |
-|[textFile(path[, options])](#sctextfilepath-options)     | Create a dataset from text file                        |
-
-### Transformations
-
-Transformations operate on a dataset and return a new dataset. Note that some
-transformation operate only on datasets where each element is in the form
-of 2 elements array of key and value (`[k,v]` dataset):
-
-	[[Ki,Vi], ..., [Kj, Vj]]
-
-A special transformation `persist()` enables one to *persist* a dataset
-in memory, allowing efficient reuse accross parallel operations.
-
-|Transformation Name              | Description                                   | In    | Out   |Shuffle|
-| -----------------               |-----------------------------------------------|-------|-------|-------|
-|[aggregateByKey(func, func, init)](#dsaggregatebykeyreducer-combiner-init-obj)| reduce and combine by key using functions| [k,v]| [k,v]|yes|
-|[cartesian(other)](#dscartesianother) | Perform a cartesian product with the other dataset | v w | [v,w]|yes|
-|[coGroup(other)](#dscogroupother) | Group data from both datasets sharing the same key | [k,v] [k,w] |[k,[[v],[w]]]|yes|
-|[distinct()](#dsdistinct)    | Return a dataset where duplicates are removed | v | w|yes|
-|[filter(func)](#dsfilterfilter-obj)| Return a dataset of elements on which function returns true | v | w|no|
-|[flatMap(func)](#dsflatmapflatmapper-obj)| Pass the dataset elements to a function which returns a sequence | v | w|no|
-|[flatMapValues(func)](#dsflatmapflatvaluesmapper-obj)| Pass the dataset [k,v] elements to a function without changing the keys | [k,v] | [k,w]|no|
-|[groupByKey()](#dsgroupbykey)| Group values with the same key | [k,v] | [k,[v]]|yes|
-|[intersection(other)](#dsintersectionother) | Return a dataset containing only elements found in both datasets | v w | v|yes|
-|[join(other)](#dsjoinother)       | Perform an inner join between 2 datasets | [k,v] | [k,[v,w]]|yes|
-|[leftOuterJoin(other)](#dsleftouterjoinother) | Join 2 datasets where the key must be present in the other | [k,v] | [k,[v,w]]|yes|
-|[rightOuterJoin(other)](#dsrightouterjoinother) | Join 2 datasets where the key must be present in the first | [k,v] | [k,[v,w]]|yes|
-|[keys()](#dskeys)            | Return a dataset of just the keys | [k,v] | k|no|
-|[map(func)](#dsmapmapper-obj) | Return a dataset where elements are passed through a function | v | w|no|
-|[mapValues(func)](#dsmapvaluesmapper-obj)| Map a function to the value field of key-value dataset | [k,v] | [k,w]|no|
-|[reduceByKey(func, init)](#dsreducebykeyreducer-init-obj)| Combine values with the same key | [k,v] | [k,w]|yes|
-|[partitionBy(partitioner)](#dspartitionbypartitioner)| Partition using the partitioner | v | v|yes|
-|[persist()](#dspersist)      | Idempotent. Keep content of dataset in cache for further reuse. | v | v|no|
-|[sample(rep, frac, seed)](#dssamplewithreplacement-frac-seed) | Sample a dataset, with or without replacement | v | w|no|
-|[sortBy(func)](#dssortbykeyfunc-ascending) | Sort a dataset | v | v|yes|
-|[sortByKey()](#dssortbykeyascending) | Sort a [k,v] dataset | [k,v] | [k,v]|yes|
-|[subtract(other)](#dssubtractother) | Remove the content of one dataset | v w | v|yes|
-|[union(other)](#dsunionother)     | Return a dataset containing elements from both datasets | v | v w|no|
-|[values()](#dsvalues)        | Return a dataset of just the values | [k,v] | v|no|
-
-### Actions
-
-Actions operate on a dataset and send back results to the *master*. Results
-are always produced asynchronously and send to an optional callback function,
-alternatively through a returned [ES6 promise].
-
-|Action Name | Description | out|
-|------------------             |----------------------------------------------|--------------|
-|[aggregate(func, func, init)](#dsaggregatereducer-combiner-init-obj-done)| Similar to reduce() but may return a different type| value |
-|[collect()](#dscollectdone)         | Return the content of dataset | array of elements|
-|[count()](#dscountdone)             | Return the number of elements from dataset | number|
-|[countByKey()](#dscountbykeydone)     | Return the number of occurrences for each key in a `[k,v]` dataset | array of [k,number]|
-|[countByValue()](#dscountbyvaluedone) | Return the number of occurrences of elements from dataset | array of [v,number]|
-|[first()](#dsfirstdone)               | Return the first element in dataset | value |
-|[forEach(func)](#dsforeachcallback-obj-done)| Apply the provided function to each element of the dataset | empty |
-|[lookup(k)](#dslookupk-done)          | Return the list of values `v` for key `k` in a `[k,v]` dataset | array of v|
-|[reduce(func, init)](#dsreducereducer-init-obj-done)| Aggregates dataset elements using a function into one value | value|
-|[save(url)](#dssaveurl-options-done)       | Save the content of a dataset to an url | empty |
-|[stream()](#dsstream-opt)            | Stream out a dataset | stream |
-|[take(num)](#dstakenum-done)         | Return the first `num` elements of dataset | array of value|
-|[takeSample(withReplacement, num)](#dstakesamplewithreplacement-num-done)         | Return a sample of `num` elements of dataset | array of value|
-|[top(num)](#dstopnum-done)           | Return the top `num` elements of dataset | array of value|
-
-## Skale module
+# Skale API
 
 The Skale module is the main entry point for Skale functionality.
 To use it, one must `require('skale-engine')`.
 
-### skale.context([config])
+## skale.context([config])
 
 Creates and returns a new context which represents the connection
 to the Skale cluster, and which can be used to create datasets on that
@@ -180,8 +12,8 @@ with the following defaults:
 
 ```javascript
 {
-  host: 'localhost',	// Cluster server host, settable also by SKALE_HOST env
-  port: '12346'			// Cluster server port, settable also by SKALE_PORT env
+  host: 'localhost',  // Cluster server host, settable also by SKALE_HOST env
+  port: '12346'       // Cluster server port, settable also by SKALE_PORT env
 }
 ```
 
@@ -192,7 +24,7 @@ var skale = require('skale-engine');
 var sc = skale.context();
 ```
 
-#### sc.env
+### sc.env
 
 The `sc.env` property returns an object containing user environment variables
 to be set in workers.
@@ -206,11 +38,11 @@ Example:
 sc.env.MY_VAR = 'my_value';
 ```
 
-#### sc.end()
+### sc.end()
 
 Closes the connection to the cluster.
 
-#### sc.lineStream(input_stream)
+### sc.lineStream(input_stream)
 
 Returns a new dataset of lines of text read from input_stream
 *Object*, which is a [readable stream] where dataset content is
@@ -226,7 +58,7 @@ sc.lineStream(stream).
    then(console.log);
 ```
 
-#### sc.objectStream(input_stream)
+### sc.objectStream(input_stream)
 
 Returns a new dataset of Javascript *Objects* read from input_stream
 *Object*, which is a [readable stream] where dataset content is
@@ -240,7 +72,7 @@ var cursor = db.collection('clients').find();
 sc.objectStream(cursor).count().then(console.log);
 ```
 
-#### sc.parallelize(array)
+### sc.parallelize(array)
 
 Returns a new dataset containing elements from the *Array* array.
 
@@ -250,7 +82,7 @@ Example:
 var a = sc.parallelize(['Hello', 'World']);
 ```
 
-#### sc.range(start[, end[, step]])
+### sc.range(start[, end[, step]])
 
 Returns a new dataset of integers from *start* to *end* (exclusive)
 increased by *step* (default 1) every element. If called with a
@@ -266,7 +98,7 @@ sc.range(10, -5, -3).collect().then(console.log)
 // [ 10, 7, 4, 1, -2 ]
 ```
 
-#### sc.source(size, callback[, args])
+### sc.source(size, callback[, args])
 
 Returns a new dataset of *size* elements, where each element is
 generated by a custom function *callback* executed on workers.
@@ -293,7 +125,7 @@ sc.source(3, randArray, 2).collect().then(console.log);
 // [ [ 31, 85 ], [ 93, 21 ], [ 99, 58 ] ]
 ```
 
-#### sc.textFile(path[, options])
+### sc.textFile(path[, options])
 
 Returns a new dataset of lines in file specified by path *String*.
 
@@ -330,14 +162,14 @@ var lines = sc.textFile('data.txt');
 lines.map(s => s.length).reduce((a, b) => a + b, 0).then(console.log);
 ```
 
-### Dataset methods
+## Dataset methods
 
 Dataset objects, as created initially by above skale context source
 functions, have the following methods, allowing either to instantiate
 a new dataset through a transformation, or to return results to the
 master program.
 
-#### ds.aggregate(reducer, combiner, init[, obj][, done])
+### ds.aggregate(reducer, combiner, init[, obj][, done])
 
 This [action] computes the aggregated value of the elements
 of the dataset using two functions *reducer()* and *combiner()*,
@@ -384,7 +216,7 @@ sc.parallelize([3, 5, 2, 7, 4, 8]).
 // 4.8333
 ```
 
-#### ds.aggregateByKey(reducer, combiner, init,[ obj])
+### ds.aggregateByKey(reducer, combiner, init,[ obj])
 
 When called on a dataset of type `[k,v]`, returns a dataset of type
 `[k,v]` where `v` is the aggregated value of all elements of same
@@ -423,7 +255,7 @@ sc.parallelize([['hello', 1], ['hello', 1], ['world', 1]]).
 // [ [ 'hello', 2 ], [ 'world', 1 ] ]
 ```
 
-#### ds.cartesian(other)
+### ds.cartesian(other)
 
 Returns a dataset wich contains all possible pairs `[a, b]` where `a`
 is in the source dataset and `b` is in the *other* dataset.
@@ -438,7 +270,7 @@ ds1.cartesian(ds2).collect().then(console.log);
 //   [ 2, 'a' ], [ 2, 'b' ], [ 2, 'c' ] ]
 ```
 
-#### ds.coGroup(other)
+### ds.coGroup(other)
 
 When called on dataset of type `[k,v]` and `[k,w]`, returns a dataset of type
 `[k, [[v], [w]]]`, where data of both datasets share the same key.
@@ -454,7 +286,7 @@ ds1.coGroup(ds2).collect().then(console.log);
 //   [ 30, [ [], [ 3 ] ] ] ]
 ```
 
-#### ds.collect([done])
+### ds.collect([done])
 
 This [action] returns the content of the dataset in form of an array.
 The result is passed to the *done()* callback if provided, otherwise an
@@ -473,7 +305,7 @@ sc.parallelize([1, 2, 3, 4]).
 // [ 1, 2, 3, 4 ]
 ```
 
-#### ds.count([done])
+### ds.count([done])
 
 This [action] computes the number of elements in the dataset. The
 result is passed to the *done()* callback if provided, otherwise
@@ -489,7 +321,7 @@ sc.parallelize([10, 20, 30, 40]).count().then(console.log);
 // 4
 ```
 
-#### ds.countByKey([done])
+### ds.countByKey([done])
 
 When called on a dataset of type `[k,v]`, this [action] computes
 the number of occurrences of elements for each key in a dataset of
@@ -508,7 +340,7 @@ sc.parallelize([[10, 1], [20, 2], [10, 4]]).
 // [ [ 10, 2 ], [ 20, 1 ] ]
 ```
 
-#### ds.countByValue([done])
+### ds.countByValue([done])
 
 This [action] computes the number of occurences of each element in
 dataset and returns an array of elements of type `[v,n]` where `v`
@@ -527,7 +359,7 @@ sc.parallelize([ 1, 2, 3, 1, 3, 2, 5 ]).
 // [ [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 5, 1 ] ]
 ```
 
-#### ds.distinct()
+### ds.distinct()
 
 Returns a dataset where duplicates are removed.
 
@@ -540,7 +372,7 @@ sc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
 // [ 1, 2, 3, 4, 5 ]
 ```
 
-#### ds.filter(filter[, obj])
+### ds.filter(filter[, obj])
 
 - *filter*: a function of the form `callback(element[, obj[, wc]])`,
   returning a *Boolean* and where:
@@ -567,7 +399,7 @@ sc.parallelize([1, 2, 3, 4]).
 // [ 1, 3 ]
 ```
 
-#### ds.first([done])
+### ds.first([done])
 
 This [action] computes the first element in this dataset.
 The result is passed to the *done()* callback if provided, otherwise an
@@ -581,7 +413,7 @@ sc.parallelize([1, 2, 3]).first().then(console.log);
 // 1
 ```
 
-#### ds.flatMap(flatMapper[, obj])
+### ds.flatMap(flatMapper[, obj])
 
 Applies the provided mapper function to each element of the source
 dataset and returns a new dataset.
@@ -603,7 +435,7 @@ sc.range(5).flatMap(a => [a, a]).collect().then(console.log);
 // [ 0, 0, 1, 1, 2, 2, 3, 3, 4, 4 ]
 ```
 
-#### ds.flatMapValues(flatMapper[, obj])
+### ds.flatMapValues(flatMapper[, obj])
 
 Applies the provided flatMapper function to the value of each [key,
 value] element of the source dataset and return a new dataset containing
@@ -636,7 +468,7 @@ sc.parallelize([['hello', 1], ['world', 2]]).
 // [ [ 'hello', 2 ], [ 'hello', 2 ], [ 'world', 4 ], [ 'world', 4 ] ]
 ```
 
-#### ds.forEach(callback[, obj][, done])
+### ds.forEach(callback[, obj][, done])
 
 This [action] applies a *callback* function on each element of the dataset.
 If provided, the *done()* callback is invoked at completion, otherwise an
@@ -664,7 +496,7 @@ sc.parallelize([1, 2, 3, 4]).
    forEach(console.log).then(console.log('finished'));
 ```
 
-#### ds.groupByKey()
+### ds.groupByKey()
 
 When called on a dataset of type `[k,v]`, returns a dataset of type `[k, [v]]`
 where values with the same key are grouped.
@@ -677,7 +509,7 @@ sc.parallelize([[10, 1], [20, 2], [10, 4]]).
 // [ [ 10, [ 1, 4 ] ], [ 20, [ 2 ] ] ]
 ```
 
-#### ds.intersection(other)
+### ds.intersection(other)
 
 Returns a dataset containing only elements found in source dataset and *other*
 dataset.
@@ -690,7 +522,7 @@ var ds2 = sc.parallelize([3, 4, 5, 6, 7]);
 ds1.intersection(ds2).collect().then(console.log); // [ 3, 4, 5 ]
 ```
 
-#### ds.join(other)
+### ds.join(other)
 
 When called on source dataset of type `[k,v]` and *other* dataset of type
 `[k,w]`, returns a dataset of type `[k, [v, w]]` pairs with all pairs
@@ -705,7 +537,7 @@ ds1.join(ds2).collect().then(console.log);
 // [ [ 10, [ 1, 'world' ] ] ]
 ```
 
-#### ds.keys()
+### ds.keys()
 
 When called on source dataset of type `[k,v]`, returns a dataset with just
 the elements `k`.
@@ -718,7 +550,7 @@ sc.parallelize([[10, 'world'], [30, 3]]).
 // [ 10, 30 ]
 ```
 
-#### ds.leftOuterJoin(other)
+### ds.leftOuterJoin(other)
 
 When called on source dataset of type `[k,v]` and *other* dataset of type
 `[k,w]`, returns a dataset of type `[k, [v, w]]` pairs where the key
@@ -733,7 +565,7 @@ ds1.leftOuterJoin(ds2).collect().then(console.log);
 // [ [ 10, [ 1, 'world' ] ], [ 20, [ 2, null ] ] ]
 ```
 
-#### ds.lookup(k[, done])
+### ds.lookup(k[, done])
 
 When called on source dataset of type `[k,v]`, returns an array
 of values `v` for key `k`.
@@ -751,7 +583,7 @@ sc.parallelize([[10, 'world'], [20, 2], [10, 1], [30, 3]]).
 // [ world, 1 ]
 ```
 
-#### ds.map(mapper[, obj])
+### ds.map(mapper[, obj])
 
 Applies the provided mapper function to each element of the source
 dataset and returns a new dataset.
@@ -775,7 +607,7 @@ sc.parallelize([1, 2, 3, 4]).
 // [ 1.2, 2.4, 3.6, 4.8 ]
 ```
 
-#### ds.mapValues(mapper[, obj])
+### ds.mapValues(mapper[, obj])
 
 - *mapper*: a function of the form `callback(element[, obj[, wc]])`,
   returning an element and where:
@@ -802,7 +634,7 @@ sc.parallelize([['hello', 1], ['world', 2]]).
 // [ ['hello', 2], ['world', 4] ]
 ```
 
-#### ds.partitionBy(partitioner)
+### ds.partitionBy(partitioner)
 
 Returns a dataset partitioned using the specified partitioner. The
 purpose of this transformation is not to change the dataset content,
@@ -821,7 +653,7 @@ sc.parallelize([['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric
 // [ ['world', 1], ['world', 2], ['hello', 1], ['hello', 2], ['cedric', 3] ]
 ```
 
-#### ds.persist()
+### ds.persist()
 
 Returns the dataset, and persists the dataset content on disk (and
 in memory if available) in order to directly reuse content in further
@@ -839,7 +671,7 @@ dataset.collect().then(console.log)
 dataset.collect().then(console.log)
 ```
 
-#### ds.reduce(reducer, init[, obj][, done])
+### ds.reduce(reducer, init[, obj][, done])
 
 This [action] returns the aggregated value of the elements
 of the dataset using a *reducer()* function.
@@ -873,7 +705,7 @@ sc.parallelize([1, 2, 4, 8]).
 // 15
 ```
 
-#### ds.reduceByKey(reducer, init[, obj])
+### ds.reduceByKey(reducer, init[, obj])
 
 - *reducer*: a function of the form `callback(acc,val[, obj[, wc]])`,
   returning the next value of the accumulator (which must be of the
@@ -903,7 +735,7 @@ sc.parallelize([[10, 1], [10, 2], [10, 4]]).
 // [ [10, 7] ]
 ```
 
-#### ds.rightOuterJoin(other)
+### ds.rightOuterJoin(other)
 
 When called on source dataset of type `[k,v]` and *other* dataset of type
 `[k,w]`, returns a dataset of type `[k, [v, w]]` pairs where the key
@@ -918,15 +750,14 @@ ds1.rightOuterJoin(ds2).collect().then(console.log);
 // [ [ 10, [ 1, 'world' ] ], [ 30, [ null, 2 ] ] ]
 ```
 
-#### ds.sample(withReplacement, frac, seed)
+### ds.sample(withReplacement, frac)
 
 - *withReplacement*: *Boolean* value, *true* if data must be sampled
   with replacement
 - *frac*: *Number* value of the fraction of source dataset to return
-- *seed*: *Number* value of pseudo-random seed
 
 Returns a dataset by sampling a fraction *frac* of source dataset, with or
-without replacement, using a given random generator *seed*.
+without replacement.
 
 Example:
 
@@ -937,7 +768,7 @@ sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
 // [ 1, 1, 3, 4, 4, 5, 7 ]
 ```
 
-#### ds.save(url[, options][, done])
+### ds.save(url[, options][, done])
 
 This [action] saves the content of the dataset to the destination URL. The
 destination is a flat directory which will contain as many files as partitions
@@ -948,12 +779,12 @@ element) separated by newlines.
 - *url*: a *String* of the general form `protocol://host/path` or `/path`. See
   below for supported protocols
 - *options*: an *Object* with the following fields:
-	- *gzip*: *Boolean* (default false) to enable gzip compression. If compression
-	  is enabled, files are suffixed with `.gz`
+    - *gzip*: *Boolean* (default false) to enable gzip compression. If compression
+      is enabled, files are suffixed with `.gz`
 - *done*: an optional callback function of the form `function(error, result)`
   called at completion. If not provided, an [ES6 promise] is returned.
 
-##### File protocol
+#### File protocol
 
 The URL form is `file://path` or simply `path` where *path* is an absolute
 pathname in the master host local file system.
@@ -965,7 +796,7 @@ sc.range(300).save('/tmp/results/').then(sc.end());
 // will produce /tmp/results/0, /tmp/results/1
 ```
 
-##### AWS S3 protocol
+#### AWS S3 protocol
 
 The URL form is `s3://bucket/key`. AWS credentials must be provided by environment
 variables i.e `AWS_SECRET_ACCESS_KEY`, `AWS_ACCESS_KEY_ID`.
@@ -977,13 +808,13 @@ sc.range(300).save('s3://myproject/mydataset', {gzip: true}).then(sc.end());
 // will produce https://myproject.s3.amazonaws.com/mydataset/0.gz
 ```
 
-##### Azure blob storage protocol
+#### Azure blob storage protocol
 
 The URL form is `wasb://container@user.blob.core.windows.net/blob_name`. Azure
 credentials must be provided by environment variables i.e
 `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`.
 
-#### ds.sortBy(keyfunc[, ascending])
+### ds.sortBy(keyfunc[, ascending])
 
 Returns a dataset sorted by the given *keyfunc*.
 
@@ -1001,7 +832,7 @@ sc.parallelize([4, 6, 10, 5, 1, 2, 9, 7, 3, 0])
 // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 ```
 
-#### ds.sortByKey(ascending)
+### ds.sortByKey(ascending)
 
 When called on a dataset of type `[k,v]`, returns a dataset of type `[k,v]`
 sorted on `k`. The optional parameter *ascending* is a boolean which sets
@@ -1016,7 +847,7 @@ sc.parallelize([['world', 2], ['cedric', 3], ['hello', 1]])
 // [['cedric', 3], ['hello', 1], ['world', 2]]
 ```
 
-#### ds.stream([opt])
+### ds.stream([opt])
 
 This [action] returns a [readable stream] of dataset content. The order
 of data and partitions is maintained.
@@ -1036,7 +867,7 @@ s.pipe(process.stdout);
 // 3
 ```
 
-#### ds.subtract(other)
+### ds.subtract(other)
 
 Returns a dataset containing only elements of source dataset which
 are not in *other* dataset.
@@ -1050,7 +881,7 @@ ds1.subtract(ds2).collect().then(console.log);
 // [ 1, 2 ]
 ```
 
-#### ds.take(num[, done])
+### ds.take(num[, done])
 
 This [action] returns an array of the `num` first elements of the
 source dataset.  The result is passed to the *done()* callback if
@@ -1067,7 +898,7 @@ sc.range(5).take(2).then(console.log);
 // [1, 2]
 ```
 
-#### ds.takeSample(withReplacement, num[, done])
+### ds.takeSample(withReplacement, num[, done])
 
 This [action] returns an array with a random sample of `num` elements
 of the dataset, with or without replacement. The result is passed to
@@ -1086,7 +917,7 @@ sc.range(100).takeSample(4).then(console.log);
 // [ 18, 75, 4, 57 ]
 ```
 
-#### ds.top(num[, done])
+### ds.top(num[, done])
 
 This [action] returns an array of the `num` top elements of the
 source dataset.  The result is passed to the *done()* callback if
@@ -1103,7 +934,7 @@ sc.range(5).top(2).then(console.log);
 // [3, 4]
 ```
 
-#### ds.union(other)
+### ds.union(other)
 
 Returns a dataset that contains the union of the elements in the source
 dataset and the *other* dataset.
@@ -1117,7 +948,7 @@ ds1.union(ds2).collect().then(console.log);
 // [ 1, 2, 3, 4, 5, 3, 4, 5, 6, 7 ]
 ```
 
-#### ds.values()
+### ds.values()
 
 When called on source dataset of type `[k,v]`, returns a dataset with just
 the elements `v`.
@@ -1130,7 +961,7 @@ sc.parallelize([[10, 'world'], [30, 3]]).
 // [ 'world', 3 ]
 ```
 
-### Partitioners
+## Partitioners
 
 A partitioner is an object passed to
 [ds.partitionBy(partitioner)](#dspartitionbypartitioner) which
@@ -1148,7 +979,7 @@ A partition object must provide the following properties:
   *numPartitions*) for the `element` of the dataset on which
   `partitionBy()` operates.
 
-#### HashPartitioner(numPartitions)
+### HashPartitioner(numPartitions)
 
 Returns a partitioner object which implements hash based partitioning
 using a hash checksum of each element as a string.
@@ -1162,7 +993,7 @@ var hp = new skale.HashPartitioner(3)
 var dataset = sc.range(10).partitionBy(hp)
 ```
 
-#### RangePartitioner(numPartitions, keyfunc, dataset)
+### RangePartitioner(numPartitions, keyfunc, dataset)
 
 Returns a partitioner object which first defines ranges by sampling
 the dataset and then places elements by comparing them with ranges.
@@ -1181,7 +1012,7 @@ var rp = new skale.RangePartitioner(3, a => a, dataset)
 var dataset = sc.range(10).partitionBy(rp)
 ```
 
-### Environment variables
+## Environment variables
 
 - `SKALE_HOST`: The hostname of the skale-server process in distributed mode. If unset, the master runs in standalone mode.
 - `SKALE_PORT`: The port of the skale-server process in distributed mode. Default value: "12346"
@@ -1192,142 +1023,6 @@ var dataset = sc.range(10).partitionBy(rp)
   - `2`: above traces plus worker traces
   - `3`: above traces plus network protocol traces (if running in distributed mode)
 
-## Machine Learning module
-
-The Machine Learning (ML) module provides scalable functions for
-supervised (classification, regression) and unsupervised (clustering)
-statistical learning on top of skale datasets and distributed
-map-reduce engine.
-
-The module can be loaded using:
-
-```javascript
-var ml = require('skale-engine/ml')
-```
-
-### ml.binaryClassificationMetrics(measures, options[, done])
-
-### ml.KMeans(nbClusters[, options])
-
-Creates a clusterization model fitted via [K-Means] algorithm.
-
-- *nbClusters*: *Number*, specifying the number of clusters in the model
-- *Options*: an optional *Object* with the following fields:
-  - *maxMse*: *Number* defining the maximum mean square error between cluster
-    centers since previous iteration. Used to stop iterations. Default to 1e-7.
-  - *maxIterations*: *Number* defining the maximum number of iterations. Default: 100.
-  - *means*: an initial array of vectors (arrays) of numbers, default undefined.
-
-Example:
-
-```javascript
-var dataset = sc.parallelize([
-  [1, 2], [1, 4], [1, 0],
-  [4, 2], [4, 4], [4, 0]
-]);
-kmeans = ml.KMeans(2);
-await kmeans.fit(dataset);
-kmeans.means
-// [ [ 2.5, 1 ], [ 2.5, 4 ] ]
-kmeans.predict([0, 0])
-// 0
-kmeans.predict([4, 4]
-// 1
-```
-
-#### kmeans.fit(trainingSet[, done])
-
-This [action] updates *kmeans* model by fitting it to the input
-dataset *trainingSet*. The result is passed to the *done()* callback
-if provided, otherwise an [ES6 promise] is returned.
-
-- *trainingSet*: a dataset where entries are in the following format:
-  `[feature0, feature1, ...]` with *featureN* being a float number.
-- *done*: an optional callback of the form `function(error, result)`
-  which is called at completion.
-
-#### kmeans.predict(sample)
-
-Returns the closest cluster index for the *sample*.
-
-- *sample*: an *Array* with the format `[feature0, feature 1, ...]`
-  with *featureN* being a float number.
-
-### ml.SGDLinearModel([options])
-
-Creates a regularized linear model fitted via [stochastic
-gradient descent] learning. Such model can be used either for 
-regression or classification, as training method is identical,
-only prediction changes. SGD is sensitive to the scaling
-of the features. For best results, the data should have zero mean and
-unit variance, which can be achieved with [ml.StandardScaler].
-
-The model it fits can be controlled with the *loss* option; by default,
-it fits a linear [support vector machine] (SVM). A regularization term
-can be added to the loss, by default the squared euclidean norm L2.
-
-- *options*: an *Object* with the following fields:
-  - *fitIntercept*: *Boolean* indicating whether to include an intercept. Default: *true*
-  - *loss*: *String* specifying the [loss function] to be used. Possible values are:
-      - `hinge`: (default), gives a linear SVM
-      - `log`: gives logistic loss, a probabilistic classifier
-      - `square`: gives square loss fit
-  - *penalty*: *String*  specifying the [regularization] term. Possible values are:
-      - `l2`: (default) squared euclidean norm L2, standard regularizer for linear SVM models
-      - `l1`: absolute norm L1, might bring sparsity to the model, not achievable with `l2`
-      - `none`: zero penalty
-  - *proba*: *Boolean* (default *false*). If *true* predict returns a probability rather than a raw number. Only applicable when logisitic loss is selected.
-  - *regParam*: *Number*  >= 0, defaults to 0.001, defines the trade-off between the
-    two goals of minimizing the loss (i.e. training error) and minimizing model complexity
-    (i.e. to avoid overfitting)
-  - *stepSize*: *Number* >= 0, defaults to 1, defines the initial step size of the gradient
-    descent
-
-Example:
-
-```javascript
-var trainingSet = sc.parallelize([
- [1, [0.5, -0.7]],
- [-1 [-0.5, 0.7]]
-]);
-var model = new ml.SGDLinearModel()
-await model.fit(trainingSet, 2)
-model.weights
-// [ 0.8531998372026804, -1.1944797720837526 ]
-model.predict([2, -2])
-// 0.9836229103782058
-```
-
-#### sgdClassifier.fit(trainingSet, iterations[, done])
-
-This [action] updates *sgdClassifier* model by fitting it to the
-input dataset *trainingSet*. The result is passed to the *done()*
-callback if provided, otherwise an [ES6 promise] is returned.
-
-- *trainingSet*: a dataset where entries are in the following format:
-  `[label, [feature0, feature1, ...]]` with *label* being either 1 or -1,
-  and *featureN* being a float number, preferentially with a zero mean and
-  unit variance (in range [-1, 1]). Sparse vectors with undefined features
-  are supported.
-- *done*: an optional callback of the form `function(error, result)`
-  which is called at completion.
-
-#### sgdClassifier.predict(sample)
-
-### ml.StandardScaler()
-
-#### standardScaler.fit(dataset, [done])
-
-#### standardScaler.transform(features)
-
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
 [ES6 promise]: https://promisesaplus.com
-[action]: #actions
-[K-Means]: https://en.wikipedia.org/wiki/K-means_clustering
-[loss function]: https://en.wikipedia.org/wiki/Loss_functions_for_classification
-[logistic regression]: https://en.wikipedia.org/wiki/Logistic_regression
-[ml.StandardScaler]: #mlstandardscaler
-[parquet]: https://parquet.apache.org
-[regularization]: https://en.wikipedia.org/wiki/Regularization_(mathematics)
-[stochastic gradient descent]: https://en.wikipedia.org/wiki/Stochastic_gradient_descent
-[support vector machine]: https://en.wikipedia.org/wiki/Support_vector_machine
+[action]: concepts#actions

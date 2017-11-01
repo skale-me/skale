@@ -14,13 +14,13 @@ markdown_extensions:
 
 extra:
   logo: 'images/logo.svg'
-  palette:
-    primary: 'indigo'
-    accent: 'light blue'
 
 pages:
-  - 'index.md'
-  - 'skale-API.md'
+  - About Skale: 'index.md'
+  - Programming guide:
+    - 'concepts.md'
+    - 'skale-API.md'
+    - 'machine-learning.md'
   - 'skale-hackers-guide.md'
 
 repo_url: https://github.com/skale-me/skale-engine/

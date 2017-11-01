@@ -1,20 +1,8 @@
-# skale-engine
+![skale-logo](images/logo-skale.png)
 
 Skale-engine is a fast and general purpose distributed data processing
 system. It provides a high-level API in Javascript and an optimized
 parallel execution engine on top of NodeJS.
-
-Word count using skale:
-
-```javascript
-var sc = require('skale-engine').context();
-
-sc.textFile('/path/...')
-  .flatMap(line => line.split(' '))
-  .map(word => [word, 1])
-  .reduceByKey((a, b) => a + b, 0)
-  .count().then(console.log);
-```
 
 ## Features
 
