@@ -3,7 +3,7 @@ var sc = require('skale-engine').context();
 t.onFinish(sc.end);
 
 var mydep = function (a) {
-    return a + 2;
+  return a + 2;
 };
 
 function mapper(element, option, wc) {
