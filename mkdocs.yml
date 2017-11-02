@@ -1,5 +1,6 @@
 site_name: Skale
 site_description: Skale documentation
+site_favicon: 'images/favicon.png'
 dev_addr: 0.0.0.0:8000
 
 docs_dir: docs
@@ -14,13 +15,13 @@ markdown_extensions:
 
 extra:
   logo: 'images/logo.svg'
-  palette:
-    primary: 'indigo'
-    accent: 'light blue'
 
 pages:
-  - 'index.md'
-  - 'skale-API.md'
+  - About Skale: 'index.md'
+  - Programming guide:
+    - 'concepts.md'
+    - 'skale-API.md'
+    - 'machine-learning.md'
   - 'skale-hackers-guide.md'
 
 repo_url: https://github.com/skale-me/skale-engine/
