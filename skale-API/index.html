@@ -27,7 +27,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       
-        <link rel="shortcut icon" href="../assets/images/favicon.png">
+        <link rel="shortcut icon" href="../images/favicon.png">
       
       <meta name="generator" content="mkdocs-0.16.3, mkdocs-material-1.11.0">
     
@@ -40,9 +40,7 @@
       <script src="../assets/javascripts/modernizr-e826f8942a.js"></script>
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application-0741cbeb94.css">
-      
-        <link rel="stylesheet" href="../assets/stylesheets/application-23f75ab9c7.palette.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application-04ea671600.css">
       
     
     
@@ -62,7 +60,7 @@
   
   
   
-    <body data-md-color-primary="indigo" data-md-color-accent="light-blue">
+    <body>
   
     <svg class="md-svg">
       <defs>
@@ -95,6 +93,10 @@
         <span class="md-flex__ellipsis md-header-nav__title">
           
             
+              
+                <span class="md-header-nav__parent">
+                  Programming guide
+                </span>
               
             
             skale API
@@ -136,7 +138,7 @@
   
 
 
-  <a href="https://github.com/skale-me/skale-engine" title="Go to repository" class="md-source" data-md-source="github">
+  <a href="https://github.com/skale-me/skale-engine/" title="Go to repository" class="md-source" data-md-source="github">
     
       <div class="md-source__icon">
         <svg viewBox="0 0 24 24" width="24" height="24">
@@ -186,7 +188,7 @@
   
 
 
-  <a href="https://github.com/skale-me/skale-engine" title="Go to repository" class="md-source" data-md-source="github">
+  <a href="https://github.com/skale-me/skale-engine/" title="Go to repository" class="md-source" data-md-source="github">
     
       <div class="md-source__icon">
         <svg viewBox="0 0 24 24" width="24" height="24">
@@ -209,8 +211,8 @@
 
 
   <li class="md-nav__item">
-    <a href=".." title="Home" class="md-nav__link">
-      Home
+    <a href=".." title="About Skale" class="md-nav__link">
+      About Skale
     </a>
   </li>
 
@@ -218,6 +220,39 @@
       
       
       
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      Programming guide
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Programming guide
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../concepts/" title="Concepts" class="md-nav__link">
+      Concepts
+    </a>
+  </li>
+
+        
+          
+          
+          
 
   
 
@@ -248,82 +283,6 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" title="Overview" class="md-nav__link">
-    Overview
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#core-concepts" title="Core concepts" class="md-nav__link">
-    Core concepts
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#partitioning" title="Partitioning" class="md-nav__link">
-    Partitioning
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pipeline-stages-and-shuffles" title="Pipeline stages and shuffles" class="md-nav__link">
-    Pipeline stages and shuffles
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#working-with-datasets" title="Working with datasets" class="md-nav__link">
-    Working with datasets
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sources" title="Sources" class="md-nav__link">
-    Sources
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#transformations" title="Transformations" class="md-nav__link">
-    Transformations
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#actions" title="Actions" class="md-nav__link">
-    Actions
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#skale-module" title="Skale module" class="md-nav__link">
-    Skale module
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#skalecontextconfig" title="skale.context([config])" class="md-nav__link">
     skale.context([config])
   </a>
@@ -391,8 +350,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#dataset-methods" title="Dataset methods" class="md-nav__link">
     Dataset methods
   </a>
@@ -590,8 +549,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dssamplewithreplacement-frac-seed" title="ds.sample(withReplacement, frac, seed)" class="md-nav__link">
-    ds.sample(withReplacement, frac, seed)
+  <a href="#dssamplewithreplacement-frac" title="ds.sample(withReplacement, frac)" class="md-nav__link">
+    ds.sample(withReplacement, frac)
   </a>
   
 </li>
@@ -697,8 +656,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#partitioners" title="Partitioners" class="md-nav__link">
     Partitioners
   </a>
@@ -724,117 +683,11 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#environment-variables" title="Environment variables" class="md-nav__link">
     Environment variables
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#machine-learning-module" title="Machine Learning module" class="md-nav__link">
-    Machine Learning module
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mlbinaryclassificationmetricsmeasures-options-done" title="ml.binaryClassificationMetrics(measures, options[, done])" class="md-nav__link">
-    ml.binaryClassificationMetrics(measures, options[, done])
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlkmeansnbclusters-options" title="ml.KMeans(nbClusters[, options])" class="md-nav__link">
-    ml.KMeans(nbClusters[, options])
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kmeansfittrainingset-done" title="kmeans.fit(trainingSet[, done])" class="md-nav__link">
-    kmeans.fit(trainingSet[, done])
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kmeanspredictsample" title="kmeans.predict(sample)" class="md-nav__link">
-    kmeans.predict(sample)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlsgdlinearmodeloptions" title="ml.SGDLinearModel([options])" class="md-nav__link">
-    ml.SGDLinearModel([options])
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sgdclassifierfittrainingset-iterations-done" title="sgdClassifier.fit(trainingSet, iterations[, done])" class="md-nav__link">
-    sgdClassifier.fit(trainingSet, iterations[, done])
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sgdclassifierpredictsample" title="sgdClassifier.predict(sample)" class="md-nav__link">
-    sgdClassifier.predict(sample)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlstandardscaler" title="ml.StandardScaler()" class="md-nav__link">
-    ml.StandardScaler()
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#standardscalerfitdataset-done" title="standardScaler.fit(dataset, [done])" class="md-nav__link">
-    standardScaler.fit(dataset, [done])
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#standardscalertransformfeatures" title="standardScaler.transform(features)" class="md-nav__link">
-    standardScaler.transform(features)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -844,6 +697,23 @@
   
 </nav>
     
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../machine-learning/" title="Machine learning" class="md-nav__link">
+      Machine learning
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
   </li>
 
     
@@ -880,82 +750,6 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" title="Overview" class="md-nav__link">
-    Overview
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#core-concepts" title="Core concepts" class="md-nav__link">
-    Core concepts
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#partitioning" title="Partitioning" class="md-nav__link">
-    Partitioning
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pipeline-stages-and-shuffles" title="Pipeline stages and shuffles" class="md-nav__link">
-    Pipeline stages and shuffles
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#working-with-datasets" title="Working with datasets" class="md-nav__link">
-    Working with datasets
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sources" title="Sources" class="md-nav__link">
-    Sources
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#transformations" title="Transformations" class="md-nav__link">
-    Transformations
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#actions" title="Actions" class="md-nav__link">
-    Actions
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#skale-module" title="Skale module" class="md-nav__link">
-    Skale module
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#skalecontextconfig" title="skale.context([config])" class="md-nav__link">
     skale.context([config])
   </a>
@@ -1023,8 +817,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#dataset-methods" title="Dataset methods" class="md-nav__link">
     Dataset methods
   </a>
@@ -1222,8 +1016,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dssamplewithreplacement-frac-seed" title="ds.sample(withReplacement, frac, seed)" class="md-nav__link">
-    ds.sample(withReplacement, frac, seed)
+  <a href="#dssamplewithreplacement-frac" title="ds.sample(withReplacement, frac)" class="md-nav__link">
+    ds.sample(withReplacement, frac)
   </a>
   
 </li>
@@ -1329,8 +1123,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#partitioners" title="Partitioners" class="md-nav__link">
     Partitioners
   </a>
@@ -1356,117 +1150,11 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#environment-variables" title="Environment variables" class="md-nav__link">
     Environment variables
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#machine-learning-module" title="Machine Learning module" class="md-nav__link">
-    Machine Learning module
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mlbinaryclassificationmetricsmeasures-options-done" title="ml.binaryClassificationMetrics(measures, options[, done])" class="md-nav__link">
-    ml.binaryClassificationMetrics(measures, options[, done])
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlkmeansnbclusters-options" title="ml.KMeans(nbClusters[, options])" class="md-nav__link">
-    ml.KMeans(nbClusters[, options])
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kmeansfittrainingset-done" title="kmeans.fit(trainingSet[, done])" class="md-nav__link">
-    kmeans.fit(trainingSet[, done])
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kmeanspredictsample" title="kmeans.predict(sample)" class="md-nav__link">
-    kmeans.predict(sample)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlsgdlinearmodeloptions" title="ml.SGDLinearModel([options])" class="md-nav__link">
-    ml.SGDLinearModel([options])
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sgdclassifierfittrainingset-iterations-done" title="sgdClassifier.fit(trainingSet, iterations[, done])" class="md-nav__link">
-    sgdClassifier.fit(trainingSet, iterations[, done])
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sgdclassifierpredictsample" title="sgdClassifier.predict(sample)" class="md-nav__link">
-    sgdClassifier.predict(sample)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mlstandardscaler" title="ml.StandardScaler()" class="md-nav__link">
-    ml.StandardScaler()
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#standardscalerfitdataset-done" title="standardScaler.fit(dataset, [done])" class="md-nav__link">
-    standardScaler.fit(dataset, [done])
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#standardscalertransformfeatures" title="standardScaler.transform(features)" class="md-nav__link">
-    standardScaler.transform(features)
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1487,407 +1175,17 @@
                   <a href="https://github.com/skale-me/skale-engine/edit/master/docs/skale-API.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="skale-reference">Skale Reference<a class="headerlink" href="#skale-reference" title="Permanent link">&para;</a></h1>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>Skale is a fast and general purpose distributed data processing
-system. It provides a high-level API in Javascript and an optimized
-parallel execution engine.</p>
-<p>A Skale application consists of a <em>master</em> program that runs the
-user code and executes various <em>parallel operations</em> on a cluster
-of <em>workers</em>.</p>
-<p>The main abstraction Skale provides is a <em>dataset</em> which is similar
-to a Javascript <em>array</em>, but partitioned accross the workers that
-can be operated in parallel.</p>
-<p>There are several ways to create a dataset: <em>parallelizing</em> an existing
-array in the master program, or referencing a dataset in a distributed
-storage system (such as HDFS), or <em>streaming</em> the content of any
-source that can be processed through Node.js <em>Streams</em>. We call
-<em>source</em> a function which initializes a dataset.</p>
-<p>Datasets support two kinds of operations: <em>transformations</em>, which create
-a new dataset from an existing one, and <em>actions</em>, which
-return a value to the <em>master</em> program after running a computation
-on the dataset.</p>
-<p>For example, <code>map</code> is a transformation that applies a function to
-each element of a dataset, returning a new dataset. On the other
-hand, <code>reduce</code> is an action that aggregates all elements of a dataset
-using some function, and returns the final result to the master.</p>
-<p><em>Sources</em> and <em>transformations</em> in Skale are <em>lazy</em>. They do not
-start right away, but are triggered by <em>actions</em>, thus allowing
-efficient pipelined execution and optimized data transfers.</p>
-<p>A first example:</p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine&#39;</span><span class="p">).</span><span class="nx">context</span><span class="p">();</span>     <span class="c1">// create a new context</span>
-<span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>               <span class="c1">// source</span>
-   <span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="nx">x</span><span class="o">+</span><span class="mi">1</span><span class="p">}).</span>          <span class="c1">// transform</span>
-   <span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">},</span> <span class="mi">0</span><span class="p">).</span> <span class="c1">// action</span>
-   <span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>                       <span class="c1">// process result: 14</span>
-</pre></div>
-
-
-<h2 id="core-concepts">Core concepts<a class="headerlink" href="#core-concepts" title="Permanent link">&para;</a></h2>
-<p>As stated above, a program can be considered as a workflow of steps,
-each step consisting of a transformation which inputs from one or
-more datasets (parents), and outputs to a new dataset (child).</p>
-<h3 id="partitioning">Partitioning<a class="headerlink" href="#partitioning" title="Permanent link">&para;</a></h3>
-<p>Datasets are divided into several partitions, so each partition can
-be assigned to a separate worker, and processing can occur concurently
-in a distributed and parallel system.</p>
-<p>The consequence of this partitioning is that two types of transformations
-exist:</p>
-<ul>
-<li>
-<p><em>Narrow</em> transformations, where each partition of the parent dataset
-  is used by at most one partition of the child dataset. This is the
-  case for example for <code>map()</code> or <code>filter()</code>, where each dataset entry
-  is processed independently from each other.
-  Partitions are decoupled, no synchronization
-  between workers is required, and narrow transformations can be
-  pipelined on each worker.</p>
-</li>
-<li>
-<p><em>Wide</em> transformations, where multiple child partitions may depend
-  on one parent partition. This is the case for example for <code>sortBy()</code>
-  or <code>groupByKey()</code>. Data need to be exchanged between workers or
-  <em>shuffled</em>, in order to complete the transformation. This introduces
-  synchronization points which prevent pipelining.</p>
-</li>
-</ul>
-<h3 id="pipeline-stages-and-shuffles">Pipeline stages and shuffles<a class="headerlink" href="#pipeline-stages-and-shuffles" title="Permanent link">&para;</a></h3>
-<p>Internally, each wide transformation consists of a pre-shuffle and
-a post-shuffle part. All sequences of steps from source to pre-shuffle,
-or from post-shuffle to next pre-shuffle or action, are thus only
-narrow transformations, or pipelined stages (the most efficient
-pattern).  A skale program is therefore simply a sequence of stages
-and shuffles, shuffles being global serialization points.</p>
-<p>It's important to grab this concept as it sets the limit to the
-level of parallelism which can be achieved by a given code.</p>
-<p>The synoptic table of <a href="#transformations">transformations</a> indicates
-for each transformation if it is narrow or wide (shuffle).</p>
-<h2 id="working-with-datasets">Working with datasets<a class="headerlink" href="#working-with-datasets" title="Permanent link">&para;</a></h2>
-<h3 id="sources">Sources<a class="headerlink" href="#sources" title="Permanent link">&para;</a></h3>
-<p>After having initialized a cluster context using
-<a href="#skale-context">skale.context()</a>, one can create a dataset
-using the following sources:</p>
-<table>
-<thead>
-<tr>
-<th>Source Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="#sclinestreaminput_stream">lineStream(stream)</a></td>
-<td>Create a dataset from a text stream</td>
-</tr>
-<tr>
-<td><a href="#scobjectstreaminput_stream">objectStream(stream)</a></td>
-<td>Create a dataset from an object stream</td>
-</tr>
-<tr>
-<td><a href="#scparallelizearray">parallelize(array)</a></td>
-<td>Create a dataset from an array</td>
-</tr>
-<tr>
-<td><a href="#scrangestart-end-step">range(start,end,step)</a></td>
-<td>Create a dataset containing integers from start to end</td>
-</tr>
-<tr>
-<td><a href="#scsourcesize-callback-args">source(size,callback,args)</a></td>
-<td>Create a dataset from a custom source function</td>
-</tr>
-<tr>
-<td><a href="#sctextfilepath-options">textFile(path[, options])</a></td>
-<td>Create a dataset from text file</td>
-</tr>
-</tbody>
-</table>
-<h3 id="transformations">Transformations<a class="headerlink" href="#transformations" title="Permanent link">&para;</a></h3>
-<p>Transformations operate on a dataset and return a new dataset. Note that some
-transformation operate only on datasets where each element is in the form
-of 2 elements array of key and value (<code>[k,v]</code> dataset):</p>
-<div class="codehilite"><pre><span></span>[[Ki,Vi], ..., [Kj, Vj]]
-</pre></div>
-
-
-<p>A special transformation <code>persist()</code> enables one to <em>persist</em> a dataset
-in memory, allowing efficient reuse accross parallel operations.</p>
-<table>
-<thead>
-<tr>
-<th>Transformation Name</th>
-<th>Description</th>
-<th>In</th>
-<th>Out</th>
-<th>Shuffle</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="#dsaggregatebykeyreducer-combiner-init-obj">aggregateByKey(func, func, init)</a></td>
-<td>reduce and combine by key using functions</td>
-<td>[k,v]</td>
-<td>[k,v]</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dscartesianother">cartesian(other)</a></td>
-<td>Perform a cartesian product with the other dataset</td>
-<td>v w</td>
-<td>[v,w]</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dscogroupother">coGroup(other)</a></td>
-<td>Group data from both datasets sharing the same key</td>
-<td>[k,v] [k,w]</td>
-<td>[k,[[v],[w]]]</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dsdistinct">distinct()</a></td>
-<td>Return a dataset where duplicates are removed</td>
-<td>v</td>
-<td>w</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dsfilterfilter-obj">filter(func)</a></td>
-<td>Return a dataset of elements on which function returns true</td>
-<td>v</td>
-<td>w</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="#dsflatmapflatmapper-obj">flatMap(func)</a></td>
-<td>Pass the dataset elements to a function which returns a sequence</td>
-<td>v</td>
-<td>w</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="#dsflatmapflatvaluesmapper-obj">flatMapValues(func)</a></td>
-<td>Pass the dataset [k,v] elements to a function without changing the keys</td>
-<td>[k,v]</td>
-<td>[k,w]</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="#dsgroupbykey">groupByKey()</a></td>
-<td>Group values with the same key</td>
-<td>[k,v]</td>
-<td>[k,[v]]</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dsintersectionother">intersection(other)</a></td>
-<td>Return a dataset containing only elements found in both datasets</td>
-<td>v w</td>
-<td>v</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dsjoinother">join(other)</a></td>
-<td>Perform an inner join between 2 datasets</td>
-<td>[k,v]</td>
-<td>[k,[v,w]]</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dsleftouterjoinother">leftOuterJoin(other)</a></td>
-<td>Join 2 datasets where the key must be present in the other</td>
-<td>[k,v]</td>
-<td>[k,[v,w]]</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dsrightouterjoinother">rightOuterJoin(other)</a></td>
-<td>Join 2 datasets where the key must be present in the first</td>
-<td>[k,v]</td>
-<td>[k,[v,w]]</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dskeys">keys()</a></td>
-<td>Return a dataset of just the keys</td>
-<td>[k,v]</td>
-<td>k</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="#dsmapmapper-obj">map(func)</a></td>
-<td>Return a dataset where elements are passed through a function</td>
-<td>v</td>
-<td>w</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="#dsmapvaluesmapper-obj">mapValues(func)</a></td>
-<td>Map a function to the value field of key-value dataset</td>
-<td>[k,v]</td>
-<td>[k,w]</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="#dsreducebykeyreducer-init-obj">reduceByKey(func, init)</a></td>
-<td>Combine values with the same key</td>
-<td>[k,v]</td>
-<td>[k,w]</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dspartitionbypartitioner">partitionBy(partitioner)</a></td>
-<td>Partition using the partitioner</td>
-<td>v</td>
-<td>v</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dspersist">persist()</a></td>
-<td>Idempotent. Keep content of dataset in cache for further reuse.</td>
-<td>v</td>
-<td>v</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="#dssamplewithreplacement-frac-seed">sample(rep, frac, seed)</a></td>
-<td>Sample a dataset, with or without replacement</td>
-<td>v</td>
-<td>w</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="#dssortbykeyfunc-ascending">sortBy(func)</a></td>
-<td>Sort a dataset</td>
-<td>v</td>
-<td>v</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dssortbykeyascending">sortByKey()</a></td>
-<td>Sort a [k,v] dataset</td>
-<td>[k,v]</td>
-<td>[k,v]</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dssubtractother">subtract(other)</a></td>
-<td>Remove the content of one dataset</td>
-<td>v w</td>
-<td>v</td>
-<td>yes</td>
-</tr>
-<tr>
-<td><a href="#dsunionother">union(other)</a></td>
-<td>Return a dataset containing elements from both datasets</td>
-<td>v</td>
-<td>v w</td>
-<td>no</td>
-</tr>
-<tr>
-<td><a href="#dsvalues">values()</a></td>
-<td>Return a dataset of just the values</td>
-<td>[k,v]</td>
-<td>v</td>
-<td>no</td>
-</tr>
-</tbody>
-</table>
-<h3 id="actions">Actions<a class="headerlink" href="#actions" title="Permanent link">&para;</a></h3>
-<p>Actions operate on a dataset and send back results to the <em>master</em>. Results
-are always produced asynchronously and send to an optional callback function,
-alternatively through a returned <a href="https://promisesaplus.com">ES6 promise</a>.</p>
-<table>
-<thead>
-<tr>
-<th>Action Name</th>
-<th>Description</th>
-<th>out</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="#dsaggregatereducer-combiner-init-obj-done">aggregate(func, func, init)</a></td>
-<td>Similar to reduce() but may return a different type</td>
-<td>value</td>
-</tr>
-<tr>
-<td><a href="#dscollectdone">collect()</a></td>
-<td>Return the content of dataset</td>
-<td>array of elements</td>
-</tr>
-<tr>
-<td><a href="#dscountdone">count()</a></td>
-<td>Return the number of elements from dataset</td>
-<td>number</td>
-</tr>
-<tr>
-<td><a href="#dscountbykeydone">countByKey()</a></td>
-<td>Return the number of occurrences for each key in a <code>[k,v]</code> dataset</td>
-<td>array of [k,number]</td>
-</tr>
-<tr>
-<td><a href="#dscountbyvaluedone">countByValue()</a></td>
-<td>Return the number of occurrences of elements from dataset</td>
-<td>array of [v,number]</td>
-</tr>
-<tr>
-<td><a href="#dsfirstdone">first()</a></td>
-<td>Return the first element in dataset</td>
-<td>value</td>
-</tr>
-<tr>
-<td><a href="#dsforeachcallback-obj-done">forEach(func)</a></td>
-<td>Apply the provided function to each element of the dataset</td>
-<td>empty</td>
-</tr>
-<tr>
-<td><a href="#dslookupk-done">lookup(k)</a></td>
-<td>Return the list of values <code>v</code> for key <code>k</code> in a <code>[k,v]</code> dataset</td>
-<td>array of v</td>
-</tr>
-<tr>
-<td><a href="#dsreducereducer-init-obj-done">reduce(func, init)</a></td>
-<td>Aggregates dataset elements using a function into one value</td>
-<td>value</td>
-</tr>
-<tr>
-<td><a href="#dssaveurl-options-done">save(url)</a></td>
-<td>Save the content of a dataset to an url</td>
-<td>empty</td>
-</tr>
-<tr>
-<td><a href="#dsstream-opt">stream()</a></td>
-<td>Stream out a dataset</td>
-<td>stream</td>
-</tr>
-<tr>
-<td><a href="#dstakenum-done">take(num)</a></td>
-<td>Return the first <code>num</code> elements of dataset</td>
-<td>array of value</td>
-</tr>
-<tr>
-<td><a href="#dstakesamplewithreplacement-num-done">takeSample(withReplacement, num)</a></td>
-<td>Return a sample of <code>num</code> elements of dataset</td>
-<td>array of value</td>
-</tr>
-<tr>
-<td><a href="#dstopnum-done">top(num)</a></td>
-<td>Return the top <code>num</code> elements of dataset</td>
-<td>array of value</td>
-</tr>
-</tbody>
-</table>
-<h2 id="skale-module">Skale module<a class="headerlink" href="#skale-module" title="Permanent link">&para;</a></h2>
+                <h1 id="skale-api">Skale API<a class="headerlink" href="#skale-api" title="Permanent link">&para;</a></h1>
 <p>The Skale module is the main entry point for Skale functionality.
 To use it, one must <code>require('skale-engine')</code>.</p>
-<h3 id="skalecontextconfig">skale.context([config])<a class="headerlink" href="#skalecontextconfig" title="Permanent link">&para;</a></h3>
+<h2 id="skalecontextconfig">skale.context([config])<a class="headerlink" href="#skalecontextconfig" title="Permanent link">&para;</a></h2>
 <p>Creates and returns a new context which represents the connection
 to the Skale cluster, and which can be used to create datasets on that
 cluster. Config is an <em>Object</em> which defines the cluster server,
 with the following defaults:</p>
 <div class="codehilite"><pre><span></span><span class="p">{</span>
-  <span class="nx">host</span><span class="o">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>    <span class="c1">// Cluster server host, settable also by SKALE_HOST env</span>
-  <span class="nx">port</span><span class="o">:</span> <span class="s1">&#39;12346&#39;</span>         <span class="c1">// Cluster server port, settable also by SKALE_PORT env</span>
+  <span class="nx">host</span><span class="o">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>  <span class="c1">// Cluster server host, settable also by SKALE_HOST env</span>
+  <span class="nx">port</span><span class="o">:</span> <span class="s1">&#39;12346&#39;</span>       <span class="c1">// Cluster server port, settable also by SKALE_PORT env</span>
 <span class="p">}</span>
 </pre></div>
 
@@ -1898,7 +1196,7 @@ with the following defaults:</p>
 </pre></div>
 
 
-<h4 id="scenv">sc.env<a class="headerlink" href="#scenv" title="Permanent link">&para;</a></h4>
+<h3 id="scenv">sc.env<a class="headerlink" href="#scenv" title="Permanent link">&para;</a></h3>
 <p>The <code>sc.env</code> property returns an object containing user environment variables
 to be set in workers.</p>
 <p>To set and propagate an environment variable to all workers, assign <code>sc.env</code> object
@@ -1908,9 +1206,9 @@ prior to invoking an action.</p>
 </pre></div>
 
 
-<h4 id="scend">sc.end()<a class="headerlink" href="#scend" title="Permanent link">&para;</a></h4>
+<h3 id="scend">sc.end()<a class="headerlink" href="#scend" title="Permanent link">&para;</a></h3>
 <p>Closes the connection to the cluster.</p>
-<h4 id="sclinestreaminput_stream">sc.lineStream(input_stream)<a class="headerlink" href="#sclinestreaminput_stream" title="Permanent link">&para;</a></h4>
+<h3 id="sclinestreaminput_stream">sc.lineStream(input_stream)<a class="headerlink" href="#sclinestreaminput_stream" title="Permanent link">&para;</a></h3>
 <p>Returns a new dataset of lines of text read from input_stream
 <em>Object</em>, which is a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> where dataset content is
 read from.</p>
@@ -1923,7 +1221,7 @@ read from.</p>
 </pre></div>
 
 
-<h4 id="scobjectstreaminput_stream">sc.objectStream(input_stream)<a class="headerlink" href="#scobjectstreaminput_stream" title="Permanent link">&para;</a></h4>
+<h3 id="scobjectstreaminput_stream">sc.objectStream(input_stream)<a class="headerlink" href="#scobjectstreaminput_stream" title="Permanent link">&para;</a></h3>
 <p>Returns a new dataset of Javascript <em>Objects</em> read from input_stream
 <em>Object</em>, which is a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> where dataset content is
 read from.</p>
@@ -1934,14 +1232,14 @@ object stream using the mongodb native Javascript driver:</p>
 </pre></div>
 
 
-<h4 id="scparallelizearray">sc.parallelize(array)<a class="headerlink" href="#scparallelizearray" title="Permanent link">&para;</a></h4>
+<h3 id="scparallelizearray">sc.parallelize(array)<a class="headerlink" href="#scparallelizearray" title="Permanent link">&para;</a></h3>
 <p>Returns a new dataset containing elements from the <em>Array</em> array.</p>
 <p>Example:</p>
 <div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="s1">&#39;World&#39;</span><span class="p">]);</span>
 </pre></div>
 
 
-<h4 id="scrangestart-end-step">sc.range(start[, end[, step]])<a class="headerlink" href="#scrangestart-end-step" title="Permanent link">&para;</a></h4>
+<h3 id="scrangestart-end-step">sc.range(start[, end[, step]])<a class="headerlink" href="#scrangestart-end-step" title="Permanent link">&para;</a></h3>
 <p>Returns a new dataset of integers from <em>start</em> to <em>end</em> (exclusive)
 increased by <em>step</em> (default 1) every element. If called with a
 single argument, the argument is interpreted as <em>end</em>, and <em>start</em>
@@ -1955,7 +1253,7 @@ is set to 0.</p>
 </pre></div>
 
 
-<h4 id="scsourcesize-callback-args">sc.source(size, callback[, args])<a class="headerlink" href="#scsourcesize-callback-args" title="Permanent link">&para;</a></h4>
+<h3 id="scsourcesize-callback-args">sc.source(size, callback[, args])<a class="headerlink" href="#scsourcesize-callback-args" title="Permanent link">&para;</a></h3>
 <p>Returns a new dataset of <em>size</em> elements, where each element is
 generated by a custom function <em>callback</em> executed on workers.</p>
 <ul>
@@ -1983,7 +1281,7 @@ generated by a custom function <em>callback</em> executed on workers.</p>
 </pre></div>
 
 
-<h4 id="sctextfilepath-options">sc.textFile(path[, options])<a class="headerlink" href="#sctextfilepath-options" title="Permanent link">&para;</a></h4>
+<h3 id="sctextfilepath-options">sc.textFile(path[, options])<a class="headerlink" href="#sctextfilepath-options" title="Permanent link">&para;</a></h3>
 <p>Returns a new dataset of lines in file specified by path <em>String</em>.</p>
 <ul>
 <li><em>path</em>: a <em>String</em> of the general form <code>protocol://host/path</code> or <code>/path</code>,
@@ -1995,7 +1293,7 @@ generated by a custom function <em>callback</em> executed on workers.</p>
 <li><em>maxFiles</em>: a <em>Number</em> of maximum files to process if the path refers
     to a directory.</li>
 <li><em>parquet</em>: a <em>Boolean</em> to indicate that all files are in the
-    <a href="https://parquet.apache.org">parquet</a> format. Default value is <em>false</em>.</li>
+    [parquet] format. Default value is <em>false</em>.</li>
 </ul>
 <p>if <em>path</em> ends by a '/' (directory separator), then the dataset
 will be composed of all the files in the directory. Sub-directories
@@ -2004,7 +1302,7 @@ in the Unix Shell globbing patterns are supported.</p>
 <p>If a file name ends by '.gz', then its content will be automatically
 uncompressed using GZIP.</p>
 <p>If a file name ends by '.parquet', it will automatically be processed
-as a <a href="https://parquet.apache.org">parquet</a>.</p>
+as a [parquet].</p>
 <p>Note: If using a path on the local filesystem, the file must also
 be accessible at the same path on worker nodes. Either copy the
 file to all workers or use a network-mounted shared file system.</p>
@@ -2014,13 +1312,13 @@ file to all workers or use a network-mounted shared file system.</p>
 </pre></div>
 
 
-<h3 id="dataset-methods">Dataset methods<a class="headerlink" href="#dataset-methods" title="Permanent link">&para;</a></h3>
+<h2 id="dataset-methods">Dataset methods<a class="headerlink" href="#dataset-methods" title="Permanent link">&para;</a></h2>
 <p>Dataset objects, as created initially by above skale context source
 functions, have the following methods, allowing either to instantiate
 a new dataset through a transformation, or to return results to the
 master program.</p>
-<h4 id="dsaggregatereducer-combiner-init-obj-done">ds.aggregate(reducer, combiner, init[, obj][, done])<a class="headerlink" href="#dsaggregatereducer-combiner-init-obj-done" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> computes the aggregated value of the elements
+<h3 id="dsaggregatereducer-combiner-init-obj-done">ds.aggregate(reducer, combiner, init[, obj][, done])<a class="headerlink" href="#dsaggregatereducer-combiner-init-obj-done" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> computes the aggregated value of the elements
 of the dataset using two functions <em>reducer()</em> and <em>combiner()</em>,
 allowing to use an arbitrary accumulator type, different from element
 type (as opposed to <code>reduce()</code> which imposes the same type for
@@ -2068,7 +1366,7 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
 </pre></div>
 
 
-<h4 id="dsaggregatebykeyreducer-combiner-init-obj">ds.aggregateByKey(reducer, combiner, init,[ obj])<a class="headerlink" href="#dsaggregatebykeyreducer-combiner-init-obj" title="Permanent link">&para;</a></h4>
+<h3 id="dsaggregatebykeyreducer-combiner-init-obj">ds.aggregateByKey(reducer, combiner, init,[ obj])<a class="headerlink" href="#dsaggregatebykeyreducer-combiner-init-obj" title="Permanent link">&para;</a></h3>
 <p>When called on a dataset of type <code>[k,v]</code>, returns a dataset of type
 <code>[k,v]</code> where <code>v</code> is the aggregated value of all elements of same
 key <code>k</code>. The aggregation is performed using two functions <em>reducer()</em>
@@ -2109,7 +1407,7 @@ different from element type.</p>
 </pre></div>
 
 
-<h4 id="dscartesianother">ds.cartesian(other)<a class="headerlink" href="#dscartesianother" title="Permanent link">&para;</a></h4>
+<h3 id="dscartesianother">ds.cartesian(other)<a class="headerlink" href="#dscartesianother" title="Permanent link">&para;</a></h3>
 <p>Returns a dataset wich contains all possible pairs <code>[a, b]</code> where <code>a</code>
 is in the source dataset and <code>b</code> is in the <em>other</em> dataset.</p>
 <p>Example:</p>
@@ -2121,7 +1419,7 @@ is in the source dataset and <code>b</code> is in the <em>other</em> dataset.</p
 </pre></div>
 
 
-<h4 id="dscogroupother">ds.coGroup(other)<a class="headerlink" href="#dscogroupother" title="Permanent link">&para;</a></h4>
+<h3 id="dscogroupother">ds.coGroup(other)<a class="headerlink" href="#dscogroupother" title="Permanent link">&para;</a></h3>
 <p>When called on dataset of type <code>[k,v]</code> and <code>[k,w]</code>, returns a dataset of type
 <code>[k, [[v], [w]]]</code>, where data of both datasets share the same key.</p>
 <p>Example:</p>
@@ -2134,8 +1432,8 @@ is in the source dataset and <code>b</code> is in the <em>other</em> dataset.</p
 </pre></div>
 
 
-<h4 id="dscollectdone">ds.collect([done])<a class="headerlink" href="#dscollectdone" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> returns the content of the dataset in form of an array.
+<h3 id="dscollectdone">ds.collect([done])<a class="headerlink" href="#dscollectdone" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> returns the content of the dataset in form of an array.
 The result is passed to the <em>done()</em> callback if provided, otherwise an
 <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 <ul>
@@ -2151,8 +1449,8 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
 </pre></div>
 
 
-<h4 id="dscountdone">ds.count([done])<a class="headerlink" href="#dscountdone" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> computes the number of elements in the dataset. The
+<h3 id="dscountdone">ds.count([done])<a class="headerlink" href="#dscountdone" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> computes the number of elements in the dataset. The
 result is passed to the <em>done()</em> callback if provided, otherwise
 an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 <ul>
@@ -2165,8 +1463,8 @@ an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 </pre></div>
 
 
-<h4 id="dscountbykeydone">ds.countByKey([done])<a class="headerlink" href="#dscountbykeydone" title="Permanent link">&para;</a></h4>
-<p>When called on a dataset of type <code>[k,v]</code>, this <a href="#actions">action</a> computes
+<h3 id="dscountbykeydone">ds.countByKey([done])<a class="headerlink" href="#dscountbykeydone" title="Permanent link">&para;</a></h3>
+<p>When called on a dataset of type <code>[k,v]</code>, this <a href="../concepts#actions">action</a> computes
 the number of occurrences of elements for each key in a dataset of
 type <code>[k,v]</code>. It produces an array of elements of type <code>[k,w]</code> where
 <code>w</code> is the result count.  The result is passed to the <em>done()</em>
@@ -2182,8 +1480,8 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
 </pre></div>
 
 
-<h4 id="dscountbyvaluedone">ds.countByValue([done])<a class="headerlink" href="#dscountbyvaluedone" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> computes the number of occurences of each element in
+<h3 id="dscountbyvaluedone">ds.countByValue([done])<a class="headerlink" href="#dscountbyvaluedone" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> computes the number of occurences of each element in
 dataset and returns an array of elements of type <code>[v,n]</code> where <code>v</code>
 is the element and <code>n</code> its number of occurrences.  The result is
 passed to the <em>done()</em> callback if provided, otherwise an <a href="https://promisesaplus.com">ES6
@@ -2199,7 +1497,7 @@ promise</a> is returned.</p>
 </pre></div>
 
 
-<h4 id="dsdistinct">ds.distinct()<a class="headerlink" href="#dsdistinct" title="Permanent link">&para;</a></h4>
+<h3 id="dsdistinct">ds.distinct()<a class="headerlink" href="#dsdistinct" title="Permanent link">&para;</a></h3>
 <p>Returns a dataset where duplicates are removed.</p>
 <p>Example:</p>
 <div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span> <span class="p">]).</span>
@@ -2209,7 +1507,7 @@ promise</a> is returned.</p>
 </pre></div>
 
 
-<h4 id="dsfilterfilter-obj">ds.filter(filter[, obj])<a class="headerlink" href="#dsfilterfilter-obj" title="Permanent link">&para;</a></h4>
+<h3 id="dsfilterfilter-obj">ds.filter(filter[, obj])<a class="headerlink" href="#dsfilterfilter-obj" title="Permanent link">&para;</a></h3>
 <ul>
 <li><em>filter</em>: a function of the form <code>callback(element[, obj[, wc]])</code>,
   returning a <em>Boolean</em> and where:<ul>
@@ -2236,8 +1534,8 @@ test.</p>
 </pre></div>
 
 
-<h4 id="dsfirstdone">ds.first([done])<a class="headerlink" href="#dsfirstdone" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> computes the first element in this dataset.
+<h3 id="dsfirstdone">ds.first([done])<a class="headerlink" href="#dsfirstdone" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> computes the first element in this dataset.
 The result is passed to the <em>done()</em> callback if provided, otherwise an
 <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 <ul>
@@ -2249,7 +1547,7 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
 </pre></div>
 
 
-<h4 id="dsflatmapflatmapper-obj">ds.flatMap(flatMapper[, obj])<a class="headerlink" href="#dsflatmapflatmapper-obj" title="Permanent link">&para;</a></h4>
+<h3 id="dsflatmapflatmapper-obj">ds.flatMap(flatMapper[, obj])<a class="headerlink" href="#dsflatmapflatmapper-obj" title="Permanent link">&para;</a></h3>
 <p>Applies the provided mapper function to each element of the source
 dataset and returns a new dataset.</p>
 <ul>
@@ -2271,7 +1569,7 @@ dataset and returns a new dataset.</p>
 </pre></div>
 
 
-<h4 id="dsflatmapvaluesflatmapper-obj">ds.flatMapValues(flatMapper[, obj])<a class="headerlink" href="#dsflatmapvaluesflatmapper-obj" title="Permanent link">&para;</a></h4>
+<h3 id="dsflatmapvaluesflatmapper-obj">ds.flatMapValues(flatMapper[, obj])<a class="headerlink" href="#dsflatmapvaluesflatmapper-obj" title="Permanent link">&para;</a></h3>
 <p>Applies the provided flatMapper function to the value of each [key,
 value] element of the source dataset and return a new dataset containing
 elements defined as [key, mapper(value)], keeping the key unchanged
@@ -2304,8 +1602,8 @@ for each source element.</p>
 </pre></div>
 
 
-<h4 id="dsforeachcallback-obj-done">ds.forEach(callback[, obj][, done])<a class="headerlink" href="#dsforeachcallback-obj-done" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> applies a <em>callback</em> function on each element of the dataset.
+<h3 id="dsforeachcallback-obj-done">ds.forEach(callback[, obj][, done])<a class="headerlink" href="#dsforeachcallback-obj-done" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> applies a <em>callback</em> function on each element of the dataset.
 If provided, the <em>done()</em> callback is invoked at completion, otherwise an
 <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 <ul>
@@ -2331,7 +1629,7 @@ to <code>forEach()</code> is executed on workers and may be not visible:</p>
 </pre></div>
 
 
-<h4 id="dsgroupbykey">ds.groupByKey()<a class="headerlink" href="#dsgroupbykey" title="Permanent link">&para;</a></h4>
+<h3 id="dsgroupbykey">ds.groupByKey()<a class="headerlink" href="#dsgroupbykey" title="Permanent link">&para;</a></h3>
 <p>When called on a dataset of type <code>[k,v]</code>, returns a dataset of type <code>[k, [v]]</code>
 where values with the same key are grouped.</p>
 <p>Example:</p>
@@ -2341,7 +1639,7 @@ where values with the same key are grouped.</p>
 </pre></div>
 
 
-<h4 id="dsintersectionother">ds.intersection(other)<a class="headerlink" href="#dsintersectionother" title="Permanent link">&para;</a></h4>
+<h3 id="dsintersectionother">ds.intersection(other)<a class="headerlink" href="#dsintersectionother" title="Permanent link">&para;</a></h3>
 <p>Returns a dataset containing only elements found in source dataset and <em>other</em>
 dataset.</p>
 <p>Example:</p>
@@ -2351,7 +1649,7 @@ dataset.</p>
 </pre></div>
 
 
-<h4 id="dsjoinother">ds.join(other)<a class="headerlink" href="#dsjoinother" title="Permanent link">&para;</a></h4>
+<h3 id="dsjoinother">ds.join(other)<a class="headerlink" href="#dsjoinother" title="Permanent link">&para;</a></h3>
 <p>When called on source dataset of type <code>[k,v]</code> and <em>other</em> dataset of type
 <code>[k,w]</code>, returns a dataset of type <code>[k, [v, w]]</code> pairs with all pairs
 of elements for each key.</p>
@@ -2363,7 +1661,7 @@ of elements for each key.</p>
 </pre></div>
 
 
-<h4 id="dskeys">ds.keys()<a class="headerlink" href="#dskeys" title="Permanent link">&para;</a></h4>
+<h3 id="dskeys">ds.keys()<a class="headerlink" href="#dskeys" title="Permanent link">&para;</a></h3>
 <p>When called on source dataset of type <code>[k,v]</code>, returns a dataset with just
 the elements <code>k</code>.</p>
 <p>Example:</p>
@@ -2373,7 +1671,7 @@ the elements <code>k</code>.</p>
 </pre></div>
 
 
-<h4 id="dsleftouterjoinother">ds.leftOuterJoin(other)<a class="headerlink" href="#dsleftouterjoinother" title="Permanent link">&para;</a></h4>
+<h3 id="dsleftouterjoinother">ds.leftOuterJoin(other)<a class="headerlink" href="#dsleftouterjoinother" title="Permanent link">&para;</a></h3>
 <p>When called on source dataset of type <code>[k,v]</code> and <em>other</em> dataset of type
 <code>[k,w]</code>, returns a dataset of type <code>[k, [v, w]]</code> pairs where the key
 must be present in the <em>other</em> dataset.</p>
@@ -2385,7 +1683,7 @@ must be present in the <em>other</em> dataset.</p>
 </pre></div>
 
 
-<h4 id="dslookupk-done">ds.lookup(k[, done])<a class="headerlink" href="#dslookupk-done" title="Permanent link">&para;</a></h4>
+<h3 id="dslookupk-done">ds.lookup(k[, done])<a class="headerlink" href="#dslookupk-done" title="Permanent link">&para;</a></h3>
 <p>When called on source dataset of type <code>[k,v]</code>, returns an array
 of values <code>v</code> for key <code>k</code>.
 The result is passed to the <em>done()</em> callback if provided, otherwise an
@@ -2401,7 +1699,7 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
 </pre></div>
 
 
-<h4 id="dsmapmapper-obj">ds.map(mapper[, obj])<a class="headerlink" href="#dsmapmapper-obj" title="Permanent link">&para;</a></h4>
+<h3 id="dsmapmapper-obj">ds.map(mapper[, obj])<a class="headerlink" href="#dsmapmapper-obj" title="Permanent link">&para;</a></h3>
 <p>Applies the provided mapper function to each element of the source
 dataset and returns a new dataset.</p>
 <ul>
@@ -2425,7 +1723,7 @@ dataset and returns a new dataset.</p>
 </pre></div>
 
 
-<h4 id="dsmapvaluesmapper-obj">ds.mapValues(mapper[, obj])<a class="headerlink" href="#dsmapvaluesmapper-obj" title="Permanent link">&para;</a></h4>
+<h3 id="dsmapvaluesmapper-obj">ds.mapValues(mapper[, obj])<a class="headerlink" href="#dsmapvaluesmapper-obj" title="Permanent link">&para;</a></h3>
 <ul>
 <li><em>mapper</em>: a function of the form <code>callback(element[, obj[, wc]])</code>,
   returning an element and where:<ul>
@@ -2452,7 +1750,7 @@ source element.</p>
 </pre></div>
 
 
-<h4 id="dspartitionbypartitioner">ds.partitionBy(partitioner)<a class="headerlink" href="#dspartitionbypartitioner" title="Permanent link">&para;</a></h4>
+<h3 id="dspartitionbypartitioner">ds.partitionBy(partitioner)<a class="headerlink" href="#dspartitionbypartitioner" title="Permanent link">&para;</a></h3>
 <p>Returns a dataset partitioned using the specified partitioner. The
 purpose of this transformation is not to change the dataset content,
 but to increase processing speed by ensuring that the elements
@@ -2468,7 +1766,7 @@ accessed by further transfomations reside in the same partition.</p>
 </pre></div>
 
 
-<h4 id="dspersist">ds.persist()<a class="headerlink" href="#dspersist" title="Permanent link">&para;</a></h4>
+<h3 id="dspersist">ds.persist()<a class="headerlink" href="#dspersist" title="Permanent link">&para;</a></h3>
 <p>Returns the dataset, and persists the dataset content on disk (and
 in memory if available) in order to directly reuse content in further
 tasks.</p>
@@ -2483,8 +1781,8 @@ tasks.</p>
 </pre></div>
 
 
-<h4 id="dsreducereducer-init-obj-done">ds.reduce(reducer, init[, obj][, done])<a class="headerlink" href="#dsreducereducer-init-obj-done" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> returns the aggregated value of the elements
+<h3 id="dsreducereducer-init-obj-done">ds.reduce(reducer, init[, obj][, done])<a class="headerlink" href="#dsreducereducer-init-obj-done" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> returns the aggregated value of the elements
 of the dataset using a <em>reducer()</em> function.
 The result is passed to the <em>done()</em> callback if provided, otherwise an
 <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
@@ -2517,7 +1815,7 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
 </pre></div>
 
 
-<h4 id="dsreducebykeyreducer-init-obj">ds.reduceByKey(reducer, init[, obj])<a class="headerlink" href="#dsreducebykeyreducer-init-obj" title="Permanent link">&para;</a></h4>
+<h3 id="dsreducebykeyreducer-init-obj">ds.reduceByKey(reducer, init[, obj])<a class="headerlink" href="#dsreducebykeyreducer-init-obj" title="Permanent link">&para;</a></h3>
 <ul>
 <li><em>reducer</em>: a function of the form <code>callback(acc,val[, obj[, wc]])</code>,
   returning the next value of the accumulator (which must be of the
@@ -2547,7 +1845,7 @@ function and the <em>init</em> initial value.</p>
 </pre></div>
 
 
-<h4 id="dsrightouterjoinother">ds.rightOuterJoin(other)<a class="headerlink" href="#dsrightouterjoinother" title="Permanent link">&para;</a></h4>
+<h3 id="dsrightouterjoinother">ds.rightOuterJoin(other)<a class="headerlink" href="#dsrightouterjoinother" title="Permanent link">&para;</a></h3>
 <p>When called on source dataset of type <code>[k,v]</code> and <em>other</em> dataset of type
 <code>[k,w]</code>, returns a dataset of type <code>[k, [v, w]]</code> pairs where the key
 must be present in the <em>source</em> dataset.</p>
@@ -2559,15 +1857,14 @@ must be present in the <em>source</em> dataset.</p>
 </pre></div>
 
 
-<h4 id="dssamplewithreplacement-frac-seed">ds.sample(withReplacement, frac, seed)<a class="headerlink" href="#dssamplewithreplacement-frac-seed" title="Permanent link">&para;</a></h4>
+<h3 id="dssamplewithreplacement-frac">ds.sample(withReplacement, frac)<a class="headerlink" href="#dssamplewithreplacement-frac" title="Permanent link">&para;</a></h3>
 <ul>
 <li><em>withReplacement</em>: <em>Boolean</em> value, <em>true</em> if data must be sampled
   with replacement</li>
 <li><em>frac</em>: <em>Number</em> value of the fraction of source dataset to return</li>
-<li><em>seed</em>: <em>Number</em> value of pseudo-random seed</li>
 </ul>
 <p>Returns a dataset by sampling a fraction <em>frac</em> of source dataset, with or
-without replacement, using a given random generator <em>seed</em>.</p>
+without replacement.</p>
 <p>Example:</p>
 <div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]).</span>
    <span class="nx">sample</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
@@ -2576,8 +1873,8 @@ without replacement, using a given random generator <em>seed</em>.</p>
 </pre></div>
 
 
-<h4 id="dssaveurl-options-done">ds.save(url[, options][, done])<a class="headerlink" href="#dssaveurl-options-done" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> saves the content of the dataset to the destination URL. The
+<h3 id="dssaveurl-options-done">ds.save(url[, options][, done])<a class="headerlink" href="#dssaveurl-options-done" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> saves the content of the dataset to the destination URL. The
 destination is a flat directory which will contain as many files as partitions
 in the dataset. Files are named from partition numbers, starting at 0.
 The file format is a stream of JSON strings (one per dataset
@@ -2593,7 +1890,7 @@ element) separated by newlines.</p>
 <li><em>done</em>: an optional callback function of the form <code>function(error, result)</code>
   called at completion. If not provided, an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</li>
 </ul>
-<h5 id="file-protocol">File protocol<a class="headerlink" href="#file-protocol" title="Permanent link">&para;</a></h5>
+<h4 id="file-protocol">File protocol<a class="headerlink" href="#file-protocol" title="Permanent link">&para;</a></h4>
 <p>The URL form is <code>file://path</code> or simply <code>path</code> where <em>path</em> is an absolute
 pathname in the master host local file system.</p>
 <p>Example:</p>
@@ -2602,7 +1899,7 @@ pathname in the master host local file system.</p>
 </pre></div>
 
 
-<h5 id="aws-s3-protocol">AWS S3 protocol<a class="headerlink" href="#aws-s3-protocol" title="Permanent link">&para;</a></h5>
+<h4 id="aws-s3-protocol">AWS S3 protocol<a class="headerlink" href="#aws-s3-protocol" title="Permanent link">&para;</a></h4>
 <p>The URL form is <code>s3://bucket/key</code>. AWS credentials must be provided by environment
 variables i.e <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_ACCESS_KEY_ID</code>.</p>
 <p>Example:</p>
@@ -2611,11 +1908,11 @@ variables i.e <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_ACCESS_KEY_ID</code>
 </pre></div>
 
 
-<h5 id="azure-blob-storage-protocol">Azure blob storage protocol<a class="headerlink" href="#azure-blob-storage-protocol" title="Permanent link">&para;</a></h5>
+<h4 id="azure-blob-storage-protocol">Azure blob storage protocol<a class="headerlink" href="#azure-blob-storage-protocol" title="Permanent link">&para;</a></h4>
 <p>The URL form is <code>wasb://container@user.blob.core.windows.net/blob_name</code>. Azure
 credentials must be provided by environment variables i.e
 <code>AZURE_STORAGE_ACCOUNT</code> and <code>AZURE_STORAGE_ACCESS_KEY</code>.</p>
-<h4 id="dssortbykeyfunc-ascending">ds.sortBy(keyfunc[, ascending])<a class="headerlink" href="#dssortbykeyfunc-ascending" title="Permanent link">&para;</a></h4>
+<h3 id="dssortbykeyfunc-ascending">ds.sortBy(keyfunc[, ascending])<a class="headerlink" href="#dssortbykeyfunc-ascending" title="Permanent link">&para;</a></h3>
 <p>Returns a dataset sorted by the given <em>keyfunc</em>.</p>
 <ul>
 <li><em>keyfunc</em>: a function of the form <code>function(element)</code> which returns
@@ -2631,7 +1928,7 @@ credentials must be provided by environment variables i.e
 </pre></div>
 
 
-<h4 id="dssortbykeyascending">ds.sortByKey(ascending)<a class="headerlink" href="#dssortbykeyascending" title="Permanent link">&para;</a></h4>
+<h3 id="dssortbykeyascending">ds.sortByKey(ascending)<a class="headerlink" href="#dssortbykeyascending" title="Permanent link">&para;</a></h3>
 <p>When called on a dataset of type <code>[k,v]</code>, returns a dataset of type <code>[k,v]</code>
 sorted on <code>k</code>. The optional parameter <em>ascending</em> is a boolean which sets
 the sort direction, true by default.</p>
@@ -2643,8 +1940,8 @@ the sort direction, true by default.</p>
 </pre></div>
 
 
-<h4 id="dsstreamopt">ds.stream([opt])<a class="headerlink" href="#dsstreamopt" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of dataset content. The order
+<h3 id="dsstreamopt">ds.stream([opt])<a class="headerlink" href="#dsstreamopt" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> returns a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a> of dataset content. The order
 of data and partitions is maintained.</p>
 <ul>
 <li><em>opt</em>: an object with the following fields:</li>
@@ -2661,7 +1958,7 @@ of data and partitions is maintained.</p>
 </pre></div>
 
 
-<h4 id="dssubtractother">ds.subtract(other)<a class="headerlink" href="#dssubtractother" title="Permanent link">&para;</a></h4>
+<h3 id="dssubtractother">ds.subtract(other)<a class="headerlink" href="#dssubtractother" title="Permanent link">&para;</a></h3>
 <p>Returns a dataset containing only elements of source dataset which
 are not in <em>other</em> dataset.</p>
 <p>Example:</p>
@@ -2672,8 +1969,8 @@ are not in <em>other</em> dataset.</p>
 </pre></div>
 
 
-<h4 id="dstakenum-done">ds.take(num[, done])<a class="headerlink" href="#dstakenum-done" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> returns an array of the <code>num</code> first elements of the
+<h3 id="dstakenum-done">ds.take(num[, done])<a class="headerlink" href="#dstakenum-done" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> returns an array of the <code>num</code> first elements of the
 source dataset.  The result is passed to the <em>done()</em> callback if
 provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 <ul>
@@ -2687,8 +1984,8 @@ provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is re
 </pre></div>
 
 
-<h4 id="dstakesamplewithreplacement-num-done">ds.takeSample(withReplacement, num[, done])<a class="headerlink" href="#dstakesamplewithreplacement-num-done" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> returns an array with a random sample of <code>num</code> elements
+<h3 id="dstakesamplewithreplacement-num-done">ds.takeSample(withReplacement, num[, done])<a class="headerlink" href="#dstakesamplewithreplacement-num-done" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> returns an array with a random sample of <code>num</code> elements
 of the dataset, with or without replacement. The result is passed to
 the <em>done()</em> callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 <ul>
@@ -2704,8 +2001,8 @@ the <em>done()</em> callback if provided, otherwise an <a href="https://promises
 </pre></div>
 
 
-<h4 id="dstopnum-done">ds.top(num[, done])<a class="headerlink" href="#dstopnum-done" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> returns an array of the <code>num</code> top elements of the
+<h3 id="dstopnum-done">ds.top(num[, done])<a class="headerlink" href="#dstopnum-done" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> returns an array of the <code>num</code> top elements of the
 source dataset.  The result is passed to the <em>done()</em> callback if
 provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 <ul>
@@ -2719,7 +2016,7 @@ provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is re
 </pre></div>
 
 
-<h4 id="dsunionother">ds.union(other)<a class="headerlink" href="#dsunionother" title="Permanent link">&para;</a></h4>
+<h3 id="dsunionother">ds.union(other)<a class="headerlink" href="#dsunionother" title="Permanent link">&para;</a></h3>
 <p>Returns a dataset that contains the union of the elements in the source
 dataset and the <em>other</em> dataset.</p>
 <p>Example:</p>
@@ -2730,7 +2027,7 @@ dataset and the <em>other</em> dataset.</p>
 </pre></div>
 
 
-<h4 id="dsvalues">ds.values()<a class="headerlink" href="#dsvalues" title="Permanent link">&para;</a></h4>
+<h3 id="dsvalues">ds.values()<a class="headerlink" href="#dsvalues" title="Permanent link">&para;</a></h3>
 <p>When called on source dataset of type <code>[k,v]</code>, returns a dataset with just
 the elements <code>v</code>.</p>
 <p>Example:</p>
@@ -2740,7 +2037,7 @@ the elements <code>v</code>.</p>
 </pre></div>
 
 
-<h3 id="partitioners">Partitioners<a class="headerlink" href="#partitioners" title="Permanent link">&para;</a></h3>
+<h2 id="partitioners">Partitioners<a class="headerlink" href="#partitioners" title="Permanent link">&para;</a></h2>
 <p>A partitioner is an object passed to
 <a href="#dspartitionbypartitioner">ds.partitionBy(partitioner)</a> which
 places data in partitions according to a strategy, for example hash
@@ -2756,7 +2053,7 @@ it limits data transfers between workers during jobs.</p>
   <em>numPartitions</em>) for the <code>element</code> of the dataset on which
   <code>partitionBy()</code> operates.</li>
 </ul>
-<h4 id="hashpartitionernumpartitions">HashPartitioner(numPartitions)<a class="headerlink" href="#hashpartitionernumpartitions" title="Permanent link">&para;</a></h4>
+<h3 id="hashpartitionernumpartitions">HashPartitioner(numPartitions)<a class="headerlink" href="#hashpartitionernumpartitions" title="Permanent link">&para;</a></h3>
 <p>Returns a partitioner object which implements hash based partitioning
 using a hash checksum of each element as a string.</p>
 <ul>
@@ -2768,7 +2065,7 @@ using a hash checksum of each element as a string.</p>
 </pre></div>
 
 
-<h4 id="rangepartitionernumpartitions-keyfunc-dataset">RangePartitioner(numPartitions, keyfunc, dataset)<a class="headerlink" href="#rangepartitionernumpartitions-keyfunc-dataset" title="Permanent link">&para;</a></h4>
+<h3 id="rangepartitionernumpartitions-keyfunc-dataset">RangePartitioner(numPartitions, keyfunc, dataset)<a class="headerlink" href="#rangepartitionernumpartitions-keyfunc-dataset" title="Permanent link">&para;</a></h3>
 <p>Returns a partitioner object which first defines ranges by sampling
 the dataset and then places elements by comparing them with ranges.</p>
 <ul>
@@ -2785,7 +2082,7 @@ the dataset and then places elements by comparing them with ranges.</p>
 </pre></div>
 
 
-<h3 id="environment-variables">Environment variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h3>
+<h2 id="environment-variables">Environment variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>SKALE_HOST</code>: The hostname of the skale-server process in distributed mode. If unset, the master runs in standalone mode.</li>
 <li><code>SKALE_PORT</code>: The port of the skale-server process in distributed mode. Default value: "12346"</li>
@@ -2796,122 +2093,6 @@ the dataset and then places elements by comparing them with ranges.</p>
 <li><code>2</code>: above traces plus worker traces</li>
 <li><code>3</code>: above traces plus network protocol traces (if running in distributed mode)</li>
 </ul>
-<h2 id="machine-learning-module">Machine Learning module<a class="headerlink" href="#machine-learning-module" title="Permanent link">&para;</a></h2>
-<p>The Machine Learning (ML) module provides scalable functions for
-supervised (classification, regression) and unsupervised (clustering)
-statistical learning on top of skale datasets and distributed
-map-reduce engine.</p>
-<p>The module can be loaded using:</p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">ml</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine/ml&#39;</span><span class="p">)</span>
-</pre></div>
-
-
-<h3 id="mlbinaryclassificationmetricsmeasures-options-done">ml.binaryClassificationMetrics(measures, options[, done])<a class="headerlink" href="#mlbinaryclassificationmetricsmeasures-options-done" title="Permanent link">&para;</a></h3>
-<h3 id="mlkmeansnbclusters-options">ml.KMeans(nbClusters[, options])<a class="headerlink" href="#mlkmeansnbclusters-options" title="Permanent link">&para;</a></h3>
-<p>Creates a clusterization model fitted via <a href="https://en.wikipedia.org/wiki/K-means_clustering">K-Means</a> algorithm.</p>
-<ul>
-<li><em>nbClusters</em>: <em>Number</em>, specifying the number of clusters in the model</li>
-<li><em>Options</em>: an optional <em>Object</em> with the following fields:</li>
-<li><em>maxMse</em>: <em>Number</em> defining the maximum mean square error between cluster
-    centers since previous iteration. Used to stop iterations. Default to 1e-7.</li>
-<li><em>maxIterations</em>: <em>Number</em> defining the maximum number of iterations. Default: 100.</li>
-<li><em>means</em>: an initial array of vectors (arrays) of numbers, default undefined.</li>
-</ul>
-<p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">dataset</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span>
-  <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-  <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="p">]);</span>
-<span class="nx">kmeans</span> <span class="o">=</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">KMeans</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<span class="nx">await</span> <span class="nx">kmeans</span><span class="p">.</span><span class="nx">fit</span><span class="p">(</span><span class="nx">dataset</span><span class="p">);</span>
-<span class="nx">kmeans</span><span class="p">.</span><span class="nx">means</span>
-<span class="c1">// [ [ 2.5, 1 ], [ 2.5, 4 ] ]</span>
-<span class="nx">kmeans</span><span class="p">.</span><span class="nx">predict</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="c1">// 0</span>
-<span class="nx">kmeans</span><span class="p">.</span><span class="nx">predict</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
-<span class="c1">// 1</span>
-</pre></div>
-
-
-<h4 id="kmeansfittrainingset-done">kmeans.fit(trainingSet[, done])<a class="headerlink" href="#kmeansfittrainingset-done" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> updates <em>kmeans</em> model by fitting it to the input
-dataset <em>trainingSet</em>. The result is passed to the <em>done()</em> callback
-if provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
-<ul>
-<li><em>trainingSet</em>: a dataset where entries are in the following format:
-  <code>[feature0, feature1, ...]</code> with <em>featureN</em> being a float number.</li>
-<li><em>done</em>: an optional callback of the form <code>function(error, result)</code>
-  which is called at completion.</li>
-</ul>
-<h4 id="kmeanspredictsample">kmeans.predict(sample)<a class="headerlink" href="#kmeanspredictsample" title="Permanent link">&para;</a></h4>
-<p>Returns the closest cluster index for the <em>sample</em>.</p>
-<ul>
-<li><em>sample</em>: an <em>Array</em> with the format <code>[feature0, feature 1, ...]</code>
-  with <em>featureN</em> being a float number.</li>
-</ul>
-<h3 id="mlsgdlinearmodeloptions">ml.SGDLinearModel([options])<a class="headerlink" href="#mlsgdlinearmodeloptions" title="Permanent link">&para;</a></h3>
-<p>Creates a regularized linear model fitted via <a href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent">stochastic
-gradient descent</a> learning. Such model can be used either for 
-regression or classification, as training method is identical,
-only prediction changes. SGD is sensitive to the scaling
-of the features. For best results, the data should have zero mean and
-unit variance, which can be achieved with <a href="#mlstandardscaler">ml.StandardScaler</a>.</p>
-<p>The model it fits can be controlled with the <em>loss</em> option; by default,
-it fits a linear <a href="https://en.wikipedia.org/wiki/Support_vector_machine">support vector machine</a> (SVM). A regularization term
-can be added to the loss, by default the squared euclidean norm L2.</p>
-<ul>
-<li><em>options</em>: an <em>Object</em> with the following fields:</li>
-<li><em>fitIntercept</em>: <em>Boolean</em> indicating whether to include an intercept. Default: <em>true</em></li>
-<li><em>loss</em>: <em>String</em> specifying the <a href="https://en.wikipedia.org/wiki/Loss_functions_for_classification">loss function</a> to be used. Possible values are:<ul>
-<li><code>hinge</code>: (default), gives a linear SVM</li>
-<li><code>log</code>: gives logistic loss, a probabilistic classifier</li>
-<li><code>square</code>: gives square loss fit</li>
-</ul>
-</li>
-<li><em>penalty</em>: <em>String</em>  specifying the <a href="https://en.wikipedia.org/wiki/Regularization_(mathematics)">regularization</a> term. Possible values are:<ul>
-<li><code>l2</code>: (default) squared euclidean norm L2, standard regularizer for linear SVM models</li>
-<li><code>l1</code>: absolute norm L1, might bring sparsity to the model, not achievable with <code>l2</code></li>
-<li><code>none</code>: zero penalty</li>
-</ul>
-</li>
-<li><em>proba</em>: <em>Boolean</em> (default <em>false</em>). If <em>true</em> predict returns a probability rather than a raw number. Only applicable when logisitic loss is selected.</li>
-<li><em>regParam</em>: <em>Number</em>  &gt;= 0, defaults to 0.001, defines the trade-off between the
-    two goals of minimizing the loss (i.e. training error) and minimizing model complexity
-    (i.e. to avoid overfitting)</li>
-<li><em>stepSize</em>: <em>Number</em> &gt;= 0, defaults to 1, defines the initial step size of the gradient
-    descent</li>
-</ul>
-<p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">trainingSet</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span>
- <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">]],</span>
- <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]]</span>
-<span class="p">]);</span>
-<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">SGDLinearModel</span><span class="p">()</span>
-<span class="nx">await</span> <span class="nx">model</span><span class="p">.</span><span class="nx">fit</span><span class="p">(</span><span class="nx">trainingSet</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="nx">model</span><span class="p">.</span><span class="nx">weights</span>
-<span class="c1">// [ 0.8531998372026804, -1.1944797720837526 ]</span>
-<span class="nx">model</span><span class="p">.</span><span class="nx">predict</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-<span class="c1">// 0.9836229103782058</span>
-</pre></div>
-
-
-<h4 id="sgdclassifierfittrainingset-iterations-done">sgdClassifier.fit(trainingSet, iterations[, done])<a class="headerlink" href="#sgdclassifierfittrainingset-iterations-done" title="Permanent link">&para;</a></h4>
-<p>This <a href="#actions">action</a> updates <em>sgdClassifier</em> model by fitting it to the
-input dataset <em>trainingSet</em>. The result is passed to the <em>done()</em>
-callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
-<ul>
-<li><em>trainingSet</em>: a dataset where entries are in the following format:
-  <code>[label, [feature0, feature1, ...]]</code> with <em>label</em> being either 1 or -1,
-  and <em>featureN</em> being a float number, preferentially with a zero mean and
-  unit variance (in range [-1, 1]). Sparse vectors with undefined features
-  are supported.</li>
-<li><em>done</em>: an optional callback of the form <code>function(error, result)</code>
-  which is called at completion.</li>
-</ul>
-<h4 id="sgdclassifierpredictsample">sgdClassifier.predict(sample)<a class="headerlink" href="#sgdclassifierpredictsample" title="Permanent link">&para;</a></h4>
-<h3 id="mlstandardscaler">ml.StandardScaler()<a class="headerlink" href="#mlstandardscaler" title="Permanent link">&para;</a></h3>
-<h4 id="standardscalerfitdataset-done">standardScaler.fit(dataset, [done])<a class="headerlink" href="#standardscalerfitdataset-done" title="Permanent link">&para;</a></h4>
-<h4 id="standardscalertransformfeatures">standardScaler.transform(features)<a class="headerlink" href="#standardscalertransformfeatures" title="Permanent link">&para;</a></h4>
                 
                   
                 
@@ -2930,7 +2111,7 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href=".." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../concepts/" title="Concepts" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -2939,19 +2120,19 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Home
+                Concepts
               </span>
             </div>
           </a>
         
         
-          <a href="../skale-hackers-guide/" title="Skale hackers guide" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../machine-learning/" title="Machine learning" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Skale hackers guide
+                Machine learning
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

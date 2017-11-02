@@ -4,23 +4,37 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2017-10-19</lastmod>
+     <lastmod>2017-11-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
 
     
+        
     <url>
-     <loc>/skale-API/</loc>
-     <lastmod>2017-10-19</lastmod>
+     <loc>/concepts/</loc>
+     <lastmod>2017-11-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
+        
+    <url>
+     <loc>/skale-API/</loc>
+     <lastmod>2017-11-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/machine-learning/</loc>
+     <lastmod>2017-11-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
     
     <url>
      <loc>/skale-hackers-guide/</loc>
-     <lastmod>2017-10-19</lastmod>
+     <lastmod>2017-11-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
     

@@ -27,7 +27,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       
-        <link rel="shortcut icon" href="./assets/images/favicon.png">
+        <link rel="shortcut icon" href="./images/favicon.png">
       
       <meta name="generator" content="mkdocs-0.16.3, mkdocs-material-1.11.0">
     
@@ -40,9 +40,7 @@
       <script src="./assets/javascripts/modernizr-e826f8942a.js"></script>
     
     
-      <link rel="stylesheet" href="./assets/stylesheets/application-0741cbeb94.css">
-      
-        <link rel="stylesheet" href="./assets/stylesheets/application-23f75ab9c7.palette.css">
+      <link rel="stylesheet" href="./assets/stylesheets/application-04ea671600.css">
       
     
     
@@ -62,7 +60,7 @@
   
   
   
-    <body data-md-color-primary="indigo" data-md-color-accent="light-blue">
+    <body>
   
     <svg class="md-svg">
       <defs>
@@ -97,7 +95,7 @@
             
               
             
-            Home
+            About Skale
           
         </span>
       </div>
@@ -136,7 +134,7 @@
   
 
 
-  <a href="https://github.com/skale-me/skale-engine" title="Go to repository" class="md-source" data-md-source="github">
+  <a href="https://github.com/skale-me/skale-engine/" title="Go to repository" class="md-source" data-md-source="github">
     
       <div class="md-source__icon">
         <svg viewBox="0 0 24 24" width="24" height="24">
@@ -186,7 +184,7 @@
   
 
 
-  <a href="https://github.com/skale-me/skale-engine" title="Go to repository" class="md-source" data-md-source="github">
+  <a href="https://github.com/skale-me/skale-engine/" title="Go to repository" class="md-source" data-md-source="github">
     
       <div class="md-source__icon">
         <svg viewBox="0 0 24 24" width="24" height="24">
@@ -214,22 +212,18 @@
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
     
-      
-    
     
       <label class="md-nav__link md-nav__link--active" for="toc">
-        Home
+        About Skale
       </label>
     
-    <a href="." title="Home" class="md-nav__link md-nav__link--active">
-      Home
+    <a href="." title="About Skale" class="md-nav__link md-nav__link--active">
+      About Skale
     </a>
     
       
 <nav class="md-nav md-nav--secondary">
   
-  
-    
   
   
     <label class="md-nav__title" for="toc">Table of contents</label>
@@ -305,10 +299,58 @@
       
 
 
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Programming guide
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Programming guide
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="concepts/" title="Concepts" class="md-nav__link">
+      Concepts
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
   <li class="md-nav__item">
     <a href="skale-API/" title="skale API" class="md-nav__link">
       skale API
     </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="machine-learning/" title="Machine learning" class="md-nav__link">
+      Machine learning
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
   </li>
 
     
@@ -337,8 +379,6 @@
                     
 <nav class="md-nav md-nav--secondary">
   
-  
-    
   
   
     <label class="md-nav__title" for="toc">Table of contents</label>
@@ -417,21 +457,12 @@
                   <a href="https://github.com/skale-me/skale-engine/edit/master/docs/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="skale-engine">skale-engine<a class="headerlink" href="#skale-engine" title="Permanent link">&para;</a></h1>
+                  <h1>About Skale</h1>
+                
+                <p><img alt="skale-logo" src="./images/logo-skale.png" /></p>
 <p>Skale-engine is a fast and general purpose distributed data processing
 system. It provides a high-level API in Javascript and an optimized
 parallel execution engine on top of NodeJS.</p>
-<p>Word count using skale:</p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine&#39;</span><span class="p">).</span><span class="nx">context</span><span class="p">();</span>
-
-<span class="nx">sc</span><span class="p">.</span><span class="nx">textFile</span><span class="p">(</span><span class="s1">&#39;/path/...&#39;</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">line</span> <span class="p">=&gt;</span> <span class="nx">line</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))</span>
-  <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">word</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">word</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-  <span class="p">.</span><span class="nx">reduceByKey</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-  <span class="p">.</span><span class="nx">count</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
-</pre></div>
-
-
 <h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
 <ul>
 <li>In-memory computing</li>
@@ -515,13 +546,13 @@ contributors</a></p>
       <nav class="md-footer-nav__inner md-grid">
         
         
-          <a href="skale-API/" title="skale API" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="concepts/" title="Concepts" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                skale API
+                Concepts
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
