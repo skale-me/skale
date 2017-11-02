@@ -1,5 +1,6 @@
 site_name: Skale
 site_description: Skale documentation
+site_favicon: 'images/favicon.png'
 dev_addr: 0.0.0.0:8000
 
 docs_dir: docs
