@@ -1,6 +1,17 @@
 var t = require('tape');
 var sc = require('skale-engine').context();
 
+t.test('env', function (t) {
+  t.plan(1);
+
+  sc.env.MY_VAR = 'hello';
+  sc.range(5)
+    .map(a => process.env.MY_VAR + a)
+    .collect(function (err, res) {
+      t.equal(res[0], 'hello0');
+    });
+});
+
 t.test('require', function (t) {
   t.plan(1);
 
@@ -12,3 +23,4 @@ t.test('require', function (t) {
       sc.end();
     });
 });
+
