@@ -1,6 +1,5 @@
 var t = require('tape');
 var sc = require('skale-engine').context();
-t.onFinish(sc.end);
 
 t.test('require', function (t) {
   t.plan(1);
@@ -10,5 +9,6 @@ t.test('require', function (t) {
     .map(a => add3(a))                // eslint-disable-line no-undef
     .collect(function (err, res) {
       t.deepEquals(res, [3, 4, 5, 6]);
+      sc.end();
     });
 });

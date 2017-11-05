@@ -1,10 +1,8 @@
 var t = require('tape');
 var sc = require('skale-engine').context();
 
-t.onFinish(sc.end);
-
-t.test('aggregate', function (t) {
-  t.plan(2);
+t.test('aggregate callback', function (t) {
+  t.plan(1);
 
   sc.parallelize([3, 5, 2, 7, 4, 8])
     .aggregate(
@@ -15,6 +13,10 @@ t.test('aggregate', function (t) {
         t.equal(res[0] / res[1], 29 / 6);
       }
     );
+});
+
+t.test('aggregate promise', function (t) {
+  t.plan(1);
 
   sc.parallelize([3, 5, 2, 7, 4, 8])
     .aggregate(
@@ -24,5 +26,6 @@ t.test('aggregate', function (t) {
     )
     .then(function(res) {
       t.equal(res[0] / res[1], 29 / 6);
+      sc.end();
     });
 });
