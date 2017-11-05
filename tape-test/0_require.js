@@ -4,7 +4,7 @@ var sc = require('skale-engine').context();
 t.test('require', function (t) {
   t.plan(1);
 
-  sc.require({add3: './dep'})
+  sc.require({add3: './dep.js'})
     .range(4)
     .map(a => add3(a))                // eslint-disable-line no-undef
     .collect(function (err, res) {

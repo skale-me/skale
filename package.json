@@ -10,7 +10,7 @@
     "pretest": "eslint .",
     "lint": "eslint .",
     "mocha": "mocha -t 5000 --exit",
-    "tape": "tape 'tape-test/**/*.js'",
+    "tape": "tape \"tape-test/**/*.js\"",
     "test": "make -C tape-test"
   },
   "bin": {
