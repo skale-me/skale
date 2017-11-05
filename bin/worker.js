@@ -200,6 +200,8 @@ function runWorker(host, port) {
     task.dlog = dlog;
     task.lib = {aws: aws, azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, stream: stream, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
+    // Indirect Eval to set user dependencies bundle in the worker global context
+    (0, eval)(task.bundle);
     task.run(function(result) {
       result.workerId = task.workerId;
       grid.reply(msg, null, result);

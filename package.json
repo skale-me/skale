@@ -37,6 +37,8 @@
     "await-outside": "^2.1.2",
     "aws-sdk": "^2.137.0",
     "azure-storage": "^2.6.0",
+    "browserify": "^14.5.0",
+    "callsite": "^1.0.0",
     "merge2": "^1.2.0",
     "micromatch": "^3.1.0",
     "mkdirp": "^0.5.1",
