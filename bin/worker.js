@@ -174,7 +174,7 @@ function runWorker(host, port) {
       totalmem: os.totalmem(),
       hostname: hostname || process.env.puuid,
       type: 'worker',
-      wsid: process.env.wsid,
+      wsid: Number(process.env.wsid),
       jobId: ''
     }
   }, function (err, res) {
