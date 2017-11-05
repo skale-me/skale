@@ -1,5 +1,5 @@
 environment:
-  nodejs_version: "6"
+  nodejs_version: "8"
   SKALE_WORKERS: "2"
   SKALE_MEMORY: "512"
 

@@ -4,6 +4,4 @@ os:
 language: node_js
 node_js:
   - "node"
-  - "6"
-env:
-  - SKALE_WORKERS=2
+  - "8"
