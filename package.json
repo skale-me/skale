@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "mocha": "mocha -t 5000 --exit",
     "tape": "tape 'tape-test/**/*.js'",
-    "test": "make -C tape-test | tap-summary"
+    "test": "make -C tape-test"
   },
   "bin": {
     "skale-server": "./bin/server.js",
@@ -55,7 +55,6 @@
     "eslint": "^4.9.0",
     "mocha": "^4.0.1",
     "plotter": "^0.5.0",
-    "tap-summary": "^4.0.0",
     "tape": "^4.8.0"
   },
   "peerDependencies": {
