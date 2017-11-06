@@ -1,19 +1,20 @@
 var t = require('tape');
 var sc = require('skale-engine').context();
 
-t.onFinish(sc.end);
-
-function sum(a, b) {return a + b;}
-
-t.test('reduce', function (t) {
-  t.plan(2);
+t.test('reduce callback', function (t) {
+  t.plan(1);
   sc.parallelize([1, 2, 3, 4], 2)
-    .reduce(sum, 0, function(err, res) {
+    .reduce((a, b) => a + b, 0, function(err, res) {
       t.equal(res, 10);
     });
+});
+
+t.test('reduce promise', function (t) {
+  t.plan(1);
   sc.parallelize([1, 2, 3, 4], 2)
-    .reduce(sum, 0)
+    .reduce((a, b) => a + b, 0)
     .then(function(res) {
       t.equal(res, 10);
+      sc.end();
     });
 });

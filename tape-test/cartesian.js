@@ -1,6 +1,5 @@
 var t = require('tape');
 var sc = require('skale-engine').context();
-t.onFinish(sc.end);
 
 t.test('cartesian', function (t) {
   var data = [1, 2, 3, 4, 5, 6];
@@ -23,5 +22,6 @@ t.test('cartesian', function (t) {
         [5, 10], [5, 11], [5, 12], [5, 7], [5, 8], [5, 9],
         [6, 10], [6, 11], [6, 12], [6, 7], [6, 8], [6, 9]
       ]);
+      sc.end();
     });
 });

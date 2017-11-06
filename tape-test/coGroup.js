@@ -1,6 +1,5 @@
 var t = require('tape');
 var sc = require('skale-engine').context();
-t.onFinish(sc.end);
 
 t.test('coGroup', function (t) {
   t.plan(1);
@@ -19,5 +18,6 @@ t.test('coGroup', function (t) {
       ['test', [[], [5]]],
       ['world', [[2], [4]]],
     ]);
+    sc.end();
   });
 });
