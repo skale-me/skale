@@ -27,11 +27,11 @@ Creates a clusterization model fitted via [K-Means] algorithm.
 Example:
 
 ```javascript
-var dataset = sc.parallelize([
+const dataset = sc.parallelize([
   [1, 2], [1, 4], [1, 0],
   [4, 2], [4, 4], [4, 0]
 ]);
-kmeans = ml.KMeans(2);
+const kmeans = ml.KMeans(2);
 await kmeans.fit(dataset);
 kmeans.means
 // [ [ 2.5, 1 ], [ 2.5, 4 ] ]
@@ -92,11 +92,11 @@ can be added to the loss, by default the squared euclidean norm L2.
 Example:
 
 ```javascript
-var trainingSet = sc.parallelize([
+const trainingSet = sc.parallelize([
  [1, [0.5, -0.7]],
- [-1 [-0.5, 0.7]]
+ [-1, [-0.5, 0.7]]
 ]);
-var sgd = new ml.SGDLinearModel()
+const sgd = new ml.SGDLinearModel()
 await sgd.fit(trainingSet, 2)
 sgd.weights
 // [ 0.8531998372026804, -1.1944797720837526 ]
