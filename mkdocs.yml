@@ -1,11 +1,41 @@
+# Project information
 site_name: Skale
 site_description: Skale documentation
-site_favicon: 'images/favicon.png'
+site_author: 'Marc Vertes'
+site_url: 'https://skale-me.github.io/skale-engine/'
 dev_addr: 0.0.0.0:8000
 
-docs_dir: docs
-theme: 'material'
+google_analytics:
+  - 'UA-75822605-1'
+  - 'auto'
 
+# Repository
+repo_name: 'skale-me/skale-engine'
+repo_url: 'https://github.com/skale-me/skale-engine/'
+
+# Copyright
+copyright: 'Copyright &copy; 2016 Luca-SAS'
+
+# Configuration
+theme:
+  name: 'material'
+  langage: 'en'
+  logo: 'images/logo.svg'
+  favicon: 'images/favicon.png'
+  palette:
+    primary: 'indigo'
+    accent: 'indigo'
+  font:
+    text: 'Roboto'
+    code: 'Roboto mono'
+
+# Customization
+extra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/skale-me'
+
+# Extensions
 markdown_extensions:
   - admonition
   - codehilite:
@@ -13,8 +43,8 @@ markdown_extensions:
   - toc:
       permalink: true
 
-extra:
-  logo: 'images/logo.svg'
+# Content
+docs_dir: docs
 
 pages:
   - About Skale: 'index.md'
@@ -23,6 +53,3 @@ pages:
     - 'skale-API.md'
     - 'machine-learning.md'
   - 'skale-hackers-guide.md'
-
-repo_url: https://github.com/skale-me/skale-engine/
-google_analytics: ['UA-75822605-1', 'skale-engine.github.io']
