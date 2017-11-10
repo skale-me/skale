@@ -52,10 +52,10 @@ The following example computes the size of a file using streams:
 
 ```javascript
 var stream = fs.createReadStream('data.txt', 'utf8');
-sc.lineStream(stream).
-   map(s => s.length).
-   reduce((a, b) => a + b, 0).
-   then(console.log);
+sc.lineStream(stream)
+  .map(s => s.length)
+  .reduce((a, b) => a + b, 0)
+  .then(console.log);
 ```
 
 ### sc.objectStream(input_stream)
@@ -96,6 +96,33 @@ sc.range(2, 4).collect().then(console.log)
 // [ 2, 3 ]
 sc.range(10, -5, -3).collect().then(console.log)
 // [ 10, 7, 4, 1, -2 ]
+```
+
+### sc.require(modules)
+
+Sets a list of dependency modules to be deployed in workers for use
+by callbacks, such as mappers or reducers.  Returns the context
+object.
+
+- *modules*: an *Object* of the form `{name1: 'path1', ...}`
+  where `name1` is the name of the variable to which the module
+  is assigned to, and `path1` a path expression as in [require.resolve(path)].
+
+Under the hood, [browserify] is used on master side to build a
+bundle which is serialized and sent to workers, where
+It is then evaluated in global context.
+
+Example:
+```js
+// deps.js contains:
+// module.export = function add3(a) {return a + 3;};
+
+sc.require({add3: './deps.js'})
+  .range(4)
+  .map(a => add3)
+  .collect()
+  .then(console.log);
+// [ 3, 4, 5, 6 ]
 ```
 
 ### sc.source(size, callback[, args])
@@ -207,11 +234,11 @@ The result is passed to the *done()* callback if provided, otherwise an
 The following example computes the average of a dataset, avoiding a `map()`:
 
 ```javascript
-sc.parallelize([3, 5, 2, 7, 4, 8]).
-   aggregate((a, v) => [a[0] + v, a[1] + 1],
-	(a1, a2) => [a1[0] + a2[0], a1[1] + a2[1]], [0, 0]).
-   then(function(data) {
-	console.log(data[0] / data[1]);
+sc.parallelize([3, 5, 2, 7, 4, 8])
+  .aggregate((a, v) => [a[0] + v, a[1] + 1],
+    (a1, a2) => [a1[0] + a2[0], a1[1] + a2[1]], [0, 0])
+  .then(function(data) {
+    console.log(data[0] / data[1]);
   })
 // 4.8333
 ```
@@ -249,9 +276,10 @@ different from element type.
 Example:
 
 ```javascript
-sc.parallelize([['hello', 1], ['hello', 1], ['world', 1]]).
-   aggregateByKey((a, b) => a + b, (a, b) => a + b, 0).
-   collect().then(console.log);
+sc.parallelize([['hello', 1], ['hello', 1], ['world', 1]])
+  .aggregateByKey((a, b) => a + b, (a, b) => a + b, 0)
+  .collect()
+  .then(console.log);
 // [ [ 'hello', 2 ], [ 'world', 1 ] ]
 ```
 
@@ -298,8 +326,8 @@ The result is passed to the *done()* callback if provided, otherwise an
 Example:
 
 ```javascript
-sc.parallelize([1, 2, 3, 4]).
-   collect(function (err, res) {
+sc.parallelize([1, 2, 3, 4])
+  .collect(function (err, res) {
      console.log(res);
    });
 // [ 1, 2, 3, 4 ]
@@ -335,8 +363,8 @@ callback if provided, otherwise an [ES6 promise] is returned.
 Example:
 
 ```javascript
-sc.parallelize([[10, 1], [20, 2], [10, 4]]).
-   countByKey().then(console.log);
+sc.parallelize([[10, 1], [20, 2], [10, 4]])
+  .countByKey().then(console.log);
 // [ [ 10, 2 ], [ 20, 1 ] ]
 ```
 
@@ -354,8 +382,8 @@ promise] is returned.
 Example:
 
 ```javascript
-sc.parallelize([ 1, 2, 3, 1, 3, 2, 5 ]).
-   countByValue().then(console.log);
+sc.parallelize([ 1, 2, 3, 1, 3, 2, 5 ])
+  .countByValue().then(console.log);
 // [ [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 5, 1 ] ]
 ```
 
@@ -366,9 +394,9 @@ Returns a dataset where duplicates are removed.
 Example:
 
 ```javascript
-sc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
-   distinct().
-   collect().then(console.log);
+sc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ])
+  .distinct()
+  .collect().then(console.log);
 // [ 1, 2, 3, 4, 5 ]
 ```
 
@@ -393,9 +421,9 @@ Example:
 ```javascript
 function filter(data, obj) { return data % obj.modulo; }
 
-sc.parallelize([1, 2, 3, 4]).
-   filter(filter, {modulo: 2}).
-   collect().then(console.log);
+sc.parallelize([1, 2, 3, 4])
+  .filter(filter, {modulo: 2})
+  .collect().then(console.log);
 // [ 1, 3 ]
 ```
 
@@ -462,9 +490,9 @@ function valueFlatMapper(data, obj) {
 	return tmp;
 }
 
-sc.parallelize([['hello', 1], ['world', 2]]).
-   flatMapValues(valueFlatMapper, {N: 2, fact: 2}).
-   collect().then(console.log);
+sc.parallelize([['hello', 1], ['world', 2]])
+  .flatMapValues(valueFlatMapper, {N: 2, fact: 2})
+  .collect().then(console.log);
 // [ [ 'hello', 2 ], [ 'hello', 2 ], [ 'world', 4 ], [ 'world', 4 ] ]
 ```
 
@@ -492,8 +520,8 @@ In the following example, the `console.log()` callback provided
 to `forEach()` is executed on workers and may be not visible:
 
 ```javascript
-sc.parallelize([1, 2, 3, 4]).
-   forEach(console.log).then(console.log('finished'));
+sc.parallelize([1, 2, 3, 4])
+  .forEach(console.log).then(console.log('finished'));
 ```
 
 ### ds.groupByKey()
@@ -504,8 +532,8 @@ where values with the same key are grouped.
 Example:
 
 ```javascript
-sc.parallelize([[10, 1], [20, 2], [10, 4]]).
-   groupByKey().collect().then(console.log);
+sc.parallelize([[10, 1], [20, 2], [10, 4]])
+  .groupByKey().collect().then(console.log);
 // [ [ 10, [ 1, 4 ] ], [ 20, [ 2 ] ] ]
 ```
 
@@ -545,8 +573,8 @@ the elements `k`.
 Example:
 
 ```javascript
-sc.parallelize([[10, 'world'], [30, 3]]).
-   keys.collect().then(console.log);
+sc.parallelize([[10, 'world'], [30, 3]])
+  .keys.collect().then(console.log);
 // [ 10, 30 ]
 ```
 
@@ -578,8 +606,8 @@ The result is passed to the *done()* callback if provided, otherwise an
 Example:
 
 ```javascript
-sc.parallelize([[10, 'world'], [20, 2], [10, 1], [30, 3]]).
-   lookup(10).then(console.log);
+sc.parallelize([[10, 'world'], [20, 2], [10, 1], [30, 3]])
+  .lookup(10).then(console.log);
 // [ world, 1 ]
 ```
 
@@ -601,9 +629,9 @@ dataset and returns a new dataset.
 Example:
 
 ```javascript
-sc.parallelize([1, 2, 3, 4]).
-   map((data, obj) => data * obj.scaling, {scaling: 1.2}).
-   collect().then(console.log);
+sc.parallelize([1, 2, 3, 4])
+  .map((data, obj) => data * obj.scaling, {scaling: 1.2})
+  .collect().then(console.log);
 // [ 1.2, 2.4, 3.6, 4.8 ]
 ```
 
@@ -628,9 +656,9 @@ source element.
 Example:
 
 ```javascript
-sc.parallelize([['hello', 1], ['world', 2]]).
-   mapValues((a, obj) => a*obj.fact, {fact: 2}).
-   collect().then(console.log);
+sc.parallelize([['hello', 1], ['world', 2]])
+  .mapValues((a, obj) => a*obj.fact, {fact: 2})
+  .collect().then(console.log);
 // [ ['hello', 2], ['world', 4] ]
 ```
 
@@ -699,9 +727,9 @@ The result is passed to the *done()* callback if provided, otherwise an
 Example:
 
 ```javascript
-sc.parallelize([1, 2, 4, 8]).
-   reduce((a, b) => a + b, 0).
-   then(console.log);
+sc.parallelize([1, 2, 4, 8])
+  .reduce((a, b) => a + b, 0)
+  .then(console.log);
 // 15
 ```
 
@@ -729,9 +757,9 @@ function and the *init* initial value.
 Example:
 
 ```javascript
-sc.parallelize([[10, 1], [10, 2], [10, 4]]).
-   reduceByKey((a,b) => a+b, 0).
-   collect().then(console.log);
+sc.parallelize([[10, 1], [10, 2], [10, 4]])
+  .reduceByKey((a,b) => a+b, 0)
+  .collect().then(console.log);
 // [ [10, 7] ]
 ```
 
@@ -762,9 +790,9 @@ without replacement.
 Example:
 
 ```javascript
-sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8]).
-   sample(true, 0.5, 0).
-   collect().then(console.log);
+sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8])
+  .sample(true, 0.5, 0)
+  .collect().then(console.log);
 // [ 1, 1, 3, 4, 4, 5, 7 ]
 ```
 
@@ -956,8 +984,8 @@ the elements `v`.
 Example:
 
 ```javascript
-sc.parallelize([[10, 'world'], [30, 3]]).
-   keys.collect().then(console.log);
+sc.parallelize([[10, 'world'], [30, 3]])
+  .keys.collect().then(console.log);
 // [ 'world', 3 ]
 ```
 
@@ -1026,3 +1054,5 @@ var dataset = sc.range(10).partitionBy(rp)
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
 [ES6 promise]: https://promisesaplus.com
 [action]: concepts#actions
+[require.resolve(path)]: https://nodejs.org/dist/latest-v8.x/docs/api/modules.html#modules_require_resolve_request_options
+[browserify]: https://www.npmjs.com/package/browserify

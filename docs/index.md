@@ -17,8 +17,8 @@ parallel execution engine on top of NodeJS.
 * 50 high level operators to build parallel apps
 * Machine learning: scalable classification, regression, clusterization
 * Run interactively in a nodeJS REPL shell
-* Docker [ready](docker/), simple local mode or full distributed mode
-* Very fast, see [benchmark](benchmark/)
+* Docker [ready](https://github.com/skale-me/skale-engine/blob/master/docker/), simple local mode or full distributed mode
+* Very fast, see [benchmark](https://github.com/skale-me/skale-engine/blob/master/benchmark/)
 
 ## Quickstart
 ```sh
