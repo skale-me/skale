@@ -85,13 +85,12 @@ SKALE_HOST=server_host SKALE_DEBUG=2 node my_app.js
 
 ## Resources
 
+* [Contributing guide](CONTRIBUTING.md)
 * [Documentation](https://skale-me.github.io/skale-engine)
 * [Gitter](https://gitter.im/skale-me/skale-engine) for support and
   discussion
 * [Mailing list](https://groups.google.com/forum/#!forum/skale)
   for discussion about use and development
-* [Skale Hacker's Guide](docs/skale-hackers-guide.md)
-* [Roadmap](Roadmap.md)
 
 ## Authors
 

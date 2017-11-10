@@ -5,12 +5,13 @@ your help. Skale-engine is an open source project, built one
 contribution at a time by users just like you.
 
 The [Code of Conduct] details the bare minimum behavior
-expectations required from contributors to this project.
+expectations required from contributors.
 
 ## Where to get help or report a problem
 
 * If you have a question about using skale-engine, start a discussion
-  on [gitter] or on [google group]
+  on [gitter] or on [google group]. Please do not open issues for
+  questions or support requests.
 * If you think you have found a bug within skale-engine, open an
   [issue].  Do not forget to check that it doesn't already exist
   in our [issue database]
