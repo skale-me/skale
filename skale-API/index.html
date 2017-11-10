@@ -334,6 +334,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#screquiremodules" title="sc.require(modules)" class="md-nav__link">
+    sc.require(modules)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#scsourcesize-callback-args" title="sc.source(size, callback[, args])" class="md-nav__link">
     sc.source(size, callback[, args])
   </a>
@@ -801,6 +808,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#screquiremodules" title="sc.require(modules)" class="md-nav__link">
+    sc.require(modules)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#scsourcesize-callback-args" title="sc.source(size, callback[, args])" class="md-nav__link">
     sc.source(size, callback[, args])
   </a>
@@ -1215,10 +1229,10 @@ prior to invoking an action.</p>
 read from.</p>
 <p>The following example computes the size of a file using streams:</p>
 <div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">stream</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">createReadStream</span><span class="p">(</span><span class="s1">&#39;data.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">);</span>
-<span class="nx">sc</span><span class="p">.</span><span class="nx">lineStream</span><span class="p">(</span><span class="nx">stream</span><span class="p">).</span>
-   <span class="nx">map</span><span class="p">(</span><span class="nx">s</span> <span class="p">=&gt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span>
-   <span class="nx">reduce</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
-   <span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">lineStream</span><span class="p">(</span><span class="nx">stream</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">s</span> <span class="p">=&gt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 </pre></div>
 
 
@@ -1251,6 +1265,31 @@ is set to 0.</p>
 <span class="c1">// [ 2, 3 ]</span>
 <span class="nx">sc</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">).</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span>
 <span class="c1">// [ 10, 7, 4, 1, -2 ]</span>
+</pre></div>
+
+
+<h3 id="screquiremodules">sc.require(modules)<a class="headerlink" href="#screquiremodules" title="Permanent link">&para;</a></h3>
+<p>Sets a list of dependency modules to be deployed in workers for use
+by callbacks, such as mappers or reducers.  Returns the context
+object.</p>
+<ul>
+<li><em>modules</em>: an <em>Object</em> of the form <code>{name1: 'path1', ...}</code>
+  where <code>name1</code> is the name of the variable to which the module
+  is assigned to, and <code>path1</code> a path expression as in <a href="https://nodejs.org/dist/latest-v8.x/docs/api/modules.html#modules_require_resolve_request_options">require.resolve(path)</a>.</li>
+</ul>
+<p>Under the hood, <a href="https://www.npmjs.com/package/browserify">browserify</a> is used on master side to build a
+bundle which is serialized and sent to workers, where
+It is then evaluated in global context.</p>
+<p>Example:</p>
+<div class="codehilite"><pre><span></span><span class="c1">// deps.js contains:</span>
+<span class="c1">// module.export = function add3(a) {return a + 3;};</span>
+
+<span class="nx">sc</span><span class="p">.</span><span class="nx">require</span><span class="p">({</span><span class="nx">add3</span><span class="o">:</span> <span class="s1">&#39;./deps.js&#39;</span><span class="p">})</span>
+  <span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">a</span> <span class="p">=&gt;</span> <span class="nx">add3</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="c1">// [ 3, 4, 5, 6 ]</span>
 </pre></div>
 
 
@@ -1357,10 +1396,10 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
   <a href="https://promisesaplus.com">ES6 promise</a>.</li>
 </ul>
 <p>The following example computes the average of a dataset, avoiding a <code>map()</code>:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]).</span>
-   <span class="nx">aggregate</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
-    <span class="p">(</span><span class="nx">a1</span><span class="p">,</span> <span class="nx">a2</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">a1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">a1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a2</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]).</span>
-   <span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">aggregate</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">(</span><span class="nx">a1</span><span class="p">,</span> <span class="nx">a2</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">a1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">a1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">a2</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="nx">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
   <span class="p">})</span>
 <span class="c1">// 4.8333</span>
@@ -1401,9 +1440,10 @@ different from element type.</p>
   mapper executions over each element of the dataset.</li>
 </ul>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]).</span>
-   <span class="nx">aggregateByKey</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
-   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">aggregateByKey</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ [ &#39;hello&#39;, 2 ], [ &#39;world&#39;, 1 ] ]</span>
 </pre></div>
 
@@ -1442,8 +1482,8 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>
-   <span class="nx">collect</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
    <span class="p">});</span>
 <span class="c1">// [ 1, 2, 3, 4 ]</span>
@@ -1475,8 +1515,8 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]).</span>
-   <span class="nx">countByKey</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">countByKey</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ [ 10, 2 ], [ 20, 1 ] ]</span>
 </pre></div>
 
@@ -1492,8 +1532,8 @@ promise</a> is returned.</p>
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span> <span class="p">]).</span>
-   <span class="nx">countByValue</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span> <span class="p">])</span>
+  <span class="p">.</span><span class="nx">countByValue</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ [ 1, 2 ], [ 2, 2 ], [ 3, 2 ], [ 5, 1 ] ]</span>
 </pre></div>
 
@@ -1501,9 +1541,9 @@ promise</a> is returned.</p>
 <h3 id="dsdistinct">ds.distinct()<a class="headerlink" href="#dsdistinct" title="Permanent link">&para;</a></h3>
 <p>Returns a dataset where duplicates are removed.</p>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span> <span class="p">]).</span>
-   <span class="nx">distinct</span><span class="p">().</span>
-   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span> <span class="p">])</span>
+  <span class="p">.</span><span class="nx">distinct</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ 1, 2, 3, 4, 5 ]</span>
 </pre></div>
 
@@ -1528,9 +1568,9 @@ test.</p>
 <p>Example:</p>
 <div class="codehilite"><pre><span></span><span class="kd">function</span> <span class="nx">filter</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">data</span> <span class="o">%</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">modulo</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>
-   <span class="nx">filter</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="p">{</span><span class="nx">modulo</span><span class="o">:</span> <span class="mi">2</span><span class="p">}).</span>
-   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="p">{</span><span class="nx">modulo</span><span class="o">:</span> <span class="mi">2</span><span class="p">})</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ 1, 3 ]</span>
 </pre></div>
 
@@ -1596,9 +1636,9 @@ for each source element.</p>
     <span class="k">return</span> <span class="nx">tmp</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]).</span>
-   <span class="nx">flatMapValues</span><span class="p">(</span><span class="nx">valueFlatMapper</span><span class="p">,</span> <span class="p">{</span><span class="nx">N</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">fact</span><span class="o">:</span> <span class="mi">2</span><span class="p">}).</span>
-   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">flatMapValues</span><span class="p">(</span><span class="nx">valueFlatMapper</span><span class="p">,</span> <span class="p">{</span><span class="nx">N</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">fact</span><span class="o">:</span> <span class="mi">2</span><span class="p">})</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ [ &#39;hello&#39;, 2 ], [ &#39;hello&#39;, 2 ], [ &#39;world&#39;, 4 ], [ &#39;world&#39;, 4 ] ]</span>
 </pre></div>
 
@@ -1625,8 +1665,8 @@ If provided, the <em>done()</em> callback is invoked at completion, otherwise an
 </ul>
 <p>In the following example, the <code>console.log()</code> callback provided
 to <code>forEach()</code> is executed on workers and may be not visible:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>
-   <span class="nx">forEach</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;finished&#39;</span><span class="p">));</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;finished&#39;</span><span class="p">));</span>
 </pre></div>
 
 
@@ -1634,8 +1674,8 @@ to <code>forEach()</code> is executed on workers and may be not visible:</p>
 <p>When called on a dataset of type <code>[k,v]</code>, returns a dataset of type <code>[k, [v]]</code>
 where values with the same key are grouped.</p>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]).</span>
-   <span class="nx">groupByKey</span><span class="p">().</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">groupByKey</span><span class="p">().</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ [ 10, [ 1, 4 ] ], [ 20, [ 2 ] ] ]</span>
 </pre></div>
 
@@ -1666,8 +1706,8 @@ of elements for each key.</p>
 <p>When called on source dataset of type <code>[k,v]</code>, returns a dataset with just
 the elements <code>k</code>.</p>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]).</span>
-   <span class="nx">keys</span><span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ 10, 30 ]</span>
 </pre></div>
 
@@ -1694,8 +1734,8 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]).</span>
-   <span class="nx">lookup</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ world, 1 ]</span>
 </pre></div>
 
@@ -1717,9 +1757,9 @@ dataset and returns a new dataset.</p>
   mapper executions over each element of the dataset</li>
 </ul>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]).</span>
-   <span class="nx">map</span><span class="p">((</span><span class="nx">data</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">data</span> <span class="o">*</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">scaling</span><span class="p">,</span> <span class="p">{</span><span class="nx">scaling</span><span class="o">:</span> <span class="mf">1.2</span><span class="p">}).</span>
-   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">data</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">data</span> <span class="o">*</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">scaling</span><span class="p">,</span> <span class="p">{</span><span class="nx">scaling</span><span class="o">:</span> <span class="mf">1.2</span><span class="p">})</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ 1.2, 2.4, 3.6, 4.8 ]</span>
 </pre></div>
 
@@ -1744,9 +1784,9 @@ element of the source dataset and return a new dataset containing elements
 defined as <code>[k, mapper(v)]</code>, keeping the key unchanged for each
 source element.</p>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]).</span>
-   <span class="nx">mapValues</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span><span class="o">*</span><span class="nx">obj</span><span class="p">.</span><span class="nx">fact</span><span class="p">,</span> <span class="p">{</span><span class="nx">fact</span><span class="o">:</span> <span class="mi">2</span><span class="p">}).</span>
-   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">mapValues</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span><span class="o">*</span><span class="nx">obj</span><span class="p">.</span><span class="nx">fact</span><span class="p">,</span> <span class="p">{</span><span class="nx">fact</span><span class="o">:</span> <span class="mi">2</span><span class="p">})</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ [&#39;hello&#39;, 2], [&#39;world&#39;, 4] ]</span>
 </pre></div>
 
@@ -1809,9 +1849,9 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
   called at completion.</li>
 </ul>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]).</span>
-   <span class="nx">reduce</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
-   <span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// 15</span>
 </pre></div>
 
@@ -1839,9 +1879,9 @@ The result is passed to the <em>done()</em> callback if provided, otherwise an
 where the values of each key are aggregated using the <em>reducer</em>
 function and the <em>init</em> initial value.</p>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]).</span>
-   <span class="nx">reduceByKey</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
-   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">reduceByKey</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ [10, 7] ]</span>
 </pre></div>
 
@@ -1867,9 +1907,9 @@ must be present in the <em>source</em> dataset.</p>
 <p>Returns a dataset by sampling a fraction <em>frac</em> of source dataset, with or
 without replacement.</p>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]).</span>
-   <span class="nx">sample</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
-   <span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">sample</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ 1, 1, 3, 4, 4, 5, 7 ]</span>
 </pre></div>
 
@@ -2032,8 +2072,8 @@ dataset and the <em>other</em> dataset.</p>
 <p>When called on source dataset of type <code>[k,v]</code>, returns a dataset with just
 the elements <code>v</code>.</p>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]).</span>
-   <span class="nx">keys</span><span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+  <span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">collect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">);</span>
 <span class="c1">// [ &#39;world&#39;, 3 ]</span>
 </pre></div>
 
