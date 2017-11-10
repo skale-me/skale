@@ -65,11 +65,24 @@ Dataset objects have methods that can be run either on master side or on worker 
 
 ### Local standalone mode
 
-The standalone local mode limits the scalability to the single machine but simplifies the use, as it is only necessary to `require('skale-engine')`, and avoid cluster or extra server and configuration management.
+The standalone mode is the default operating mode. All the processes, master and workers are running on the local host, using the [cluster] core NodeJS module. This mode is the simplest to operate: no dependency, and no server nor cluster setup and management required.  It is used as any standard NodeJS package: simply `require('skale-engine')`, and that's it.
 
-In local standalone mode, the workers processes are created on the same host as the master, by the master itself, using the NodeJS core [cluster] module.
+This mode is perfect for development, fast prototyping and tests on a single machine (i.e. a laptop). For unlimited scalibity, see distributed mode below.
 
 ### Distributed mode
+
+The distributed mode allows to run the exact same code as in standalone over a network of multiple machines, thus achieving horizontal scalability.
+
+The distributed mode involves two executables, which must be running prior to launch application programs:
+
+- a `skale-server` process, which is the access point where the `master` (user application) and `workers` (running slaves) connect to, either by direct TCP connections, or by websockets.
+- A `skale-worker` process, which is a worker controller, running on each machine of the computing cluster, and connecting to the `skale-server`. The worker controller will spawn worker processes on demand (typically one per CPU), each time a new job is submitted.
+
+To run in distributed mode, the environment variable `SKALE_HOST` must be set to the `skale-server` hostname or IP address. If unset, the application will run in standalone mode. Multiple applications, each with its own set of workers and master processes can run simultaneously using the same server and worker controllers.
+
+Although not mandatory, running an external HTTP server on worker hosts, exposing skale temporary files, allows efficient peer-to-peer shuffle data transfer between workers. If not available, this traffic will go through the centralized `skale-server`. Any external HTTP server such as nginx, apache or busybox httpd, or even NodeJS (although not the most efficient for static file serving) will do.
+
+For further details, see command line help for `skale-worker` and `skale-server`.
 
 ## Adding a new source
 
@@ -105,7 +118,7 @@ A new transform can be implemented either by deriving a new class from the Datas
 [dataset.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js
 [serialization]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L141
 [deserialization]: https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js#L275
-[cluster]: https://nodejs.org/dist/latest-v7.x/docs/api/cluster.html
+[cluster]: https://nodejs.org/dist/latest-v8.x/docs/api/cluster.html
 [TextLocal]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L911-L919
 [TextLocal.getPartitions]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L921-L941
 [TextLocal.iterate]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L943

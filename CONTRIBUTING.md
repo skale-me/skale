@@ -4,10 +4,14 @@ Interested in contributing to skale-engine? We'd love
 your help. Skale-engine is an open source project, built one
 contribution at a time by users just like you.
 
+The [Code of Conduct] details the bare minimum behavior
+expectations required from contributors.
+
 ## Where to get help or report a problem
 
 * If you have a question about using skale-engine, start a discussion
-  on [gitter] or on [google group]
+  on [gitter] or on [google group]. Please do not open issues for
+  questions or support requests.
 * If you think you have found a bug within skale-engine, open an
   [issue].  Do not forget to check that it doesn't already exist
   in our [issue database]
@@ -32,14 +36,15 @@ contribution at a time by users just like you.
   create a pull request from there. Reference any relevant issue by
   including its number in the message, e.g. #123
 
-## Documentation
+## Writing documentation
 
 The [documentation guidelines] from Google provide a good reference
 for writing consistent and good technical documents, in particular
 [API documentation rules].
 
 Note: skale documentation was started before knowing this standard,
-thus is not yet fully compliant! Fixes are welcome here.
+thus is not yet fully compliant! Please help us to write better
+docs.
 
 ## Coding rules
 
@@ -56,6 +61,7 @@ the following conventions should be applied as well:
 Note: the code base is not yet fully compliant to these rules. Contributions
 are welcome here.
 
+[Code of Conduct]: CODE_OF_CONDUCT.md
 [coding style]: https://github.com/felixge/node-style-guide
 [gitter]: https://gitter.im/skale-me/skale-engine
 [google group]: https://groups.google.com/forum/#!forum/skale
