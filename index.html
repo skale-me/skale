@@ -238,36 +238,42 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#docs-community" title="Docs &amp; community" class="md-nav__link">
-    Docs &amp; community
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#quickstart" title="Quickstart" class="md-nav__link">
     Quickstart
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#local-mode" title="Local mode" class="md-nav__link">
+    Local mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distributed-mode" title="Distributed mode" class="md-nav__link">
+    Distributed mode
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" title="Examples" class="md-nav__link">
-    Examples
+  <a href="#resources" title="Resources" class="md-nav__link">
+    Resources
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#tests" title="Tests" class="md-nav__link">
-    Tests
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#people" title="People" class="md-nav__link">
-    People
+  <a href="#authors" title="Authors" class="md-nav__link">
+    Authors
   </a>
   
 </li>
@@ -393,36 +399,42 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#docs-community" title="Docs &amp; community" class="md-nav__link">
-    Docs &amp; community
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#quickstart" title="Quickstart" class="md-nav__link">
     Quickstart
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#local-mode" title="Local mode" class="md-nav__link">
+    Local mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distributed-mode" title="Distributed mode" class="md-nav__link">
+    Distributed mode
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" title="Examples" class="md-nav__link">
-    Examples
+  <a href="#resources" title="Resources" class="md-nav__link">
+    Resources
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#tests" title="Tests" class="md-nav__link">
-    Tests
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#people" title="People" class="md-nav__link">
-    People
+  <a href="#authors" title="Authors" class="md-nav__link">
+    Authors
   </a>
   
 </li>
@@ -460,72 +472,98 @@
                 
                   <h1>About Skale</h1>
                 
-                <p><img alt="skale-logo" src="./images/logo-skale.png" /></p>
-<p>Skale-engine is a fast and general purpose distributed data processing
-system. It provides a high-level API in Javascript and an optimized
+                <p><img alt="logo" src="./images/logo-skale.png" /></p>
+<p><a href="https://travis-ci.org/skale-me/skale-engine"><img alt="Build
+Status" src="https://travis-ci.org/skale-me/skale-engine.svg?branch=master" /></a>
+<a href="https://ci.appveyor.com/project/skaleme/skale-engine"><img alt="Build Status" src="https://ci.appveyor.com/api/projects/status/github/skale-me/skale-engine?svg=true" /></a></p>
+<p>High performance distributed data processing and machine learning.</p>
+<p>Skale provides a high-level API in Javascript and an optimized
 parallel execution engine on top of NodeJS.</p>
 <h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
 <ul>
-<li>In-memory computing</li>
-<li>Controlled memory usage, spill to disk when necessary</li>
-<li>Fast multiple distributed streams</li>
-<li>realtime lazy compiling and running of execution graphs</li>
-<li>workers can connect through TCP or websockets</li>
-</ul>
-<h2 id="docs-community">Docs &amp; community<a class="headerlink" href="#docs-community" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="skale-API/">skale-engine API</a></li>
-<li><a href="https://gitter.im/skale-me/skale-engine">Gitter</a> for support and
-  discussion</li>
-<li><a href="https://groups.google.com/forum/#!forum/skale">skale</a>
-  mailing list for discussion about use and development</li>
+<li>Pure javascript implementation of a Spark like engine</li>
+<li>Multiple data sources: filesystems, databases, cloud (S3, azure)</li>
+<li>Multiple data formats: CSV, JSON, Columnar (Parquet)...</li>
+<li>50 high level operators to build parallel apps</li>
+<li>Machine learning: scalable classification, regression, clusterization</li>
+<li>Run interactively in a nodeJS REPL shell</li>
+<li>Docker <a href="./docker/">ready</a>, simple local mode or full distributed mode</li>
+<li>Very fast, see <a href="./benchmark/">benchmark</a></li>
 </ul>
 <h2 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h2>
-<p>The best and quickest way to get started with skale-engine is to use
-<a href="https://www.npmjs.com/package/skale">skale</a> to create, run
-and deploy skale applications.</p>
-<div class="codehilite"><pre><span></span>$ npm install -g skale      # Install skale command once and for all
-$ skale create my_app       # Create a new app, install skale-engine
-$ cd my_app
-$ skale run                 # Starts a local cluster if necessary and run
+<div class="codehilite"><pre><span></span>npm install skale-engine
 </pre></div>
 
 
-<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
-<p>In the following, we bypass <a href="https://www.npmjs.com/package/skale">skale</a>
-toolbelt, and use directly and only skale-engine. It's for you if you are
-rather more interested by the skale-engine architecture, details and internals.</p>
-<p>To run the internal examples, clone the skale-engine repository and
-install the dependencies:</p>
-<div class="codehilite"><pre><span></span>$ git clone git://github.com/skale-me/skale-engine.git --depth 1
-$ cd skale-engine
-$ npm install
+<p>Word count example: </p>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine&#39;</span><span class="p">).</span><span class="nx">context</span><span class="p">();</span>
+
+<span class="nx">sc</span><span class="p">.</span><span class="nx">textFile</span><span class="p">(</span><span class="s1">&#39;/my/path/*.txt&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">line</span> <span class="p">=&gt;</span> <span class="nx">line</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))</span>
+  <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">word</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">word</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">reduceByKey</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">count</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+    <span class="nx">sc</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+  <span class="p">});</span>
 </pre></div>
 
 
-<p>Then start a skale-engine server and workers on local host:</p>
-<div class="codehilite"><pre><span></span>$ npm start
+<h3 id="local-mode">Local mode<a class="headerlink" href="#local-mode" title="Permanent link">&para;</a></h3>
+<p>In local mode, worker processes are automatically forked and
+communicate with app through child process IPC channel. This is
+the simplest way to operate, and it allows to use all machine
+available cores.</p>
+<p>To run in local mode, just execute your app script:</p>
+<div class="codehilite"><pre><span></span>node my_app.js
 </pre></div>
 
 
-<p>Then run whichever example you want</p>
-<div class="codehilite"><pre><span></span>$ ./examples/core/wordcount.js /etc/hosts
+<p>or with debug traces:</p>
+<div class="codehilite"><pre><span></span><span class="nv">SKALE_DEBUG</span><span class="o">=</span><span class="m">2</span> node my_app.js
 </pre></div>
 
 
-<h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">&para;</a></h2>
-<p>To run the test suite, first install the dependencies, then run <code>npm test</code>:</p>
-<div class="codehilite"><pre><span></span>$ npm install
-$ npm test
+<h3 id="distributed-mode">Distributed mode<a class="headerlink" href="#distributed-mode" title="Permanent link">&para;</a></h3>
+<p>In distributed mode, a cluster server process and worker processes
+must be started prior to start app. Processes communicate with each
+other via raw TCP or via websockets.</p>
+<p>To run in distributed cluster mode, first start a cluster server
+on <code>server_host</code>:</p>
+<div class="codehilite"><pre><span></span>./bin/server.js
 </pre></div>
 
 
-<h2 id="people">People<a class="headerlink" href="#people" title="Permanent link">&para;</a></h2>
+<p>On each worker host, start a worker controller process which connects
+to server:</p>
+<div class="codehilite"><pre><span></span>./bin/worker.js -H server_host
+</pre></div>
+
+
+<p>Then run your app, setting the cluster server host in environment:</p>
+<div class="codehilite"><pre><span></span><span class="nv">SKALE_HOST</span><span class="o">=</span>server_host node my_app.js
+</pre></div>
+
+
+<p>The same with debug traces:</p>
+<div class="codehilite"><pre><span></span><span class="nv">SKALE_HOST</span><span class="o">=</span>server_host <span class="nv">SKALE_DEBUG</span><span class="o">=</span><span class="m">2</span> node my_app.js
+</pre></div>
+
+
+<h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/skale-me/skale-engine/blob/master/CONTRIBUTING.md">Contributing guide</a></li>
+<li><a href="https://gitter.im/skale-me/skale-engine">Gitter</a> for support and
+  discussion</li>
+<li><a href="https://groups.google.com/forum/#!forum/skale">Mailing list</a>
+  for discussion about use and development</li>
+</ul>
+<h2 id="authors">Authors<a class="headerlink" href="#authors" title="Permanent link">&para;</a></h2>
 <p>The original authors of skale-engine are <a href="https://github.com/CedricArtigue">Cedric Artigue</a> and <a href="https://github.com/mvertes">Marc Vertes</a>.</p>
 <p><a href="https://github.com/skale-me/skale-engine/graphs/contributors">List of all
 contributors</a></p>
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
-<p><a href="./LICENSE">Apache-2.0</a></p>
+<p><a href="https://github.com/skale-me/skale-engine/blob/master/LICENSE">Apache-2.0</a></p>
 <h2 id="credits">Credits<a class="headerlink" href="#credits" title="Permanent link">&para;</a></h2>
 <div>Logo Icon made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
                 

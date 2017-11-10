@@ -2,38 +2,38 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Skale-engine is a fast and general purpose distributed data processing\nsystem. It provides a high-level API in Javascript and an optimized\nparallel execution engine on top of NodeJS.\n\n\nFeatures\n\n\n\n\nIn-memory computing\n\n\nControlled memory usage, spill to disk when necessary\n\n\nFast multiple distributed streams\n\n\nrealtime lazy compiling and running of execution graphs\n\n\nworkers can connect through TCP or websockets\n\n\n\n\nDocs \n community\n\n\n\n\nskale-engine API\n\n\nGitter\n for support and\n  discussion\n\n\nskale\n\n  mailing list for discussion about use and development\n\n\n\n\nQuickstart\n\n\nThe best and quickest way to get started with skale-engine is to use\n\nskale\n to create, run\nand deploy skale applications.\n\n\n$ npm install -g skale      # Install skale command once and for all\n$ skale create my_app       # Create a new app, install skale-engine\n$ cd my_app\n$ skale run                 # Starts a local cluster if necessary and run\n\n\n\n\n\nExamples\n\n\nIn the following, we bypass \nskale\n\ntoolbelt, and use directly and only skale-engine. It's for you if you are\nrather more interested by the skale-engine architecture, details and internals.\n\n\nTo run the internal examples, clone the skale-engine repository and\ninstall the dependencies:\n\n\n$ git clone git://github.com/skale-me/skale-engine.git --depth 1\n$ cd skale-engine\n$ npm install\n\n\n\n\n\nThen start a skale-engine server and workers on local host:\n\n\n$ npm start\n\n\n\n\n\nThen run whichever example you want\n\n\n$ ./examples/core/wordcount.js /etc/hosts\n\n\n\n\n\nTests\n\n\nTo run the test suite, first install the dependencies, then run \nnpm test\n:\n\n\n$ npm install\n$ npm test\n\n\n\n\n\nPeople\n\n\nThe original authors of skale-engine are \nCedric Artigue\n and \nMarc Vertes\n.\n\n\nList of all\ncontributors\n\n\nLicense\n\n\nApache-2.0\n\n\nCredits\n\n\nLogo Icon made by \nSmashicons\n from \nwww.flaticon.com\n is licensed by \nCC 3.0 BY", 
+            "text": "High performance distributed data processing and machine learning.\n\n\nSkale provides a high-level API in Javascript and an optimized\nparallel execution engine on top of NodeJS.\n\n\nFeatures\n\n\n\n\nPure javascript implementation of a Spark like engine\n\n\nMultiple data sources: filesystems, databases, cloud (S3, azure)\n\n\nMultiple data formats: CSV, JSON, Columnar (Parquet)...\n\n\n50 high level operators to build parallel apps\n\n\nMachine learning: scalable classification, regression, clusterization\n\n\nRun interactively in a nodeJS REPL shell\n\n\nDocker \nready\n, simple local mode or full distributed mode\n\n\nVery fast, see \nbenchmark\n\n\n\n\nQuickstart\n\n\nnpm install skale-engine\n\n\n\n\n\nWord count example: \n\n\nvar\n \nsc\n \n=\n \nrequire\n(\nskale-engine\n).\ncontext\n();\n\n\n\nsc\n.\ntextFile\n(\n/my/path/*.txt\n)\n\n  \n.\nflatMap\n(\nline\n \n=\n \nline\n.\nsplit\n(\n \n))\n\n  \n.\nmap\n(\nword\n \n=\n \n[\nword\n,\n \n1\n])\n\n  \n.\nreduceByKey\n((\na\n,\n \nb\n)\n \n=\n \na\n \n+\n \nb\n,\n \n0\n)\n\n  \n.\ncount\n(\nfunction\n \n(\nerr\n,\n \nresult\n)\n \n{\n\n    \nconsole\n.\nlog\n(\nresult\n);\n\n    \nsc\n.\nend\n();\n\n  \n});\n\n\n\n\n\n\nLocal mode\n\n\nIn local mode, worker processes are automatically forked and\ncommunicate with app through child process IPC channel. This is\nthe simplest way to operate, and it allows to use all machine\navailable cores.\n\n\nTo run in local mode, just execute your app script:\n\n\nnode my_app.js\n\n\n\n\n\nor with debug traces:\n\n\nSKALE_DEBUG\n=\n2\n node my_app.js\n\n\n\n\n\nDistributed mode\n\n\nIn distributed mode, a cluster server process and worker processes\nmust be started prior to start app. Processes communicate with each\nother via raw TCP or via websockets.\n\n\nTo run in distributed cluster mode, first start a cluster server\non \nserver_host\n:\n\n\n./bin/server.js\n\n\n\n\n\nOn each worker host, start a worker controller process which connects\nto server:\n\n\n./bin/worker.js -H server_host\n\n\n\n\n\nThen run your app, setting the cluster server host in environment:\n\n\nSKALE_HOST\n=\nserver_host node my_app.js\n\n\n\n\n\nThe same with debug traces:\n\n\nSKALE_HOST\n=\nserver_host \nSKALE_DEBUG\n=\n2\n node my_app.js\n\n\n\n\n\nResources\n\n\n\n\nContributing guide\n\n\nGitter\n for support and\n  discussion\n\n\nMailing list\n\n  for discussion about use and development\n\n\n\n\nAuthors\n\n\nThe original authors of skale-engine are \nCedric Artigue\n and \nMarc Vertes\n.\n\n\nList of all\ncontributors\n\n\nLicense\n\n\nApache-2.0\n\n\nCredits\n\n\nLogo Icon made by \nSmashicons\n from \nwww.flaticon.com\n is licensed by \nCC 3.0 BY", 
             "title": "About Skale"
         }, 
         {
             "location": "/#features", 
-            "text": "In-memory computing  Controlled memory usage, spill to disk when necessary  Fast multiple distributed streams  realtime lazy compiling and running of execution graphs  workers can connect through TCP or websockets", 
+            "text": "Pure javascript implementation of a Spark like engine  Multiple data sources: filesystems, databases, cloud (S3, azure)  Multiple data formats: CSV, JSON, Columnar (Parquet)...  50 high level operators to build parallel apps  Machine learning: scalable classification, regression, clusterization  Run interactively in a nodeJS REPL shell  Docker  ready , simple local mode or full distributed mode  Very fast, see  benchmark", 
             "title": "Features"
         }, 
         {
-            "location": "/#docs-community", 
-            "text": "skale-engine API  Gitter  for support and\n  discussion  skale \n  mailing list for discussion about use and development", 
-            "title": "Docs &amp; community"
-        }, 
-        {
             "location": "/#quickstart", 
-            "text": "The best and quickest way to get started with skale-engine is to use skale  to create, run\nand deploy skale applications.  $ npm install -g skale      # Install skale command once and for all\n$ skale create my_app       # Create a new app, install skale-engine\n$ cd my_app\n$ skale run                 # Starts a local cluster if necessary and run", 
+            "text": "npm install skale-engine  Word count example:   var   sc   =   require ( skale-engine ). context ();  sc . textFile ( /my/path/*.txt ) \n   . flatMap ( line   =   line . split (   )) \n   . map ( word   =   [ word ,   1 ]) \n   . reduceByKey (( a ,   b )   =   a   +   b ,   0 ) \n   . count ( function   ( err ,   result )   { \n     console . log ( result ); \n     sc . end (); \n   });", 
             "title": "Quickstart"
         }, 
         {
-            "location": "/#examples", 
-            "text": "In the following, we bypass  skale \ntoolbelt, and use directly and only skale-engine. It's for you if you are\nrather more interested by the skale-engine architecture, details and internals.  To run the internal examples, clone the skale-engine repository and\ninstall the dependencies:  $ git clone git://github.com/skale-me/skale-engine.git --depth 1\n$ cd skale-engine\n$ npm install  Then start a skale-engine server and workers on local host:  $ npm start  Then run whichever example you want  $ ./examples/core/wordcount.js /etc/hosts", 
-            "title": "Examples"
+            "location": "/#local-mode", 
+            "text": "In local mode, worker processes are automatically forked and\ncommunicate with app through child process IPC channel. This is\nthe simplest way to operate, and it allows to use all machine\navailable cores.  To run in local mode, just execute your app script:  node my_app.js  or with debug traces:  SKALE_DEBUG = 2  node my_app.js", 
+            "title": "Local mode"
         }, 
         {
-            "location": "/#tests", 
-            "text": "To run the test suite, first install the dependencies, then run  npm test :  $ npm install\n$ npm test", 
-            "title": "Tests"
+            "location": "/#distributed-mode", 
+            "text": "In distributed mode, a cluster server process and worker processes\nmust be started prior to start app. Processes communicate with each\nother via raw TCP or via websockets.  To run in distributed cluster mode, first start a cluster server\non  server_host :  ./bin/server.js  On each worker host, start a worker controller process which connects\nto server:  ./bin/worker.js -H server_host  Then run your app, setting the cluster server host in environment:  SKALE_HOST = server_host node my_app.js  The same with debug traces:  SKALE_HOST = server_host  SKALE_DEBUG = 2  node my_app.js", 
+            "title": "Distributed mode"
         }, 
         {
-            "location": "/#people", 
+            "location": "/#resources", 
+            "text": "Contributing guide  Gitter  for support and\n  discussion  Mailing list \n  for discussion about use and development", 
+            "title": "Resources"
+        }, 
+        {
+            "location": "/#authors", 
             "text": "The original authors of skale-engine are  Cedric Artigue  and  Marc Vertes .  List of all\ncontributors", 
-            "title": "People"
+            "title": "Authors"
         }, 
         {
             "location": "/#license", 
