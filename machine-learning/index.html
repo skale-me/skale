@@ -1,4 +1,7 @@
 
+
+
+
 <!DOCTYPE html>
 <html lang="en" class="no-js">
   <head>
@@ -10,13 +13,17 @@
         <meta name="description" content="Skale documentation">
       
       
+        <link rel="canonical" href="https://skale-me.github.io/skale-engine/machine-learning/">
+      
+      
+        <meta name="author" content="Marc Vertes">
       
       
         <meta name="lang:clipboard.copy" content="Copy to clipboard">
       
         <meta name="lang:clipboard.copied" content="Copied to clipboard">
       
-        <meta name="lang:search.languages" content="">
+        <meta name="lang:search.language" content="en">
       
         <meta name="lang:search.result.none" content="No matching documents">
       
@@ -26,30 +33,27 @@
       
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
-      
-        <link rel="shortcut icon" href="../images/favicon.png">
-      
-      <meta name="generator" content="mkdocs-0.16.3, mkdocs-material-1.11.0">
+      <link rel="shortcut icon" href="../images/favicon.png">
+      <meta name="generator" content="mkdocs-0.17.1, mkdocs-material-2.0.4">
     
     
       
-        <title>Machine learning - Skale</title>
+        <title>Machine Learning module - Skale</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application-709eec9410.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-23f75ab9c7.palette.css">
       
     
     
       <script src="../assets/javascripts/modernizr-e826f8942a.js"></script>
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application-04ea671600.css">
       
-    
-    
-      
-        
-        
-        
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
-        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto mono","Courier New",Courier,monospace}</style>
       
       <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     
@@ -57,10 +61,11 @@
     
   </head>
   
-  
-  
-  
-    <body>
+    
+    
+    
+      <body data-md-color-primary="indigo" data-md-color-accent="indigo">
+    
   
     <svg class="md-svg">
       <defs>
@@ -78,11 +83,9 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="Skale" class="md-header-nav__button md-logo">
+        <a href="https://skale-me.github.io/skale-engine/" title="Skale" class="md-header-nav__button md-logo">
           
-            
-              <img src="../images/logo.svg" width="24" height="24">
-            
+            <img src="../images/logo.svg" width="24" height="24">
           
         </a>
       </div>
@@ -99,14 +102,15 @@
                 </span>
               
             
-            Machine learning
+            Machine Learning module
           
         </span>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
         
-          <label class="md-icon md-icon--search md-header-nav__button" for="search"></label>
           
+            <label class="md-icon md-icon--search md-header-nav__button" for="search"></label>
+            
 <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="search"></label>
   <div class="md-search__inner">
@@ -127,6 +131,7 @@
     </div>
   </div>
 </div>
+          
         
       </div>
       
@@ -147,7 +152,7 @@
       </div>
     
     <div class="md-source__repository">
-      GitHub
+      skale-me/skale-engine
     </div>
   </a>
 
@@ -160,8 +165,6 @@
     
     <div class="md-container">
       
-      
-      
       <main class="md-main">
         <div class="md-main__inner md-grid" data-md-component="container">
           
@@ -171,13 +174,11 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="drawer">
-    <div class="md-nav__button md-logo">
+    <span class="md-nav__button md-logo">
       
-        
-          <img src="../images/logo.svg">
-        
+        <img src="../images/logo.svg" width="24" height="24">
       
-    </div>
+    </span>
     Skale
   </label>
   
@@ -197,7 +198,7 @@
       </div>
     
     <div class="md-source__repository">
-      GitHub
+      skale-me/skale-engine
     </div>
   </a>
 
@@ -256,8 +257,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../skale-API/" title="skale API" class="md-nav__link">
-      skale API
+    <a href="../skale-API/" title="Skale API" class="md-nav__link">
+      Skale API
     </a>
   </li>
 
@@ -277,11 +278,11 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="toc">
-        Machine learning
+        Machine Learning module
       </label>
     
-    <a href="./" title="Machine learning" class="md-nav__link md-nav__link--active">
-      Machine learning
+    <a href="./" title="Machine Learning module" class="md-nav__link md-nav__link--active">
+      Machine Learning module
     </a>
     
       
@@ -555,11 +556,11 @@ map-reduce engine.</p>
 <li><em>means</em>: an initial array of vectors (arrays) of numbers, default undefined.</li>
 </ul>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">dataset</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span>
+<div class="codehilite"><pre><span></span><span class="kr">const</span> <span class="nx">dataset</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span>
   <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
   <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 <span class="p">]);</span>
-<span class="nx">kmeans</span> <span class="o">=</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">KMeans</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">kmeans</span> <span class="o">=</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">KMeans</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
 <span class="nx">await</span> <span class="nx">kmeans</span><span class="p">.</span><span class="nx">fit</span><span class="p">(</span><span class="nx">dataset</span><span class="p">);</span>
 <span class="nx">kmeans</span><span class="p">.</span><span class="nx">means</span>
 <span class="c1">// [ [ 2.5, 1 ], [ 2.5, 4 ] ]</span>
@@ -619,11 +620,11 @@ can be added to the loss, by default the squared euclidean norm L2.</p>
     descent</li>
 </ul>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">trainingSet</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span>
+<div class="codehilite"><pre><span></span><span class="kr">const</span> <span class="nx">trainingSet</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span>
  <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.7</span><span class="p">]],</span>
- <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]]</span>
+ <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]]</span>
 <span class="p">]);</span>
-<span class="kd">var</span> <span class="nx">sgd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">SGDLinearModel</span><span class="p">()</span>
+<span class="kr">const</span> <span class="nx">sgd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">SGDLinearModel</span><span class="p">()</span>
 <span class="nx">await</span> <span class="nx">sgd</span><span class="p">.</span><span class="nx">fit</span><span class="p">(</span><span class="nx">trainingSet</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="nx">sgd</span><span class="p">.</span><span class="nx">weights</span>
 <span class="c1">// [ 0.8531998372026804, -1.1944797720837526 ]</span>
@@ -667,7 +668,7 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../skale-API/" title="skale API" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../skale-API/" title="Skale API" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -676,7 +677,7 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                skale API
+                Skale API
               </span>
             </div>
           </a>
@@ -703,6 +704,10 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
     <div class="md-footer-meta__inner md-grid">
       <div class="md-footer-copyright">
         
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2016 Luca-SAS
+          </div>
+        
         powered by
         <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
         and
@@ -711,6 +716,14 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
       </div>
       
         
+  <div class="md-footer-social">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+      <a href="https://github.com/skale-me" class="md-footer-social__link fa fa-github"></a>
+    
+  </div>
+
       
     </div>
   </div>
@@ -718,15 +731,14 @@ callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promi
       
     </div>
     
-      <script src="../assets/javascripts/application-268d62d82d.js"></script>
+      <script src="../assets/javascripts/application-8e4952e681.js"></script>
       
-      
-      <script>app.initialize({url:{base:".."}})</script>
+      <script>app.initialize({version:"0.17.1",url:{base:".."}})</script>
       
     
     
       
-      <script>!function(e,t,a,n,o,c,i){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,c=t.createElement(a),i=t.getElementsByTagName(a)[0],c.async=1,c.src=n,i.parentNode.insertBefore(c,i)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-75822605-1","skale-engine.github.io"),ga("set","anonymizeIp",!0),ga("send","pageview");var links=document.getElementsByTagName("a");Array.prototype.map.call(links,function(e){e.host!=document.location.host&&e.addEventListener("click",function(){var t=e.getAttribute("data-md-action")||"follow";ga("send","event","outbound",t,e.href)})});var query=document.forms.search.query;query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})</script>
+      <script>!function(e,t,a,n,o,c,i){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,c=t.createElement(a),i=t.getElementsByTagName(a)[0],c.async=1,c.src=n,i.parentNode.insertBefore(c,i)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-75822605-1","auto"),ga("set","anonymizeIp",!0),ga("send","pageview");var links=document.getElementsByTagName("a");Array.prototype.map.call(links,function(e){e.host!=document.location.host&&e.addEventListener("click",function(){var t=e.getAttribute("data-md-action")||"follow";ga("send","event","outbound",t,e.href)})});var query=document.forms.search.query;query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})</script>
       
     
   </body>
