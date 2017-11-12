@@ -120,6 +120,12 @@ callback if provided, otherwise an [ES6 promise] is returned.
 
 ### sgd.predict(sample)
 
+Predict a label for a given *sample* and returns a numerical value
+which can be converted to a label -1 if negative, or 1 if positive.
+
+If selected loss is `log`, the returned value can be interpreted as
+a probability of the corresponding label.
+
 ## StandardScaler()
 
 ### scaler.fit(dataset, [done])
