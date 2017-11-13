@@ -6,12 +6,35 @@ statistical learning on top of skale datasets and distributed
 map-reduce engine.
 
 The module can be loaded using:
-
-```javascript
+```js
 var ml = require('skale-engine/ml')
 ```
 
-## binaryClassificationMetrics(measures, options[, done])
+## classificationMetrics(measures[, options][, done])
+
+This [action] computes various metrics to measure classification performance.
+
+- *measures*: a dataset where entries are in the form
+  `[prediction, label]` with *prediction* and *label* being numbers where
+  only value sign is used: true if positive or false if negative.
+- *options*: an optional *Object* with the following fields:
+    - *steps*: integer *Number* defining the number of points in the Receiver
+      Operation Charateristics (ROC) curve. Defaults: 10
+- *done*:  an optional callback of the form `function(error, result)`
+  which is called at completion. *result* is an object with the following fields:
+    - *rates*: an array of *steps* of confusion matrix raw values
+    - *auROC*: area under ROC curve, using the trapezoidal rule
+    - *auPR*: area under Precision Recall curve, using the trapezoidal rule
+
+Example:
+```js
+var model = new ml.SGDLinearModel();
+await model.fit(trainingSet);
+var predictionAndLabels = testSet.map((p, model) => [model.predict(p[1]), p[0]], model);
+var metrics = await ml.classificationMetrics(predictionAndLabels)
+console.log('ROC AUC:', metrics.auROC);
+// 0.869
+```
 
 ## KMeans(nbClusters[, options])
 
@@ -19,14 +42,13 @@ Creates a clusterization model fitted via [K-Means] algorithm.
 
 - *nbClusters*: *Number*, specifying the number of clusters in the model
 - *Options*: an optional *Object* with the following fields:
-  - *maxMse*: *Number* defining the maximum mean square error between cluster
-    centers since previous iteration. Used to stop iterations. Default to 1e-7.
-  - *maxIterations*: *Number* defining the maximum number of iterations. Default: 100.
-  - *means*: an initial array of vectors (arrays) of numbers, default undefined.
+    - *maxMse*: *Number* defining the maximum mean square error between cluster
+      centers since previous iteration. Used to stop iterations. Default to 1e-7.
+    - *maxIterations*: *Number* defining the maximum number of iterations. Default: 100.
+    - *means*: an initial array of vectors (arrays) of numbers, default undefined.
 
 Example:
-
-```javascript
+```js
 const dataset = sc.parallelize([
   [1, 2], [1, 4], [1, 0],
   [4, 2], [4, 4], [4, 0]
@@ -90,8 +112,7 @@ can be added to the loss, by default the squared euclidean norm L2.
     descent
 
 Example:
-
-```javascript
+```js
 const trainingSet = sc.parallelize([
  [1, [0.5, -0.7]],
  [-1, [-0.5, 0.7]]
