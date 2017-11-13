@@ -163,6 +163,7 @@ alternatively through a returned [ES6 promise].
 |[takeSample(withReplacement, num)]|Return a sample of `num` elements of dataset                      |array of value     |
 |[top(num)]                        |Return the top `num` elements of dataset                          |array of value     |
 
+[ES6 promise]: https://promisesaplus.com
 [skale.context()]: skale-API.md#skalecontextconfig
 
 [lineStream(stream)]: skale-API#sclinestreaminput_stream

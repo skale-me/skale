@@ -66,12 +66,12 @@ kmeans.predict([4, 4]
 ### kmeans.fit(trainingSet[, done])
 
 This [action] updates *kmeans* model by fitting it to the input
-dataset *trainingSet*. The result is passed to the *done()* callback
+dataset *trainingSet*. The *done()* callback is called at completion
 if provided, otherwise an [ES6 promise] is returned.
 
 - *trainingSet*: a dataset where entries are in the following format:
   `[feature0, feature1, ...]` with *featureN* being a float number.
-- *done*: an optional callback of the form `function(error, result)`
+- *done*: an optional callback of the form `function(error)`
   which is called at completion.
 
 ### kmeans.predict(sample)
@@ -128,15 +128,15 @@ sgd.predict([2, -2])
 ### sgd.fit(trainingSet, iterations[, done])
 
 This [action] updates *sgdClassifier* model by fitting it to the
-input dataset *trainingSet*. The result is passed to the *done()*
-callback if provided, otherwise an [ES6 promise] is returned.
+input dataset *trainingSet*. The *done()* callback is called at
+completion if provided, otherwise an [ES6 promise] is returned.
 
 - *trainingSet*: a dataset where entries are in the following format:
   `[label, [feature0, feature1, ...]]` with *label* being either 1 or -1,
   and *featureN* being a float number, preferentially with a zero mean and
   unit variance (in range [-1, 1]). Sparse vectors with undefined features
   are supported.
-- *done*: an optional callback of the form `function(error, result)`
+- *done*: an optional callback of the form `function(error)`
   which is called at completion.
 
 ### sgd.predict(sample)
@@ -149,13 +149,58 @@ a probability of the corresponding label.
 
 ## StandardScaler()
 
-### scaler.fit(dataset, [done])
+Creates a standard scaler which standardizes features by removing
+the mean and scaling to unit variance.
 
-### scaler.transform(features)
+Centering and scaling happen independently on each feature by
+computing the relevant statistics on the samples in the training
+set. 
+
+Standardization of datasets is a common requirement for many machine
+learning estimators. They might behave badly if the individual
+features do not more or less look like standard normally distributed
+data: Gaussian with zero mean and unit variance.
+
+Example:
+```js
+var data = sc.parallelize([[0, 0], [0, 0], [1, 1], [1, 1]]);
+var scaler = new ml.StandardScaler();
+await scaler.fit(data);
+scaler
+//StandardScaler {
+//  transform: [Function],
+//  count: 4,
+//  mean: [ 0.5, 0.5 ],
+//  std: [ 0.5, 0.5 ] }
+var scaled = data.map((p, scaler) => scaler.transform(p), scaler)
+console.log(await scaled.collect());
+// [ [ -1, -1 ], [ -1, -1 ], [ 1, 1 ], [ 1, 1 ] ]
+scaler.transform([2, 2])
+// [ 3, 3 ]
+```
+
+### scaler.fit(trainingSet[, done])
+
+This [action] updates *scaler* by computing the mean and std of
+*trainingSet* to be used for later scaling. The *done()* callback
+is called at completion if provided, otherwise an [ES6 promise] is
+returned.
+
+- *trainingSet*: a dataset where entries are in the format
+  `[feature0, feature1, ...]` with *featureN* being a *Number*
+- *done*: an optional callback of the form `function (error)` which
+  is called at completion.
+
+### scaler.transform(sample)
+
+Returns the standardized scaled value of *sample*.
+
+- *sample*: an *Array* with the format `[feature0, feature 1, ...]`
+  with *featureN* being a float number.
 
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
 [ES6 promise]: https://promisesaplus.com
-[action]: #actions
+[action]: concepts#actions
 [K-Means]: https://en.wikipedia.org/wiki/K-means_clustering
 [loss function]: https://en.wikipedia.org/wiki/Loss_functions_for_classification
 [logistic regression]: https://en.wikipedia.org/wiki/Logistic_regression
