@@ -296,8 +296,8 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#binaryclassificationmetricsmeasures-options-done" title="binaryClassificationMetrics(measures, options[, done])" class="md-nav__link">
-    binaryClassificationMetrics(measures, options[, done])
+  <a href="#classificationmetricsmeasures-options-done" title="classificationMetrics(measures[, options][, done])" class="md-nav__link">
+    classificationMetrics(measures[, options][, done])
   </a>
   
 </li>
@@ -365,15 +365,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#scalerfitdataset-done" title="scaler.fit(dataset, [done])" class="md-nav__link">
-    scaler.fit(dataset, [done])
+  <a href="#scalerfittrainingset-done" title="scaler.fit(trainingSet[, done])" class="md-nav__link">
+    scaler.fit(trainingSet[, done])
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#scalertransformfeatures" title="scaler.transform(features)" class="md-nav__link">
-    scaler.transform(features)
+  <a href="#scalertransformsample" title="scaler.transform(sample)" class="md-nav__link">
+    scaler.transform(sample)
   </a>
   
 </li>
@@ -430,8 +430,8 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#binaryclassificationmetricsmeasures-options-done" title="binaryClassificationMetrics(measures, options[, done])" class="md-nav__link">
-    binaryClassificationMetrics(measures, options[, done])
+  <a href="#classificationmetricsmeasures-options-done" title="classificationMetrics(measures[, options][, done])" class="md-nav__link">
+    classificationMetrics(measures[, options][, done])
   </a>
   
 </li>
@@ -499,15 +499,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#scalerfitdataset-done" title="scaler.fit(dataset, [done])" class="md-nav__link">
-    scaler.fit(dataset, [done])
+  <a href="#scalerfittrainingset-done" title="scaler.fit(trainingSet[, done])" class="md-nav__link">
+    scaler.fit(trainingSet[, done])
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#scalertransformfeatures" title="scaler.transform(features)" class="md-nav__link">
-    scaler.transform(features)
+  <a href="#scalertransformsample" title="scaler.transform(sample)" class="md-nav__link">
+    scaler.transform(sample)
   </a>
   
 </li>
@@ -544,16 +544,46 @@ map-reduce engine.</p>
 </pre></div>
 
 
-<h2 id="binaryclassificationmetricsmeasures-options-done">binaryClassificationMetrics(measures, options[, done])<a class="headerlink" href="#binaryclassificationmetricsmeasures-options-done" title="Permanent link">&para;</a></h2>
+<h2 id="classificationmetricsmeasures-options-done">classificationMetrics(measures[, options][, done])<a class="headerlink" href="#classificationmetricsmeasures-options-done" title="Permanent link">&para;</a></h2>
+<p>This <a href="../concepts#actions">action</a> computes various metrics to measure classification performance.</p>
+<ul>
+<li><em>measures</em>: a dataset where entries are in the form
+  <code>[prediction, label]</code> with <em>prediction</em> and <em>label</em> being numbers where
+  only value sign is used: true if positive or false if negative.</li>
+<li><em>options</em>: an optional <em>Object</em> with the following fields:<ul>
+<li><em>steps</em>: integer <em>Number</em> defining the number of points in the Receiver
+  Operation Charateristics (ROC) curve. Defaults: 10</li>
+</ul>
+</li>
+<li><em>done</em>:  an optional callback of the form <code>function(error, result)</code>
+  which is called at completion. <em>result</em> is an object with the following fields:<ul>
+<li><em>rates</em>: an array of <em>steps</em> of confusion matrix raw values</li>
+<li><em>auROC</em>: area under ROC curve, using the trapezoidal rule</li>
+<li><em>auPR</em>: area under Precision Recall curve, using the trapezoidal rule</li>
+</ul>
+</li>
+</ul>
+<p>Example:</p>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">SGDLinearModel</span><span class="p">();</span>
+<span class="nx">await</span> <span class="nx">model</span><span class="p">.</span><span class="nx">fit</span><span class="p">(</span><span class="nx">trainingSet</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">predictionAndLabels</span> <span class="o">=</span> <span class="nx">testSet</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">p</span><span class="p">,</span> <span class="nx">model</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">predict</span><span class="p">(</span><span class="nx">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nx">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="nx">model</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">metrics</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">classificationMetrics</span><span class="p">(</span><span class="nx">predictionAndLabels</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ROC AUC:&#39;</span><span class="p">,</span> <span class="nx">metrics</span><span class="p">.</span><span class="nx">auROC</span><span class="p">);</span>
+<span class="c1">// 0.869</span>
+</pre></div>
+
+
 <h2 id="kmeansnbclusters-options">KMeans(nbClusters[, options])<a class="headerlink" href="#kmeansnbclusters-options" title="Permanent link">&para;</a></h2>
 <p>Creates a clusterization model fitted via <a href="https://en.wikipedia.org/wiki/K-means_clustering">K-Means</a> algorithm.</p>
 <ul>
 <li><em>nbClusters</em>: <em>Number</em>, specifying the number of clusters in the model</li>
-<li><em>Options</em>: an optional <em>Object</em> with the following fields:</li>
+<li><em>Options</em>: an optional <em>Object</em> with the following fields:<ul>
 <li><em>maxMse</em>: <em>Number</em> defining the maximum mean square error between cluster
-    centers since previous iteration. Used to stop iterations. Default to 1e-7.</li>
+  centers since previous iteration. Used to stop iterations. Default to 1e-7.</li>
 <li><em>maxIterations</em>: <em>Number</em> defining the maximum number of iterations. Default: 100.</li>
 <li><em>means</em>: an initial array of vectors (arrays) of numbers, default undefined.</li>
+</ul>
+</li>
 </ul>
 <p>Example:</p>
 <div class="codehilite"><pre><span></span><span class="kr">const</span> <span class="nx">dataset</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([</span>
@@ -572,13 +602,13 @@ map-reduce engine.</p>
 
 
 <h3 id="kmeansfittrainingset-done">kmeans.fit(trainingSet[, done])<a class="headerlink" href="#kmeansfittrainingset-done" title="Permanent link">&para;</a></h3>
-<p>This <a href="#actions">action</a> updates <em>kmeans</em> model by fitting it to the input
-dataset <em>trainingSet</em>. The result is passed to the <em>done()</em> callback
+<p>This <a href="../concepts#actions">action</a> updates <em>kmeans</em> model by fitting it to the input
+dataset <em>trainingSet</em>. The <em>done()</em> callback is called at completion
 if provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 <ul>
 <li><em>trainingSet</em>: a dataset where entries are in the following format:
   <code>[feature0, feature1, ...]</code> with <em>featureN</em> being a float number.</li>
-<li><em>done</em>: an optional callback of the form <code>function(error, result)</code>
+<li><em>done</em>: an optional callback of the form <code>function(error)</code>
   which is called at completion.</li>
 </ul>
 <h3 id="kmeanspredictsample">kmeans.predict(sample)<a class="headerlink" href="#kmeanspredictsample" title="Permanent link">&para;</a></h3>
@@ -634,22 +664,68 @@ can be added to the loss, by default the squared euclidean norm L2.</p>
 
 
 <h3 id="sgdfittrainingset-iterations-done">sgd.fit(trainingSet, iterations[, done])<a class="headerlink" href="#sgdfittrainingset-iterations-done" title="Permanent link">&para;</a></h3>
-<p>This <a href="#actions">action</a> updates <em>sgdClassifier</em> model by fitting it to the
-input dataset <em>trainingSet</em>. The result is passed to the <em>done()</em>
-callback if provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
+<p>This <a href="../concepts#actions">action</a> updates <em>sgdClassifier</em> model by fitting it to the
+input dataset <em>trainingSet</em>. The <em>done()</em> callback is called at
+completion if provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is returned.</p>
 <ul>
 <li><em>trainingSet</em>: a dataset where entries are in the following format:
   <code>[label, [feature0, feature1, ...]]</code> with <em>label</em> being either 1 or -1,
   and <em>featureN</em> being a float number, preferentially with a zero mean and
   unit variance (in range [-1, 1]). Sparse vectors with undefined features
   are supported.</li>
-<li><em>done</em>: an optional callback of the form <code>function(error, result)</code>
+<li><em>done</em>: an optional callback of the form <code>function(error)</code>
   which is called at completion.</li>
 </ul>
 <h3 id="sgdpredictsample">sgd.predict(sample)<a class="headerlink" href="#sgdpredictsample" title="Permanent link">&para;</a></h3>
+<p>Predict a label for a given <em>sample</em> and returns a numerical value
+which can be converted to a label -1 if negative, or 1 if positive.</p>
+<p>If selected loss is <code>log</code>, the returned value can be interpreted as
+a probability of the corresponding label.</p>
 <h2 id="standardscaler">StandardScaler()<a class="headerlink" href="#standardscaler" title="Permanent link">&para;</a></h2>
-<h3 id="scalerfitdataset-done">scaler.fit(dataset, [done])<a class="headerlink" href="#scalerfitdataset-done" title="Permanent link">&para;</a></h3>
-<h3 id="scalertransformfeatures">scaler.transform(features)<a class="headerlink" href="#scalertransformfeatures" title="Permanent link">&para;</a></h3>
+<p>Creates a standard scaler which standardizes features by removing
+the mean and scaling to unit variance.</p>
+<p>Centering and scaling happen independently on each feature by
+computing the relevant statistics on the samples in the training
+set. </p>
+<p>Standardization of datasets is a common requirement for many machine
+learning estimators. They might behave badly if the individual
+features do not more or less look like standard normally distributed
+data: Gaussian with zero mean and unit variance.</p>
+<p>Example:</p>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]);</span>
+<span class="kd">var</span> <span class="nx">scaler</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ml</span><span class="p">.</span><span class="nx">StandardScaler</span><span class="p">();</span>
+<span class="nx">await</span> <span class="nx">scaler</span><span class="p">.</span><span class="nx">fit</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="nx">scaler</span>
+<span class="c1">//StandardScaler {</span>
+<span class="c1">//  transform: [Function],</span>
+<span class="c1">//  count: 4,</span>
+<span class="c1">//  mean: [ 0.5, 0.5 ],</span>
+<span class="c1">//  std: [ 0.5, 0.5 ] }</span>
+<span class="kd">var</span> <span class="nx">scaled</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">p</span><span class="p">,</span> <span class="nx">scaler</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">scaler</span><span class="p">.</span><span class="nx">transform</span><span class="p">(</span><span class="nx">p</span><span class="p">),</span> <span class="nx">scaler</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">await</span> <span class="nx">scaled</span><span class="p">.</span><span class="nx">collect</span><span class="p">());</span>
+<span class="c1">// [ [ -1, -1 ], [ -1, -1 ], [ 1, 1 ], [ 1, 1 ] ]</span>
+<span class="nx">scaler</span><span class="p">.</span><span class="nx">transform</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="c1">// [ 3, 3 ]</span>
+</pre></div>
+
+
+<h3 id="scalerfittrainingset-done">scaler.fit(trainingSet[, done])<a class="headerlink" href="#scalerfittrainingset-done" title="Permanent link">&para;</a></h3>
+<p>This <a href="../concepts#actions">action</a> updates <em>scaler</em> by computing the mean and std of
+<em>trainingSet</em> to be used for later scaling. The <em>done()</em> callback
+is called at completion if provided, otherwise an <a href="https://promisesaplus.com">ES6 promise</a> is
+returned.</p>
+<ul>
+<li><em>trainingSet</em>: a dataset where entries are in the format
+  <code>[feature0, feature1, ...]</code> with <em>featureN</em> being a <em>Number</em></li>
+<li><em>done</em>: an optional callback of the form <code>function (error)</code> which
+  is called at completion.</li>
+</ul>
+<h3 id="scalertransformsample">scaler.transform(sample)<a class="headerlink" href="#scalertransformsample" title="Permanent link">&para;</a></h3>
+<p>Returns the standardized scaled value of <em>sample</em>.</p>
+<ul>
+<li><em>sample</em>: an <em>Array</em> with the format <code>[feature0, feature 1, ...]</code>
+  with <em>featureN</em> being a float number.</li>
+</ul>
                 
                   
                 
