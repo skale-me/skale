@@ -1,8 +1,8 @@
 ![logo](docs/images/logo-skale.png)
 
-[![Build
-Status](https://travis-ci.org/skale-me/skale.svg?branch=master)](https://travis-ci.org/skale-me/skale)
+[![Build Status](https://travis-ci.org/skale-me/skale.svg?branch=master)](https://travis-ci.org/skale-me/skale)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/skale-me/skale?svg=true)](https://ci.appveyor.com/project/skaleme/skale)
+[![npm badge](https://img.shields.io/npm/v/skale.svg)](https://www.npmjs.com/package/skale)
 
 
 High performance distributed data processing and machine learning.
