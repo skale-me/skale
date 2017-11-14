@@ -1,8 +1,8 @@
 ![logo](docs/images/logo-skale.png)
 
 [![Build
-Status](https://travis-ci.org/skale-me/skale-engine.svg?branch=master)](https://travis-ci.org/skale-me/skale-engine)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/skale-me/skale-engine?svg=true)](https://ci.appveyor.com/project/skaleme/skale-engine)
+Status](https://travis-ci.org/skale-me/skale.svg?branch=master)](https://travis-ci.org/skale-me/skale)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/skale-me/skale?svg=true)](https://ci.appveyor.com/project/skaleme/skale)
 
 
 High performance distributed data processing and machine learning.
