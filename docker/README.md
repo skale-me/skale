@@ -1,6 +1,6 @@
 # Skale Docker
 
-This directory contains a sample Dockerfile for skale-engine container, based on [Alpine](https://hub.docker.com/_/alpine/) container. 
+This directory contains a sample Dockerfile for skale container, based on [Alpine](https://hub.docker.com/_/alpine/) container. 
 
 It also contains a sample Compose file to deploy a minimal stack on a single host or a docker swarm.
 

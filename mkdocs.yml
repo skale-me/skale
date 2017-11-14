@@ -2,7 +2,7 @@
 site_name: Skale
 site_description: Skale documentation
 site_author: 'Marc Vertes'
-site_url: 'https://skale-me.github.io/skale-engine/'
+site_url: 'https://skale-me.github.io/skale/'
 dev_addr: 0.0.0.0:8000
 
 google_analytics:
@@ -10,8 +10,8 @@ google_analytics:
   - 'auto'
 
 # Repository
-repo_name: 'skale-me/skale-engine'
-repo_url: 'https://github.com/skale-me/skale-engine/'
+repo_name: 'skale-me/skale'
+repo_url: 'https://github.com/skale-me/skale/'
 
 # Copyright
 copyright: 'Copyright &copy; 2016 Luca-SAS'
