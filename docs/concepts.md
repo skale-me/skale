@@ -35,7 +35,7 @@ efficient pipelined execution and optimized data transfers.
 A first example:
 
 ```javascript
-var sc = require('skale-engine').context();		// create a new context
+var sc = require('skale').context();		// create a new context
 sc.parallelize([1, 2, 3, 4]).				// source
    map(function (x) {return x+1}).			// transform
    reduce(function (a, b) {return a+b}, 0).	// action

@@ -11,8 +11,8 @@
   // - evaluate the model on the adult test set
   // - generate ROC curves as png images
 
-  var sc = require('skale-engine').context();
-  var ml = require('skale-engine/ml');
+  var sc = require('skale').context();
+  var ml = require('skale/ml');
   var plot = require('plotter').plot;     // Todo: should be replaced by D3
 
   // Todo: features should be automatically extracted from dataset + type schema

@@ -1,5 +1,5 @@
 var t = require('tape');
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 t.test('cartesian', function (t) {
   var data = [1, 2, 3, 4, 5, 6];

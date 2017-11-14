@@ -65,7 +65,7 @@ Dataset objects have methods that can be run either on master side or on worker 
 
 ### Local standalone mode
 
-The standalone mode is the default operating mode. All the processes, master and workers are running on the local host, using the [cluster] core NodeJS module. This mode is the simplest to operate: no dependency, and no server nor cluster setup and management required.  It is used as any standard NodeJS package: simply `require('skale-engine')`, and that's it.
+The standalone mode is the default operating mode. All the processes, master and workers are running on the local host, using the [cluster] core NodeJS module. This mode is the simplest to operate: no dependency, and no server nor cluster setup and management required.  It is used as any standard NodeJS package: simply `require('skale')`, and that's it.
 
 This mode is perfect for development, fast prototyping and tests on a single machine (i.e. a laptop). For unlimited scalibity, see distributed mode below.
 

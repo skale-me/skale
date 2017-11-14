@@ -1,5 +1,5 @@
 var t = require('tape');
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 t.test('range 1 arg', function (t) {
   t.plan(1);

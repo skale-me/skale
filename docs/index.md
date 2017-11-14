@@ -22,13 +22,13 @@ parallel execution engine on top of NodeJS.
 
 ## Quickstart
 ```sh
-npm install skale-engine
+npm install skale
 ```
 
 Word count example: 
 
 ```javascript
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 sc.textFile('/my/path/*.txt')
   .flatMap(line => line.split(' '))
@@ -93,7 +93,7 @@ SKALE_HOST=server_host SKALE_DEBUG=2 node my_app.js
 
 ## Authors
 
-The original authors of skale-engine are [Cedric Artigue](https://github.com/CedricArtigue) and [Marc Vertes](https://github.com/mvertes).
+The original authors of skale are [Cedric Artigue](https://github.com/CedricArtigue) and [Marc Vertes](https://github.com/mvertes).
 
 [List of all
 contributors](https://github.com/skale-me/skale-engine/graphs/contributors)

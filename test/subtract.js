@@ -1,5 +1,5 @@
 var t = require('tape');
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 var d1 = [[1, 1], [1, 1], [2, 3], [2, 4], [3, 5]];
 var d2 = [[1, 1], [1, 1], [2, 3]];

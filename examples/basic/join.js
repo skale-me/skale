@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 var data = [['hello', 1], ['world', 2], ['world', 3]];
 var data2 = [['cedric', 3], ['world', 4]];
