@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 sc.parallelize([1, 2, 3, 4, 5])
   .collect(function(err, res) {

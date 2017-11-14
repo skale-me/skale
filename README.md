@@ -22,13 +22,13 @@ parallel execution engine on top of NodeJS.
 
 ## Quickstart
 ```sh
-npm install skale-engine
+npm install skale
 ```
 
 Word count example: 
 
 ```javascript
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 sc.textFile('/my/path/*.txt')
   .flatMap(line => line.split(' '))
@@ -86,7 +86,7 @@ SKALE_HOST=server_host SKALE_DEBUG=2 node my_app.js
 ## Resources
 
 * [Contributing guide](CONTRIBUTING.md)
-* [Documentation](https://skale-me.github.io/skale-engine)
+* [Documentation](https://skale-me.github.io/skale)
 * [Gitter](https://gitter.im/skale-me/skale-engine) for support and
   discussion
 * [Mailing list](https://groups.google.com/forum/#!forum/skale)

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 var schema = {
   int1: {type: 'int32'},

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 function logisticLossGradient(p, weights) {
   var grad = [], dot_prod = 0;

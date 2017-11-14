@@ -1,6 +1,6 @@
 const stream = require('stream');
 const t = require('tape');
-const sc = require('skale-engine').context();
+const sc = require('skale').context();
 
 t.test('stream', function (t) {
   t.plan(2);

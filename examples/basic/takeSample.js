@@ -2,7 +2,7 @@
 
 process.env.SKALE_RANDOM_SEED = 'skale';
 
-const sc = require('skale-engine').context();
+const sc = require('skale').context();
 
 sc.range(100)
   .takeSample(false, 4, function(err, res) {

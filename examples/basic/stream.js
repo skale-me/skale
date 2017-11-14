@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 // var s = sc.range(20).stream({gzip: true});
 //var s = sc.range(20).stream();
 var s = sc.range(20).stream({end: true});
