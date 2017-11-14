@@ -1,5 +1,5 @@
 var t = require('tape');
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 t.test('distinct', function (t) {
   t.plan(1);

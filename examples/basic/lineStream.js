@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var fs = require('fs');
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 var stream = fs.createReadStream(__dirname + '/kv.data');
 

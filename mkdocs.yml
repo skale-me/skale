@@ -1,7 +1,7 @@
 # Project information
 site_name: Skale
 site_description: Skale documentation
-site_author: 'Marc Vertes'
+site_author: 'Skale authors'
 site_url: 'https://skale-me.github.io/skale/'
 dev_addr: 0.0.0.0:8000
 

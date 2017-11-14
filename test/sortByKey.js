@@ -1,5 +1,5 @@
 var t = require('tape');
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 var data = [['world', 2], ['cedric', 3], ['hello', 1]];
 var nPartitions = 2;

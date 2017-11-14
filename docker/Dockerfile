@@ -1,7 +1,7 @@
 from alpine:edge
 
 RUN apk add --no-cache nodejs nodejs-npm; \
-	npm install -g skale-engine; \
+	npm install -g skale; \
 	apk del nodejs-npm; \
 	adduser -D skale
 

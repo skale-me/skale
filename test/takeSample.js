@@ -1,5 +1,5 @@
 const t = require('tape');
-const sc = require('skale-engine').context();
+const sc = require('skale').context();
 
 t.test('takeSample', function (t) {
   t.plan(1);

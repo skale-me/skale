@@ -1,7 +1,7 @@
 # Skale API
 
 The Skale module is the main entry point for Skale functionality.
-To use it, one must `require('skale-engine')`.
+To use it, one must `require('skale')`.
 
 ## skale.context([config])
 
@@ -20,7 +20,7 @@ with the following defaults:
 Example:
 
 ```javascript
-var skale = require('skale-engine');
+var skale = require('skale');
 var sc = skale.context();
 ```
 
@@ -672,7 +672,7 @@ accessed by further transfomations reside in the same partition.
 Example:
 
 ```javascript
-var skale = require('skale-engine');
+var skale = require('skale');
 var sc = skale.context();
 
 sc.parallelize([['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric', 3]])

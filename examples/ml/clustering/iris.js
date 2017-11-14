@@ -4,8 +4,8 @@
 
 (async function main() {
 
-  const sc = require('skale-engine').context();
-  const ml = require('skale-engine/ml');
+  const sc = require('skale').context();
+  const ml = require('skale/ml');
 
   const rawdata = sc.textFile(__dirname + '/iris.csv');
   //console.log(await rawdata.collect());

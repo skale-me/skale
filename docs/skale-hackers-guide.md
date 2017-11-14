@@ -65,7 +65,7 @@ Dataset objects have methods that can be run either on master side or on worker 
 
 ### Local standalone mode
 
-The standalone mode is the default operating mode. All the processes, master and workers are running on the local host, using the [cluster] core NodeJS module. This mode is the simplest to operate: no dependency, and no server nor cluster setup and management required.  It is used as any standard NodeJS package: simply `require('skale-engine')`, and that's it.
+The standalone mode is the default operating mode. All the processes, master and workers are running on the local host, using the [cluster] core NodeJS module. This mode is the simplest to operate: no dependency, and no server nor cluster setup and management required.  It is used as any standard NodeJS package: simply `require('skale')`, and that's it.
 
 This mode is perfect for development, fast prototyping and tests on a single machine (i.e. a laptop). For unlimited scalibity, see distributed mode below.
 
@@ -104,26 +104,26 @@ A new transform can be implemented either by deriving a new class from the Datas
 
 ## Adding a new action
 
-[reference guide]: https://github.com/skale-me/skale-engine/blob/0.7.0/doc/skale-API.md
-[core concepts]: https://github.com/skale-me/skale-engine/blob/0.7.0/doc/skale-API.md#core-concepts
-[context-local.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context-local.js
-[context.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js
-[context]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L22
-[workers]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L51-L53
-[Compiles then runs]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L223
-[runs the next task]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L129
-[worker-local.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/worker-local.js
-[worker.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js
-[task.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/task.js
-[dataset.js]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js
-[serialization]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L141
-[deserialization]: https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js#L275
+[reference guide]: https://github.com/skale-me/skale/blob/0.7.0/doc/skale-API.md
+[core concepts]: https://github.com/skale-me/skale/blob/0.7.0/doc/skale-API.md#core-concepts
+[context-local.js]: https://github.com/skale-me/skale/blob/0.7.0/lib/context-local.js
+[context.js]: https://github.com/skale-me/skale/blob/0.7.0/lib/context.js
+[context]: https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L22
+[workers]: https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L51-L53
+[Compiles then runs]: https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L223
+[runs the next task]: https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L129
+[worker-local.js]: https://github.com/skale-me/skale/blob/0.7.0/lib/worker-local.js
+[worker.js]: https://github.com/skale-me/skale/blob/0.7.0/bin/worker.js
+[task.js]: https://github.com/skale-me/skale/blob/0.7.0/lib/task.js
+[dataset.js]: https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js
+[serialization]: https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L141
+[deserialization]: https://github.com/skale-me/skale/blob/0.7.0/bin/worker.js#L275
 [cluster]: https://nodejs.org/dist/latest-v8.x/docs/api/cluster.html
-[TextLocal]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L911-L919
-[TextLocal.getPartitions]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L921-L941
-[TextLocal.iterate]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L943
-[iterateStream]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L800
+[TextLocal]: https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L911-L919
+[TextLocal.getPartitions]: https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L921-L941
+[TextLocal.iterate]: https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L943
+[iterateStream]: https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L800
 [readable stream]: https://nodejs.org/api/stream.html#stream_class_stream_readable
-[textFile]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L112-121
-[parallelize]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L107
-[distinct]: https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L121-L125
+[textFile]: https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L112-121
+[parallelize]: https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L107
+[distinct]: https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L121-L125

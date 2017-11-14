@@ -1,4 +1,4 @@
-VERSION = 0.7.2-0
+VERSION = 1.2.0-0
 IMAGE = skale/skale
 
 all:

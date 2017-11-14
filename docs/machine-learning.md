@@ -7,7 +7,7 @@ map-reduce engine.
 
 The module can be loaded using:
 ```js
-var ml = require('skale-engine/ml')
+var ml = require('skale/ml')
 ```
 
 ## classificationMetrics(measures[, options][, done])

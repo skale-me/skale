@@ -23,7 +23,7 @@ Foundation available to any project in the Hadoop ecosystem.
 A separate nodeJS module supporting Apache parquet format, both for
 reading an writing is first required.
 
-Such an experimental module has been started by skale-engine
+Such an experimental module has been started by skale
 maintainers [here](https://github.com/mvertes/node-parquet)
 
 ## Add support for Avro
@@ -43,5 +43,5 @@ A pure Javascript implementation exists
 The current processing model is *action* driven, suitable for batch,
 or micro-batch processing. See if it is possible to apply the same
 API, or at least a subset, to *source* driven processing better
-suited for realtime data processing, while retaining skale-engine
+suited for realtime data processing, while retaining skale
 scalability and efficiency.

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale-engine').context();
+var sc = require('skale').context();
 
 var data = [4, 6, 10, 5, 1, 2, 9, 7, 3, 0];
 var nPartitions = 3;

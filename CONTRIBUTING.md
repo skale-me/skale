@@ -1,6 +1,6 @@
 # Contributing
 
-Interested in contributing to skale-engine? We'd love
+Interested in contributing to skale? We'd love
 your help. Skale-engine is an open source project, built one
 contribution at a time by users just like you.
 
@@ -9,14 +9,14 @@ expectations required from contributors.
 
 ## Where to get help or report a problem
 
-* If you have a question about using skale-engine, start a discussion
+* If you have a question about using skale, start a discussion
   on [gitter] or on [google group]. Please do not open issues for
   questions or support requests.
-* If you think you have found a bug within skale-engine, open an
+* If you think you have found a bug within skale, open an
   [issue].  Do not forget to check that it doesn't already exist
   in our [issue database]
 * If you want to learn more about skale internals, architecture and
-  how to extend skale-engine, see the
+  how to extend skale, see the
   [Skale Hacker's Guide](docs/skale-hackers-guide.md)
 * If you have a suggestion for improvement or a new feature, create
   a [pull request] so it can be discussed and reviewed by the
@@ -63,11 +63,11 @@ are welcome here.
 
 [Code of Conduct]: CODE_OF_CONDUCT.md
 [coding style]: https://github.com/felixge/node-style-guide
-[gitter]: https://gitter.im/skale-me/skale-engine
+[gitter]: https://gitter.im/skale-me/skale
 [google group]: https://groups.google.com/forum/#!forum/skale
-[issue database]: https://github.com/skale-me/skale-engine/issues
-[issue]: https://github.com/skale-me/skale-engine/issues/new
+[issue database]: https://github.com/skale-me/skale/issues
+[issue]: https://github.com/skale-me/skale/issues/new
 [pull request]: #submitting-a-pull-request
-[fork]: https://github.com/skale-me/skale-engine
+[fork]: https://github.com/skale-me/skale
 [documentation guidelines]: https://developers.google.com/style/
 [API documentation rules]: https://developers.google.com/style/api-reference-comments
