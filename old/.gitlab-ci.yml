@@ -1,2 +1,0 @@
-job1:
-  script: "npm install && npm test"

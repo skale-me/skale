@@ -1,2 +1,0 @@
-#!/bin/sh
-exec watch "ps ux | awk '\$11 ~ /^ugrid/ || /^USER/'"
