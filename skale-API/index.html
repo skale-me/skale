@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://skale-me.github.io/skale/skale-API/">
       
       
-        <meta name="author" content="Marc Vertes">
+        <meta name="author" content="Skale authors">
       
       
         <meta name="lang:clipboard.copy" content="Copy to clipboard">
@@ -1192,7 +1192,7 @@
                 
                 <h1 id="skale-api">Skale API<a class="headerlink" href="#skale-api" title="Permanent link">&para;</a></h1>
 <p>The Skale module is the main entry point for Skale functionality.
-To use it, one must <code>require('skale-engine')</code>.</p>
+To use it, one must <code>require('skale')</code>.</p>
 <h2 id="skalecontextconfig">skale.context([config])<a class="headerlink" href="#skalecontextconfig" title="Permanent link">&para;</a></h2>
 <p>Creates and returns a new context which represents the connection
 to the Skale cluster, and which can be used to create datasets on that
@@ -1206,7 +1206,7 @@ with the following defaults:</p>
 
 
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">skale</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine&#39;</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">skale</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">skale</span><span class="p">.</span><span class="nx">context</span><span class="p">();</span>
 </pre></div>
 
@@ -1797,7 +1797,7 @@ purpose of this transformation is not to change the dataset content,
 but to increase processing speed by ensuring that the elements
 accessed by further transfomations reside in the same partition.</p>
 <p>Example:</p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">skale</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine&#39;</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">skale</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale&#39;</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">skale</span><span class="p">.</span><span class="nx">context</span><span class="p">();</span>
 
 <span class="nx">sc</span><span class="p">.</span><span class="nx">parallelize</span><span class="p">([[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;cedric&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>

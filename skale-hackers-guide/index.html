@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://skale-me.github.io/skale/skale-hackers-guide/">
       
       
-        <meta name="author" content="Marc Vertes">
+        <meta name="author" content="Skale authors">
       
       
         <meta name="lang:clipboard.copy" content="Copy to clipboard">
@@ -508,21 +508,21 @@
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <p>Skale is a fast and general purpose distributed data processing system. It provides a high-level API in Javascript and an optimized parallel execution engine.</p>
 <p>This document gives an overview of its design and architecture, then some details on internals and code organisation, and finally presents how to extends various parts of the engine.</p>
-<p>It is assumed that the reader is already familiar with using skale and with the <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/doc/skale-API.md">reference guide</a>, at least the <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/doc/skale-API.md#core-concepts">core concepts</a>.</p>
+<p>It is assumed that the reader is already familiar with using skale and with the <a href="https://github.com/skale-me/skale/blob/0.7.0/doc/skale-API.md">reference guide</a>, at least the <a href="https://github.com/skale-me/skale/blob/0.7.0/doc/skale-API.md#core-concepts">core concepts</a>.</p>
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
 <p>This section describes the core architecture of skale. At high level, a skale application consists of a <em>master</em> program which launches various parallel tasks on <em>worker</em> nodes. The tasks read and write <em>datasets</em>, i.e. arrays of data of abritrary size, split in <em>partitions</em> distributed on workers.</p>
 <h3 id="master">Master<a class="headerlink" href="#master" title="Permanent link">&para;</a></h3>
-<p>The corresponding code is in <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context-local.js">context-local.js</a> for the standalone mode, or <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js">context.js</a> for the distributed mode, the only difference between the 2 being the way workers are created and connected to the master.</p>
+<p>The corresponding code is in <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/context-local.js">context-local.js</a> for the standalone mode, or <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/context.js">context.js</a> for the distributed mode, the only difference between the 2 being the way workers are created and connected to the master.</p>
 <p>In a nutshell, the master performs the following:</p>
 <ol>
-<li>Creates a new skale <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L22">context</a> object to hold the state of cluster, datasets and tasks, then in this context:</li>
-<li>Allocates a new cluster, i.e. and array of <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L51-L53">workers</a>: connected slave processes on each worker host (1 process per CPU).</li>
-<li><a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L223">Compiles then runs</a> an execution graph derived from the user code, the <em>job</em>, consisting of a sequence of <em>stages</em>. This compilation is only triggered when an <em>action</em> is met, thus in <em>lazy</em> mode.</li>
-<li>For each stage, <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L129">runs the next task</a>: serialize and send stage code and metadata about input dataset partitions to the next free worker, trigger execution, wait for result, repeat until all stage's tasks are completed.</li>
+<li>Creates a new skale <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L22">context</a> object to hold the state of cluster, datasets and tasks, then in this context:</li>
+<li>Allocates a new cluster, i.e. and array of <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L51-L53">workers</a>: connected slave processes on each worker host (1 process per CPU).</li>
+<li><a href="https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L223">Compiles then runs</a> an execution graph derived from the user code, the <em>job</em>, consisting of a sequence of <em>stages</em>. This compilation is only triggered when an <em>action</em> is met, thus in <em>lazy</em> mode.</li>
+<li>For each stage, <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L129">runs the next task</a>: serialize and send stage code and metadata about input dataset partitions to the next free worker, trigger execution, wait for result, repeat until all stage's tasks are completed.</li>
 </ol>
 <p><em>Stage explanation here</em></p>
 <h3 id="worker">Worker<a class="headerlink" href="#worker" title="Permanent link">&para;</a></h3>
-<p>The corresponding code is in <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/worker-local.js">worker-local.js</a> for the standalone mode and <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js">worker.js</a> for the distributed mode. The common part is implemented in <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/task.js">task.js</a>.</p>
+<p>The corresponding code is in <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/worker-local.js">worker-local.js</a> for the standalone mode and <a href="https://github.com/skale-me/skale/blob/0.7.0/bin/worker.js">worker.js</a> for the distributed mode. The common part is implemented in <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/task.js">task.js</a>.</p>
 <p>A worker performs the following:</p>
 <ol>
 <li>Connects to the master and wait for the next task to execute, then for each task:</li>
@@ -539,7 +539,7 @@
 <h3 id="datasets">Datasets<a class="headerlink" href="#datasets" title="Permanent link">&para;</a></h3>
 <p>The main abstraction provided by skale is a <em>dataset</em> which is similar to a Javascript array, but partitioned accross the workers that can be operated in parallel.</p>
 <p>A dataset object is always created first on the master side, either by a <em>source</em> function which returns a dataset from an external input or from scratch, or by a <em>transformation</em> function, which takes a dataset in input and outputs a new dataset.</p>
-<p>The same code, in <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js">dataset.js</a> is loaded both in master and workers. A dataset object instantiated on master will be replicated on each worker through task <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L141">serialization</a> and <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/bin/worker.js#L275">deserialization</a> process.</p>
+<p>The same code, in <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js">dataset.js</a> is loaded both in master and workers. A dataset object instantiated on master will be replicated on each worker through task <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L141">serialization</a> and <a href="https://github.com/skale-me/skale/blob/0.7.0/bin/worker.js#L275">deserialization</a> process.</p>
 <p>From an object oriented perspective, all <em>sources</em> and <em>transformations</em>, as dataset contructors, are classes which derive and inherit from the <em>Dataset</em> class, whereas <em>actions</em>, which operate on a dataset object, are simply methods of the <em>Dataset</em> class.</p>
 <p>Dataset objects have methods that can be run either on master side or on worker side (never on both), the following table provides a summary of these:</p>
 <table>
@@ -591,7 +591,7 @@
 </tbody>
 </table>
 <h3 id="local-standalone-mode">Local standalone mode<a class="headerlink" href="#local-standalone-mode" title="Permanent link">&para;</a></h3>
-<p>The standalone mode is the default operating mode. All the processes, master and workers are running on the local host, using the <a href="https://nodejs.org/dist/latest-v8.x/docs/api/cluster.html">cluster</a> core NodeJS module. This mode is the simplest to operate: no dependency, and no server nor cluster setup and management required.  It is used as any standard NodeJS package: simply <code>require('skale-engine')</code>, and that's it.</p>
+<p>The standalone mode is the default operating mode. All the processes, master and workers are running on the local host, using the <a href="https://nodejs.org/dist/latest-v8.x/docs/api/cluster.html">cluster</a> core NodeJS module. This mode is the simplest to operate: no dependency, and no server nor cluster setup and management required.  It is used as any standard NodeJS package: simply <code>require('skale')</code>, and that's it.</p>
 <p>This mode is perfect for development, fast prototyping and tests on a single machine (i.e. a laptop). For unlimited scalibity, see distributed mode below.</p>
 <h3 id="distributed-mode">Distributed mode<a class="headerlink" href="#distributed-mode" title="Permanent link">&para;</a></h3>
 <p>The distributed mode allows to run the exact same code as in standalone over a network of multiple machines, thus achieving horizontal scalability.</p>
@@ -607,14 +607,14 @@
 <p>A source returns a dataset from an external input or from scratch. For example, to be able to process data from kafka in a parallel manner, i.e. one topic partition per worker, one has to implement a kafka source in skale.</p>
 <p>Adding a new source is a matter of:</p>
 <ul>
-<li>Deriving a new class from the Dataset class, see as for example <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L911-L919">TextLocal</a>, which implements a textFile source from local filesystem</li>
-<li>Providing a <code>getPartition</code> method prototype, which allocates a fixed number of partitions, see <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L921-L941">TextLocal.getPartitions</a> as an example of allocating one partition per file. This method will be run on the master, when triggered by the action, and prior to dispatch tasks to workers</li>
+<li>Deriving a new class from the Dataset class, see as for example <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L911-L919">TextLocal</a>, which implements a textFile source from local filesystem</li>
+<li>Providing a <code>getPartition</code> method prototype, which allocates a fixed number of partitions, see <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L921-L941">TextLocal.getPartitions</a> as an example of allocating one partition per file. This method will be run on the master, when triggered by the action, and prior to dispatch tasks to workers</li>
 <li>Optionally providing a <code>getPreferedLocation</code> method prototype, to select a given worker according to your source semantics. If not provided, the master will dispatch the partition by default to the next free worker at execution time.</li>
-<li>Providing an <code>iterate</code> method prototype, which operates this time on the worker to execute the stage pipeline on each partition entry. See for example <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L943">TextLocal.iterate</a> and <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L800">iterateStream</a> which processes each line of a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a>. If the partition can be mapped to a readable stream, as it is the case for many NodeJS connectors, one can just reuse <code>iterateStream</code> as is.</li>
-<li>Exposing the source in the API, either by extending <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L112-121">textFile</a> to process a new URL protocol, or adding a new source method in the context, see for example <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/context.js#L107">parallelize</a>.</li>
+<li>Providing an <code>iterate</code> method prototype, which operates this time on the worker to execute the stage pipeline on each partition entry. See for example <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L943">TextLocal.iterate</a> and <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L800">iterateStream</a> which processes each line of a <a href="https://nodejs.org/api/stream.html#stream_class_stream_readable">readable stream</a>. If the partition can be mapped to a readable stream, as it is the case for many NodeJS connectors, one can just reuse <code>iterateStream</code> as is.</li>
+<li>Exposing the source in the API, either by extending <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L112-121">textFile</a> to process a new URL protocol, or adding a new source method in the context, see for example <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/context.js#L107">parallelize</a>.</li>
 </ul>
 <h2 id="adding-a-new-transform">Adding a new transform<a class="headerlink" href="#adding-a-new-transform" title="Permanent link">&para;</a></h2>
-<p>A new transform can be implemented either by deriving a new class from the Dataset class then providing dataset methods as in the previous table of dataset methods, or by composing existing tranform methods to issue a new one, see for example <a href="https://github.com/skale-me/skale-engine/blob/0.7.0/lib/dataset.js#L121-L125">distinct</a>.</p>
+<p>A new transform can be implemented either by deriving a new class from the Dataset class then providing dataset methods as in the previous table of dataset methods, or by composing existing tranform methods to issue a new one, see for example <a href="https://github.com/skale-me/skale/blob/0.7.0/lib/dataset.js#L121-L125">distinct</a>.</p>
 <p><em>Here give details on narrow vs wide transforms and impact on implementation</em></p>
 <h2 id="adding-a-new-action">Adding a new action<a class="headerlink" href="#adding-a-new-action" title="Permanent link">&para;</a></h2>
                 

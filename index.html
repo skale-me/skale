@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://skale-me.github.io/skale/">
       
       
-        <meta name="author" content="Marc Vertes">
+        <meta name="author" content="Skale authors">
       
       
         <meta name="lang:clipboard.copy" content="Copy to clipboard">
@@ -473,9 +473,9 @@
                   <h1>About Skale</h1>
                 
                 <p><img alt="logo" src="./images/logo-skale.png" /></p>
-<p><a href="https://travis-ci.org/skale-me/skale-engine"><img alt="Build
-Status" src="https://travis-ci.org/skale-me/skale-engine.svg?branch=master" /></a>
-<a href="https://ci.appveyor.com/project/skaleme/skale-engine"><img alt="Build Status" src="https://ci.appveyor.com/api/projects/status/github/skale-me/skale-engine?svg=true" /></a></p>
+<p><a href="https://travis-ci.org/skale-me/skale"><img alt="Build Status" src="https://travis-ci.org/skale-me/skale.svg?branch=master" /></a>
+<a href="https://ci.appveyor.com/project/skaleme/skale"><img alt="Build Status" src="https://ci.appveyor.com/api/projects/status/github/skale-me/skale?svg=true" /></a>
+<a href="https://www.npmjs.com/package/skale"><img alt="npm badge" src="https://img.shields.io/npm/v/skale.svg" /></a></p>
 <p>High performance distributed data processing and machine learning.</p>
 <p>Skale provides a high-level API in Javascript and an optimized
 parallel execution engine on top of NodeJS.</p>
@@ -487,16 +487,16 @@ parallel execution engine on top of NodeJS.</p>
 <li>50 high level operators to build parallel apps</li>
 <li>Machine learning: scalable classification, regression, clusterization</li>
 <li>Run interactively in a nodeJS REPL shell</li>
-<li>Docker <a href="https://github.com/skale-me/skale-engine/blob/master/docker/">ready</a>, simple local mode or full distributed mode</li>
-<li>Very fast, see <a href="https://github.com/skale-me/skale-engine/blob/master/benchmark/">benchmark</a></li>
+<li>Docker <a href="https://github.com/skale-me/skale/blob/master/docker/">ready</a>, simple local mode or full distributed mode</li>
+<li>Very fast, see <a href="https://github.com/skale-me/skale/blob/master/benchmark/">benchmark</a></li>
 </ul>
 <h2 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h2>
-<div class="codehilite"><pre><span></span>npm install skale-engine
+<div class="codehilite"><pre><span></span>npm install skale
 </pre></div>
 
 
 <p>Word count example: </p>
-<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale-engine&#39;</span><span class="p">).</span><span class="nx">context</span><span class="p">();</span>
+<div class="codehilite"><pre><span></span><span class="kd">var</span> <span class="nx">sc</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;skale&#39;</span><span class="p">).</span><span class="nx">context</span><span class="p">();</span>
 
 <span class="nx">sc</span><span class="p">.</span><span class="nx">textFile</span><span class="p">(</span><span class="s1">&#39;/my/path/*.txt&#39;</span><span class="p">)</span>
   <span class="p">.</span><span class="nx">flatMap</span><span class="p">(</span><span class="nx">line</span> <span class="p">=&gt;</span> <span class="nx">line</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))</span>
@@ -552,18 +552,18 @@ to server:</p>
 
 <h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="https://github.com/skale-me/skale-engine/blob/master/CONTRIBUTING.md">Contributing guide</a></li>
+<li><a href="https://github.com/skale-me/skale/blob/master/CONTRIBUTING.md">Contributing guide</a></li>
 <li><a href="https://gitter.im/skale-me/skale-engine">Gitter</a> for support and
   discussion</li>
 <li><a href="https://groups.google.com/forum/#!forum/skale">Mailing list</a>
   for discussion about use and development</li>
 </ul>
 <h2 id="authors">Authors<a class="headerlink" href="#authors" title="Permanent link">&para;</a></h2>
-<p>The original authors of skale-engine are <a href="https://github.com/CedricArtigue">Cedric Artigue</a> and <a href="https://github.com/mvertes">Marc Vertes</a>.</p>
-<p><a href="https://github.com/skale-me/skale-engine/graphs/contributors">List of all
+<p>The original authors of skale are <a href="https://github.com/CedricArtigue">Cedric Artigue</a> and <a href="https://github.com/mvertes">Marc Vertes</a>.</p>
+<p><a href="https://github.com/skale-me/skale/graphs/contributors">List of all
 contributors</a></p>
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
-<p><a href="https://github.com/skale-me/skale-engine/blob/master/LICENSE">Apache-2.0</a></p>
+<p><a href="https://github.com/skale-me/skale/blob/master/LICENSE">Apache-2.0</a></p>
 <h2 id="credits">Credits<a class="headerlink" href="#credits" title="Permanent link">&para;</a></h2>
 <div>Logo Icon made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
                 
