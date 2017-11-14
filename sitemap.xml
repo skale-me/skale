@@ -3,7 +3,7 @@
 
     
     <url>
-     <loc>https://skale-me.github.io/skale-engine//</loc>
+     <loc>https://skale-me.github.io/skale//</loc>
      <lastmod>2017-11-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -12,19 +12,19 @@
     
         
     <url>
-     <loc>https://skale-me.github.io/skale-engine//concepts/</loc>
+     <loc>https://skale-me.github.io/skale//concepts/</loc>
      <lastmod>2017-11-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>https://skale-me.github.io/skale-engine//skale-API/</loc>
+     <loc>https://skale-me.github.io/skale//skale-API/</loc>
      <lastmod>2017-11-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>https://skale-me.github.io/skale-engine//machine-learning/</loc>
+     <loc>https://skale-me.github.io/skale//machine-learning/</loc>
      <lastmod>2017-11-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -33,7 +33,7 @@
 
     
     <url>
-     <loc>https://skale-me.github.io/skale-engine//skale-hackers-guide/</loc>
+     <loc>https://skale-me.github.io/skale//skale-hackers-guide/</loc>
      <lastmod>2017-11-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
