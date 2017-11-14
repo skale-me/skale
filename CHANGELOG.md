@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.0](https://github.com/skale-me/skale/tree/1.2.0) (2017-11-14)
+[Full Changelog](https://github.com/skale-me/skale/compare/0.8.0...1.2.0)
+
+**Closed issues:**
+
+- Import skale-ml, skale-examples, skale-cli [\#181](https://github.com/skale-me/skale/issues/181)
+
 ## [0.8.0](https://github.com/skale-me/skale/tree/0.8.0) (2017-11-14)
 [Full Changelog](https://github.com/skale-me/skale/compare/0.7.2...0.8.0)
 
