@@ -94,10 +94,10 @@ SKALE_HOST=server_host SKALE_DEBUG=2 node my_app.js
 
 ## Authors
 
-The original authors of skale-engine are [Cedric Artigue](https://github.com/CedricArtigue) and [Marc Vertes](https://github.com/mvertes).
+The original authors of skale are [Cedric Artigue](https://github.com/CedricArtigue) and [Marc Vertes](https://github.com/mvertes).
 
 [List of all
-contributors](https://github.com/skale-me/skale-engine/graphs/contributors)
+contributors](https://github.com/skale-me/skale/graphs/contributors)
 
 ## License
 

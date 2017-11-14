@@ -1,6 +1,6 @@
 {
-  "name": "skale-engine",
-  "version": "0.7.2",
+  "name": "skale",
+  "version": "0.8.0",
   "license": "Apache-2.0",
   "description": "parallel and distributed data processing engine",
   "main": "index.js",
@@ -17,9 +17,9 @@
     "skale-worker": "./bin/worker.js",
     "skale-shell": "./bin/shell.js"
   },
-  "repository": "skale-me/skale-engine",
+  "repository": "skale-me/skale",
   "bugs": {
-    "url": "https://github.com/skale-me/skale-engine/issues"
+    "url": "https://github.com/skale-me/skale/issues"
   },
   "keywords": [
     "big data",
