@@ -1,6 +1,8 @@
 const t = require('tape');
 const sc = require('skale').context();
 
+console.log('AWS_ACCESS_KEY_ID:', process.env.AWS_ACCESS_KEY_ID);
+
 t.test('textFile s3 file', function (t) {
   t.plan(1);
   sc.textFile('s3://skale-test-eu-west-1/test/iris.csv')
