@@ -41,4 +41,3 @@ t.test('textFile multiple files', function (t) {
       sc.end();
     });
 });
-
