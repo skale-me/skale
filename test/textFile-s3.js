@@ -1,7 +1,6 @@
 const t = require('tape');
 const sc = require('skale').context();
 
-console.log('AWS_ACCESS_KEY_ID:', process.env.AWS_ACCESS_KEY_ID);
 const skip = process.env.AWS_ACCESS_KEY_ID ? false : true;
 
 t.test('textFile s3 file', function (t) {
