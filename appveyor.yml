@@ -3,9 +3,9 @@ environment:
   SKALE_WORKERS: "2"
   SKALE_MEMORY: "512"
   AWS_ACCESS_KEY_ID:
-    secure: hWClEdeW0r+5qRWcF0Ez7nGmqkKbfdHLlxsw3x1wvhE=
+    secure: d3GA6U28GOVQvQy9pjKpnqkiQ8GfJgyqggLrfRnfRsQ=
   AWS_SECRET_ACCESS_KEY:
-    secure: 8YMyTcupMmcUho/Z9Hn1QlT9qs12SNs6xi9upsHXCM00r7aWNiUUTIF4qy2rza7R
+    secure: MntXe1/M33xEgIZimiBsEi89oyRqTIIK3s65U4qLxfqhKmZGWZYKOt8ctWndSbhN
 
 init:
   - git config --global core.autocrlf true
