@@ -2,6 +2,10 @@ environment:
   nodejs_version: "8"
   SKALE_WORKERS: "2"
   SKALE_MEMORY: "512"
+  AWS_ACCESS_KEY_ID:
+    secure: d3GA6U28GOVQvQy9pjKpnqkiQ8GfJgyqggLrfRnfRsQ=
+  AWS_SECRET_ACCESS_KEY:
+    secure: MntXe1/M33xEgIZimiBsEi89oyRqTIIK3s65U4qLxfqhKmZGWZYKOt8ctWndSbhN
 
 init:
   - git config --global core.autocrlf true
