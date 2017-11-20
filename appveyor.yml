@@ -6,6 +6,8 @@ environment:
     secure: d3GA6U28GOVQvQy9pjKpnqkiQ8GfJgyqggLrfRnfRsQ=
   AWS_SECRET_ACCESS_KEY:
     secure: MntXe1/M33xEgIZimiBsEi89oyRqTIIK3s65U4qLxfqhKmZGWZYKOt8ctWndSbhN
+  AZURE_STORAGE_CONNECTION_STRING:
+    secure: I9AVN8F9jTyDt0xwTUfbtm5avy1qMk/jpg08RrzJqpwuWtkR7UN7W+diTnXXhCUD6K1TmQ367tWUB+Q8zWHK2d8jem9ZDHU0zl2qKY0UTnrPCt8uaRRTG4/ECHsnd5zaHXTTMTUThu8JI9fSSpLB0RDle/IUe4d9/NBZTaz3yExp6q+8tzT1ghj4gxYGgbFy1nrD5P0QXDnv74Znshp2MSJyM2XRz4siY4365g2z7p4CGy53B38dObmcc9Mjkz1I
 
 init:
   - git config --global core.autocrlf true
