@@ -1,7 +1,5 @@
-const fs = require('fs');
 const t = require('tape');
 const aws = require('aws-sdk');
-const rimraf = require('rimraf');
 const sc = require('skale').context();
 
 const skip = process.env.AWS_ACCESS_KEY_ID ? false : true;

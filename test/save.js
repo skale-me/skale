@@ -20,7 +20,7 @@ t.test('save', function (t) {
             t.deepEqual(res, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'saved content is correct');
           });
       });
-    });
+  });
 });
 
 t.test('save gzip', function (t) {
@@ -39,5 +39,5 @@ t.test('save gzip', function (t) {
             sc.end();
           });
       });
-    });
+  });
 });
