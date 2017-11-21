@@ -6,7 +6,7 @@ const sc = require('skale').context();
 const savedir = '/tmp/skale-test/save';
 
 t.test('save', function (t) {
-  t.plan(3);
+  t.plan(4);
 
   rimraf(savedir, function (err) {
     t.ok(!err, 'delete previous saved data');
