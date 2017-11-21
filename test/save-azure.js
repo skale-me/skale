@@ -60,7 +60,7 @@ function deleteAzureDir(container, prefix, done) {
     let toDelete = res.length;
     res.forEach(function (element) {
       az.deleteBlob(container, element.name, function (err) {
-        if (--toDelete <= 0) done();
+        if (--toDelete <= 0) done(err);
       });
     });
   });
