@@ -5,11 +5,12 @@ const sc = require('skale').context();
 const savedir = '/tmp/skale-test/save';
 
 t.test('save', function (t) {
-  t.plan(1);
+  t.plan(2);
 
   rimraf.sync(savedir);
   sc.range(10)
-    .save('/tmp/skale-test/save', function (err, res) {
+    .save('/tmp/skale-test/save', function (err) {
+      t.ok(!err);
       sc.textFile(savedir + '/')
         .map(a => JSON.parse(a))
         .collect(function (err, res) {
