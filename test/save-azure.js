@@ -4,7 +4,7 @@ const sc = require('skale').context();
 
 const skip = process.env.AZURE_STORAGE_CONNECTION_STRING ? false : true;
 const retry = new azure.ExponentialRetryPolicyFilter();
-const az = azure.createBlobService().withFilter(retry);
+const az = skip ? null : azure.createBlobService().withFilter(retry);
 const savedir = 'wasb://skalejs/save';
 
 t.test('save azure', {skip: skip}, function (t) {
