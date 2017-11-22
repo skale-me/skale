@@ -2,9 +2,9 @@
 
 'use strict';
 
-var ContextRemote = require('./lib/context.js');
-var ContextLocal = require('./lib/context-local.js');
-var Dataset = require('./lib/dataset.js');
+const ContextRemote = require('./lib/context.js');
+const ContextLocal = require('./lib/context-local.js');
+const Dataset = require('./lib/dataset.js');
 
 function Context(args) {
   args = args || {};
