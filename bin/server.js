@@ -86,7 +86,10 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
   const to = chunk.readUInt32LE(0, true);
   let o = {};
   if (to >= minMulticast) { // Multicast
-    const sub = topics[to - minMulticast].sub, len = sub.length, n = 0;
+    const sub = topics[to - minMulticast].sub;
+    let len = sub.length;
+    let n = 0;
+
     if (len === 0) return done();
     for (let i in sub) {
       // Flow control: adjust to the slowest receiver
@@ -417,7 +420,7 @@ function register(from, msg, sock)
 }
 
 function devices(msg) {
-  const query = msg.data.query
+  const query = msg.data.query;
   const result = [];
 
   for (let i in clients) {
