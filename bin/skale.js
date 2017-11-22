@@ -3,13 +3,13 @@
 
 // Copyright 2016 Luca-SAS, licensed under the Apache License 2.0
 
-var child_process = require('child_process');
-var fs = require('fs');
-var DDPClient = require('ddp');
-var login = require('ddp-login');
-var netrc = require('netrc');
+const child_process = require('child_process');
+const fs = require('fs');
+const DDPClient = require('ddp');
+const login = require('ddp-login');
+const netrc = require('netrc');
 
-var help = 'Usage: skale [options] <command> [<args>]\n' +
+const help = 'Usage: skale [options] <command> [<args>]\n' +
 '\n' +
 'Create, test, deploy, run clustered NodeJS applications\n' +
 '\n' +
@@ -35,7 +35,7 @@ var help = 'Usage: skale [options] <command> [<args>]\n' +
 '  -V, --version       Print version and quit\n' +
 '  -w, --worker num    Set the number of workers (default 2)\n';
 
-var argv = require('minimist')(process.argv.slice(2), {
+const argv = require('minimist')(process.argv.slice(2), {
   string: [
     'c', 'config',
     'f', 'file',
@@ -57,7 +57,7 @@ if (argv.h || argv.help) {
   process.exit();
 }
 if (argv.V || argv.version) {
-  var pkg = require('./package');
+  const pkg = require('./package');
   console.log(pkg.name + '-' + pkg.version);
   process.exit();
 }
@@ -65,21 +65,21 @@ if (argv.d || argv.debug) {
   process.env.SKALE_DEBUG = 2;
 }
 
-var configPath = argv.c || argv.config || process.env.SKALE_CONFIG || process.env.HOME + '/.skalerc';
-var config = load_config(argv);
-var rc = netrc();
-var start = process.hrtime();
-var trace;
+const configPath = argv.c || argv.config || process.env.SKALE_CONFIG || process.env.HOME + '/.skalerc';
+const config = load_config(argv);
+const rc = netrc();
+const start = process.hrtime();
+let trace;
 
 if (process.env.SKALE_DEBUG > 1) {
-  trace =  function() {
-    var args = Array.prototype.slice.call(arguments);
-    var elapsed = process.hrtime(start);
+  trace =  function trace() {
+    const args = Array.prototype.slice.call(arguments);
+    const elapsed = process.hrtime(start);
     args.unshift('[skale ' + (elapsed[0] + elapsed[1] / 1e9).toFixed(3) + 's]');
     console.error.apply(null, args);
   };
 } else {
-  trace = function () {};
+  trace = function noop() {};
 }
 
 switch (argv._[0]) {
@@ -138,7 +138,7 @@ function create(name) {
     return;
   }
 
-  var pkg = {
+  const pkg = {
     name: name,
     version: '0.1.0',
     private: true,
@@ -148,18 +148,18 @@ function create(name) {
     }
   };
   fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
-  var src = '#!/usr/bin/env node\n' +
+  const src = '#!/usr/bin/env node\n' +
     '\n' +
-    'var sc = require(\'skale-engine\').context();\n' +
+    'const sc = require(\'skale-engine\').context();\n' +
     '\n' +
     'sc.parallelize([\'Hello world\']).collect().then(function (res) {\n' +
     ' console.log(sc.worker.length + \' workers, res:\', res);\n' +
     ' sc.end();\n' +
     '});\n';
   fs.writeFileSync(name + '.js', src);
-  var gitIgnore = 'node_modules\nnpm-debug.log*\n.npm-install-changed.json\n';
+  const gitIgnore = 'node_modules\nnpm-debug.log*\n.npm-install-changed.json\n';
   fs.writeFileSync('.gitignore', gitIgnore);
-  var npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
+  const npm = child_process.spawnSync('npm', ['install'], {stdio: 'inherit'});
   if (npm.status) die('skale create error: npm install failed');
 
 
@@ -176,7 +176,8 @@ function die(err) {
 }
 
 function load_config(argv) {
-  var conf = {}, save = false;
+  let conf = {};
+  let save = false;
   try { conf = JSON.parse(fs.readFileSync(configPath)); } catch (error) { save = true; }
   process.env.SKALE_TOKEN = process.env.SKALE_TOKEN || conf.token;
   if (save || argv._[0] == 'init') save_config(conf);
@@ -190,17 +191,17 @@ function save_config(config) {
 }
 
 function run_local(args) {
-  var pkg = JSON.parse(fs.readFileSync('package.json'));
-  var cmd = argv.f || argv.file || pkg.name + '.js';
+  const pkg = JSON.parse(fs.readFileSync('package.json'));
+  const cmd = argv.f || argv.file || pkg.name + '.js';
   args.splice(0, 0, cmd);
   child_process.spawn('node', args, {stdio: 'inherit'});
 }
 
 function skale_session(callback) {
-  var host = process.env.SKALE_SERVER || 'apps.skale.me';
-  var port = process.env.SKALE_PORT || 443;
+  const host = process.env.SKALE_SERVER || 'apps.skale.me';
+  const port = process.env.SKALE_PORT || 443;
 
-  var ddp = new DDPClient({
+  const ddp = new DDPClient({
     // All properties optional, defaults shown
     host : host,
     port : port,
@@ -240,16 +241,16 @@ function deploy() {
         die(err.toString());
       }
     }
-    var pkg = JSON.parse(fs.readFileSync('package.json'));
-    var name = pkg.name;
+    const pkg = JSON.parse(fs.readFileSync('package.json'));
+    const name = pkg.name;
 
     ddp.call('etls.add', [{name: name}], function (err, res) {
       if (err) die('Could not create application ' + name + ':', err);
       trace('application added on server', name);
-      var a = res.url.split('/');
-      var login = a[a.length - 2];
-      var host = a[2].replace(/:.*/, '');
-      var passwd = res.token;
+      const a = res.url.split('/');
+      const login = a[a.length - 2];
+      const host = a[2].replace(/:.*/, '');
+      const passwd = res.token;
       rc[host] = {login: login, password: passwd};
       netrc.save(rc);
       child_process.exec('git remote remove skale; git remote add skale "' + res.url + '"; git add -A .; git commit -m "automatic commit"; git pull --rebase -Xours skale master; git push skale master', function (err) {
@@ -269,10 +270,10 @@ function deploy() {
 function list() {
   skale_session(function (err, ddp) {
     if (err) die('Could not connect:', err);
-    var user = Object.keys(ddp.collections.users)[0];
+    const user = Object.keys(ddp.collections.users)[0];
     ddp.subscribe('etls', [user], function () {
-      var etls = ddp.collections.etls;
-      for (var i in etls) console.log(etls[i].name);
+      const etls = ddp.collections.etls;
+      for (let i in etls) console.log(etls[i].name);
       trace('done');
       ddp.close();
     });
@@ -281,7 +282,7 @@ function list() {
 
 function run_remote() {
   try {
-    var diff = child_process.execSync('git diff skale/master', {stdio: ['pipe', 'pipe', 'ignore']});
+    const diff = child_process.execSync('git diff skale/master', {stdio: ['pipe', 'pipe', 'ignore']});
     if (diff.length) {
       if (argv.force) console.error('Warning, running an obsolete version, you should deploy');
       else die('Error: content has changed, deploy first or run --force');
@@ -291,10 +292,10 @@ function run_remote() {
   }
   skale_session(function (err, ddp) {
     if (err) die('Could not connect:', err);
-    var pkg = JSON.parse(fs.readFileSync('package.json'));
-    var name = pkg.name;
-    var opt = {debug: process.env.SKALE_DEBUG};
-    var ltrace;
+    const pkg = JSON.parse(fs.readFileSync('package.json'));
+    const name = pkg.name;
+    const opt = {debug: process.env.SKALE_DEBUG};
+    let ltrace;
 
     trace('run triggered, wait for machine');
     ddp.call('etls.run', [{name: name, opt: opt}], function (err, res) {
@@ -302,9 +303,9 @@ function run_remote() {
       if (res.alreadyStarted) die('Error: application is already running, use "skale attach" or "skale stop"');
       ddp.subscribe('task.withTaskId', [res.taskId], function () {});
 
-      var observer = ddp.observe('tasks');
+      const observer = ddp.observe('tasks');
       observer.added = function (id) {
-        var task = ddp.collections.tasks[id];
+        const task = ddp.collections.tasks[id];
         if (task.trace !== ltrace) {
           ltrace = task.trace;
           trace(ltrace);
@@ -322,9 +323,9 @@ function run_remote() {
           ddp.close();
         }
         if (newFields.out) {
-          var olen = oldFields.out ? oldFields.out.length : 0;
-          var nlen = newFields.out.length;
-          for (var i = olen; i < nlen; i++) process.stdout.write(newFields.out[i] + '\n');
+          const olen = oldFields.out ? oldFields.out.length : 0;
+          const nlen = newFields.out.length;
+          for (let i = olen; i < nlen; i++) process.stdout.write(newFields.out[i] + '\n');
         }
       };
     });
@@ -334,25 +335,25 @@ function run_remote() {
 function attach() {
   skale_session(function (err, ddp) {
     if (err) die('Could not connect:', err);
-    var pkg = JSON.parse(fs.readFileSync('package.json'));
-    var name = pkg.name;
+    const pkg = JSON.parse(fs.readFileSync('package.json'));
+    const name = pkg.name;
     ddp.subscribe('etls.withName', [name], function () {
-      var etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
+      const etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
       if (!etl.running) die('Application is not running, use "skale log" or "skale run"');
 
       ddp.subscribe('task.withTaskId', [etl.taskId], function () {
-        var task = ddp.collections.tasks[Object.keys(ddp.collections.tasks)[0]];
-        for (var i = 0; i < task.out.length; i++)
+        const task = ddp.collections.tasks[Object.keys(ddp.collections.tasks)[0]];
+        for (let i = 0; i < task.out.length; i++)
           console.log(task.out[i]);
       });
 
-      var observer = ddp.observe('tasks');
+      const observer = ddp.observe('tasks');
       observer.changed = function (id, oldFields, clearedFields, newFields) {
         if (newFields.status && newFields.status != 'pending') ddp.close();
         if (newFields.out) {
-          var olen = oldFields.out ? oldFields.out.length : 0;
-          var nlen = newFields.out.length;
-          for (var i = olen; i < nlen; i++) process.stdout.write(newFields.out[i] + '\n');
+          const olen = oldFields.out ? oldFields.out.length : 0;
+          const nlen = newFields.out.length;
+          for (let i = olen; i < nlen; i++) process.stdout.write(newFields.out[i] + '\n');
         }
       };
 
@@ -367,10 +368,10 @@ function log(name) {
   skale_session(function (err, ddp) {
     if (err) die('could not connect:', err);
     ddp.subscribe('etls.withName', [name], function () {
-      var etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
+      const etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
       ddp.subscribe('task.withTaskId', [etl.taskId], function () {
-        var task = ddp.collections.tasks[Object.keys(ddp.collections.tasks)[0]];
-        for (var i = 0; i < task.out.length; i++)
+        const task = ddp.collections.tasks[Object.keys(ddp.collections.tasks)[0]];
+        for (let i = 0; i < task.out.length; i++)
           console.log(task.out[i]);
         trace('done');
         ddp.close();
@@ -384,7 +385,7 @@ function status(name) {
     if (err) die('could node connect:', err);
     if (!name) {
       try {
-        var pkg = JSON.parse(fs.readFileSync('package.json'));
+        const pkg = JSON.parse(fs.readFileSync('package.json'));
         name = pkg.name;
       } catch (err) {
         die('Could not find package.json.  You need to run this command from a skale project directory.');
@@ -393,7 +394,7 @@ function status(name) {
 
     ddp.subscribe('etls.withName', [name], function () {
       if (!ddp.collections.etls) die('etl not found:', name);
-      var etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
+      const etl = ddp.collections.etls[Object.keys(ddp.collections.etls)[0]];
       console.log(etl.name, 'status:', etl.running ? 'running' : 'exited');
       ddp.close();
     });
@@ -403,8 +404,8 @@ function status(name) {
 function stop() {
   skale_session(function (err, ddp) {
     if (err) die('could node connect:', err);
-    var pkg = JSON.parse(fs.readFileSync('package.json'));
-    var name = pkg.name;
+    const pkg = JSON.parse(fs.readFileSync('package.json'));
+    const name = pkg.name;
     ddp.call('etls.reset', [{name: name, reset: argv.force}], function () {
       ddp.close();
     });

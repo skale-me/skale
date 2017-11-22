@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
 //sc.range(900).save('/tmp/truc', {gzip: true}, (err, res) => {
 //sc.range(900).save('/tmp/truc', {stream: true}, (err, res) => {

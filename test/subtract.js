@@ -1,8 +1,8 @@
-var t = require('tape');
-var sc = require('skale').context();
+const t = require('tape');
+const sc = require('skale').context();
 
-var d1 = [[1, 1], [1, 1], [2, 3], [2, 4], [3, 5]];
-var d2 = [[1, 1], [1, 1], [2, 3]];
+const d1 = [[1, 1], [1, 1], [2, 3], [2, 4], [3, 5]];
+const d2 = [[1, 1], [1, 1], [2, 3]];
 
 t.test('subtract', function (t) {
   t.plan(1);

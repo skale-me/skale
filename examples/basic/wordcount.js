@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
-var file = process.argv[2] || '/etc/hosts';
+const file = process.argv[2] || '/etc/hosts';
 
 sc.textFile(file)
   .flatMap(line => line.split(' '))

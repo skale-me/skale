@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
-var sc = require('skale').context();
+const fs = require('fs');
+const sc = require('skale').context();
 
-var stream = fs.createReadStream(__dirname + '/kv.data');
+const stream = fs.createReadStream(__dirname + '/kv.data');
 
 sc.lineStream(stream)
   .collect(function(err, res) {

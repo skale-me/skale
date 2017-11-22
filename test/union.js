@@ -1,5 +1,5 @@
-var t = require('tape');
-var sc = require('skale').context();
+const t = require('tape');
+const sc = require('skale').context();
 
 t.test('union', function (t) {
   t.plan(1);

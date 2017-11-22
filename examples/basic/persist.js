@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
 function reducer(a, b) {a.push(b); return a;}
 function combiner(a, b) {return a.concat(b);}
 
-var a = sc.parallelize([1, 2, 3, 4], 2).persist();
+const a = sc.parallelize([1, 2, 3, 4], 2).persist();
 
 a.aggregate(reducer, combiner, [], function(err, res) {
   console.log('First Time !');

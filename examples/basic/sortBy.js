@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
-var data = [4, 6, 10, 5, 1, 2, 9, 7, 3, 0];
-var nPartitions = 3;
+const data = [4, 6, 10, 5, 1, 2, 9, 7, 3, 0];
+const nPartitions = 3;
 
 function keyFunc(data) {return data;}
 

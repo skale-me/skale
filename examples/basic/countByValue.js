@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
-var data = [[1, 1], [1, 1], [2, 3], [2, 4], [3, 5]];
+const data = [[1, 1], [1, 1], [2, 3], [2, 4], [3, 5]];
 
-var nPartitions = 1;
+const nPartitions = 1;
 
 function valueFlatMapper(e) {
-  var i, out = [];
-  for (i = e; i <= 5; i++) out.push(i);
+  const out = [];
+  for (let i = e; i <= 5; i++) out.push(i);
   return out;
 }
 

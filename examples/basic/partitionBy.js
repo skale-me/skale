@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-var skale = require('skale');
-var sc = skale.context();
+const skale = require('skale');
+const sc = skale.context();
 
-var data = [['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric', 3]];
+const data = [['hello', 1], ['world', 1], ['hello', 2], ['world', 2], ['cedric', 3]];
 
 sc.parallelize(data)
   .partitionBy(new skale.HashPartitioner(3))

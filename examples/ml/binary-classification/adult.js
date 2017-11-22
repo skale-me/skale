@@ -11,12 +11,12 @@
   // - evaluate the model on the adult test set
   // - generate ROC curves as png images
 
-  var sc = require('skale').context();
-  var ml = require('skale/ml');
-  var plot = require('plotter').plot;     // Todo: should be replaced by D3
+  const sc = require('skale').context();
+  const ml = require('skale/ml');
+  const plot = require('plotter').plot;     // Todo: should be replaced by D3
 
   // Todo: features should be automatically extracted from dataset + type schema
-  var metadata = {
+  const metadata = {
     workclass: [
       'Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov',
       'State-gov', 'Without-pay', 'Never-worked'
@@ -57,8 +57,8 @@
   };
 
   function featurize(data, metadata) {
-    var label = (data[14] === '>50K' || data[14] === '>50K.') ? 1 : -1;
-    var features = [
+    const label = (data[14] === '>50K' || data[14] === '>50K.') ? 1 : -1;
+    const features = [
       Number(data[0]),                          // 1 age
       metadata.workclass.indexOf(data[1]),      // 2 workclass
       Number(data[2]),                          // 3 fnlwgt
@@ -77,40 +77,40 @@
     return [label, features];
   }
 
-  var trainingSet = sc.textFile(__dirname + '/dataset/adult-0*.csv')
+  const trainingSet = sc.textFile(__dirname + '/dataset/adult-0*.csv')
     .filter(a => a[0] !== 'a')                                        // filter out header
     .map(line => line.split(',').map(str => str.trim()))              // split csv lines
     .filter(data => data.length === 15 && data.indexOf('?') === -1)   // remove incomplete data
     .map(featurize, metadata)                                         // transform string data to number
     .persist();
 
-  var testSet = sc.textFile(__dirname + '/dataset/adult-1*.csv')
+  const testSet = sc.textFile(__dirname + '/dataset/adult-1*.csv')
     .filter(a => a[0] !== 'a')                                        // filter out header
     .map(line => line.split(',').map(str => str.trim()))              // split csv lines
     .filter(data => data.length === 15 && data.indexOf('?') === -1)   // remove incomplete data
     .map(featurize, metadata);                                        // transform string data to number
 
   // Standardize features to zero mean and unit variance
-  var scaler = new ml.StandardScaler();
+  const scaler = new ml.StandardScaler();
 
   await scaler.fit(trainingSet.map(point => point[1]));
 
   // Use scaler to standardize training and test datasets
-  var trainingSetStd = trainingSet
+  const trainingSetStd = trainingSet
     .map((p, scaler) => [p[0], scaler.transform(p[1])], scaler);
 
-  var testSetStd = testSet
+  const testSetStd = testSet
     .map((p, scaler) => [p[0], scaler.transform(p[1])], scaler);
 
   // Train logistic regression with SGD on standardized training set
-  var nIterations = 10;
-  var parameters = {loss: 'log', penalty: 'l2', regParam: 0.001, stepSize: 1, proba: true};
-  var model = new ml.SGDLinearModel(parameters);
+  const nIterations = 10;
+  const parameters = {loss: 'log', penalty: 'l2', regParam: 0.001, stepSize: 1, proba: true};
+  const model = new ml.SGDLinearModel(parameters);
 
   await model.fit(trainingSetStd, nIterations);
 
-  var predictionAndLabels = testSetStd.map((p, model) => [model.predict(p[1]), p[0]], model);
-  var metrics = await ml.classificationMetrics(predictionAndLabels, {steps: 100});
+  const predictionAndLabels = testSetStd.map((p, model) => [model.predict(p[1]), p[0]], model);
+  const metrics = await ml.classificationMetrics(predictionAndLabels, {steps: 100});
 
   console.log('model weights:', model.weights);
   console.log('intercept:', model.intercept);

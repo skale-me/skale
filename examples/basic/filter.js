@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
 function reducer(a, b) {a.push(b); return a;}
 function combiner(a, b) {return a.concat(b);}
