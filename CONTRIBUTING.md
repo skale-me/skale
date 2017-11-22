@@ -58,9 +58,6 @@ the following conventions should be applied as well:
 * Use arrow functions in callbacks, where applicable: `map`, `reduce`,
   `aggregate`, etc
 
-Note: the code base is not yet fully compliant to these rules. Contributions
-are welcome here.
-
 [Code of Conduct]: CODE_OF_CONDUCT.md
 [coding style]: https://github.com/felixge/node-style-guide
 [gitter]: https://gitter.im/skale-me/skale
