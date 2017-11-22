@@ -78,6 +78,7 @@
         2,
         "always"
       ],
+      "no-var": 2,
       "no-console": 0
     },
     "env": {

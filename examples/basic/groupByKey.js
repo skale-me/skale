@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
-var data = [['hello', 1], ['hello', 1], ['world', 1]];
-var nPartitions = 1;
+const data = [['hello', 1], ['hello', 1], ['world', 1]];
+const nPartitions = 1;
 
-var a = sc.parallelize(data, nPartitions).groupByKey().persist();
+const a = sc.parallelize(data, nPartitions).groupByKey().persist();
 
 a.collect(function(err, res) {
   console.log(res);

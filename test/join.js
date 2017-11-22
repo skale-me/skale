@@ -1,8 +1,8 @@
-var t = require('tape');
-var sc = require('skale').context();
+const t = require('tape');
+const sc = require('skale').context();
 
-var data = [['hello', 1], ['world', 2], ['world', 3]];
-var data2 = [['cedric', 3], ['world', 4]];
+const data = [['hello', 1], ['world', 2], ['world', 3]];
+const data2 = [['cedric', 3], ['world', 4]];
 
 t.test('join', function (t) {
   t.plan(1);

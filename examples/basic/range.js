@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
 sc.range(10).map(a => a * 2).collect().then(console.log);
 

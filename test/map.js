@@ -1,5 +1,5 @@
-var t = require('tape');
-var sc = require('skale').context();
+const t = require('tape');
+const sc = require('skale').context();
 
 function by2(a, args) {return a * 2 * args.bias;}
 function sum(a, b) {return a + b;}

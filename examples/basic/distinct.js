@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
 sc.parallelize([ 1, 2, 3, 1, 4, 3, 5 ]).
   distinct().

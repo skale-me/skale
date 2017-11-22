@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
 sc.env.MY_VAR = 'Hello';
 

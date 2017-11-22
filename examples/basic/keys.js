@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
 sc.parallelize([[1, 2], [2, 4], [4, 6]])
   .keys()

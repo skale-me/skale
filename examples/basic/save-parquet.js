@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
-var schema = {
+const schema = {
   int1: {type: 'int32'},
   int2: {type: 'int32'}
 };

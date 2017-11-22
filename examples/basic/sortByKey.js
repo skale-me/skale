@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
-var data = [['world', 2], ['cedric', 3], ['hello', 1]];
-var nPartitions = 2;
+const data = [['world', 2], ['cedric', 3], ['hello', 1]];
+const nPartitions = 2;
 
 sc.parallelize(data, nPartitions)
   .sortByKey()

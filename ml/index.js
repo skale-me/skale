@@ -2,9 +2,9 @@
 
 'use strict';
 
-var thenify = require('thenify');
+const thenify = require('thenify');
 
-var ml = {};
+const ml = {};
 module.exports = ml;
 
 ml.StandardScaler = require('./standard-scaler.js');
@@ -14,9 +14,9 @@ ml.KMeans = require('./kmeans.js');
 
 // Return a label -1 or 1, and features between -1 and 1
 ml.randomSVMLine = function (index, D) {
-  var label = Math.floor(Math.random() * 2) * 2 - 1;
-  var features = [];
-  for (var i = 0; i < D; i++)
+  const label = Math.floor(Math.random() * 2) * 2 - 1;
+  const features = [];
+  for (let i = 0; i < D; i++)
     features.push(Math.random() * 2 - 1);
   return [label, features];
 };
@@ -31,30 +31,34 @@ ml.randomSVMLine = function (index, D) {
 */
 
 ml.LinearSVM = function (data, D, N, w) {
-  var self = this;
+  const self = this;
   this.w = w || new Array(D).fill(0);
 
   this.train = thenify(function(nIterations, callback) {
-    var i = 0;
+    let i = 0;
     iterate();
 
     function hingeLossGradient(p, args) {
-      var grad = [], dotProd = 0, label = p[0], features = p[1];
-      for (var i = 0; i < features.length; i++)
+      const grad = [];
+      const label = p[0];
+      const features = p[1];
+      let dotProd = 0;
+
+      for (let i = 0; i < features.length; i++)
         dotProd += features[i] * args.weights[i];
 
       if (label * dotProd < 1)
-        for (i = 0; i < features.length; i++) 
+        for (let i = 0; i < features.length; i++) 
           grad[i] = -label * features[i];
       else
-        for (i = 0; i < features.length; i++) 
+        for (let i = 0; i < features.length; i++) 
           grad[i] = 0;
 
       return grad;
     }
 
     function sum(a, b) {
-      for (var i = 0; i < b.length; i++)
+      for (let i = 0; i < b.length; i++)
         a[i] += b[i];
       return a;
     }
@@ -63,7 +67,7 @@ ml.LinearSVM = function (data, D, N, w) {
       console.time(i);
       data.map(hingeLossGradient, {weights: self.w}).reduce(sum, new Array(D).fill(0), function(err, gradient) {
         console.timeEnd(i);
-        for (var j = 0; j < self.w.length; j++)
+        for (let j = 0; j < self.w.length; j++)
           self.w[j] -= gradient[j] / (N * Math.sqrt(i + 1));
         if (++i == nIterations) callback();
         else iterate();
@@ -73,24 +77,28 @@ ml.LinearSVM = function (data, D, N, w) {
 };
 
 ml.LinearRegression = function (data, D, N, w) {
-  var self = this;
+  const self = this;
   this.w = w || new Array(D).fill(0);
 
   this.train = thenify(function(nIterations, callback) {
-    var i = 0;
+    let i = 0;
     iterate();
 
     function squaredLossGradient(p, args) {
-      var grad = [], dotProd = 0, label = p[0], features = p[1];
-      for (var i = 0; i < features.length; i++)
+      const grad = [];
+      const label = p[0];
+      const features = p[1];
+      let dotProd = 0;
+
+      for (let i = 0; i < features.length; i++)
         dotProd += features[i] * args.weights[i];
-      for (i = 0; i < features.length; i++) 
+      for (let i = 0; i < features.length; i++) 
         grad[i] = (dotProd - label) * features[i];
       return grad;
     }
 
     function sum(a, b) {
-      for (var i = 0; i < b.length; i++)
+      for (let i = 0; i < b.length; i++)
         a[i] += b[i];
       return a;
     }
@@ -99,7 +107,7 @@ ml.LinearRegression = function (data, D, N, w) {
       console.time(i);
       data.map(squaredLossGradient, {weights: self.w}).reduce(sum, new Array(D).fill(0)).on('data', function(gradient) {
         console.timeEnd(i);
-        for (var j = 0; j < self.w.length; j++)
+        for (let j = 0; j < self.w.length; j++)
           self.w[j] -= gradient[j] / (N * Math.sqrt(i + 1));
         if (++i == nIterations) callback();
         else iterate();

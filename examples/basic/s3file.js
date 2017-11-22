@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
-var input = sc.textFile('s3://skale-demo/datasets/*-ny.json.gz');
-//var input = sc.textFile('s3://skale-demo/datasets/restaurants-ny.json.gz');
-//var input = sc.textFile('s3://skale-demo/datasets/restaurants-ny.json');
-//var s = input.stream();
+const sc = require('skale').context();
+const input = sc.textFile('s3://skale-demo/datasets/*-ny.json.gz');
+//const input = sc.textFile('s3://skale-demo/datasets/restaurants-ny.json.gz');
+//const input = sc.textFile('s3://skale-demo/datasets/restaurants-ny.json');
+//const s = input.stream();
 //s.pipe(process.stdout);
 //s.on('end', sc.end);
 

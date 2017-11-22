@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var sc = require('skale').context();
+const sc = require('skale').context();
 
-var file = __dirname + '/kv.data';
+const file = __dirname + '/kv.data';
 
 sc.textFile(file)
   .take(1)

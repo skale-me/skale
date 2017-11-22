@@ -1,10 +1,10 @@
-var t = require('tape');
-var sc = require('skale').context();
+const t = require('tape');
+const sc = require('skale').context();
 
-var data = [['hello', 1], ['hello', 1], ['world', 1]];
-var nPartitions = 2;
+const data = [['hello', 1], ['hello', 1], ['world', 1]];
+const nPartitions = 2;
 
-var init = 0;
+const init = 0;
 
 function reducer(a, b) {return a + b;}
 function combiner(a, b) {return a + b;}

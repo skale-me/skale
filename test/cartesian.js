@@ -1,13 +1,13 @@
-var t = require('tape');
-var sc = require('skale').context();
+const t = require('tape');
+const sc = require('skale').context();
 
 t.test('cartesian', function (t) {
-  var data = [1, 2, 3, 4, 5, 6];
-  var data2 = [7, 8, 9, 10, 11, 12];
-  var nPartitions = 3;
+  const data = [1, 2, 3, 4, 5, 6];
+  const data2 = [7, 8, 9, 10, 11, 12];
+  const nPartitions = 3;
 
-  var a = sc.parallelize(data, nPartitions);
-  var b = sc.parallelize(data2, nPartitions);
+  const a = sc.parallelize(data, nPartitions);
+  const b = sc.parallelize(data2, nPartitions);
 
   t.plan(1);
 
