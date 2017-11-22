@@ -4,28 +4,28 @@
 
 'use strict';
 
-var child_process = require('child_process');
-var fs = require('fs');
-var os = require('os');
-var cluster = require('cluster');
-var url = require('url');
-var zlib = require('zlib');
-var stream = require('stream');
+const child_process = require('child_process');
+const fs = require('fs');
+const os = require('os');
+const cluster = require('cluster');
+const url = require('url');
+const zlib = require('zlib');
+const stream = require('stream');
 
-var mkdirp = require('mkdirp');
-var uuid = require('uuid');
-var aws = require('aws-sdk');
-var azure = require('azure-storage');
-var parquet = require('../lib/stub-parquet.js');
+const mkdirp = require('mkdirp');
+const uuid = require('uuid');
+const aws = require('aws-sdk');
+const azure = require('azure-storage');
+const parquet = require('../lib/stub-parquet.js');
 
-var SkaleClient = require('../lib/client.js');
-var Dataset = require('../lib/dataset.js');
-var Task = require('../lib/task.js');
-var Lines = require('../lib/lines.js');
-var sizeOf = require('../lib/rough-sizeof.js');
-var readSplit = require('../lib/readsplit.js').readSplit;
+const SkaleClient = require('../lib/client.js');
+const Dataset = require('../lib/dataset.js');
+const Task = require('../lib/task.js');
+const Lines = require('../lib/lines.js');
+const sizeOf = require('../lib/rough-sizeof.js');
+const readSplit = require('../lib/readsplit.js').readSplit;
 
-var opt = require('node-getopt').create([
+const opt = require('node-getopt').create([
   ['h', 'help', 'print this help text'],
   ['d', 'debug', 'print debug traces'],
   ['m', 'memory=ARG', 'set max memory in MB for workers'],
@@ -40,27 +40,27 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 if (opt.options.version) {
-  var pkg = require('../package');
+  const pkg = require('../package');
   return console.log(pkg.name + '-' +  pkg.version);
 }
 
-var debug = opt.options.debug || false;
-var forceGc = opt.options.forcegc || false;
-var nworkers = Number(opt.options.nworker) || (process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
-var memory = Number(opt.options.memory || process.env.SKALE_MEMORY);
-var cgrid;
-var mm = new MemoryManager(memory);
-var log;
-var hostname;
-var start = Date.now();
+const debug = opt.options.debug || false;
+const forceGc = opt.options.forcegc || false;
+const nworkers = +opt.options.nworker || +(process.env.SKALE_WORKER_PER_HOST ? process.env.SKALE_WORKER_PER_HOST : os.cpus().length);
+const memory = +(opt.options.memory || process.env.SKALE_MEMORY);
+const mm = new MemoryManager(memory);
+const start = Date.now();
+let cgrid;
+let hostname;
+let log;
+let dlog;
 
-nworkers = Number(nworkers);
 if (!opt.options.slow)
   hostname = opt.options.MyHost || os.hostname();
 
 if (process.env.SKALE_DEBUG > 1) {
   log = function () {
-    var args = Array.prototype.slice.call(arguments);
+    const args = Array.prototype.slice.call(arguments);
     args.unshift('[worker-controller ' + (Date.now() - start) / 1000 + 's]');
     console.error.apply(null, args);
   };
@@ -73,7 +73,7 @@ if (cluster.isMaster) {
   if (memory)
     cluster.setupMaster({execArgv: ['--expose-gc', '--max_old_space_size=' + memory]});
   cluster.on('exit', handleExit);
-  var cpus = os.cpus();
+  const cpus = os.cpus();
   cgrid = new SkaleClient({
     debug: debug,
     retry: opt.options.retry,
@@ -100,7 +100,7 @@ if (cluster.isMaster) {
   // Periodic stats
   fs.mkdir('/tmp/skale', function () {});
   setInterval(function () {
-    var stats = { nworkers: Object.keys(cluster.workers).length };
+    const stats = { nworkers: Object.keys(cluster.workers).length };
     fs.writeFile('/tmp/skale/worker-controller-stats', JSON.stringify(stats), function () {});
   }, 3000);
   log('worker controller ready');
@@ -109,11 +109,14 @@ if (cluster.isMaster) {
 }
 
 function startWorkers(msg) {
-  var worker = [], removed = {};
-  var n = msg.n || nworkers;
+  const worker = [];
+  const removed = {};
+  const n = msg.n || nworkers;
+
   log('worker-controller host', cgrid.uuid);
-  for (var i = 0; i < n; i++)
+  for (let i = 0; i < n; i++) {
     worker[i] = cluster.fork({wsid: msg.wsid, rank: i, puuid: cgrid.uuid});
+  }
   worker.forEach(function (w) {
     w.on('message', function (msg) {
       switch (msg.cmd) {
@@ -135,19 +138,21 @@ function handleExit(worker, code, signal) {
 }
 
 function runWorker(host, port) {
-  var basedir, log;
-  var start = Date.now();
-  var wid = process.env.rank;
+  const start = Date.now();
+  let wid = process.env.rank;
+  let basedir;
+  let log;
+
   if (process.env.SKALE_DEBUG > 1) {
     log = function () {
-      var args = Array.prototype.slice.call(arguments);
+      const args = Array.prototype.slice.call(arguments);
       args.unshift('[worker-' +  wid + ' ' + (Date.now() - start) / 1000 + 's]');
       console.error.apply(null, args);
     };
-    var dlog = function() {
-      var args = Array.prototype.slice.call(arguments);
-      var now = Date.now();
-      var lstart = args.shift();
+    dlog = function() {
+      const args = Array.prototype.slice.call(arguments);
+      const now = Date.now();
+      const lstart = args.shift();
       args.unshift('[worker-' +  wid + ' ' + (now - start) / 1000 + 's]');
       args.push('in ' + (now - lstart) / 1000 + 's');
       console.error.apply(null, args);
@@ -162,7 +167,7 @@ function runWorker(host, port) {
     process.exit(2);
   });
 
-  var grid = new SkaleClient({
+  const grid = new SkaleClient({
     debug: debug,
     host: host,
     port: port,
@@ -191,7 +196,7 @@ function runWorker(host, port) {
 
   function runTask(msg) {
     grid.muuid = msg.data.master_uuid;
-    var task = parseTask(msg.data.args);
+    const task = parseTask(msg.data.args);
     basedir = task.basedir;
     // set worker side dependencies
     task.workerId = 'w' + grid.id;
@@ -207,7 +212,7 @@ function runWorker(host, port) {
       grid.reply(msg, null, result);
       if (global.gc && forceGc) {
         setImmediate(function () {
-          var gcs = Date.now();
+          const gcs = Date.now();
           global.gc();
           dlog(gcs, 'gc');
         });
@@ -218,11 +223,12 @@ function runWorker(host, port) {
 
   function runztask(msg) {
     //log('runztask msg', msg);
-    var file = msg.data.args;
+    const file = msg.data.args;
     grid.muuid = msg.data.master_uuid;
 
-    var s = getReadStreamSync({path: file});
-    var data = Buffer.concat([]);
+    const s = getReadStreamSync({path: file});
+    let data = Buffer.concat([]);
+
     s.on('data', function (chunk) {
       data = Buffer.concat([data, chunk]);
     });
@@ -242,7 +248,7 @@ function runWorker(host, port) {
     }
   }
 
-  var request = { runTask: runTask, runztask: runztask };
+  const request = { runTask: runTask, runztask: runztask };
 
   grid.on('remoteClose', function () {
     process.send({cmd: 'rm', dir: basedir});
@@ -263,13 +269,12 @@ function runWorker(host, port) {
   });
 }
 
-function MemoryManager(memory) {
-  memory = memory || 1024;
-  var Kb = 1024, Mb = 1024 * Kb;
-  var MAX_MEMORY = (memory - 100) * Mb;
-  var maxStorageMemory = MAX_MEMORY * 0.4;
-  var maxShuffleMemory = MAX_MEMORY * 0.2;
-  var maxCollectMemory = MAX_MEMORY * 0.2;
+function MemoryManager(memory = 1024) {
+  const Mb = 1024 * 1024;
+  const MAX_MEMORY = (memory - 100) * Mb;
+  const maxStorageMemory = MAX_MEMORY * 0.4;
+  const maxShuffleMemory = MAX_MEMORY * 0.2;
+  const maxCollectMemory = MAX_MEMORY * 0.2;
 
   this.storageMemory = 0;
   this.shuffleMemory = 0;
@@ -282,7 +287,7 @@ function MemoryManager(memory) {
 
   this.partitions = {};
   this.register = function (partition) {
-    var key = partition.datasetId + '.' + partition.partitionIndex;
+    const key = partition.datasetId + '.' + partition.partitionIndex;
     if (!(key in this.partitions)) this.partitions[key] = partition;
   };
 
@@ -296,13 +301,12 @@ function MemoryManager(memory) {
 }
 
 function parseTask(str) {
-  var i, j, n, ref;
-  var task = JSON.parse(str, function (key, value) {
+  const task = JSON.parse(str, function (key, value) {
     if (typeof value === 'string') {
       // String value can be a regular function or an ES6 arrow function
       if (value.substring(0, 8) === 'function') {
-        var args = value.match(/\(([^)]*)/)[1];
-        var body = value.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
+        const args = value.match(/\(([^)]*)/)[1];
+        const body = value.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
         value = new Function(args, body);
       } else if (value.match(/^\s*\(\s*[^(][^)]*\)\s*=>/) || value.match(/^\s*\w+\s*=>/))
         value = ('indirect', eval)(value);
@@ -310,13 +314,13 @@ function parseTask(str) {
     return value;
   });
 
-  for (i in task.nodes) {
-    n = task.nodes[i];
-    for (j in n.dependencies) {
-      ref = n.dependencies[j];
+  for (let i in task.nodes) {
+    const n = task.nodes[i];
+    for (let j in n.dependencies) {
+      const ref = n.dependencies[j];
       n.dependencies[j] = task.nodes[ref];
     }
-    for (j in n.partitions) {
+    for (let j in n.partitions) {
       Object.setPrototypeOf(task.nodes[i].partitions[j], Dataset.Partition.prototype);
       task.nodes[i].partitions[j].count = 0;
       task.nodes[i].partitions[j].bsize = 0;

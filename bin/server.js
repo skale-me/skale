@@ -10,24 +10,24 @@
 
 'use strict';
 
-var child_process = require('child_process');
-var fs = require('fs');
-var net = require('net');
-var os = require('os');
-var util = require('util');
-var stream = require('stream');
-var uuidGen = require('uuid');
-var SkaleClient = require('../lib/client.js');
-var webSocketServer = require('ws').Server;
-var websocket = require('websocket-stream');
+const child_process = require('child_process');
+const fs = require('fs');
+const net = require('net');
+const os = require('os');
+const util = require('util');
+const stream = require('stream');
+const uuidGen = require('uuid');
+const SkaleClient = require('../lib/client.js');
+const webSocketServer = require('ws').Server;
+const websocket = require('websocket-stream');
 
-var wsid = 1; // worker stock id
-var expectedWorkers = 0;  // number of expected workers per stock
-var workerStock = [];
-var workerControllers = [];
-var pendingMasters = [];
+const workerControllers = [];
+const pendingMasters = [];
+let workerStock = [];
+let wsid = 1; // worker stock id
+let expectedWorkers = 0;  // number of expected workers per stock
 
-var opt = require('node-getopt').create([
+const opt = require('node-getopt').create([
   ['h', 'help', 'print this help text'],
   ['H', 'Host=ARG', 'primary server host (default none)'],
   ['l', 'local=ARG', 'start local worker controller (default ncpu workers)'],
@@ -42,29 +42,28 @@ var opt = require('node-getopt').create([
 ]).bindHelp().parseSystem();
 
 if (opt.options.version) {
-  var pkg = require('../package');
+  const pkg = require('../package');
   return console.log(pkg.name + '-' +  pkg.version);
 }
 
-var clients = {};
-var clientNum = 1;
-var clientMax = SkaleClient.minMulticast;
-var minMulticast = SkaleClient.minMulticast;
-var topics = {};
-var topicNum = -1;
-var UInt32Max = 4294967296;
-var topicMax = UInt32Max - minMulticast;
-var topicIndex = {};
-var memory = opt.options.memory || process.env.SKALE_MEMORY || 0;
+const clients = {};
+let clientNum = 1;
+const clientMax = SkaleClient.minMulticast;
+const minMulticast = SkaleClient.minMulticast;
+const topics = {};
+let topicNum = -1;
+const UInt32Max = 4294967296;
+const topicMax = UInt32Max - minMulticast;
+const topicIndex = {};
+const memory = opt.options.memory || process.env.SKALE_MEMORY || 0;
 //var name = opt.options.name || 'localhost';   // Unused until FT comes back
-var hostname = opt.options.MyHost || os.hostname();
-var port = Number(opt.options.port) || 12346;
-var wss;
-var wsport = opt.options.wsport || port + 2;
-var crossbar = {};
-var nworker = (opt.options.local > 0) ? opt.options.local : 0;
-var access = process.env.SKALE_KEY;
-var stats = {
+const hostname = opt.options.MyHost || os.hostname();
+const port = Number(opt.options.port) || 12346;
+const wsport = opt.options.wsport || port + 2;
+const crossbar = {};
+const nworker = (opt.options.local > 0) ? opt.options.local : 0;
+const access = process.env.SKALE_KEY;
+const stats = {
   masters: 0,
   workerControllers: 0,
   workers: 0,
@@ -84,11 +83,15 @@ function SwitchBoard(sock) {
 util.inherits(SwitchBoard, stream.Transform);
 
 SwitchBoard.prototype._transform = function (chunk, encoding, done) {
-  var o = {}, to = chunk.readUInt32LE(0, true);
+  const to = chunk.readUInt32LE(0, true);
+  let o = {};
   if (to >= minMulticast) { // Multicast
-    var sub = topics[to - minMulticast].sub, len = sub.length, n = 0;
+    const sub = topics[to - minMulticast].sub;
+    let len = sub.length;
+    let n = 0;
+
     if (len === 0) return done();
-    for (var i in sub) {
+    for (let i in sub) {
       // Flow control: adjust to the slowest receiver
       if (crossbar[sub[i]]) {
         crossbar[sub[i]].write(chunk, function () {
@@ -125,9 +128,9 @@ SwitchBoard.prototype._transform = function (chunk, encoding, done) {
 
 // Client requests functions, return true if a response must be sent
 // to client, false otherwise. Reply data, if any,  must be set in msg.data.
-var clientRequest = {
+const clientRequest = {
   connect: function (sock, msg) {
-    var i, ret = true, master;
+    let ret = true;
     if (access && msg.access !== access) {
       console.log('## Skale connect failed: access denied');
       msg.error = 'access denied, check SKALE_KEY';
@@ -160,7 +163,7 @@ var clientRequest = {
       if (wsid === msg.data.wsid) {
         workerStock.push(msg.data);
         if (pendingMasters.length && workerStock.length >= expectedWorkers) {
-          master = pendingMasters.shift();
+          const master = pendingMasters.shift();
           master.data.devices = workerStock;
           master.cmd = 'reply';
           if (clients[master.data.uuid].sock)
@@ -185,10 +188,9 @@ var clientRequest = {
     return ret;
 
     function postMaster(muuid) {
-      var wuuid;
       // Setup notifications to terminate workers on master end
-      for (i = 0; i < workerStock.length; i++) {
-        wuuid = workerStock[i].uuid;
+      for (let i = 0; i < workerStock.length; i++) {
+        const wuuid = workerStock[i].uuid;
         clients[muuid].closeListeners[wuuid] = true;
         clients[wuuid].closeListeners[muuid] = true;
       }
@@ -218,7 +220,7 @@ var clientRequest = {
   },
   set: function (sock, msg) {
     if (typeof msg.data !== 'object') return false;
-    for (var i in msg.data)
+    for (let i in msg.data)
       sock.client.data[i] = msg.data[i];
     pubmon({event: 'set', uuid: sock.client.uuid, data: msg.data});
     return false;
@@ -228,8 +230,8 @@ var clientRequest = {
     return false;
   },
   tid: function (sock, msg) {
-    var topic = msg.data;
-    var n = msg.data = getTopicId(topic);
+    const topic = msg.data;
+    const n = msg.data = getTopicId(topic);
     // First to publish becomes topic owner
     if (!topics[n].owner) {
       topics[n].owner = sock.client;
@@ -247,7 +249,7 @@ function startWorkerStock() {
   // Pre-fork new workers to renew the stock
   wsid++;
   workerStock = [];
-  for (var i = 0; i < workerControllers.length; i++) {
+  for (let i = 0; i < workerControllers.length; i++) {
     clients[workerControllers[i].uuid].sock.write(SkaleClient.encode({
       cmd: 'getWorker',
       wsid: wsid,
@@ -257,8 +259,8 @@ function startWorkerStock() {
 }
 
 // Create a source stream and topic for monitoring info publishing
-var mstream = new SwitchBoard({});
-var monid =  getTopicId('monitoring') + minMulticast;
+const mstream = new SwitchBoard({});
+const monid =  getTopicId('monitoring') + minMulticast;
 function pubmon(data) {
   mstream.write(SkaleClient.encode({cmd: 'monitoring', id: monid, data: data}));
 }
@@ -282,9 +284,9 @@ if (port) {
 // Start a websocket server if a listening port is specified on command line
 if (wsport) {
   console.log('## Listening WebSocket on', wsport);
-  wss = new webSocketServer({port: wsport});
+  const wss = new webSocketServer({port: wsport});
   wss.on('connection', function (ws) {
-    var sock = websocket(ws);
+    const sock = websocket(ws);
     sock.ws = true;
     handleConnect(sock);
     // Catch error/close at websocket level in addition to stream level
@@ -302,9 +304,9 @@ if (wsport) {
 if (opt.options.local) startWorker();
 
 function startWorker() {
-  var args = ['-P', port, '-n', nworker, '-m', memory];
+  let args = ['-P', port, '-n', nworker, '-m', memory];
   args = args.concat(opt.options.slow ? ['-s'] : ['-M', hostname]);
-  var worker =  child_process.fork( __dirname + '/worker.js', args, {
+  const worker = child_process.fork( __dirname + '/worker.js', args, {
     execArgv: [ '--expose-gc' ],
     stdio: 'inherit'
   });
@@ -318,7 +320,7 @@ setInterval(function () {
 }, 3000);
 
 function handleClose(sock) {
-  var i, cli = sock.client;
+  const cli = sock.client;
   if (cli) {
     console.log('## Close:', cli.data.type, cli.index, cli.uuid);
     pubmon({event: 'disconnect', uuid: cli.uuid});
@@ -327,7 +329,7 @@ function handleClose(sock) {
     case 'worker-controller':
       // Resize stock capacity
       expectedWorkers -= cli.data.nworkers;
-      for (i = 0; i < workerControllers.length; i++) {
+      for (let i = 0; i < workerControllers.length; i++) {
         if (cli.uuid === workerControllers[i].uuid) {
           delete stats.workerHosts[workerControllers[i].id];
           workerControllers.splice(i, 1);
@@ -337,7 +339,7 @@ function handleClose(sock) {
       break;
     case 'worker':
       // Remove worker from stock
-      for (i = 0; i < workerStock.length; i++) {
+      for (let i = 0; i < workerStock.length; i++) {
         if (cli.uuid === workerStock[i].uuid)
           workerStock.splice(i, 1);
       }
@@ -345,7 +347,7 @@ function handleClose(sock) {
       break;
     case 'master':
       // Remove master from pending masters, avoiding future useless workers start
-      for (i in pendingMasters) {
+      for (let i in pendingMasters) {
         if (pendingMasters[i].data.uuid === cli.uuid) {
           pendingMasters.splice(i, 1);
           break;
@@ -355,11 +357,11 @@ function handleClose(sock) {
       startWorkerStock();
       break;
     }
-    for (i in cli.closeListeners) {
+    for (let i in cli.closeListeners) {
       if (i in clients && clients[i].sock)
         clients[i].sock.write(SkaleClient.encode({cmd: 'remoteClose', data: cli.uuid}));
     }
-    for (i in cli.topics) {   // Remove owned topics
+    for (let i in cli.topics) {   // Remove owned topics
       delete topicIndex[topics[i].name];
       delete topics[i];
     }
@@ -389,7 +391,7 @@ function handleConnect(sock) {
 }
 
 function getClientNumber() {
-  var n = 100000;
+  let n = 100000;
   do {
     clientNum = (clientNum < clientMax) ? clientNum + 1 : 2;
   } while (clientNum in crossbar && --n);
@@ -399,7 +401,7 @@ function getClientNumber() {
 
 function register(from, msg, sock)
 {
-  var uuid = msg.uuid || uuidGen.v1();
+  const uuid = msg.uuid || uuidGen.v1();
   sock.client = clients[uuid] = {
     index: sock.index,
     uuid: uuid,
@@ -418,12 +420,14 @@ function register(from, msg, sock)
 }
 
 function devices(msg) {
-  var query = msg.data.query, result = [];
+  const query = msg.data.query;
+  const result = [];
 
-  for (var i in clients) {
+  for (let i in clients) {
+    let match;
     if (!clients[i].sock) continue;
-    var match = true;
-    for (var j in query) {
+    match = true;
+    for (let j in query) {
       if (!clients[i].data || clients[i].data[j] !== query[j]) {
         match = false;
         break;
@@ -443,7 +447,7 @@ function devices(msg) {
 
 function getTopicId(topic) {
   if (topic in topicIndex) return topicIndex[topic];
-  var n = 10000;
+  let n = 10000;
   do {
     topicNum = (topicNum < topicMax) ? topicNum + 1 : 0;
   } while (topicNum in topics && --n);
@@ -454,13 +458,14 @@ function getTopicId(topic) {
 }
 
 function subscribe(client, topic) {
-  var sub = topics[getTopicId(topic)].sub;
+  const sub = topics[getTopicId(topic)].sub;
   if (sub.indexOf(client.index) < 0)
     sub.push(client.index);
 }
 
 function unsubscribe(client, topic) {
   if (!(topic in topicIndex)) return;
-  var sub = topics[topicIndex[topic]].sub, i = sub.indexOf(client.index);
+  const sub = topics[topicIndex[topic]].sub;
+  const i = sub.indexOf(client.index);
   if (i >= 0) sub.splice(i, 1);
 }
