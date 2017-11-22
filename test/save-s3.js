@@ -2,7 +2,7 @@ const t = require('tape');
 const aws = require('aws-sdk');
 const sc = require('skale').context();
 
-const skip = process.env.AWS_ACCESS_KEY_ID ? false : true;
+const skip = (process.env.CI || process.env.AWS_ACCESS_KEY_ID) ? false : true;
 const s3 = skip ? null : new aws.S3({httpOptions: {timeout: 3600000}, signatureVersion: 'v4'});
 const savedir = 's3://skale-test-eu-west-1/test/save';
 
