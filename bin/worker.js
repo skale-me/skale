@@ -301,7 +301,6 @@ function MemoryManager(memory = 1024) {
 }
 
 function parseTask(str) {
-  //var i, j, n, ref;
   const task = JSON.parse(str, function (key, value) {
     if (typeof value === 'string') {
       // String value can be a regular function or an ES6 arrow function
