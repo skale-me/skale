@@ -287,7 +287,7 @@ function MemoryManager(memory = 1024) {
 
   this.partitions = {};
   this.register = function (partition) {
-    var key = partition.datasetId + '.' + partition.partitionIndex;
+    const key = partition.datasetId + '.' + partition.partitionIndex;
     if (!(key in this.partitions)) this.partitions[key] = partition;
   };
 
@@ -305,8 +305,8 @@ function parseTask(str) {
     if (typeof value === 'string') {
       // String value can be a regular function or an ES6 arrow function
       if (value.substring(0, 8) === 'function') {
-        var args = value.match(/\(([^)]*)/)[1];
-        var body = value.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
+        const args = value.match(/\(([^)]*)/)[1];
+        const body = value.replace(/^function\s*[^)]*\)\s*{/, '').replace(/}$/, '');
         value = new Function(args, body);
       } else if (value.match(/^\s*\(\s*[^(][^)]*\)\s*=>/) || value.match(/^\s*\w+\s*=>/))
         value = ('indirect', eval)(value);
