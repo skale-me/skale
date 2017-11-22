@@ -21,9 +21,9 @@ const SkaleClient = require('../lib/client.js');
 const webSocketServer = require('ws').Server;
 const websocket = require('websocket-stream');
 
-const workerStock = [];
 const workerControllers = [];
 const pendingMasters = [];
+let workerStock = [];
 let wsid = 1; // worker stock id
 let expectedWorkers = 0;  // number of expected workers per stock
 
