@@ -201,12 +201,12 @@ function runWorker(host, port) {
     // set worker side dependencies
     task.workerId = 'w' + grid.id;
     task.mm = mm;
-    task.log = log;
-    task.dlog = dlog;
     task.grid = grid;
     // Set dependencies in global scope for user evaluated code in workers
     global.azure = azure;
     global.S3 = S3;
+    global.dlog = dlog;
+    global.log = log;
     global.Lines = Lines;
     global.mkdirp = mkdirp;
     global.mm = mm;
