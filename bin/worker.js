@@ -14,7 +14,7 @@ const stream = require('stream');
 
 const mkdirp = require('mkdirp');
 const uuid = require('uuid');
-const aws = require('aws-sdk');
+const S3 = require('aws-sdk/clients/s3');
 const azure = require('azure-storage');
 const parquet = require('../lib/stub-parquet.js');
 
@@ -203,8 +203,11 @@ function runWorker(host, port) {
     task.mm = mm;
     task.log = log;
     task.dlog = dlog;
-    task.lib = {aws: aws, azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, stream: stream, url: url, uuid: uuid, zlib: zlib};
+    task.lib = {azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, stream: stream, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
+    // Set dependencies in global scope for user evaluated code in workers
+    global.S3 = S3;
+    global.fs = fs;
     // Indirect Eval to set user dependencies bundle in the worker global context
     (0, eval)(task.bundle);
     task.run(function(result) {
