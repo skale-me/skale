@@ -203,11 +203,22 @@ function runWorker(host, port) {
     task.mm = mm;
     task.log = log;
     task.dlog = dlog;
-    task.lib = {azure: azure, sizeOf: sizeOf, fs: fs, readSplit: readSplit, Lines: Lines, task: task, mkdirp: mkdirp, parquet: parquet, stream: stream, url: url, uuid: uuid, zlib: zlib};
     task.grid = grid;
     // Set dependencies in global scope for user evaluated code in workers
+    global.azure = azure;
     global.S3 = S3;
+    global.Lines = Lines;
+    global.mkdirp = mkdirp;
+    global.mm = mm;
+    global.parquet = parquet;
+    global.readSplit = readSplit;
+    global.uuid = uuid;
+
     global.fs = fs;
+    global.stream = stream;
+    global.url = url;
+    global.zlib = zlib;
+
     // Indirect Eval to set user dependencies bundle in the worker global context
     (0, eval)(task.bundle);
     task.run(function(result) {
