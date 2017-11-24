@@ -8,7 +8,7 @@ t.test('env', function (t) {
   sc.range(5)
     .map(a => process.env.MY_VAR + a)
     .collect(function (err, res) {
-      t.equal(res[0], 'hello0');
+      t.equal(res[0], 'hello0', 'env is propagated to workers');
     });
 });
 
@@ -19,7 +19,7 @@ t.test('require', function (t) {
     .range(4)
     .map(a => add3(a))                // eslint-disable-line no-undef
     .collect(function (err, res) {
-      t.deepEquals(res, [3, 4, 5, 6]);
+      t.deepEquals(res, [3, 4, 5, 6], 'dependency is injected in workers');
       sc.end();
     });
 });
