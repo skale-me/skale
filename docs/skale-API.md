@@ -809,6 +809,9 @@ element) separated by newlines.
 - *options*: an *Object* with the following fields:
     - *gzip*: *Boolean* (default false) to enable gzip compression. If compression
       is enabled, files are suffixed with `.gz`
+    - *csv*: *Object* (default undefined) with the following fields:
+        - *header*: optional *String* to define first line
+        - *sep*: *String* to define separator (default `;`)
 - *done*: an optional callback function of the form `function(error, result)`
   called at completion. If not provided, an [ES6 promise] is returned.
 
