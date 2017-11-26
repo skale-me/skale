@@ -23,8 +23,10 @@ function KMeans(nClusters, options) {
     let smallestSnIdx;
     for (let i = 0; i < means.length; i++) {
       let sn = 0;
-      for (let j = 0; j < element.length; j++)
-        sn += (element[j] - means[i][j]) ** 2;
+      for (let j = 0; j < element.length; j++) {
+        let delta = (element[j] - means[i][j]);
+        sn += delta * delta;
+      }
       if (sn < smallestSn) {
         smallestSnIdx = i;
         smallestSn = sn;
