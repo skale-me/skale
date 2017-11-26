@@ -61,10 +61,11 @@ KMeans.prototype.fit = thenify(function(trainingSet, done) {
       .map(a => a[1].data.map(e => e / a[1].sum))
       .collect(function (err, means) {
         let mse = 0;
-        for (let i = 0; i < self.nClusters; i++)
+        for (let i = 0; i < self.nClusters; i++) {
           for (let j = 0; j < means[i].length; j++) {
             let delta = means[i][j] - self.means[i][j];
             mse += delta * delta;
+          }
         }
         self.means = means;
         if (mse < self.maxMse || iter++ > self.maxIterations)

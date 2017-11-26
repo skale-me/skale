@@ -10,8 +10,8 @@ t.test('standard scaler', function (t) {
 
   scaler.fit(data, function (err) {
     t.ok(!err, 'scaler.fit() returns no error');
-    t.deepEqual(scaler.mean, [0.5, 0.5]);
-    t.deepEqual(scaler.std, [0.5, 0.5]);
+    t.deepEqual(scaler.mean, [0.5, 0.5], 'scaler mean vector is correct');
+    t.deepEqual(scaler.std, [0.5, 0.5], 'scaler standard deviation vector is correct');
 
     const scaled = data.map((p, scaler) => scaler.transform(p), scaler);
     scaled.collect(function (err, res) {
