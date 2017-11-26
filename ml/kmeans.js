@@ -24,7 +24,7 @@ function KMeans(nClusters, options) {
     for (let i = 0; i < means.length; i++) {
       let sn = 0;
       for (let j = 0; j < element.length; j++) {
-        let delta = (element[j] - means[i][j]);
+        let delta = element[j] - means[i][j];
         sn += delta * delta;
       }
       if (sn < smallestSn) {
@@ -62,8 +62,10 @@ KMeans.prototype.fit = thenify(function(trainingSet, done) {
       .collect(function (err, means) {
         let mse = 0;
         for (let i = 0; i < self.nClusters; i++)
-          for (let j = 0; j < means[i].length; j++)
-            mse += (means[i][j] - self.means[i][j]) ** 2;
+          for (let j = 0; j < means[i].length; j++) {
+            let delta = means[i][j] - self.means[i][j];
+            mse += delta * delta;
+        }
         self.means = means;
         if (mse < self.maxMse || iter++ > self.maxIterations)
           return done();
