@@ -10,7 +10,6 @@ t.test('subtract', function (t) {
   sc.parallelize(d1)
     .subtract(sc.parallelize(d2))
     .collect(function(err, res) {
-      console.log(res);
       t.deepEqual(res.sort(), [[2, 4], [3, 5]]);
       sc.end();
     });
