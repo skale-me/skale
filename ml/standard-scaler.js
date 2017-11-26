@@ -33,8 +33,10 @@ function meanCombiner(a, b) {
 }
 
 function stddevReducer(acc, features) {
-  for (let i = 0; i < features.length; i++)
-    acc.sum[i] = (acc.sum[i] || 0) + (features[i] - acc.mean[i]) ** 2;
+  for (let i = 0; i < features.length; i++) {
+    let delta = features[i] - acc.mean[i];
+    acc.sum[i] = (acc.sum[i] || 0) + delta * delta;
+  }
   return acc;
 }
 
