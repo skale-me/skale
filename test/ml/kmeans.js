@@ -1,3 +1,5 @@
+process.env.SKALE_RANDOM_SEED = 1;
+
 const t = require('tape');
 const sc = require('skale').context();
 const ml = require('skale/ml');
