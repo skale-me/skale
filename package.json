@@ -8,7 +8,6 @@
     "start": "pf=/tmp/skale-server.pid; test -f $pf && exit 1; bin/server.js -l 0 & echo $! > $pf",
     "stop": "pf=/tmp/skale-server.pid; test -f $pf || exit 1; kill $(cat $pf); rm -f $pf",
     "pretest": "eslint .",
-    "lint": "eslint .",
     "tape": "tape \"test/**/*.js\"",
     "test": "make -C test"
   },
@@ -37,24 +36,24 @@
   "author": "Skale team",
   "dependencies": {
     "await-outside": "^2.1.2",
-    "aws-sdk": "^2.137.0",
-    "azure-storage": "^2.6.0",
-    "browserify": "^14.5.0",
+    "aws-sdk": "^2.188.0",
+    "azure-storage": "^2.7.0",
+    "browserify": "^15.2.0",
     "callsite": "^1.0.0",
-    "merge2": "^1.2.0",
-    "micromatch": "^3.1.0",
+    "merge2": "^1.2.1",
+    "micromatch": "^3.1.5",
     "mkdirp": "^0.5.1",
     "node-getopt": "^0.2.3",
     "resolve": "^1.5.0",
     "rimraf": "^2.6.2",
     "seedrandom": "^2.4.3",
     "thenify": "^3.3.0",
-    "uuid": "^3.1.0",
-    "websocket-stream": "^5.0.1",
-    "ws": "^3.2.0"
+    "uuid": "^3.2.1",
+    "websocket-stream": "^5.1.1",
+    "ws": "^4.0.0"
   },
   "devDependencies": {
-    "eslint": "^4.9.0",
+    "eslint": "^4.17.0",
     "plotter": "^0.5.0",
     "tape": "^4.8.0"
   },
