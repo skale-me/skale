@@ -2,7 +2,8 @@ const t = require('tape');
 const azure = require('azure-storage');
 const sc = require('skale').context();
 
-const skip = process.env.CI || (process.env.AZURE_STORAGE_CONNECTION_STRING ? false : true);
+//const skip = process.env.CI || (process.env.AZURE_STORAGE_CONNECTION_STRING ? false : true);
+const skip = true;
 const retry = new azure.ExponentialRetryPolicyFilter();
 const az = skip ? null : azure.createBlobService().withFilter(retry);
 const savedir = 'wasb://skalejs/save';
