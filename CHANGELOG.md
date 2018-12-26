@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.2.2](https://github.com/skale-me/skale/tree/1.2.2) (2018-12-26)
+[Full Changelog](https://github.com/skale-me/skale/compare/1.2.1...1.2.2)
+
+**Merged pull requests:**
+
+- Update dependencies [\#258](https://github.com/skale-me/skale/pull/258) ([mvertes](https://github.com/mvertes))
+- Update dependencies [\#257](https://github.com/skale-me/skale/pull/257) ([mvertes](https://github.com/mvertes))
+- Restored changelog using github\_generate\_changelog [\#256](https://github.com/skale-me/skale/pull/256) ([mvertes](https://github.com/mvertes))
+
 ## [1.2.1](https://github.com/skale-me/skale/tree/1.2.1) (2018-04-28)
 [Full Changelog](https://github.com/skale-me/skale/compare/1.2.0...1.2.1)
 
