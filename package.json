@@ -10,7 +10,7 @@
     "pretest": "eslint .",
     "tape": "tape \"test/**/*.js\"",
     "test": "make -C test",
-    "env": "env"
+    "version": "github_generate_changelog --future-release $npm_package_version"
   },
   "bin": {
     "skale-server": "./bin/server.js",
