@@ -9,7 +9,8 @@
     "stop": "pf=/tmp/skale-server.pid; test -f $pf || exit 1; kill $(cat $pf); rm -f $pf",
     "pretest": "eslint .",
     "tape": "tape \"test/**/*.js\"",
-    "test": "make -C test"
+    "test": "make -C test",
+    "env": "env"
   },
   "bin": {
     "skale-server": "./bin/server.js",
@@ -40,22 +41,22 @@
     "azure-storage": "^2.10.2",
     "browserify": "^16.2.3",
     "callsite": "^1.0.0",
-    "merge2": "^1.2.0",
+    "merge2": "^1.2.3",
     "micromatch": "^3.1.10",
     "mkdirp": "^0.5.1",
     "node-getopt": "^0.3.2",
-    "resolve": "^1.5.0",
+    "resolve": "^1.9.0",
     "rimraf": "^2.6.2",
-    "seedrandom": "^2.4.3",
+    "seedrandom": "^2.4.4",
     "thenify": "^3.3.0",
-    "uuid": "^3.1.0",
-    "websocket-stream": "^5.0.1",
+    "uuid": "^3.3.2",
+    "websocket-stream": "^5.1.2",
     "ws": "^6.1.2"
   },
   "devDependencies": {
     "eslint": "^5.11.0",
     "plotter": "^0.5.0",
-    "tape": "^4.9.0"
+    "tape": "^4.9.1"
   },
   "peerDependencies": {
     "node-parquet": "^0.2.4"
