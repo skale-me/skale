@@ -51,7 +51,7 @@
     "thenify": "^3.3.0",
     "uuid": "^3.3.2",
     "websocket-stream": "^5.1.2",
-    "ws": "^6.1.2"
+    "ws": "^7.4.5"
   },
   "devDependencies": {
     "eslint": "^5.11.0",
