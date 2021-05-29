@@ -1,3 +1,5 @@
+**Development activity is stopped, and this project is now archived.**
+
 ![logo](docs/images/logo-skale.png)
 
 [![Build Status](https://travis-ci.org/skale-me/skale.svg?branch=master)](https://travis-ci.org/skale-me/skale)
